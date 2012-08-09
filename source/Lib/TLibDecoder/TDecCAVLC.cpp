@@ -785,17 +785,30 @@ Void TDecCavlc::parseVPS(TComVPS* pcVPS)
 {
   UInt  uiCode;
   
+#if VPS_SYNTAX_CHANGES
+  READ_CODE( 4,  uiCode,  "video_parameter_set_id" );             pcVPS->setVPSId( uiCode );
+  READ_FLAG(     uiCode,  "vps_temporal_id_nesting_flag" );       pcVPS->setTemporalNestingFlag( uiCode ? true:false );
+  READ_CODE( 2,  uiCode,  "vps_reserved_zero_2bits" );            assert(uiCode == 0);
+  READ_CODE( 6,  uiCode,  "vps_reserved_zero_6bits" );            assert(uiCode == 0);
+  READ_CODE( 3,  uiCode,  "vps_max_sub_layers_minus1" );          pcVPS->setMaxTLayers( uiCode + 1 );
+  parsePTL ( pcVPS->getPTL(), true, pcVPS->getMaxTLayers()-1);
+  READ_CODE( 12, uiCode,  "vps_reserved_zero_12bits" );           assert(uiCode == 0);
+#else
   READ_CODE( 3, uiCode, "vps_max_temporal_layers_minus1" );   pcVPS->setMaxTLayers( uiCode + 1 );
   READ_CODE( 5, uiCode, "vps_max_layers_minus1" );            pcVPS->setMaxLayers( uiCode + 1 );
   READ_UVLC( uiCode,  "video_parameter_set_id" );             pcVPS->setVPSId( uiCode );
   READ_FLAG( uiCode,  "vps_temporal_id_nesting_flag" );       pcVPS->setTemporalNestingFlag( uiCode ? true:false );
+#endif
   for(UInt i = 0; i <= pcVPS->getMaxTLayers()-1; i++)
   {
     READ_UVLC( uiCode,  "vps_max_dec_pic_buffering[i]" );     pcVPS->setMaxDecPicBuffering( uiCode, i );
     READ_UVLC( uiCode,  "vps_num_reorder_pics[i]" );          pcVPS->setNumReorderPics( uiCode, i );
     READ_UVLC( uiCode,  "vps_max_latency_increase[i]" );      pcVPS->setMaxLatencyIncrease( uiCode, i );
   }
-  
+#if VPS_SYNTAX_CHANGES
+  READ_UVLC( uiCode,    "vps_num_hrd_parameters" );           assert(uiCode == 0);
+  // hrd_parameters
+#endif  
   READ_FLAG( uiCode,  "vps_extension_flag" );          assert(!uiCode);
   //future extensions go here..
   

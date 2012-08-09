@@ -249,7 +249,9 @@ private:
   UInt        m_numReorderPics[MAX_TLAYER];
   UInt        m_uiMaxDecPicBuffering[MAX_TLAYER]; 
   UInt        m_uiMaxLatencyIncrease[MAX_TLAYER];
-  
+#if VPS_SYNTAX_CHANGES
+  TComPTL     m_pcPTL;
+#endif
 public:
   TComVPS();
   virtual ~TComVPS();
@@ -274,7 +276,9 @@ public:
   
   Void    setMaxLatencyIncrease(UInt v, UInt tLayer)            { m_uiMaxLatencyIncrease[tLayer] = v;    }
   UInt    getMaxLatencyIncrease(UInt tLayer)                    { return m_uiMaxLatencyIncrease[tLayer]; }
-  
+#if VPS_SYNTAX_CHANGES
+  TComPTL* getPTL() { return &m_pcPTL; }
+#endif  
 };
 
 /// SPS class

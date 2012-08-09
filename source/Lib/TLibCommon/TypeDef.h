@@ -42,6 +42,7 @@
 
 //! \ingroup TLibCommon
 //! \{
+#define VPS_SYNTAX_CHANGES               1  ///< J0550/J0562: changes to VPS syntax
 #define PROFILE_TIER_LEVEL_SYNTAX        1  ///< J0562: Include profile_tier_level() syntax structure; not used for now
 #define SAO_LUM_CHROMA_ONOFF_FLAGS       1  ///< J0087: slice-level independent luma/chroma SAO on/off flag 
 #define LTRP_IN_SPS                      1  ///< J0116: Include support for signalling LTRP LSBs in the SPS, and index them in the slice header.

@@ -521,17 +521,30 @@ Void TEncCavlc::codeSPS( TComSPS* pcSPS )
 
 Void TEncCavlc::codeVPS( TComVPS* pcVPS )
 {
+#if VPS_SYNTAX_CHANGES
+  WRITE_CODE( pcVPS->getVPSId(),                    4,        "video_parameter_set_id" );
+  WRITE_FLAG( pcVPS->getTemporalNestingFlag() - 1,            "vps_temporal_id_nesting_flag" );
+  WRITE_CODE( 0,                                    2,        "vps_reserved_zero_2bits" );
+  WRITE_CODE( 0,                                    6,        "vps_reserved_zero_6bits" );
+  WRITE_CODE( pcVPS->getMaxTLayers() - 1,           3,        "vps_max_sub_layers_minus1" );
+  codePTL( pcVPS->getPTL(), true, pcVPS->getMaxTLayers() - 1 );
+  WRITE_CODE( 0,                                   12,        "vps_reserved_zero_12bits" );
+#else
   WRITE_CODE( pcVPS->getMaxTLayers() - 1,     3,        "vps_max_temporal_layers_minus1" );
   WRITE_CODE( pcVPS->getMaxLayers() - 1,      5,        "vps_max_layers_minus1" );
   WRITE_UVLC( pcVPS->getVPSId(),                        "video_parameter_set_id" );
   WRITE_FLAG( pcVPS->getTemporalNestingFlag() - 1,      "vps_temporal_id_nesting_flag" );
+#endif
   for(UInt i=0; i <= pcVPS->getMaxTLayers()-1; i++)
   {
     WRITE_UVLC( pcVPS->getMaxDecPicBuffering(i),           "vps_max_dec_pic_buffering[i]" );
     WRITE_UVLC( pcVPS->getNumReorderPics(i),               "vps_num_reorder_pics[i]" );
     WRITE_UVLC( pcVPS->getMaxLatencyIncrease(i),           "vps_max_latency_increase[i]" );
   }
-  
+#if VPS_SYNTAX_CHANGES
+  WRITE_UVLC( 0,                                           "vps_num_hrd_parameters" );
+  // hrd_parameters
+#endif
   WRITE_FLAG( 0,                     "vps_extension_flag" );
   
   //future extensions here..
