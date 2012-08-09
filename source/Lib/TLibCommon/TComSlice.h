@@ -286,11 +286,13 @@ class TComSPS
 {
 private:
   Int         m_SPSId;
+#if !SPS_SYNTAX_CHANGES
   Int         m_ProfileSpace;
   Int         m_ProfileIdc;
   Int         m_ReservedIndicatorFlags;
   Int         m_LevelIdc;
   UInt        m_ProfileCompatibility;
+#endif
   Int         m_VPSId;
   Int         m_chromaFormatIdc;
 
@@ -383,7 +385,9 @@ private:
 
   static const Int   m_cropUnitX[MAX_CHROMA_FORMAT_IDC+1];
   static const Int   m_cropUnitY[MAX_CHROMA_FORMAT_IDC+1];
-
+#if SPS_SYNTAX_CHANGES
+  TComPTL     m_pcPTL;
+#endif
 public:
   TComSPS();
   virtual ~TComSPS();
@@ -392,6 +396,7 @@ public:
   Void setVPSId       (Int i)    { m_VPSId = i;             }
   Int  getSPSId       ()         { return m_SPSId;          }
   Void setSPSId       (Int i)    { m_SPSId = i;             }
+#if !SPS_SYNTAX_CHANGES
   Int  getProfileSpace  ()       { return m_ProfileSpace;   }
   Void setProfileSpace  (Int i)  { m_ProfileSpace = i;      }
   Int  getProfileIdc  ()         { return m_ProfileIdc;     }
@@ -402,7 +407,7 @@ public:
   Void setLevelIdc    (Int i)    { m_LevelIdc = i;          }
   UInt getProfileCompat ()       { return m_ProfileCompatibility;       }
   Void setProfileCompat (UInt i) { m_ProfileCompatibility = i; if (m_ProfileIdc != 0 && m_ProfileSpace == 0) m_ProfileCompatibility |= (1 << (m_ProfileIdc - 1));          }
-
+#endif
   Int  getChromaFormatIdc ()         { return m_chromaFormatIdc;       }
   Void setChromaFormatIdc (Int i)    { m_chromaFormatIdc = i;          }
 
@@ -552,6 +557,9 @@ public:
   Void setMaxDecPicBuffering  ( UInt ui, UInt tlayer ) { m_uiMaxDecPicBuffering[tlayer] = ui;   }
   UInt getMaxLatencyIncrease  (UInt tlayer)            { return m_uiMaxLatencyIncrease[tlayer];   }
   Void setMaxLatencyIncrease  ( UInt ui , UInt tlayer) { m_uiMaxLatencyIncrease[tlayer] = ui;      }
+#if SPS_SYNTAX_CHANGES
+  TComPTL* getPTL()     { return &m_pcPTL; }
+#endif
 };
 
 /// Reference Picture Lists class

@@ -1255,11 +1255,13 @@ TComVPS::~TComVPS()
 
 TComSPS::TComSPS()
 : m_SPSId                     (  0)
+#if !SPS_SYNTAX_CHANGES
 , m_ProfileSpace              (  0)
 , m_ProfileIdc                (  0)
 , m_ReservedIndicatorFlags    (  0)
 , m_LevelIdc                  (  0)
 , m_ProfileCompatibility      (  0)
+#endif
 , m_VPSId                     (  0)
 , m_chromaFormatIdc           (CHROMA_420)
 , m_uiMaxTLayers              (  1)

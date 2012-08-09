@@ -599,7 +599,14 @@ Void TDecCavlc::parseSPS(TComSPS* pcSPS)
 #endif
 
   UInt  uiCode;
-
+#if SPS_SYNTAX_CHANGES
+  READ_CODE( 4,  uiCode, "video_parameter_set_id");              pcSPS->setVPSId        ( uiCode );
+  READ_CODE( 3,  uiCode, "sps_max_sub_layers_minus1" );          pcSPS->setMaxTLayers   ( uiCode+1 );
+  READ_FLAG(     uiCode, "sps_reserved_zero_bit");               assert(uiCode == 0);
+  parsePTL(pcSPS->getPTL(), 1, pcSPS->getMaxTLayers() - 1);
+  READ_UVLC(     uiCode, "seq_parameter_set_id" );               pcSPS->setSPSId( uiCode );
+  READ_UVLC(     uiCode, "chroma_format_idc" );                  pcSPS->setChromaFormatIdc( uiCode );
+#else
   READ_CODE( 3,  uiCode, "profile_space" );                      pcSPS->setProfileSpace( uiCode );
   READ_CODE( 5,  uiCode, "profile_idc" );                        pcSPS->setProfileIdc( uiCode );
   READ_CODE(16,  uiCode, "reserved_indicator_flags" );           pcSPS->setRsvdIndFlags( uiCode );
@@ -609,6 +616,7 @@ Void TDecCavlc::parseSPS(TComSPS* pcSPS)
   READ_UVLC(     uiCode, "video_parameter_set_id" );             pcSPS->setVPSId( uiCode );
   READ_UVLC(     uiCode, "chroma_format_idc" );                  pcSPS->setChromaFormatIdc( uiCode );
   READ_CODE( 3,  uiCode, "max_temporal_layers_minus1" );         pcSPS->setMaxTLayers( uiCode+1 );
+#endif
   READ_UVLC (    uiCode, "pic_width_in_luma_samples" );          pcSPS->setPicWidthInLumaSamples ( uiCode    );
   READ_UVLC (    uiCode, "pic_height_in_luma_samples" );         pcSPS->setPicHeightInLumaSamples( uiCode    );
   READ_FLAG(     uiCode, "pic_cropping_flag");                   pcSPS->setPicCroppingFlag ( uiCode ? true : false );
