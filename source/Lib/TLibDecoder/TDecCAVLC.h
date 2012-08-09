@@ -108,6 +108,10 @@ public:
 #if !REMOVE_APS
   Void  parseAPS            ( TComAPS* pAPS );
 #endif
+#if PROFILE_TIER_LEVEL_SYNTAX
+  Void  parsePTL            ( TComPTL *rpcPTL, Bool profilePresentFlag, Int maxNumSubLayersMinus1 );
+  Void  parseProfileTier    (ProfileTierLevel *ptl);
+#endif
   Void  parseSliceHeader    ( TComSlice*& rpcSlice, ParameterSetManagerDecoder *parameterSetManager);
   Void  parseTerminatingBit ( UInt& ruiBit );
   

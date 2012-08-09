@@ -114,7 +114,10 @@ public:
   Void  codePPS                 ( TComPPS* pcPPS );
   void codeSEI(const SEI&);
   Void  codeSliceHeader         ( TComSlice* pcSlice );
-
+#if PROFILE_TIER_LEVEL_SYNTAX
+  Void  codePTL                 ( TComPTL* pcPTL, Bool profilePresentFlag, Int maxNumSubLayersMinus1);
+  Void  codeProfileTier         ( ProfileTierLevel* ptl );
+#endif
   Void  codeTilesWPPEntryPoint( TComSlice* pSlice );
   Void  codeTerminatingBit      ( UInt uilsLast );
   Void  codeSliceFinish         ();

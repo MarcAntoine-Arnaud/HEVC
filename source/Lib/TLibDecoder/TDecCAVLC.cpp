@@ -1483,6 +1483,43 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
   return;
 }
   
+#if PROFILE_TIER_LEVEL_SYNTAX
+Void TDecCavlc::parsePTL( TComPTL *rpcPTL, Bool profilePresentFlag, Int maxNumSubLayersMinus1 )
+{
+  UInt uiCode;
+  if(profilePresentFlag)
+  {
+    parseProfileTier(rpcPTL->getGeneralPTL());
+  }
+  READ_CODE( 8, uiCode, "general_level_idc" );    rpcPTL->getGeneralPTL()->setLevelIdc(uiCode);
+
+  for(Int i = 0; i < maxNumSubLayersMinus1; i++)
+  {
+    READ_FLAG( uiCode, "sub_layer_profile_present_flag[i]" ); rpcPTL->setSubLayerProfilePresentFlag(i, uiCode);
+    READ_FLAG( uiCode, "sub_layer_level_present_flag[i]"   ); rpcPTL->setSubLayerLevelPresentFlag  (i, uiCode);
+    if( profilePresentFlag && rpcPTL->getSubLayerProfilePresentFlag(i) )
+    {
+      parseProfileTier(rpcPTL->getSubLayerPTL(i));
+    }
+    if(rpcPTL->getSubLayerLevelPresentFlag(i))
+    {
+      READ_CODE( 8, uiCode, "sub_layer_level_idc[i]" );   rpcPTL->getSubLayerPTL(i)->setLevelIdc(uiCode);
+    }
+  }
+}
+Void TDecCavlc::parseProfileTier(ProfileTierLevel *ptl)
+{
+  UInt uiCode;
+  READ_CODE(2 , uiCode, "XXX_profile_space[]");   ptl->setProfileSpace(uiCode);
+  READ_FLAG(    uiCode, "XXX_tier_flag[]"    );   ptl->setTierFlag    (uiCode ? 1 : 0);
+  READ_CODE(5 , uiCode, "XXX_profile_idc[]"  );   ptl->setProfileIdc  (uiCode);
+  for(Int j = 0; j < 32; j++)
+  {
+    READ_FLAG(  uiCode, "XXX_profile_compatibility_flag[][j]");   ptl->setProfileCompatibilityFlag(j, uiCode ? 1 : 0);
+  }
+  READ_CODE(16, uiCode, "XXX_reserved_zero_16bits[]");  assert( uiCode == 0 );  
+}
+#endif
 Void TDecCavlc::parseTerminatingBit( UInt& ruiBit )
 {
   ruiBit = false;

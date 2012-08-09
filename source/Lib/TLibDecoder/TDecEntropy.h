@@ -73,6 +73,7 @@ public:
 #if !REMOVE_APS
   virtual Void  parseAPS                  ( TComAPS* pAPS  )                                      = 0;
 #endif
+
   virtual void parseSEI(SEImessages&) = 0;
 
   virtual Void parseSliceHeader          ( TComSlice*& rpcSlice, ParameterSetManagerDecoder *parameterSetManager)       = 0;

@@ -42,7 +42,7 @@
 
 //! \ingroup TLibCommon
 //! \{
-
+#define PROFILE_TIER_LEVEL_SYNTAX        1  ///< J0562: Include profile_tier_level() syntax structure; not used for now
 #define SAO_LUM_CHROMA_ONOFF_FLAGS       1  ///< J0087: slice-level independent luma/chroma SAO on/off flag 
 #define LTRP_IN_SPS                      1  ///< J0116: Include support for signalling LTRP LSBs in the SPS, and index them in the slice header.
 #define CHROMA_QP_EXTENSION              1  ///< J0342: Extend mapping table from luma QP to chroma QP, introduce slice-level chroma offsets, apply limits on offset values

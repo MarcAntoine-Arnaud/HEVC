@@ -970,6 +970,42 @@ Void TEncCavlc::codeSliceHeader         ( TComSlice* pcSlice )
 #endif
 }
 
+#if PROFILE_TIER_LEVEL_SYNTAX
+Void TEncCavlc::codePTL( TComPTL* pcPTL, Bool profilePresentFlag, Int maxNumSubLayersMinus1)
+{
+  if(profilePresentFlag)
+  {
+    codeProfileTier(pcPTL->getGeneralPTL());    // general_...
+  }
+  WRITE_CODE( pcPTL->getGeneralPTL()->getLevelIdc(), 8, "general_level_idc" );
+
+  for(Int i = 0; i < maxNumSubLayersMinus1; i++)
+  {
+    WRITE_FLAG( pcPTL->getSubLayerProfilePresentFlag(i), "sub_layer_profile_present_flag[i]" );
+    WRITE_FLAG( pcPTL->getSubLayerLevelPresentFlag(i),   "sub_layer_level_present_flag[i]" );
+    if( profilePresentFlag && pcPTL->getSubLayerProfilePresentFlag(i) )
+    {
+      codeProfileTier(pcPTL->getSubLayerPTL(i));  // sub_layer_...
+    }
+    if( pcPTL->getSubLayerLevelPresentFlag(i) )
+    {
+      WRITE_CODE( pcPTL->getSubLayerPTL(i)->getLevelIdc(), 8, "sub_layer_level_idc[i]" );
+    }
+  }
+}
+Void TEncCavlc::codeProfileTier( ProfileTierLevel* ptl )
+{
+  WRITE_CODE( ptl->getProfileSpace(), 2 ,     "XXX_profile_space[]");
+  WRITE_FLAG( ptl->getTierFlag    (),         "XXX_tier_flag[]"    );
+  WRITE_CODE( ptl->getProfileIdc  (), 5 ,     "XXX_profile_idc[]"  );   
+  for(Int j = 0; j < 32; j++)
+  {
+    WRITE_FLAG( ptl->getProfileCompatibilityFlag(j), "XXX_profile_compatibility_flag[][j]");   
+  }
+  WRITE_CODE(0 , 16, "XXX_reserved_zero_16bits[]");  
+}
+#endif
+
 /**
  - write wavefront substreams sizes for the slice header.
  .
