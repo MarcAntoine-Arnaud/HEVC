@@ -190,6 +190,52 @@ private:
 #endif
 };
 
+#if PROFILE_TIER_LEVEL_SYNTAX
+class ProfileTierLevel{
+  Int     m_profileSpace;
+  Bool    m_tierFlag;
+  Int     m_profileIdc;
+  Bool    m_profileCompatibilityFlag[32];
+  Int     m_levelIdc;
+
+public:
+  ProfileTierLevel();
+
+  Int   getProfileSpace() const   { return m_profileSpace; }
+  Void  setProfileSpace(Int x)    { m_profileSpace = x; }
+
+  Bool  getTierFlag()     const   { return m_tierFlag; }
+  Void  setTierFlag(Bool x)       { m_tierFlag = x; }
+
+  Int   getProfileIdc()   const   { return m_profileIdc; }
+  Void  setProfileIdc(Int x)      { m_profileIdc = x; }
+
+  Bool  getProfileCompatibilityFlag(Int i) const    { return m_profileCompatibilityFlag[i]; }
+  Void  setProfileCompatibilityFlag(Int i, Bool x)  { m_profileCompatibilityFlag[i] = x; }
+
+  Int   getLevelIdc()   const   { return m_levelIdc; }
+  Void  setLevelIdc(Int x)      { m_levelIdc = x; }
+};
+
+
+class TComPTL{
+  ProfileTierLevel m_generalPTL;
+  ProfileTierLevel m_subLayerPTL[6];      // max. value of max_sub_layers_minus1 is 6
+  Bool m_subLayerProfilePresentFlag[6];
+  Bool m_subLayerLevelPresentFlag[6];
+
+public:
+  TComPTL();
+  Bool getSubLayerProfilePresentFlag(Int i) const { return m_subLayerProfilePresentFlag[i]; }
+  Void setSubLayerProfilePresentFlag(Int i, Bool x) { m_subLayerProfilePresentFlag[i] = x; }
+  
+  Bool getSubLayerLevelPresentFlag(Int i) const { return m_subLayerLevelPresentFlag[i]; }
+  Void setSubLayerLevelPresentFlag(Int i, Bool x) { m_subLayerLevelPresentFlag[i] = x; }
+
+  ProfileTierLevel* getGeneralPTL()  { return &m_generalPTL; }
+  ProfileTierLevel* getSubLayerPTL(Int i)  { return &m_subLayerPTL[i]; }
+};
+#endif
 /// VPS class
 
 class TComVPS
@@ -1287,53 +1333,6 @@ protected:
   ParameterSetMap<TComAPS> m_apsMap;
 #endif
 };
-
-#if PROFILE_TIER_LEVEL_SYNTAX
-class ProfileTierLevel{
-  Int     m_profileSpace;
-  Bool    m_tierFlag;
-  Int     m_profileIdc;
-  Bool    m_profileCompatibilityFlag[32];
-  Int     m_levelIdc;
-
-public:
-  ProfileTierLevel();
-
-  Int   getProfileSpace() const   { return m_profileSpace; }
-  Void  setProfileSpace(Int x)    { m_profileSpace = x; }
-
-  Bool  getTierFlag()     const   { return m_tierFlag; }
-  Void  setTierFlag(Bool x)       { m_tierFlag = x; }
-
-  Int   getProfileIdc()   const   { return m_profileIdc; }
-  Void  setProfileIdc(Int x)      { m_profileIdc = x; }
-
-  Bool  getProfileCompatibilityFlag(Int i) const    { return m_profileCompatibilityFlag[i]; }
-  Void  setProfileCompatibilityFlag(Int i, Bool x)  { m_profileCompatibilityFlag[i] = x; }
-
-  Int   getLevelIdc()   const   { return m_levelIdc; }
-  Void  setLevelIdc(Int x)      { m_levelIdc = x; }
-};
-
-
-class TComPTL{
-  ProfileTierLevel m_generalPTL;
-  ProfileTierLevel m_subLayerPTL[6];      // max. value of max_sub_layers_minus1 is 6
-  Bool m_subLayerProfilePresentFlag[6];
-  Bool m_subLayerLevelPresentFlag[6];
-
-public:
-  TComPTL();
-  Bool getSubLayerProfilePresentFlag(Int i) const { return m_subLayerProfilePresentFlag[i]; }
-  Void setSubLayerProfilePresentFlag(Int i, Bool x) { m_subLayerProfilePresentFlag[i] = x; }
-  
-  Bool getSubLayerLevelPresentFlag(Int i) const { return m_subLayerLevelPresentFlag[i]; }
-  Void setSubLayerLevelPresentFlag(Int i, Bool x) { m_subLayerLevelPresentFlag[i] = x; }
-
-  ProfileTierLevel* getGeneralPTL()  { return &m_generalPTL; }
-  ProfileTierLevel* getSubLayerPTL(Int i)  { return &m_subLayerPTL[i]; }
-};
-#endif
 
 //! \}
 
