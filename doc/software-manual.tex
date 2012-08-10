@@ -1147,14 +1147,14 @@ Controls the temporal motion vector prediction mode.
 \end{tabular}
 \\
 
-\Option{TS} &
+\Option{TransformSkip} &
 \ShortOption{\None} &
 \Default{false} &
 Enables or disables transform-skipping mode decision for 4x4 TUs
 \footnote{Enables transform_skip_enabled and per 4x4 TU tests}.
 \\
 
-\Option{TSFast} &
+\Option{TransformSkipFast} &
 \ShortOption{\None} &
 \Default{false} &
 Enables or disables reduced testing of the transform-skipping mode
@@ -1162,7 +1162,7 @@ decision for chroma TUs.  When enabled, no RDO search is performed for
 chroma TUs, instead they are transform-skipped if the four corresponding
 luma TUs are also skipped.
 \par
-This option has no effect if TS is disabled.
+This option has no effect if TransformSkip is disabled.
 \\
 \end{OptionTable}
 

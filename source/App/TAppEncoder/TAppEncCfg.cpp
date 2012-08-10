@@ -261,8 +261,8 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
 #if !REMOVE_LMCHROMA
   ("LMChroma",                m_bUseLMChroma,            true, "Intra chroma prediction based on reconstructed luma")
 #endif
-  ("TS",                      m_useTansformSkip,         false, "Intra transform skipping")
-  ("TSFast",                  m_useTansformSkipFast,     false, "Fast intra transform skipping")
+  ("TransformSkip",           m_useTransformSkip,        false, "Intra transform skipping")
+  ("TransformSkipFast",       m_useTransformSkipFast,    false, "Fast intra transform skipping")
 #if !REMOVE_ALF
   ("ALF",                     m_bUseALF,                 true, "Enable Adaptive Loop Filter")
 #endif
@@ -1025,8 +1025,8 @@ Void TAppEncCfg::xPrintParameter()
 #if !REMOVE_LMCHROMA
   printf("LMC:%d ", m_bUseLMChroma        );
 #endif
-  printf("TS:%d ",  m_useTansformSkip              );
-  printf("TSFast:%d ", m_useTansformSkipFast       );
+  printf("TransformSkip:%d ",     m_useTransformSkip              );
+  printf("TransformSkipFast:%d ", m_useTransformSkipFast       );
 #if REMOVE_FGS
   printf("Slice: M=%d ", m_iSliceMode);
 #else
