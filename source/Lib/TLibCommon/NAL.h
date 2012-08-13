@@ -70,6 +70,22 @@ struct NALUnit
   /** returns true if the NALunit is a slice NALunit */
   bool isSlice()
   {
+#if NAL_UNIT_TYPES_J1003_D7
+    return m_nalUnitType == NAL_UNIT_CODED_SLICE_TRAIL_R
+        || m_nalUnitType == NAL_UNIT_CODED_SLICE_TRAIL_N
+        || m_nalUnitType == NAL_UNIT_CODED_SLICE_TLA
+        || m_nalUnitType == NAL_UNIT_CODED_SLICE_TSA_N
+        || m_nalUnitType == NAL_UNIT_CODED_SLICE_STSA_R
+        || m_nalUnitType == NAL_UNIT_CODED_SLICE_STSA_N
+        || m_nalUnitType == NAL_UNIT_CODED_SLICE_BLA
+        || m_nalUnitType == NAL_UNIT_CODED_SLICE_BLANT
+        || m_nalUnitType == NAL_UNIT_CODED_SLICE_BLA_N_LP
+        || m_nalUnitType == NAL_UNIT_CODED_SLICE_IDR
+        || m_nalUnitType == NAL_UNIT_CODED_SLICE_IDR_N_LP
+        || m_nalUnitType == NAL_UNIT_CODED_SLICE_CRA
+        || m_nalUnitType == NAL_UNIT_CODED_SLICE_DLP
+        || m_nalUnitType == NAL_UNIT_CODED_SLICE_TFD;
+#else
     return m_nalUnitType == NAL_UNIT_CODED_SLICE_IDR
         || m_nalUnitType == NAL_UNIT_CODED_SLICE_BLANT
         || m_nalUnitType == NAL_UNIT_CODED_SLICE_BLA
@@ -78,6 +94,7 @@ struct NALUnit
         || m_nalUnitType == NAL_UNIT_CODED_SLICE_TLA
         || m_nalUnitType == NAL_UNIT_CODED_SLICE_TFD
         || m_nalUnitType == NAL_UNIT_CODED_SLICE;
+#endif
   }
 };
 

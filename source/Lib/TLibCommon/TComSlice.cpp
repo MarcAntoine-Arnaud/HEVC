@@ -611,7 +611,11 @@ Void TComSlice::checkCRA(TComReferencePictureSet *pReferencePictureSet, Int& poc
   {
     prevRAPisBLA = false;
   }
+#if NAL_UNIT_TYPES_J1003_D7
+  else if ( getNalUnitType() == NAL_UNIT_CODED_SLICE_CRA ) // CRA picture found
+#else
   else if ( getNalUnitType() == NAL_UNIT_CODED_SLICE_CRA || getNalUnitType() == NAL_UNIT_CODED_SLICE_CRANT ) // CRA/CRANT picture found
+#endif
   {
     pocCRA = getPOC();
     prevRAPisBLA = false;
@@ -675,7 +679,11 @@ Void TComSlice::decodingRefreshMarking(Int& pocCRA, Bool& bRefreshPending, TComL
       }
       bRefreshPending = false; 
     }
+#if NAL_UNIT_TYPES_J1003_D7
+    if ( getNalUnitType() == NAL_UNIT_CODED_SLICE_CRA ) // CRA picture found
+#else
     if (getNalUnitType() == NAL_UNIT_CODED_SLICE_CRA || getNalUnitType() == NAL_UNIT_CODED_SLICE_CRANT) // CRA/CRANT picture found
+#endif
     {
       bRefreshPending = true; 
       pocCRA = uiPOCCurr;

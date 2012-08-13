@@ -616,7 +616,9 @@ Void TEncCavlc::codeSliceHeader         ( TComSlice* pcSlice )
     if(   pcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_IDR
        || pcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_BLANT
        || pcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA
+#if !NAL_UNIT_TYPES_J1003_D7
        || pcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_CRANT
+#endif
        || pcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_CRA )
     {
       WRITE_FLAG( 0, "no_output_of_prior_pics_flag" );
@@ -647,7 +649,9 @@ Void TEncCavlc::codeSliceHeader         ( TComSlice* pcSlice )
     if(   pcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_IDR
        || pcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_BLANT
        || pcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA
+#if !NAL_UNIT_TYPES_J1003_D7
        || pcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_CRANT
+#endif
        || pcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_CRA )
     {
       WRITE_UVLC( 0, "rap_pic_id" );

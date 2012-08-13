@@ -840,7 +840,9 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
     if(   rpcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_IDR
       || rpcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_BLANT
       || rpcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA
+#if !NAL_UNIT_TYPES_J1003_D7
       || rpcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_CRANT
+#endif
       || rpcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_CRA )
     { 
       READ_FLAG( uiCode, "no_output_of_prior_pics_flag" );  //ignored
@@ -949,7 +951,9 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
     if(   rpcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_IDR
       || rpcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_BLANT
       || rpcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA
+#if !NAL_UNIT_TYPES_J1003_D7
       || rpcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_CRANT
+#endif
       || rpcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_CRA )
     { 
       READ_UVLC( uiCode, "rap_pic_id" );  //ignored
