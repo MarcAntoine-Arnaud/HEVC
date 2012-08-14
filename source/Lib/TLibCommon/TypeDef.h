@@ -46,6 +46,7 @@
 #if NAL_UNIT_TYPES_J1003_D7
 // Place macro definitions that deal with new NAL unit types introduced in J1003-d7 (as opposed to I1003-d7) here
 #define SUPPORT_FOR_RAP_N_LP             1  ///< J0344: Add support for IDR_N_LP and BLA_N_LP NAL unit types
+#define STSA                             1        ///STSA (GTLA) pictures labeling
 #endif
 
 #define SPS_SYNTAX_CHANGES               1  ///< J0550: changes to SPS syntax
