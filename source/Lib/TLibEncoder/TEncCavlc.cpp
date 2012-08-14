@@ -614,6 +614,10 @@ Void TEncCavlc::codeSliceHeader         ( TComSlice* pcSlice )
   WRITE_FLAG( address==0, "first_slice_in_pic_flag" );
 #if SPLICING_FRIENDLY_PARAMS
     if(   pcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_IDR
+#if SUPPORT_FOR_RAP_N_LP
+       || pcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_IDR_N_LP
+       || pcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA_N_LP
+#endif
        || pcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_BLANT
        || pcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA
 #if !NAL_UNIT_TYPES_J1003_D7
@@ -647,6 +651,10 @@ Void TEncCavlc::codeSliceHeader         ( TComSlice* pcSlice )
     }
 #if !SPLICING_FRIENDLY_PARAMS
     if(   pcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_IDR
+#if SUPPORT_FOR_RAP_N_LP
+       || pcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_IDR_N_LP
+       || pcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA_N_LP
+#endif
        || pcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_BLANT
        || pcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA
 #if !NAL_UNIT_TYPES_J1003_D7
@@ -658,7 +666,11 @@ Void TEncCavlc::codeSliceHeader         ( TComSlice* pcSlice )
       WRITE_FLAG( 0, "no_output_of_prior_pics_flag" );
     }
 #endif
+#if SUPPORT_FOR_RAP_N_LP
+    if( pcSlice->getNalUnitType() != NAL_UNIT_CODED_SLICE_IDR && pcSlice->getNalUnitType() != NAL_UNIT_CODED_SLICE_IDR_N_LP )
+#else
     if( pcSlice->getNalUnitType() != NAL_UNIT_CODED_SLICE_IDR )
+#endif
     {
       Int picOrderCntLSB = (pcSlice->getPOC()-pcSlice->getLastIDR()+(1<<pcSlice->getSPS()->getBitsForPOC()))%(1<<pcSlice->getSPS()->getBitsForPOC());
       WRITE_CODE( picOrderCntLSB, pcSlice->getSPS()->getBitsForPOC(), "pic_order_cnt_lsb");
