@@ -110,6 +110,8 @@
 #define WP_PARAM_RANGE_LIMIT             1  ///< J0221: Range limit of delta_weight and delta_offset for chroma.
 #define J0260 1 ///< Fix in rate control equations
 
+#define NO_MV_PRED_IF_DIFFERENT_TERM     1  ///< J0071/J0121: No MVP is used when cur:short-term and pred:long-term or vice-versa
+
 #define SLICE_HEADER_EXTENSION           1  ///< II0235: Slice header extension mechanism
 
 #define REMOVE_NSQT 1 ///< Disable NSQT-related code
