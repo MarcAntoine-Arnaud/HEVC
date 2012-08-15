@@ -102,6 +102,7 @@ TComSlice::TComSlice()
 , m_uiTileOffstForMultES          ( 0 )
 , m_puiSubstreamSizes             ( NULL )
 , m_cabacInitFlag                 ( false )
+, m_bLMvdL1Zero                   ( false )
 , m_numEntryPointOffsets          ( 0 )
 #if !REFERENCE_PICTURE_DEFN
 , m_nalRefFlag                    ( 0 )
