@@ -1393,7 +1393,14 @@ Void TEncSlice::encodeSlice   ( TComPic*& rpcPic, TComOutputBitstream* pcBitstre
 #endif
   if (pcSlice->getPPS()->getCabacInitPresentFlag())
   {
-    m_pcEntropyCoder->determineCabacInitIdx();
+    if  (pcSlice->getPPS()->getDependentSlicesEnabledFlag())
+    {
+      pcSlice->getPPS()->setEncCABACTableIdx( pcSlice->getSliceType() );
+    }
+    else
+    {
+      m_pcEntropyCoder->determineCabacInitIdx();
+    }
   }
 }
 
