@@ -449,7 +449,10 @@ Void TEncTop::xGetNewPicBuffer ( TComPic*& rpcPic )
       rpcPic->create( m_iSourceWidth, m_iSourceHeight, g_uiMaxCUWidth, g_uiMaxCUHeight, g_uiMaxCUDepth );
     }
 #if REMOVE_APS
-    rpcPic->getPicSym()->allocSaoParam(&m_cEncSAO);
+    if (getUseSAO())
+    {
+      rpcPic->getPicSym()->allocSaoParam(&m_cEncSAO);
+    }
 #endif
     m_cListPic.pushBack( rpcPic );
   }
