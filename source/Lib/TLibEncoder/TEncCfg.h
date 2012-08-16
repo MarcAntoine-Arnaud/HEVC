@@ -213,7 +213,11 @@ protected:
   Int       m_iDependentSliceMode;
   Int       m_iDependentSliceArgument;
 #if DEPENDENT_SLICES
+#if TILES_WPP_ENTROPYSLICES_FLAGS
+  Bool      m_entropySliceEnabledFlag;
+#else
   Bool      m_bCabacIndependentFlag;
+#endif
 #endif
 #if !REMOVE_FGS
   Int       m_iSliceGranularity;
@@ -455,8 +459,13 @@ public:
   Int   getDependentSliceMode            ()              { return m_iDependentSliceMode;    }
   Int   getDependentSliceArgument        ()              { return m_iDependentSliceArgument;}
 #if DEPENDENT_SLICES
+#if TILES_WPP_ENTROPYSLICES_FLAGS
+  Void  setEntropySliceEnabledFlag            ( Bool  i )      { m_entropySliceEnabledFlag = i;       }
+  Bool  getEntropySliceEnabledFlag     ()                    { return m_entropySliceEnabledFlag;   }
+#else
   Void  setCabacIndependentFlag            ( Bool  i )      { m_bCabacIndependentFlag = i;       }
   Bool  getCabacIndependentFlag     ()                    { return m_bCabacIndependentFlag;   }
+#endif
 #endif
 #if !REMOVE_FGS
   Void  setSliceGranularity            ( Int  i )      { m_iSliceGranularity = i;       }

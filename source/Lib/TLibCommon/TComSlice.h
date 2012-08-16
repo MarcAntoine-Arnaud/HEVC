@@ -626,9 +626,17 @@ private:
 #endif
 #if DEPENDENT_SLICES
   Bool        m_bDependentSlicesEnabledFlag;   // Indicates the presence of dependent_slices_flag in slice header
+#if !TILES_WPP_ENTROPYSLICES_FLAGS
   Bool        m_bCabacIndependentFlag;   // Indicates the presence of dependent_slices_flag in slice header
 #endif
+#endif
+#if TILES_WPP_ENTROPYSLICES_FLAGS
+  Bool        m_tilesEnabledFlag;
+  Bool        m_entropyCodingSyncEnabledFlag;
+  Bool        m_entropySliceEnabledFlag;
+#else
   UInt        m_tilesOrEntropyCodingSyncIdc;
+#endif
   Bool     m_bLFCrossTileBoundaryFlag;
   Int      m_iUniformSpacingIdr;
   Int      m_iNumColumnsMinus1;
@@ -707,8 +715,10 @@ public:
 #if DEPENDENT_SLICES
   Void      setDependentSlicesEnabledFlag( Bool b )  { m_bDependentSlicesEnabledFlag = b;    }
   Bool      getDependentSlicesEnabledFlag()          { return m_bDependentSlicesEnabledFlag; }
+#if !TILES_WPP_ENTROPYSLICES_FLAGS
   Void      setCabacIndependentFlag( Bool b )  { m_bCabacIndependentFlag = b;    }
   Bool      getCabacIndependentFlag()          { return m_bCabacIndependentFlag; }
+#endif
 #endif
   Void      setTransquantBypassEnableFlag( Bool b ) { m_TransquantBypassEnableFlag = b; }
   Bool      getTransquantBypassEnableFlag()         { return m_TransquantBypassEnableFlag; }
@@ -720,8 +730,17 @@ public:
 
   Void    setLFCrossTileBoundaryFlag               ( Bool   bValue  )    { m_bLFCrossTileBoundaryFlag = bValue; }
   Bool    getLFCrossTileBoundaryFlag               ()                    { return m_bLFCrossTileBoundaryFlag;   }
+#if TILES_WPP_ENTROPYSLICES_FLAGS
+  Bool    getTilesEnabledFlag()       { return m_tilesEnabledFlag; }
+  Void    setTilesEnabledFlag(Bool x) { m_tilesEnabledFlag = x;    }
+  Bool    getEntropyCodingSyncEnabledFlag()       { return m_entropyCodingSyncEnabledFlag; }
+  Void    setEntropyCodingSyncEnabledFlag(Bool x) { m_entropyCodingSyncEnabledFlag = x;    }
+  Bool    getEntropySliceEnabledFlag()       { return m_entropySliceEnabledFlag; }
+  Void    setEntropySliceEnabledFlag(Bool x) { m_entropySliceEnabledFlag = x;    }
+#else
   UInt     getTilesOrEntropyCodingSyncIdc   ()                  { return m_tilesOrEntropyCodingSyncIdc;   }
   Void     setTilesOrEntropyCodingSyncIdc   ( UInt val )        { m_tilesOrEntropyCodingSyncIdc = val;    }
+#endif
   Void     setUniformSpacingIdr             ( Int i )           { m_iUniformSpacingIdr = i; }
   Int      getUniformSpacingIdr             ()                  { return m_iUniformSpacingIdr; }
   Void     setNumColumnsMinus1              ( Int i )           { m_iNumColumnsMinus1 = i; }

@@ -1445,11 +1445,18 @@ TComPPS::TComPPS()
 #if MOVE_LOOP_FILTER_SLICES_FLAG
 , m_bLFCrossSliceBoundaryFlag (false)
 #endif
+#if TILES_WPP_ENTROPYSLICES_FLAGS
+,  m_tilesEnabledFlag               (false)
+,  m_entropyCodingSyncEnabledFlag   (false)
+,  m_entropySliceEnabledFlag        (false)
+#endif
 {
   m_scalingList = new TComScalingList;
 #if DEPENDENT_SLICES
   m_bDependentSlicesEnabledFlag = false;
+#if !TILES_WPP_ENTROPYSLICES_FLAGS
   m_bCabacIndependentFlag = false;
+#endif
 #endif
 }
 

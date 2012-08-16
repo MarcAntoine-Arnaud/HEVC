@@ -168,7 +168,11 @@ Void TDecGop::decompressSlice(TComInputBitstream* pcBitstream, TComPic*& rpcPic)
 #endif
   }
 #if DEPENDENT_SLICES
+#if TILES_WPP_ENTROPYSLICES_FLAGS
+  if( pcSlice->getPPS()->getDependentSlicesEnabledFlag() && (!pcSlice->getPPS()->getEntropySliceEnabledFlag()) )
+#else
   if( pcSlice->getPPS()->getDependentSlicesEnabledFlag() && (!pcSlice->getPPS()->getCabacIndependentFlag()) )
+#endif
   {
     pcSlice->initCTXMem_dec( 2 );
     for ( UInt st = 0; st < 2; st++ )

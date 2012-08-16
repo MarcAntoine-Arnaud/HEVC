@@ -194,7 +194,11 @@ Void TAppEncTop::xInitLibCfg()
   m_cTEncTop.setDependentSliceMode        ( m_iDependentSliceMode         );
   m_cTEncTop.setDependentSliceArgument    ( m_iDependentSliceArgument     );
 #if DEPENDENT_SLICES
+#if TILES_WPP_ENTROPYSLICES_FLAGS
+  m_cTEncTop.setEntropySliceEnabledFlag      ( m_entropySliceEnabledFlag );
+#else
   m_cTEncTop.setCabacIndependentFlag      ( m_bCabacIndependentFlag   );
+#endif
 #endif
   int iNumPartInCU = 1<<(m_uiMaxCUDepth<<1);
   if(m_iDependentSliceMode==SHARP_FIXED_NUMBER_OF_LCU_IN_DEPENDENT_SLICE)
