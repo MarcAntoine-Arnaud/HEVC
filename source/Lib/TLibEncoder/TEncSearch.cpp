@@ -1905,7 +1905,7 @@ TEncSearch::xLoadIntraResultQT( TComDataCU* pcCU,
   ::memcpy( pcCoeffDstY, pcCoeffSrcY, sizeof( TCoeff ) * uiNumCoeffY );
 #if ADAPTIVE_QP_SELECTION
   Int* pcArlCoeffDstY = m_ppcQTTempArlCoeffY [ uiQTLayer ] + ( uiNumCoeffIncY * uiAbsPartIdx );
-  Int* pcArlCoeffSrcY = m_ppcQTTempTUArlCoeffY            + ( uiNumCoeffIncY * uiAbsPartIdx );
+  Int* pcArlCoeffSrcY = m_ppcQTTempTUArlCoeffY;
   ::memcpy( pcArlCoeffDstY, pcArlCoeffSrcY, sizeof( Int ) * uiNumCoeffY );
 #endif
   if( !bLumaOnly && !bSkipChroma )
@@ -2173,6 +2173,20 @@ TEncSearch::xRecurIntraChromaCodingQT( TComDataCU*  pcCU,
     Bool checkTransformSkip = pcCU->getSlice()->getSPS()->getUseTransformSkip();
 #endif
     UInt uiLog2TrSize = g_aucConvertToBit[ pcCU->getSlice()->getSPS()->getMaxCUWidth() >> uiFullDepth ] + 2;
+
+    UInt actualTrDepth = uiTrDepth;
+    if( uiLog2TrSize == 2 )
+    {
+      assert( uiTrDepth > 0 );
+      actualTrDepth--;
+      UInt uiQPDiv = pcCU->getPic()->getNumPartInCU() >> ( ( pcCU->getDepth( 0 ) + actualTrDepth) << 1 );
+      Bool bFirstQ = ( ( uiAbsPartIdx % uiQPDiv ) == 0 );
+      if( !bFirstQ )
+      {
+        return;
+      }
+    }
+
     checkTransformSkip &= (uiLog2TrSize <= 3);
 #if INTRA_TRANSFORMSKIP_FAST
     if ( m_pcEncCfg->getUseTransformSkipFast() )
@@ -2190,18 +2204,6 @@ TEncSearch::xRecurIntraChromaCodingQT( TComDataCU*  pcCU,
     }
 #endif
 
-    UInt actualTrDepth = uiTrDepth;
-    if( uiLog2TrSize == 2 )
-    {
-      assert( uiTrDepth > 0 );
-      actualTrDepth--;
-      UInt uiQPDiv = pcCU->getPic()->getNumPartInCU() >> ( ( pcCU->getDepth( 0 ) + actualTrDepth) << 1 );
-      Bool bFirstQ = ( ( uiAbsPartIdx % uiQPDiv ) == 0 );
-      if( !bFirstQ )
-      {
-        return;
-      }
-    }
     if(checkTransformSkip)
     {
 #if INTRA_TRANSFORMSKIP_FAST==0
