@@ -460,8 +460,8 @@ public:
   Int   getDependentSliceArgument        ()              { return m_iDependentSliceArgument;}
 #if DEPENDENT_SLICES
 #if TILES_WPP_ENTROPYSLICES_FLAGS
-  Void  setEntropySliceEnabledFlag            ( Bool  i )      { m_entropySliceEnabledFlag = i;       }
-  Bool  getEntropySliceEnabledFlag     ()                    { return m_entropySliceEnabledFlag;   }
+  Void  setEntropySliceEnabledFlag       ( Bool  b )     { m_entropySliceEnabledFlag = b;    }
+  Bool  getEntropySliceEnabledFlag       ()              { return m_entropySliceEnabledFlag; }
 #else
   Void  setCabacIndependentFlag            ( Bool  i )      { m_bCabacIndependentFlag = i;       }
   Bool  getCabacIndependentFlag     ()                    { return m_bCabacIndependentFlag;   }

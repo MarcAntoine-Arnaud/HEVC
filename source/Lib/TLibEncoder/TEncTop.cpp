@@ -613,9 +613,8 @@ Void TEncTop::xInitPPS()
 
   m_cPPS.setNumSubstreams(m_iWaveFrontSubstreams);
 #if TILES_WPP_ENTROPYSLICES_FLAGS
-  m_cPPS.setEntropyCodingSyncEnabledFlag( m_iWaveFrontSynchro );
-  m_cPPS.setTilesEnabledFlag( (m_iNumColumnsMinus1 > 0 || m_iNumRowsMinus1 > 0)  );
-  m_cPPS.setEntropySliceEnabledFlag( m_entropySliceEnabledFlag );
+  m_cPPS.setEntropyCodingSyncEnabledFlag( m_iWaveFrontSynchro > 0 );
+  m_cPPS.setTilesEnabledFlag( (m_iNumColumnsMinus1 > 0 || m_iNumRowsMinus1 > 0) );
 #else
   m_cPPS.setTilesOrEntropyCodingSyncIdc( m_iWaveFrontSynchro ? 2 : ((m_iNumColumnsMinus1 > 0 || m_iNumRowsMinus1 > 0) ? 1 : 0));
 #endif
@@ -657,11 +656,15 @@ Void TEncTop::xInitPPS()
 #if PPS_TS_FLAG
   m_cPPS.setUseTransformSkip( m_useTansformSkip );
 #endif
+#if TILES_WPP_ENTROPYSLICES_FLAGS
+  if (m_iDependentSliceMode)
+  {
+    m_cPPS.setDependentSlicesEnabledFlag( true );
+    m_cPPS.setEntropySliceEnabledFlag( m_entropySliceEnabledFlag );
+  }
+#else
 #if DEPENDENT_SLICES
   m_cPPS.setDependentSlicesEnabledFlag( m_iDependentSliceMode );
-#if TILES_WPP_ENTROPYSLICES_FLAGS
-  m_cPPS.setEntropySliceEnabledFlag( m_entropySliceEnabledFlag ? 1 : 0 );
-#else
   m_cPPS.setCabacIndependentFlag( m_bCabacIndependentFlag ? 1 : 0 );
 #endif
 #endif
