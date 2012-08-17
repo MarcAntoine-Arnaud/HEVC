@@ -335,21 +335,21 @@ Void TEncCavlc::codePPS( TComPPS* pcPPS )
   {
     WRITE_UVLC( pcPPS->getNumColumnsMinus1(),                                    "num_tile_columns_minus1" );
     WRITE_UVLC( pcPPS->getNumRowsMinus1(),                                       "num_tile_rows_minus1" );
-    WRITE_FLAG( pcPPS->getUniformSpacingIdr(),                                   "uniform_spacing_flag" );
-    if( pcPPS->getUniformSpacingIdr() == 0 )
+    WRITE_FLAG( pcPPS->getUniformSpacingFlag(),                                  "uniform_spacing_flag" );
+    if( pcPPS->getUniformSpacingFlag() == 0 )
     {
       for(UInt i=0; i<pcPPS->getNumColumnsMinus1(); i++)
       {
-        WRITE_UVLC( pcPPS->getColumnWidth(i),                                    "column_width" );
+        WRITE_UVLC( pcPPS->getColumnWidth(i)-1,                                  "column_width_minus1" );
       }
       for(UInt i=0; i<pcPPS->getNumRowsMinus1(); i++)
       {
-        WRITE_UVLC( pcPPS->getRowHeight(i),                                      "row_height" );
+        WRITE_UVLC( pcPPS->getRowHeight(i)-1,                                    "row_height_minus1" );
       }
     }
     if(pcPPS->getNumColumnsMinus1() !=0 || pcPPS->getNumRowsMinus1() !=0)
     {
-        WRITE_FLAG( pcPPS->getLFCrossTileBoundaryFlag()?1 : 0,            "loop_filter_across_tiles_enabled_flag");
+      WRITE_FLAG( pcPPS->getLoopFilterAcrossTilesEnabledFlag()?1 : 0,          "loop_filter_across_tiles_enabled_flag");
     }
   }
 #if !TILES_WPP_ENTROPYSLICES_FLAGS
@@ -361,7 +361,7 @@ Void TEncCavlc::codePPS( TComPPS* pcPPS )
 #endif
 #endif
 #if MOVE_LOOP_FILTER_SLICES_FLAG
-  WRITE_FLAG( pcPPS->getLFCrossSliceBoundaryFlag()?1 : 0,                            "seq_loop_filter_across_slices_enabled_flag");
+  WRITE_FLAG( pcPPS->getLoopFilterAcrossSlicesEnabledFlag()?1 : 0,        "loop_filter_across_slices_enabled_flag");
 #endif
   WRITE_FLAG( pcPPS->getDeblockingFilterControlPresent()?1 : 0, "deblocking_filter_control_present_flag");
   if(pcPPS->getDeblockingFilterControlPresent())
@@ -404,6 +404,13 @@ Void TEncCavlc::codeSPS( TComSPS* pcSPS )
   codePTL(pcSPS->getPTL(), 1, pcSPS->getMaxTLayers() - 1);
   WRITE_UVLC( pcSPS->getSPSId (),                   "seq_parameter_set_id" );
   WRITE_UVLC( pcSPS->getChromaFormatIdc (),         "chroma_format_idc" );
+  assert(pcSPS->getChromaFormatIdc () == 1);
+  // in the first version chroma_format_idc can only be equal to 1 (4:2:0)
+  if( pcSPS->getChromaFormatIdc () == 3 )
+  {
+    WRITE_FLAG( 0,                                  "separate_colour_plane_flag");
+  }
+
 #else
   WRITE_CODE( pcSPS->getProfileSpace (),   3,       "profile_space" );
   WRITE_CODE( pcSPS->getProfileIdc (),     5,       "profile_idc" );
@@ -636,20 +643,10 @@ Void TEncCavlc::codeSliceHeader         ( TComSlice* pcSlice )
   Int address = (pcSlice->getPic()->getPicSym()->getCUOrderMap(lCUAddress) << reqBitsInner) + innerAddress;
   WRITE_FLAG( address==0, "first_slice_in_pic_flag" );
 #if SPLICING_FRIENDLY_PARAMS
-    if(   pcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_IDR
-#if SUPPORT_FOR_RAP_N_LP
-       || pcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_IDR_N_LP
-       || pcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA_N_LP
-#endif
-       || pcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_BLANT
-       || pcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA
-#if !NAL_UNIT_TYPES_J1003_D7
-       || pcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_CRANT
-#endif
-       || pcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_CRA )
-    {
-      WRITE_FLAG( 0, "no_output_of_prior_pics_flag" );
-    }
+  if ( pcSlice->getRapPicFlag() )
+  {
+    WRITE_FLAG( 0, "no_output_of_prior_pics_flag" );
+  }
 #endif
   WRITE_UVLC( pcSlice->getPPS()->getPPSId(), "pic_parameter_set_id" );
   if(address>0) 
@@ -672,6 +669,12 @@ Void TEncCavlc::codeSliceHeader         ( TComSlice* pcSlice )
     {
       WRITE_FLAG( pcSlice->getPicOutputFlag() ? 1 : 0, "pic_output_flag" );
     }
+
+    // in the first version chroma_format_idc is equal to one, thus colour_plane_id will not be present
+    assert (pcSlice->getSPS()->getChromaFormatIdc() == 1 );
+    // if( separate_colour_plane_flag  ==  1 )
+    //   colour_plane_id                                      u(2)
+
 #if !SPLICING_FRIENDLY_PARAMS
     if(   pcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_IDR
 #if SUPPORT_FOR_RAP_N_LP
@@ -690,7 +693,7 @@ Void TEncCavlc::codeSliceHeader         ( TComSlice* pcSlice )
     }
 #endif
 #if SUPPORT_FOR_RAP_N_LP
-    if( pcSlice->getNalUnitType() != NAL_UNIT_CODED_SLICE_IDR && pcSlice->getNalUnitType() != NAL_UNIT_CODED_SLICE_IDR_N_LP )
+    if( !pcSlice->getIdrPicFlag() )
 #else
     if( pcSlice->getNalUnitType() != NAL_UNIT_CODED_SLICE_IDR )
 #endif
@@ -715,10 +718,8 @@ Void TEncCavlc::codeSliceHeader         ( TComSlice* pcSlice )
       if(pcSlice->getSPS()->getLongTermRefsPresent())
       {
 #if LTRP_IN_SPS
-        //Int maxPocLsb = 1<<pcSlice->getSPS()->getBitsForPOC();
         Int numLtrpInSH = rps->getNumberOfLongtermPictures();
         Int ltrpInSPS[MAX_NUM_REF_PICS];
-        //Int ltrpInSH[MAX_NUM_REF_PICS];
         Int numLtrpInSPS = 0;
         UInt ltrpIndex;
         Int counter = 0;
@@ -731,7 +732,6 @@ Void TEncCavlc::codeSliceHeader         ( TComSlice* pcSlice )
           }
           else
           {
-            //ltrpInSH[counter] = rps->getPOC(k) % maxPocLsb;
             counter++;
           }
         }
@@ -747,8 +747,6 @@ Void TEncCavlc::codeSliceHeader         ( TComSlice* pcSlice )
           WRITE_UVLC( numLtrpInSPS, "num_long_term_sps");
         }
         WRITE_UVLC( numLtrpInSH, "num_long_term_pics");
-
-
 #else
         WRITE_UVLC( rps->getNumberOfLongtermPictures(), "num_long_term_pics");
 #endif
@@ -813,7 +811,7 @@ Void TEncCavlc::codeSliceHeader         ( TComSlice* pcSlice )
     {
       if (pcSlice->getSPS()->getUseSAO())
       {
-         WRITE_FLAG( pcSlice->getSaoEnabledFlag(), "SAO on/off flag in slice header" );
+         WRITE_FLAG( pcSlice->getSaoEnabledFlag(), "slice_sao_luma_flag" );
 #if !SAO_LUM_CHROMA_ONOFF_FLAGS
          if (pcSlice->getSaoEnabledFlag() )
 #endif
@@ -824,7 +822,7 @@ Void TEncCavlc::codeSliceHeader         ( TComSlice* pcSlice )
            SAOParam *saoParam = pcSlice->getAPS()->getSaoParam();
 #endif
 #if SAO_TYPE_SHARING 
-          WRITE_FLAG( saoParam->bSaoFlag[1], "SAO on/off flag for Cb&Cr in slice header" );
+          WRITE_FLAG( saoParam->bSaoFlag[1], "slice_sao_chroma_flag" );
 #else
           WRITE_FLAG( saoParam->bSaoFlag[1], "SAO on/off flag for Cb in slice header" );
           WRITE_FLAG( saoParam->bSaoFlag[2], "SAO on/off flag for Cr in slice header" );
@@ -911,22 +909,22 @@ Void TEncCavlc::codeSliceHeader         ( TComSlice* pcSlice )
     }
   }
     
-  if (pcSlice->isInterB())
-  {
-    WRITE_FLAG( pcSlice->getMvdL1ZeroFlag() ? 1 : 0,   "mvd_l1_zero_flag");
-  }
-
-  if(!pcSlice->isIntra())
-  {
-    if (!pcSlice->isIntra() && pcSlice->getPPS()->getCabacInitPresentFlag())
+    if (pcSlice->isInterB())
     {
-      SliceType sliceType   = pcSlice->getSliceType();
-      Int  encCABACTableIdx = pcSlice->getPPS()->getEncCABACTableIdx();
-      Bool encCabacInitFlag = (sliceType!=encCABACTableIdx && encCABACTableIdx!=I_SLICE) ? true : false;
-      pcSlice->setCabacInitFlag( encCabacInitFlag );
-      WRITE_FLAG( encCabacInitFlag?1:0, "cabac_init_flag" );
+      WRITE_FLAG( pcSlice->getMvdL1ZeroFlag() ? 1 : 0,   "mvd_l1_zero_flag");
     }
-  }
+
+    if(!pcSlice->isIntra())
+    {
+      if (!pcSlice->isIntra() && pcSlice->getPPS()->getCabacInitPresentFlag())
+      {
+        SliceType sliceType   = pcSlice->getSliceType();
+        Int  encCABACTableIdx = pcSlice->getPPS()->getEncCABACTableIdx();
+        Bool encCabacInitFlag = (sliceType!=encCABACTableIdx && encCABACTableIdx!=I_SLICE) ? true : false;
+        pcSlice->setCabacInitFlag( encCabacInitFlag );
+        WRITE_FLAG( encCabacInitFlag?1:0, "cabac_init_flag" );
+      }
+    }
 
   // if( !lightweight_slice_flag ) {
   if (!bDependentSlice)
@@ -960,29 +958,26 @@ Void TEncCavlc::codeSliceHeader         ( TComSlice* pcSlice )
     }
     if ( pcSlice->getEnableTMVPFlag() )
     {
-    if ( pcSlice->getSliceType() == B_SLICE )
-    {
-      WRITE_FLAG( pcSlice->getColDir(), "collocated_from_l0_flag" );
-    }
+      if ( pcSlice->getSliceType() == B_SLICE )
+      {
+        WRITE_FLAG( pcSlice->getColDir(), "collocated_from_l0_flag" );
+      }
 
-    if ( pcSlice->getSliceType() != I_SLICE &&
-      ((pcSlice->getColDir()==0 && pcSlice->getNumRefIdx(REF_PIC_LIST_0)>1)||
-      (pcSlice->getColDir()==1  && pcSlice->getNumRefIdx(REF_PIC_LIST_1)>1)))
-    {
-      WRITE_UVLC( pcSlice->getColRefIdx(), "collocated_ref_idx" );
-    }
+      if ( pcSlice->getSliceType() != I_SLICE &&
+         ((pcSlice->getColDir()==0 && pcSlice->getNumRefIdx(REF_PIC_LIST_0)>1)||
+         (pcSlice->getColDir()==1  && pcSlice->getNumRefIdx(REF_PIC_LIST_1)>1)))
+      {
+        WRITE_UVLC( pcSlice->getColRefIdx(), "collocated_ref_idx" );
+      }
     }
     if ( (pcSlice->getPPS()->getUseWP() && pcSlice->getSliceType()==P_SLICE) || (pcSlice->getPPS()->getWPBiPred() && pcSlice->getSliceType()==B_SLICE) )
     {
       xCodePredWeightTable( pcSlice );
     }
   }
-
-  // !!!! sytnax elements not in the WD !!!!
-  
-  assert(pcSlice->getMaxNumMergeCand()<=MRG_MAX_NUM_CANDS_SIGNALED);
-  assert(MRG_MAX_NUM_CANDS_SIGNALED<=MRG_MAX_NUM_CANDS);
-  WRITE_UVLC(MRG_MAX_NUM_CANDS - pcSlice->getMaxNumMergeCand(), "maxNumMergeCand");
+    assert(pcSlice->getMaxNumMergeCand()<=MRG_MAX_NUM_CANDS_SIGNALED);
+    assert(MRG_MAX_NUM_CANDS_SIGNALED<=MRG_MAX_NUM_CANDS);
+    WRITE_UVLC(MRG_MAX_NUM_CANDS - pcSlice->getMaxNumMergeCand(), "five_minus_max_num_merge_cand");
 
 #if !REMOVE_ALF
   if (!bDependentSlice)
@@ -1012,7 +1007,7 @@ Void TEncCavlc::codeSliceHeader         ( TComSlice* pcSlice )
 
 #if REMOVE_ALF
 #if MOVE_LOOP_FILTER_SLICES_FLAG
-    if(pcSlice->getPPS()->getLFCrossSliceBoundaryFlag() && ( isSAOEnabled || isDBFEnabled ))
+    if(pcSlice->getPPS()->getLoopFilterAcrossSlicesEnabledFlag() && ( isSAOEnabled || isDBFEnabled ))
 #else
     if(pcSlice->getSPS()->getLFCrossSliceBoundaryFlag() && ( isSAOEnabled || isDBFEnabled ))
 #endif

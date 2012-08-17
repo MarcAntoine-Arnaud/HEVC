@@ -434,7 +434,7 @@ Bool TDecTop::xDecodeSlice(InputNALUnit &nalu, Int &iSkipFrame, Int iPOCLastDisp
   //create the TComTileArray
   pcPic->getPicSym()->xCreateTComTileArray();
 
-  if( pcSlice->getPPS()->getUniformSpacingIdr() == 1)
+  if( pcSlice->getPPS()->getUniformSpacingFlag() )
   {
     //set the width for each tile
     for(j=0; j < pcPic->getPicSym()->getNumRowsMinus1()+1; j++)

@@ -230,6 +230,20 @@ Void TComSlice::initTiles()
   }
 }
 
+Bool TComSlice::getRapPicFlag()
+{
+  return getNalUnitType() == NAL_UNIT_CODED_SLICE_IDR
+#if SUPPORT_FOR_RAP_N_LP
+      || getNalUnitType() == NAL_UNIT_CODED_SLICE_IDR_N_LP
+      || getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA_N_LP
+#endif
+      || getNalUnitType() == NAL_UNIT_CODED_SLICE_BLANT
+      || getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA
+#if !NAL_UNIT_TYPES_J1003_D7
+      || getNalUnitType() == NAL_UNIT_CODED_SLICE_CRANT
+#endif
+      || getNalUnitType() == NAL_UNIT_CODED_SLICE_CRA;
+}
 
 /**
  - allocate table to contain substream sizes to be written to the slice header.
@@ -1429,8 +1443,8 @@ TComPPS::TComPPS()
 #if PPS_TS_FLAG
 , m_useTansformSkip             (false)
 #endif
-, m_bLFCrossTileBoundaryFlag     (true)
-, m_iUniformSpacingIdr           (0)
+, m_loopFilterAcrossTilesEnabledFlag  (true)
+, m_uniformSpacingFlag           (0)
 , m_iNumColumnsMinus1            (0)
 , m_puiColumnWidth               (NULL)
 , m_iNumRowsMinus1               (0)
@@ -1443,7 +1457,7 @@ TComPPS::TComPPS()
 , m_sliceHeaderExtensionPresentFlag    (false)
 #endif
 #if MOVE_LOOP_FILTER_SLICES_FLAG
-, m_bLFCrossSliceBoundaryFlag (false)
+, m_loopFilterAcrossSlicesEnabledFlag (false)
 #endif
 #if TILES_WPP_ENTROPYSLICES_FLAGS
 ,  m_tilesEnabledFlag               (false)
@@ -1462,12 +1476,12 @@ TComPPS::TComPPS()
 
 TComPPS::~TComPPS()
 {
-  if( m_iNumColumnsMinus1 > 0 && m_iUniformSpacingIdr == 0 )
+  if( m_iNumColumnsMinus1 > 0 && m_uniformSpacingFlag == 0 )
   {
     if (m_puiColumnWidth) delete [] m_puiColumnWidth; 
     m_puiColumnWidth = NULL;
   }
-  if( m_iNumRowsMinus1 > 0 && m_iUniformSpacingIdr == 0 )
+  if( m_iNumRowsMinus1 > 0 && m_uniformSpacingFlag == 0 )
   {
     if (m_puiRowHeight) delete [] m_puiRowHeight;
     m_puiRowHeight = NULL;

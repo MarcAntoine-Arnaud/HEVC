@@ -210,7 +210,7 @@ Void TDecGop::filterPicture(TComPic*& rpcPic)
   long iBeforeTime = clock();
 
   // deblocking filter
-  Bool bLFCrossTileBoundary = pcSlice->getPPS()->getLFCrossTileBoundaryFlag();
+  Bool bLFCrossTileBoundary = pcSlice->getPPS()->getLoopFilterAcrossTilesEnabledFlag();
   if (pcSlice->getPPS()->getDeblockingFilterControlPresent())
   {
     if(pcSlice->getPPS()->getLoopFilterOffsetInPPS())

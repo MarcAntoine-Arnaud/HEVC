@@ -243,7 +243,7 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
     pcSlice->setSliceIdx(0);
     //set default slice level flag to the same as SPS level flag
 #if MOVE_LOOP_FILTER_SLICES_FLAG
-    pcSlice->setLFCrossSliceBoundaryFlag(  pcSlice->getPPS()->getLFCrossSliceBoundaryFlag()  );
+    pcSlice->setLFCrossSliceBoundaryFlag(  pcSlice->getPPS()->getLoopFilterAcrossSlicesEnabledFlag()  );
 #else
     pcSlice->setLFCrossSliceBoundaryFlag(  pcSlice->getSPS()->getLFCrossSliceBoundaryFlag()  );
 #endif
@@ -523,7 +523,7 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
     //create the TComTileArray
     pcPic->getPicSym()->xCreateTComTileArray();
 
-    if( pcSlice->getPPS()->getUniformSpacingIdr() == 1 )
+    if( pcSlice->getPPS()->getUniformSpacingFlag() == 1 )
     {
       //set the width for each tile
       for(j=0; j < pcPic->getPicSym()->getNumRowsMinus1()+1; j++)
@@ -683,7 +683,7 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
 #endif
 
     //-- Loop filter
-    Bool bLFCrossTileBoundary = pcSlice->getPPS()->getLFCrossTileBoundaryFlag();
+    Bool bLFCrossTileBoundary = pcSlice->getPPS()->getLoopFilterAcrossTilesEnabledFlag();
     m_pcLoopFilter->setCfg(pcSlice->getPPS()->getDeblockingFilterControlPresent(), pcSlice->getLoopFilterDisable(), pcSlice->getLoopFilterBetaOffset(), pcSlice->getLoopFilterTcOffset(), bLFCrossTileBoundary);
     m_pcLoopFilter->loopFilterPic( pcPic );
 

@@ -775,7 +775,9 @@ Void TEncSlice::compressSlice( TComPic*& rpcPic )
 #else
   if( pcSlice->getPPS()->getDependentSlicesEnabledFlag()&&(!pcSlice->getPPS()->getCabacIndependentFlag()) )
 #endif
+  {
     bAllowDependence = true;
+  }
   if( bAllowDependence )
   {
     if(rpcPic->getCurrDepSliceIdx())
@@ -1063,7 +1065,9 @@ Void TEncSlice::encodeSlice   ( TComPic*& rpcPic, TComOutputBitstream* pcBitstre
 #else
   if( pcSlice->getPPS()->getDependentSlicesEnabledFlag()&&(!pcSlice->getPPS()->getCabacIndependentFlag()) )
 #endif
+  {
     bAllowDependence = true;
+  }
   if( bAllowDependence )
   {
     if(pcSlice->isNextSlice())

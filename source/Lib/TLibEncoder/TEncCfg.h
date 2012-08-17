@@ -228,7 +228,7 @@ protected:
   UInt      m_uiPCMBitDepthLuma;
   UInt      m_uiPCMBitDepthChroma;
   Bool      m_bPCMFilterDisableFlag;
-  Bool      m_bLFCrossTileBoundaryFlag;
+  Bool      m_loopFilterAcrossTilesEnabledFlag;
   Int       m_iUniformSpacingIdr;
   Int       m_iNumColumnsMinus1;
   UInt*     m_puiColumnWidth;
@@ -479,13 +479,13 @@ public:
   Void  setMaxNumOffsetsPerPic                   (Int iVal)            { m_maxNumOffsetsPerPic = iVal; }
   Int   getMaxNumOffsetsPerPic                   ()                    { return m_maxNumOffsetsPerPic; }
 #if SAO_LCU_BOUNDARY
-  Void  setSaoLcuBoundary              (bool bVal)     { m_saoLcuBoundary = bVal; }
+  Void  setSaoLcuBoundary              (Bool val)      { m_saoLcuBoundary = val; }
   Bool  getSaoLcuBoundary              ()              { return m_saoLcuBoundary; }
 #endif
-  Void  setSaoLcuBasedOptimization               (bool bVal)           { m_saoLcuBasedOptimization = bVal; }
+  Void  setSaoLcuBasedOptimization               (Bool val)            { m_saoLcuBasedOptimization = val; }
   Bool  getSaoLcuBasedOptimization               ()                    { return m_saoLcuBasedOptimization; }
-  Void  setLFCrossTileBoundaryFlag               ( Bool   bValue  )    { m_bLFCrossTileBoundaryFlag = bValue; }
-  Bool  getLFCrossTileBoundaryFlag               ()                    { return m_bLFCrossTileBoundaryFlag;   }
+  Void  setLFCrossTileBoundaryFlag               ( Bool   val  )       { m_loopFilterAcrossTilesEnabledFlag = val; }
+  Bool  getLFCrossTileBoundaryFlag               ()                    { return m_loopFilterAcrossTilesEnabledFlag;   }
   Void  setUniformSpacingIdr           ( Int i )           { m_iUniformSpacingIdr = i; }
   Int   getUniformSpacingIdr           ()                  { return m_iUniformSpacingIdr; }
   Void  setNumColumnsMinus1            ( Int i )           { m_iNumColumnsMinus1 = i; }

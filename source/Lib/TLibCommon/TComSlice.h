@@ -637,8 +637,9 @@ private:
 #else
   UInt        m_tilesOrEntropyCodingSyncIdc;
 #endif
-  Bool     m_bLFCrossTileBoundaryFlag;
-  Int      m_iUniformSpacingIdr;
+
+  Bool     m_loopFilterAcrossTilesEnabledFlag;
+  Int      m_uniformSpacingFlag;
   Int      m_iNumColumnsMinus1;
   UInt*    m_puiColumnWidth;
   Int      m_iNumRowsMinus1;
@@ -655,7 +656,7 @@ private:
   Bool     m_sliceHeaderExtensionPresentFlag;
 #endif
 #if MOVE_LOOP_FILTER_SLICES_FLAG
-  Bool        m_bLFCrossSliceBoundaryFlag;
+  Bool        m_loopFilterAcrossSlicesEnabledFlag;
 #endif
   Bool     m_DeblockingFilterControlPresent;
   Bool     m_loopFilterOffsetInPPS;
@@ -728,8 +729,8 @@ public:
   Void      setUseTransformSkip       ( Bool b ) { m_useTansformSkip  = b;       }
 #endif
 
-  Void    setLFCrossTileBoundaryFlag               ( Bool   bValue  )    { m_bLFCrossTileBoundaryFlag = bValue; }
-  Bool    getLFCrossTileBoundaryFlag               ()                    { return m_bLFCrossTileBoundaryFlag;   }
+  Void    setLoopFilterAcrossTilesEnabledFlag  (Bool b)    { m_loopFilterAcrossTilesEnabledFlag = b; }
+  Bool    getLoopFilterAcrossTilesEnabledFlag  ()          { return m_loopFilterAcrossTilesEnabledFlag;   }
 #if TILES_WPP_ENTROPYSLICES_FLAGS
   Bool    getTilesEnabledFlag()       { return m_tilesEnabledFlag; }
   Void    setTilesEnabledFlag(Bool x) { m_tilesEnabledFlag = x;    }
@@ -741,13 +742,13 @@ public:
   UInt     getTilesOrEntropyCodingSyncIdc   ()                  { return m_tilesOrEntropyCodingSyncIdc;   }
   Void     setTilesOrEntropyCodingSyncIdc   ( UInt val )        { m_tilesOrEntropyCodingSyncIdc = val;    }
 #endif
-  Void     setUniformSpacingIdr             ( Int i )           { m_iUniformSpacingIdr = i; }
-  Int      getUniformSpacingIdr             ()                  { return m_iUniformSpacingIdr; }
+  Void     setUniformSpacingFlag            ( Bool b )          { m_uniformSpacingFlag = b; }
+  Bool     getUniformSpacingFlag            ()                  { return m_uniformSpacingFlag; }
   Void     setNumColumnsMinus1              ( Int i )           { m_iNumColumnsMinus1 = i; }
   Int      getNumColumnsMinus1              ()                  { return m_iNumColumnsMinus1; }
   Void     setColumnWidth ( UInt* columnWidth )
   {
-    if( m_iUniformSpacingIdr == 0 && m_iNumColumnsMinus1 > 0 )
+    if( m_uniformSpacingFlag == 0 && m_iNumColumnsMinus1 > 0 )
     {
       m_puiColumnWidth = new UInt[ m_iNumColumnsMinus1 ];
 
@@ -762,7 +763,7 @@ public:
   Int      getNumRowsMinus1()               { return m_iNumRowsMinus1; }
   Void     setRowHeight    ( UInt* rowHeight )
   {
-    if( m_iUniformSpacingIdr == 0 && m_iNumRowsMinus1 > 0 )
+    if( m_uniformSpacingFlag == 0 && m_iNumRowsMinus1 > 0 )
     {
       m_puiRowHeight = new UInt[ m_iNumRowsMinus1 ];
 
@@ -800,8 +801,8 @@ public:
   UInt getLog2ParallelMergeLevelMinus2      ()                    { return m_log2ParallelMergeLevelMinus2; }
   Void setLog2ParallelMergeLevelMinus2      (UInt mrgLevel)       { m_log2ParallelMergeLevelMinus2 = mrgLevel; }
 #if MOVE_LOOP_FILTER_SLICES_FLAG
-  Void      setLFCrossSliceBoundaryFlag     ( Bool   bValue  )    { m_bLFCrossSliceBoundaryFlag = bValue; }
-  Bool      getLFCrossSliceBoundaryFlag     ()                    { return m_bLFCrossSliceBoundaryFlag;   } 
+  Void      setLoopFilterAcrossSlicesEnabledFlag ( Bool   bValue  )    { m_loopFilterAcrossSlicesEnabledFlag = bValue; }
+  Bool      getLoopFilterAcrossSlicesEnabledFlag ()                    { return m_loopFilterAcrossSlicesEnabledFlag;   } 
 #endif
 #if SLICE_HEADER_EXTENSION
   Bool getSliceHeaderExtensionPresentFlag   ()                    { return m_sliceHeaderExtensionPresentFlag; }
@@ -1117,6 +1118,10 @@ public:
 #endif
   Void      setNalUnitType      ( NalUnitType e )               { m_eNalUnitType      = e;      }
   NalUnitType getNalUnitType    ()                              { return m_eNalUnitType;        }
+  Bool      getRapPicFlag       ();  
+#if SUPPORT_FOR_RAP_N_LP
+  Bool      getIdrPicFlag       ()                              { return getNalUnitType() == NAL_UNIT_CODED_SLICE_IDR || getNalUnitType() == NAL_UNIT_CODED_SLICE_IDR_N_LP; }
+#endif
   Void      checkCRA(TComReferencePictureSet *pReferencePictureSet, Int& pocCRA, Bool& prevRAPisBLA, TComList<TComPic*>& rcListPic);
   Void      decodingRefreshMarking(Int& pocCRA, Bool& bRefreshPending, TComList<TComPic*>& rcListPic);
   Void      setSliceType        ( SliceType e )                 { m_eSliceType        = e;      }

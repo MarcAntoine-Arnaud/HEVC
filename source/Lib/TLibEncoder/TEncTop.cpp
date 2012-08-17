@@ -626,7 +626,7 @@ Void TEncTop::xInitPPS()
   m_cPPS.setLog2ParallelMergeLevelMinus2   (m_log2ParallelMergeLevelMinus2 );
   m_cPPS.setCabacInitPresentFlag(CABAC_INIT_PRESENT_FLAG);
 #if MOVE_LOOP_FILTER_SLICES_FLAG
-  m_cPPS.setLFCrossSliceBoundaryFlag( m_bLFCrossSliceBoundaryFlag );
+  m_cPPS.setLoopFilterAcrossSlicesEnabledFlag( m_bLFCrossSliceBoundaryFlag );
 #endif
   Int histogram[8];
   for(Int i=0; i<8; i++)
@@ -899,7 +899,7 @@ Void TEncTop::selectReferencePictureSet(TComSlice* slice, Int POCCurr, Int GOPid
 
 Void  TEncTop::xInitPPSforTiles()
 {
-  m_cPPS.setUniformSpacingIdr( m_iUniformSpacingIdr );
+  m_cPPS.setUniformSpacingFlag( m_iUniformSpacingIdr );
   m_cPPS.setNumColumnsMinus1( m_iNumColumnsMinus1 );
   m_cPPS.setNumRowsMinus1( m_iNumRowsMinus1 );
   if( m_iUniformSpacingIdr == 0 )
@@ -907,7 +907,7 @@ Void  TEncTop::xInitPPSforTiles()
     m_cPPS.setColumnWidth( m_puiColumnWidth );
     m_cPPS.setRowHeight( m_puiRowHeight );
   }
-  m_cPPS.setLFCrossTileBoundaryFlag( m_bLFCrossTileBoundaryFlag );
+  m_cPPS.setLoopFilterAcrossTilesEnabledFlag( m_loopFilterAcrossTilesEnabledFlag );
 
   // # substreams is "per tile" when tiles are independent.
   if (m_iWaveFrontSynchro
