@@ -907,28 +907,54 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
   rpcSlice->setDependentSliceCurStartCUAddr( sliceAddress );
   rpcSlice->setDependentSliceCurEndCUAddr(numCUs*maxParts);
 
-  //   slice_type
-  READ_UVLC (    uiCode, "slice_type" );            rpcSlice->setSliceType((SliceType)uiCode);
-  // lightweight_slice_flag
-  READ_FLAG( uiCode, "dependent_slice_flag" );
-  Bool bDependentSlice = uiCode ? true : false;
-#if DEPENDENT_SLICES
-  if( rpcSlice->getPPS()->getDependentSliceEnabledFlag())
+#if SLICEHEADER_SYNTAX_FIX
+  if( pps->getDependentSliceEnabledFlag() && (sliceAddress !=0 ))
   {
-    if(bDependentSlice)
-    {
-      rpcSlice->setNextSlice        ( false );
-      rpcSlice->setNextDependentSlice( true  );
-#if BYTE_ALIGNMENT
-      m_pcBitstream->readByteAlignment();
-#else
-      m_pcBitstream->readOutTrailingBits();
-#endif
-      return;
-    }
+    READ_FLAG( uiCode, "dependent_slice_flag" );       rpcSlice->setDependentSliceFlag(uiCode ? true : false);
   }
-#endif
+  else
+  {
+    rpcSlice->setDependentSliceFlag(false);
+  }
 
+  if (rpcSlice->getDependentSliceFlag())
+  {
+    rpcSlice->setNextSlice          ( false );
+    rpcSlice->setNextDependentSlice ( true  );
+  }
+  else
+  {
+    rpcSlice->setNextSlice          ( true  );
+    rpcSlice->setNextDependentSlice ( false );
+
+    rpcSlice->setSliceCurStartCUAddr(sliceAddress);
+    rpcSlice->setSliceCurEndCUAddr(numCUs*maxParts);
+  }
+  
+  if(!rpcSlice->getDependentSliceFlag())
+  {
+#endif
+    READ_UVLC (    uiCode, "slice_type" );            rpcSlice->setSliceType((SliceType)uiCode);
+#if !SLICEHEADER_SYNTAX_FIX
+    // lightweight_slice_flag
+    READ_FLAG( uiCode, "dependent_slice_flag" );
+    Bool bDependentSlice = uiCode ? true : false;
+#if DEPENDENT_SLICES
+    if( rpcSlice->getPPS()->getDependentSlicesEnabledFlag())
+    {
+      if(bDependentSlice)
+      {
+        rpcSlice->setNextSlice        ( false );
+        rpcSlice->setNextDependentSlice( true  );
+#if BYTE_ALIGNMENT
+        m_pcBitstream->readByteAlignment();
+#else
+        m_pcBitstream->readOutTrailingBits();
+#endif
+        return;
+      }
+    }
+#endif
   if (bDependentSlice)
   {
     rpcSlice->setNextSlice        ( false );
@@ -945,6 +971,7 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
 
   if (!bDependentSlice)
   {
+#endif // !SLICEHEADER_SYNTAX_FIX
     if( pps->getOutputFlagPresentFlag() )
     {
       READ_FLAG( uiCode, "pic_output_flag" );    rpcSlice->setPicOutputFlag( uiCode ? true : false );
@@ -1309,6 +1336,7 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
     {
       refPicListModification->setRefPicListModificationFlagL1(0);
     }
+#if !SLICEHEADER_SYNTAX_FIX
   }
   else
   {
@@ -1316,7 +1344,7 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
     pps = rpcSlice->getPPS();
     sps = rpcSlice->getSPS();
   }
-
+#endif
     if (rpcSlice->isInterB())
     {
       READ_FLAG( uiCode, "mvd_l1_zero_flag" );       rpcSlice->setMvdL1ZeroFlag( (uiCode ? true : false) );
@@ -1329,8 +1357,35 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
       rpcSlice->setCabacInitFlag( uiCode ? true : false );
     }
 
+#if !SLICEHEADER_SYNTAX_FIX
   if(!bDependentSlice)
   {
+#else
+    if ( rpcSlice->getEnableTMVPFlag() )
+    {
+      if ( rpcSlice->getSliceType() == B_SLICE )
+      {
+        READ_FLAG( uiCode, "collocated_from_l0_flag" );
+        rpcSlice->setColDir(uiCode);
+      }
+
+      if ( rpcSlice->getSliceType() != I_SLICE &&
+        ((rpcSlice->getColDir()==0 && rpcSlice->getNumRefIdx(REF_PIC_LIST_0)>1)||
+        (rpcSlice->getColDir() ==1 && rpcSlice->getNumRefIdx(REF_PIC_LIST_1)>1)))
+      {
+        READ_UVLC( uiCode, "collocated_ref_idx" );
+        rpcSlice->setColRefIdx(uiCode);
+      }
+    }
+    if ( (pps->getUseWP() && rpcSlice->getSliceType()==P_SLICE) || (pps->getWPBiPred() && rpcSlice->getSliceType()==B_SLICE) )
+    {
+      xParsePredWeightTable(rpcSlice);
+      rpcSlice->initWpScaling();
+    }
+    READ_UVLC( uiCode, "five_minus_max_num_merge_cand");
+    rpcSlice->setMaxNumMergeCand(MRG_MAX_NUM_CANDS - uiCode);
+    assert(rpcSlice->getMaxNumMergeCand()==MRG_MAX_NUM_CANDS_SIGNALED);
+#endif
     READ_SVLC( iCode, "slice_qp_delta" ); 
     rpcSlice->setSliceQp (26 + pps->getPicInitQPMinus26() + iCode);
 
@@ -1383,6 +1438,7 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
         rpcSlice->setLoopFilterTcOffset(rpcSlice->getPPS()->getLoopFilterTcOffset());
       }
     }
+#if !SLICEHEADER_SYNTAX_FIX
     if ( rpcSlice->getEnableTMVPFlag() )
     {
       if ( rpcSlice->getSliceType() == B_SLICE )
@@ -1412,6 +1468,7 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
 
   if (!bDependentSlice)
   {
+#endif
 #if !REMOVE_ALF
     if(sps->getUseALF())
     {
@@ -1453,26 +1510,28 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
 #endif
     }
     rpcSlice->setLFCrossSliceBoundaryFlag( (uiCode==1)?true:false);
-  }
 
+#if !SLICEHEADER_SYNTAX_FIX
+  }
 #if DEPENDENT_SLICES
   if( pps->getDependentSliceEnabledFlag()== false )
 #endif
-  {
-#if !TILES_WPP_ENTROPYSLICES_FLAGS
-    Int tilesOrEntropyCodingSyncIdc = pps->getTilesOrEntropyCodingSyncIdc();
-#endif
-    UInt *entryPointOffset          = NULL;
-    UInt numEntryPointOffsets, offsetLenMinus1;
-
-    rpcSlice->setNumEntryPointOffsets ( 0 ); // default
-
-#if TILES_WPP_ENTROPYSLICES_FLAGS
-    if( pps->getTilesEnabledFlag() || pps->getEntropyCodingSyncEnabledFlag() )
 #else
-    if (tilesOrEntropyCodingSyncIdc>0)
+    if( pps->getTilesEnabledFlag() || pps->getEntropyCodingSyncEnabledFlag() )
 #endif
     {
+#if !SLICEHEADER_SYNTAX_FIX
+      Int tilesOrEntropyCodingSyncIdc = pps->getTilesOrEntropyCodingSyncIdc();
+#endif
+      UInt *entryPointOffset          = NULL;
+      UInt numEntryPointOffsets, offsetLenMinus1;
+
+#if !SLICEHEADER_SYNTAX_FIX
+      rpcSlice->setNumEntryPointOffsets ( 0 ); // default
+
+      if (tilesOrEntropyCodingSyncIdc>0)
+      {
+#endif
       READ_UVLC(numEntryPointOffsets, "num_entry_point_offsets"); rpcSlice->setNumEntryPointOffsets ( numEntryPointOffsets );
       if (numEntryPointOffsets>0)
       {
@@ -1484,49 +1543,58 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
         READ_CODE(offsetLenMinus1+1, uiCode, "entry_point_offset");
         entryPointOffset[ idx ] = uiCode;
       }
-    }
-
-#if TILES_WPP_ENTROPYSLICES_FLAGS
-    if( pps->getTilesEnabledFlag() )
-#else
-    if ( tilesOrEntropyCodingSyncIdc == 1 ) // tiles
-#endif
-    {
-      rpcSlice->setTileLocationCount( numEntryPointOffsets );
-
-      UInt prevPos = 0;
-      for (Int idx=0; idx<rpcSlice->getTileLocationCount(); idx++)
-      {
-        rpcSlice->setTileLocation( idx, prevPos + entryPointOffset [ idx ] );
-        prevPos += entryPointOffset[ idx ];
+#if !SLICEHEADER_SYNTAX_FIX
       }
-    }
-#if TILES_WPP_ENTROPYSLICES_FLAGS
-    if( pps->getEntropyCodingSyncEnabledFlag() )
-#else
-    else if ( tilesOrEntropyCodingSyncIdc == 2 ) // wavefront
 #endif
-    {
-      Int numSubstreams = pps->getNumSubstreams();
-      rpcSlice->allocSubstreamSizes(numSubstreams);
-      UInt *pSubstreamSizes       = rpcSlice->getSubstreamSizes();
-      for (Int idx=0; idx<numSubstreams-1; idx++)
+
+#if !SLICEHEADER_SYNTAX_FIX
+      if ( tilesOrEntropyCodingSyncIdc == 1 ) // tiles
+#else
+      if ( pps->getTilesEnabledFlag() )
+#endif
       {
-        if ( idx < numEntryPointOffsets )
+        rpcSlice->setTileLocationCount( numEntryPointOffsets );
+
+        UInt prevPos = 0;
+        for (Int idx=0; idx<rpcSlice->getTileLocationCount(); idx++)
         {
-          pSubstreamSizes[ idx ] = ( entryPointOffset[ idx ] << 3 ) ;
-        }
-        else
-        {
-          pSubstreamSizes[ idx ] = 0;
+          rpcSlice->setTileLocation( idx, prevPos + entryPointOffset [ idx ] );
+          prevPos += entryPointOffset[ idx ];
         }
       }
-    }
+#if !SLICEHEADER_SYNTAX_FIX
+      else if ( tilesOrEntropyCodingSyncIdc == 2 ) // wavefront
+#else
+      else if ( pps->getEntropyCodingSyncEnabledFlag() )
+#endif
+      {
+        Int numSubstreams = pps->getNumSubstreams();
+        rpcSlice->allocSubstreamSizes(numSubstreams);
+        UInt *pSubstreamSizes       = rpcSlice->getSubstreamSizes();
+        for (Int idx=0; idx<numSubstreams-1; idx++)
+        {
+          if ( idx < numEntryPointOffsets )
+          {
+            pSubstreamSizes[ idx ] = ( entryPointOffset[ idx ] << 3 ) ;
+          }
+          else
+          {
+            pSubstreamSizes[ idx ] = 0;
+          }
+        }
+      }
 
-    if (entryPointOffset)
-    {
-      delete [] entryPointOffset;
+      if (entryPointOffset)
+      {
+        delete [] entryPointOffset;
+      }
     }
+#if SLICEHEADER_SYNTAX_FIX
+    else
+    {
+      rpcSlice->setNumEntryPointOffsets ( 0 );
+    }
+#endif
   }
 
 #if SLICE_HEADER_EXTENSION

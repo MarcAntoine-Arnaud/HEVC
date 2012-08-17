@@ -900,6 +900,9 @@ private:
   NalUnitType m_eNalUnitType;         ///< Nal unit type for the slice
   SliceType   m_eSliceType;
   Int         m_iSliceQp;
+#if SLICEHEADER_SYNTAX_FIX
+  Bool        m_dependentSliceFlag;
+#endif
 #if ADAPTIVE_QP_SELECTION
   Int         m_iSliceQpBase;
 #endif
@@ -1066,6 +1069,10 @@ public:
   SliceType getSliceType    ()                          { return  m_eSliceType;         }
   Int       getPOC          ()                          { return  m_iPOC;           }
   Int       getSliceQp      ()                          { return  m_iSliceQp;           }
+#if SLICEHEADER_SYNTAX_FIX
+  Bool      getDependentSliceFlag() const               { return m_dependentSliceFlag; }
+  void      setDependentSliceFlag(Bool val)             { m_dependentSliceFlag = val; }
+#endif
 #if ADAPTIVE_QP_SELECTION
   Int       getSliceQpBase  ()                          { return  m_iSliceQpBase;       }
 #endif
