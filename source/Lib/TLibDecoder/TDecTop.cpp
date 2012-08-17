@@ -287,7 +287,7 @@ Void TDecTop::xActivateParameterSets()
   pps->setNumSubstreams(pps->getTilesOrEntropyCodingSyncIdc() == 2 ? ((sps->getPicHeightInLumaSamples() + sps->getMaxCUHeight() - 1) / sps->getMaxCUHeight()) * (pps->getNumColumnsMinus1() + 1) : 1);
 #endif
 #if DEPENDENT_SLICES
-  if( pps->getDependentSlicesEnabledFlag() )
+  if( pps->getDependentSliceEnabledFlag() )
   {
     pps->setNumSubstreams(1);
   }

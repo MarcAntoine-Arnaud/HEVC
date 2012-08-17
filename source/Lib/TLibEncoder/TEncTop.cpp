@@ -659,7 +659,7 @@ Void TEncTop::xInitPPS()
 #if TILES_WPP_ENTROPYSLICES_FLAGS
   if (m_iDependentSliceMode)
   {
-    m_cPPS.setDependentSlicesEnabledFlag( true );
+    m_cPPS.setDependentSliceEnabledFlag( true );
     m_cPPS.setEntropySliceEnabledFlag( m_entropySliceEnabledFlag );
   }
 #else

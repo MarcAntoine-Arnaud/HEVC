@@ -169,7 +169,7 @@ Void TDecGop::decompressSlice(TComInputBitstream* pcBitstream, TComPic*& rpcPic)
   }
 #if DEPENDENT_SLICES
 #if TILES_WPP_ENTROPYSLICES_FLAGS
-  if( pcSlice->getPPS()->getDependentSlicesEnabledFlag() && (!pcSlice->getPPS()->getEntropySliceEnabledFlag()) )
+  if( pcSlice->getPPS()->getDependentSliceEnabledFlag() && (!pcSlice->getPPS()->getEntropySliceEnabledFlag()) )
 #else
   if( pcSlice->getPPS()->getDependentSlicesEnabledFlag() && (!pcSlice->getPPS()->getCabacIndependentFlag()) )
 #endif

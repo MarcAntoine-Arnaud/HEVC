@@ -507,7 +507,7 @@ Void TDecCavlc::parsePPS(TComPPS* pcPPS)
 
 #if TILES_WPP_ENTROPYSLICES_FLAGS
 #if DEPENDENT_SLICES
-  READ_FLAG( uiCode, "dependent_slices_enabled_flag"    );    pcPPS->setDependentSlicesEnabledFlag  ( uiCode == 1 );
+  READ_FLAG( uiCode, "dependent_slices_enabled_flag"    );    pcPPS->setDependentSliceEnabledFlag   ( uiCode == 1 );
 #endif
   READ_FLAG( uiCode, "tiles_enabled_flag"               );    pcPPS->setTilesEnabledFlag            ( uiCode == 1 );
   READ_FLAG( uiCode, "entropy_coding_sync_enabled_flag" );    pcPPS->setEntropyCodingSyncEnabledFlag( uiCode == 1 );   
@@ -913,7 +913,7 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
   READ_FLAG( uiCode, "dependent_slice_flag" );
   Bool bDependentSlice = uiCode ? true : false;
 #if DEPENDENT_SLICES
-  if( rpcSlice->getPPS()->getDependentSlicesEnabledFlag())
+  if( rpcSlice->getPPS()->getDependentSliceEnabledFlag())
   {
     if(bDependentSlice)
     {
@@ -1456,7 +1456,7 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
   }
 
 #if DEPENDENT_SLICES
-  if( pps->getDependentSlicesEnabledFlag()== false )
+  if( pps->getDependentSliceEnabledFlag()== false )
 #endif
   {
 #if !TILES_WPP_ENTROPYSLICES_FLAGS

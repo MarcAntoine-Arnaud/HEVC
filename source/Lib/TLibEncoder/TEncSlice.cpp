@@ -771,7 +771,7 @@ Void TEncSlice::compressSlice( TComPic*& rpcPic )
 #if DEPENDENT_SLICES
   Bool bAllowDependence = false;
 #if TILES_WPP_ENTROPYSLICES_FLAGS
-  if( pcSlice->getPPS()->getDependentSlicesEnabledFlag()&&(!pcSlice->getPPS()->getEntropySliceEnabledFlag()) )
+  if( pcSlice->getPPS()->getDependentSliceEnabledFlag()&&(!pcSlice->getPPS()->getEntropySliceEnabledFlag()) )
 #else
   if( pcSlice->getPPS()->getDependentSlicesEnabledFlag()&&(!pcSlice->getPPS()->getCabacIndependentFlag()) )
 #endif
@@ -1061,7 +1061,7 @@ Void TEncSlice::encodeSlice   ( TComPic*& rpcPic, TComOutputBitstream* pcBitstre
 #if DEPENDENT_SLICES
   Bool bAllowDependence = false;
 #if TILES_WPP_ENTROPYSLICES_FLAGS
-  if( pcSlice->getPPS()->getDependentSlicesEnabledFlag()&&(!pcSlice->getPPS()->getEntropySliceEnabledFlag()) )
+  if( pcSlice->getPPS()->getDependentSliceEnabledFlag()&&(!pcSlice->getPPS()->getEntropySliceEnabledFlag()) )
 #else
   if( pcSlice->getPPS()->getDependentSlicesEnabledFlag()&&(!pcSlice->getPPS()->getCabacIndependentFlag()) )
 #endif
@@ -1405,7 +1405,7 @@ Void TEncSlice::encodeSlice   ( TComPic*& rpcPic, TComOutputBitstream* pcBitstre
 #endif
   if (pcSlice->getPPS()->getCabacInitPresentFlag())
   {
-    if  (pcSlice->getPPS()->getDependentSlicesEnabledFlag())
+    if  (pcSlice->getPPS()->getDependentSliceEnabledFlag())
     {
       pcSlice->getPPS()->setEncCABACTableIdx( pcSlice->getSliceType() );
     }

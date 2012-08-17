@@ -174,7 +174,7 @@ Void TDecSlice::decompressSlice(TComInputBitstream* pcBitstream, TComInputBitstr
 #if DEPENDENT_SLICES
   Bool bAllowDependence = false;
 #if TILES_WPP_ENTROPYSLICES_FLAGS
-  if( rpcPic->getSlice(rpcPic->getCurrSliceIdx())->getPPS()->getDependentSlicesEnabledFlag()&& (!rpcPic->getSlice(rpcPic->getCurrSliceIdx())->getPPS()->getEntropySliceEnabledFlag()) )
+  if( rpcPic->getSlice(rpcPic->getCurrSliceIdx())->getPPS()->getDependentSliceEnabledFlag()&& (!rpcPic->getSlice(rpcPic->getCurrSliceIdx())->getPPS()->getEntropySliceEnabledFlag()) )
 #else
   if( rpcPic->getSlice(rpcPic->getCurrSliceIdx())->getPPS()->getDependentSlicesEnabledFlag()&& (!rpcPic->getSlice(rpcPic->getCurrSliceIdx())->getPPS()->getCabacIndependentFlag()) )
 #endif

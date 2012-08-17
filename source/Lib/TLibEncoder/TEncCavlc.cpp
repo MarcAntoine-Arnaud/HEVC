@@ -282,14 +282,14 @@ Void TEncCavlc::codePPS( TComPPS* pcPPS )
   WRITE_FLAG( pcPPS->getOutputFlagPresentFlag() ? 1 : 0,  "output_flag_present_flag" );
 #if !TILES_WPP_ENTROPYSLICES_FLAGS
 #if DEPENDENT_SLICES
-  WRITE_FLAG( pcPPS->getDependentSlicesEnabledFlag() ? 1 : 0, "dependent_slices_enabled_flag" );
+  WRITE_FLAG( pcPPS->getDependentSliceEnabledFlag() ? 1 : 0, "dependent_slices_enabled_flag" );
 #endif
 #endif
   WRITE_FLAG( pcPPS->getTransquantBypassEnableFlag() ? 1 : 0, "transquant_bypass_enable_flag" );
 
 #if TILES_WPP_ENTROPYSLICES_FLAGS
 #if DEPENDENT_SLICES
-  WRITE_FLAG( pcPPS->getDependentSlicesEnabledFlag() ? 1 : 0, "dependent_slices_enabled_flag" );
+  WRITE_FLAG( pcPPS->getDependentSliceEnabledFlag() ? 1 : 0, "dependent_slices_enabled_flag" );
 #endif
   if ( pcPPS->getNumColumnsMinus1() > 0 || pcPPS->getNumRowsMinus1() > 0)
   {
@@ -659,7 +659,7 @@ Void TEncCavlc::codeSliceHeader         ( TComSlice* pcSlice )
   WRITE_FLAG( bDependentSlice ? 1 : 0, "dependent_slice_flag" );
   
 #if DEPENDENT_SLICES
-  if( pcSlice->getPPS()->getDependentSlicesEnabledFlag() && bDependentSlice )
+  if( pcSlice->getPPS()->getDependentSliceEnabledFlag() && bDependentSlice )
     return;
 #endif
 
@@ -1070,7 +1070,7 @@ Void TEncCavlc::codeProfileTier( ProfileTierLevel* ptl )
 Void  TEncCavlc::codeTilesWPPEntryPoint( TComSlice* pSlice )
 {
 #if TILES_WPP_ENTROPYSLICES_FLAGS
-  if ( !(pSlice->getPPS()->getTilesEnabledFlag() || pSlice->getPPS()->getEntropyCodingSyncEnabledFlag()) || pSlice->getPPS()->getDependentSlicesEnabledFlag() )
+  if ( !(pSlice->getPPS()->getTilesEnabledFlag() || pSlice->getPPS()->getEntropyCodingSyncEnabledFlag()) || pSlice->getPPS()->getDependentSliceEnabledFlag() )
 #else
   Int tilesOrEntropyCodingSyncIdc = pSlice->getPPS()->getTilesOrEntropyCodingSyncIdc();
 #if DEPENDENT_SLICES

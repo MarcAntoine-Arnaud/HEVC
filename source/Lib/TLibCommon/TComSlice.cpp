@@ -1443,13 +1443,19 @@ TComPPS::TComPPS()
 #if PPS_TS_FLAG
 , m_useTansformSkip             (false)
 #endif
+#if TILES_WPP_ENTROPYSLICES_FLAGS
+, m_dependentSliceEnabledFlag    (false)
+, m_tilesEnabledFlag               (false)
+, m_entropyCodingSyncEnabledFlag   (false)
+, m_entropySliceEnabledFlag        (false)
+#endif
 , m_loopFilterAcrossTilesEnabledFlag  (true)
 , m_uniformSpacingFlag           (0)
 , m_iNumColumnsMinus1            (0)
 , m_puiColumnWidth               (NULL)
 , m_iNumRowsMinus1               (0)
 , m_puiRowHeight                 (NULL)
-,  m_iNumSubstreams             (1)
+, m_iNumSubstreams             (1)
 , m_signHideFlag(0)
 , m_cabacInitPresentFlag        (false)
 , m_encCABACTableIdx            (I_SLICE)
@@ -1459,16 +1465,11 @@ TComPPS::TComPPS()
 #if MOVE_LOOP_FILTER_SLICES_FLAG
 , m_loopFilterAcrossSlicesEnabledFlag (false)
 #endif
-#if TILES_WPP_ENTROPYSLICES_FLAGS
-,  m_tilesEnabledFlag               (false)
-,  m_entropyCodingSyncEnabledFlag   (false)
-,  m_entropySliceEnabledFlag        (false)
-#endif
 {
   m_scalingList = new TComScalingList;
+#if !TILES_WPP_ENTROPYSLICES_FLAGS
 #if DEPENDENT_SLICES
   m_bDependentSlicesEnabledFlag = false;
-#if !TILES_WPP_ENTROPYSLICES_FLAGS
   m_bCabacIndependentFlag = false;
 #endif
 #endif

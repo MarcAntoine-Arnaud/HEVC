@@ -1937,7 +1937,7 @@ Int TComDataCU::getIntraDirLumaPredictor( UInt uiAbsPartIdx, Int* uiIntraDirPred
   
   // Get intra direction of left PU
 #if DEPENDENT_SLICES
-  Bool bDepSliceRestriction = ( !m_pcSlice->getPPS()->getDependentSlicesEnabledFlag());
+  Bool bDepSliceRestriction = ( !m_pcSlice->getPPS()->getDependentSliceEnabledFlag());
   pcTempCU = getPULeft( uiTempPartIdx, m_uiAbsIdxInLCU + uiAbsPartIdx, true, bDepSliceRestriction );
 #else
   pcTempCU = getPULeft( uiTempPartIdx, m_uiAbsIdxInLCU + uiAbsPartIdx );
@@ -2004,7 +2004,7 @@ UInt TComDataCU::getCtxSplitFlag( UInt uiAbsPartIdx, UInt uiDepth )
   UInt        uiCtx;
   // Get left split flag
 #if DEPENDENT_SLICES
-  Bool bDepSliceRestriction = ( !m_pcSlice->getPPS()->getDependentSlicesEnabledFlag());
+  Bool bDepSliceRestriction = ( !m_pcSlice->getPPS()->getDependentSliceEnabledFlag());
   pcTempCU = getPULeft( uiTempPartIdx, m_uiAbsIdxInLCU + uiAbsPartIdx, true, bDepSliceRestriction );
 #else
   pcTempCU = getPULeft( uiTempPartIdx, m_uiAbsIdxInLCU + uiAbsPartIdx );
@@ -2076,7 +2076,7 @@ UInt TComDataCU::getCtxSkipFlag( UInt uiAbsPartIdx )
   
   // Get BCBP of left PU
 #if DEPENDENT_SLICES
-  Bool bDepSliceRestriction = ( !m_pcSlice->getPPS()->getDependentSlicesEnabledFlag());
+  Bool bDepSliceRestriction = ( !m_pcSlice->getPPS()->getDependentSliceEnabledFlag());
   pcTempCU = getPULeft( uiTempPartIdx, m_uiAbsIdxInLCU + uiAbsPartIdx, true, bDepSliceRestriction );
 #else
   pcTempCU = getPULeft( uiTempPartIdx, m_uiAbsIdxInLCU + uiAbsPartIdx );

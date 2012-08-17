@@ -624,18 +624,17 @@ private:
 #if PPS_TS_FLAG
   Bool        m_useTansformSkip;
 #endif
+#if !TILES_WPP_ENTROPYSLICES_FLAGS
 #if DEPENDENT_SLICES
   Bool        m_bDependentSlicesEnabledFlag;   // Indicates the presence of dependent_slices_flag in slice header
-#if !TILES_WPP_ENTROPYSLICES_FLAGS
   Bool        m_bCabacIndependentFlag;   // Indicates the presence of dependent_slices_flag in slice header
 #endif
-#endif
-#if TILES_WPP_ENTROPYSLICES_FLAGS
-  Bool        m_tilesEnabledFlag;
-  Bool        m_entropyCodingSyncEnabledFlag;
-  Bool        m_entropySliceEnabledFlag;
-#else
   UInt        m_tilesOrEntropyCodingSyncIdc;
+#else
+  Bool        m_dependentSliceEnabledFlag;     //!< Indicates the presence of dependent slices
+  Bool        m_tilesEnabledFlag;              //!< Indicates the presence of tiles
+  Bool        m_entropyCodingSyncEnabledFlag;  //!< Indicates the presence of wavefronts
+  Bool        m_entropySliceEnabledFlag;       //!< Indicates the presence of entropy slices
 #endif
 
   Bool     m_loopFilterAcrossTilesEnabledFlag;
@@ -713,10 +712,10 @@ public:
   Void setWPBiPred                  ( Bool b )  { m_useWeightedBiPred = b;  }
   Void      setOutputFlagPresentFlag( Bool b )  { m_OutputFlagPresentFlag = b;    }
   Bool      getOutputFlagPresentFlag()          { return m_OutputFlagPresentFlag; }
+#if !TILES_WPP_ENTROPYSLICES_FLAGS
 #if DEPENDENT_SLICES
   Void      setDependentSlicesEnabledFlag( Bool b )  { m_bDependentSlicesEnabledFlag = b;    }
   Bool      getDependentSlicesEnabledFlag()          { return m_bDependentSlicesEnabledFlag; }
-#if !TILES_WPP_ENTROPYSLICES_FLAGS
   Void      setCabacIndependentFlag( Bool b )  { m_bCabacIndependentFlag = b;    }
   Bool      getCabacIndependentFlag()          { return m_bCabacIndependentFlag; }
 #endif
@@ -732,12 +731,14 @@ public:
   Void    setLoopFilterAcrossTilesEnabledFlag  (Bool b)    { m_loopFilterAcrossTilesEnabledFlag = b; }
   Bool    getLoopFilterAcrossTilesEnabledFlag  ()          { return m_loopFilterAcrossTilesEnabledFlag;   }
 #if TILES_WPP_ENTROPYSLICES_FLAGS
-  Bool    getTilesEnabledFlag()       { return m_tilesEnabledFlag; }
-  Void    setTilesEnabledFlag(Bool x) { m_tilesEnabledFlag = x;    }
-  Bool    getEntropyCodingSyncEnabledFlag()       { return m_entropyCodingSyncEnabledFlag; }
-  Void    setEntropyCodingSyncEnabledFlag(Bool x) { m_entropyCodingSyncEnabledFlag = x;    }
-  Bool    getEntropySliceEnabledFlag()       { return m_entropySliceEnabledFlag; }
-  Void    setEntropySliceEnabledFlag(Bool x) { m_entropySliceEnabledFlag = x;    }
+  Bool    getDependentSliceEnabledFlag() const             { return m_dependentSliceEnabledFlag; }
+  Void    setDependentSliceEnabledFlag(Bool val)           { m_dependentSliceEnabledFlag = val; }
+  Bool    getTilesEnabledFlag() const                      { return m_tilesEnabledFlag; }
+  Void    setTilesEnabledFlag(Bool val)                    { m_tilesEnabledFlag = val; }
+  Bool    getEntropyCodingSyncEnabledFlag() const          { return m_entropyCodingSyncEnabledFlag; }
+  Void    setEntropyCodingSyncEnabledFlag(Bool val)        { m_entropyCodingSyncEnabledFlag = val; }
+  Bool    getEntropySliceEnabledFlag() const               { return m_entropySliceEnabledFlag; }
+  Void    setEntropySliceEnabledFlag(Bool val)             { m_entropySliceEnabledFlag = val; }
 #else
   UInt     getTilesOrEntropyCodingSyncIdc   ()                  { return m_tilesOrEntropyCodingSyncIdc;   }
   Void     setTilesOrEntropyCodingSyncIdc   ( UInt val )        { m_tilesOrEntropyCodingSyncIdc = val;    }
