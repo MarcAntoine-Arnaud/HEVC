@@ -281,7 +281,7 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
     ("DependentSliceArgument", m_iDependentSliceArgument,0, "if DependentSliceMode==1 SliceArgument represents max # of LCUs. if DependentSliceMode==2 DependentSliceArgument represents max # of bins.")
 #if DEPENDENT_SLICES
 #if TILES_WPP_ENTROPYSLICES_FLAGS
-    ("EntropySliceEnabledFlag", m_entropySliceEnabledFlag, false)
+    ("EntropySliceEnabledFlag", m_entropySliceEnabledFlag, false, "Enable use of entropy slices instead of dependent slices." )
 #else
     ("CabacIndependentFlag", m_bCabacIndependentFlag, false)
 #endif
@@ -595,7 +595,7 @@ Void TAppEncCfg::xCheckParameter()
 #endif
 #if DEPENDENT_SLICES
 #if TILES_WPP_ENTROPYSLICES_FLAGS
-  xConfirmPara( m_iWaveFrontSynchro && m_entropySliceEnabledFlag, "Wavefront and CabacIndependentFlag can not be applied together");
+  xConfirmPara( m_iWaveFrontSynchro && m_entropySliceEnabledFlag, "WaveFrontSynchro and EntropySliceEnabledFlag can not be applied together");
 #else
   xConfirmPara( m_iWaveFrontSynchro && m_bCabacIndependentFlag, "Wavefront and CabacIndependentFlag can not be applied together");
 #endif

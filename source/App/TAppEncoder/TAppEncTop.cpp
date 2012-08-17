@@ -195,7 +195,7 @@ Void TAppEncTop::xInitLibCfg()
   m_cTEncTop.setDependentSliceArgument    ( m_iDependentSliceArgument     );
 #if DEPENDENT_SLICES
 #if TILES_WPP_ENTROPYSLICES_FLAGS
-  m_cTEncTop.setEntropySliceEnabledFlag      ( m_entropySliceEnabledFlag );
+  m_cTEncTop.setEntropySliceEnabledFlag   ( m_entropySliceEnabledFlag );
 #else
   m_cTEncTop.setCabacIndependentFlag      ( m_bCabacIndependentFlag   );
 #endif
