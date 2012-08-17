@@ -289,21 +289,12 @@ Void TEncCavlc::codePPS( TComPPS* pcPPS )
 
 #if TILES_WPP_ENTROPYSLICES_FLAGS
 #if DEPENDENT_SLICES
-  WRITE_FLAG( pcPPS->getDependentSliceEnabledFlag() ? 1 : 0, "dependent_slices_enabled_flag" );
+  WRITE_FLAG( pcPPS->getDependentSliceEnabledFlag()    ? 1 : 0, "dependent_slice_enabled_flag" );
 #endif
-  if ( pcPPS->getNumColumnsMinus1() > 0 || pcPPS->getNumRowsMinus1() > 0)
-  {
-    pcPPS->setTilesEnabledFlag(1);
-  }
-  if ( pcPPS->getNumSubstreams() > 1 )
-  {
-    pcPPS->setEntropyCodingSyncEnabledFlag(1);
-  }
-
-  WRITE_FLAG( pcPPS->getTilesEnabledFlag(),             "tiles_enabled_flag"              );
-  WRITE_FLAG( pcPPS->getEntropyCodingSyncEnabledFlag(), "entropy_coding_sync_enabled_flag");
-  WRITE_FLAG( pcPPS->getEntropySliceEnabledFlag(),      "entropy_slice_enabled_flag"      );
-  if(pcPPS->getTilesEnabledFlag())
+  WRITE_FLAG( pcPPS->getTilesEnabledFlag()             ? 1 : 0, "tiles_enabled_flag" );
+  WRITE_FLAG( pcPPS->getEntropyCodingSyncEnabledFlag() ? 1 : 0, "entropy_coding_sync_enabled_flag" );
+  WRITE_FLAG( pcPPS->getEntropySliceEnabledFlag()      ? 1 : 0, "entropy_slice_enabled_flag" );
+  if( pcPPS->getTilesEnabledFlag() )
 #else
   Int tilesOrEntropyCodingSyncIdc = 0;
   if ( pcPPS->getNumColumnsMinus1() > 0 || pcPPS->getNumRowsMinus1() > 0)
@@ -1070,7 +1061,7 @@ Void TEncCavlc::codeProfileTier( ProfileTierLevel* ptl )
 Void  TEncCavlc::codeTilesWPPEntryPoint( TComSlice* pSlice )
 {
 #if TILES_WPP_ENTROPYSLICES_FLAGS
-  if ( !(pSlice->getPPS()->getTilesEnabledFlag() || pSlice->getPPS()->getEntropyCodingSyncEnabledFlag()) || pSlice->getPPS()->getDependentSliceEnabledFlag() )
+  if (!pSlice->getPPS()->getTilesEnabledFlag() && !pSlice->getPPS()->getEntropyCodingSyncEnabledFlag())
 #else
   Int tilesOrEntropyCodingSyncIdc = pSlice->getPPS()->getTilesOrEntropyCodingSyncIdc();
 #if DEPENDENT_SLICES
@@ -1111,7 +1102,7 @@ Void  TEncCavlc::codeTilesWPPEntryPoint( TComSlice* pSlice )
     }
   }
 #if TILES_WPP_ENTROPYSLICES_FLAGS
-  if ( pSlice->getPPS()->getEntropyCodingSyncEnabledFlag() )
+  else if ( pSlice->getPPS()->getEntropyCodingSyncEnabledFlag() )
 #else
   else if (tilesOrEntropyCodingSyncIdc == 2) // wavefront
 #endif
