@@ -265,8 +265,8 @@ public:
   UInt    getMaxLayers   ()                   { return m_uiMaxLayers;   }
   Void    setMaxLayers   (UInt l)             { m_uiMaxLayers = l; }
 
-  Bool    getTemporalNestingFlag   ()         { return m_uiMaxLayers;   }
-  Void    setTemporalNestingFlag   (UInt t)   { m_bTemporalIdNestingFlag = t; }
+  Bool    getTemporalNestingFlag   ()         { return m_bTemporalIdNestingFlag;   }
+  Void    setTemporalNestingFlag   (Bool t)   { m_bTemporalIdNestingFlag = t; }
   
   Void    setNumReorderPics(UInt v, UInt tLayer)                { m_numReorderPics[tLayer] = v;    }
   UInt    getNumReorderPics(UInt tLayer)                        { return m_numReorderPics[tLayer]; }
