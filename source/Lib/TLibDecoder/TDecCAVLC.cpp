@@ -559,28 +559,20 @@ Void TDecCavlc::parsePPS(TComPPS* pcPPS)
 #endif
 #endif
 #if MOVE_LOOP_FILTER_SLICES_FLAG
-  READ_FLAG( uiCode, "loop_filter_across_slices_enabled_flag" );       pcPPS->setLoopFilterAcrossSlicesEnabledFlag( uiCode ? true : false);
+  READ_FLAG( uiCode, "loop_filter_across_slices_enabled_flag" );       pcPPS->setLoopFilterAcrossSlicesEnabledFlag( uiCode ? true : false );
 #endif
-  READ_FLAG( uiCode, "deblocking_filter_control_present_flag" ); 
-  pcPPS->setDeblockingFilterControlPresent( uiCode ? true : false);
-  if(pcPPS->getDeblockingFilterControlPresent())
+  READ_FLAG( uiCode, "deblocking_filter_control_present_flag" );       pcPPS->setDeblockingFilterControlPresentFlag( uiCode ? true : false );
+  if(pcPPS->getDeblockingFilterControlPresentFlag())
   {
-    READ_FLAG( uiCode, "pps_deblocking_filter_flag" );
-    pcPPS->setLoopFilterOffsetInPPS( (uiCode==1)?true:false );
-    if(pcPPS->getLoopFilterOffsetInPPS())
+    READ_FLAG( uiCode, "deblocking_filter_override_enabled_flag" );    pcPPS->setDeblockingFilterOverrideEnabledFlag( uiCode ? true : false );
+    READ_FLAG( uiCode, "pic_disable_deblocking_filter_flag" );         pcPPS->setPicDisableDeblockingFilterFlag(uiCode ? true : false );
+    if(!pcPPS->getPicDisableDeblockingFilterFlag())
     {
-      READ_FLAG ( uiCode, "disable_deblocking_filter_flag" );
-      pcPPS->setLoopFilterDisable(uiCode ? 1 : 0);
-      if(!pcPPS->getLoopFilterDisable())
-      {
-        READ_SVLC ( iCode, "pps_beta_offset_div2" );
-        pcPPS->setLoopFilterBetaOffset( iCode );
-        READ_SVLC ( iCode, "pps_tc_offset_div2" ); 
-        pcPPS->setLoopFilterTcOffset( iCode );
-      }
+      READ_SVLC ( iCode, "pps_beta_offset_div2" );                     pcPPS->setDeblockingFilterBetaOffsetDiv2( iCode );
+      READ_SVLC ( iCode, "pps_tc_offset_div2" );                       pcPPS->setDeblockingFilterTcOffsetDiv2( iCode );
     }
   }
-  READ_FLAG( uiCode, "pps_scaling_list_data_present_flag" );                 pcPPS->setScalingListPresentFlag ( (uiCode==1)?true:false );
+  READ_FLAG( uiCode, "pps_scaling_list_data_present_flag" );           pcPPS->setScalingListPresentFlag( uiCode ? true : false );
   if(pcPPS->getScalingListPresentFlag ())
   {
     parseScalingList( pcPPS->getScalingList() );
@@ -1411,31 +1403,30 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
     }
 #endif
 
-    if (rpcSlice->getPPS()->getDeblockingFilterControlPresent())
+    if (rpcSlice->getPPS()->getDeblockingFilterControlPresentFlag())
     {
-      if(rpcSlice->getPPS()->getLoopFilterOffsetInPPS())
+      if(rpcSlice->getPPS()->getDeblockingFilterOverrideEnabledFlag())
       {
-        READ_FLAG ( uiCode, "inherit_dbl_param_from_PPS_flag" );
-        rpcSlice->setInheritDblParamFromPPS(uiCode ? 1 : 0);
+        READ_FLAG ( uiCode, "deblocking_filter_override_flag" );        rpcSlice->setDeblockingFilterOverrideFlag(uiCode ? true : false);
       }
       else
       {  
-        rpcSlice->setInheritDblParamFromPPS(0);
+        rpcSlice->setDeblockingFilterOverrideFlag(0);
       }
-      if(!rpcSlice->getInheritDblParamFromPPS()){
-        READ_FLAG ( uiCode, "disable_deblocking_filter_flag" );
-        rpcSlice->setLoopFilterDisable(uiCode ? 1 : 0);
-        if(!rpcSlice->getLoopFilterDisable())
+      if(rpcSlice->getDeblockingFilterOverrideFlag())
+      {
+        READ_FLAG ( uiCode, "slice_disable_deblocking_filter_flag" );   rpcSlice->setDeblockingFilterDisable(uiCode ? 1 : 0);
+        if(!rpcSlice->getDeblockingFilterDisable())
         {
-          READ_SVLC( iCode, "beta_offset_div2" ); rpcSlice->setLoopFilterBetaOffset(iCode);
-          READ_SVLC( iCode, "tc_offset_div2" ); rpcSlice->setLoopFilterTcOffset(iCode);
+          READ_SVLC( iCode, "beta_offset_div2" );                       rpcSlice->setDeblockingFilterBetaOffsetDiv2(iCode);
+          READ_SVLC( iCode, "tc_offset_div2" );                         rpcSlice->setDeblockingFilterTcOffsetDiv2(iCode);
         }
       }
       else
       {
-        rpcSlice->setLoopFilterDisable(rpcSlice->getPPS()->getLoopFilterDisable());
-        rpcSlice->setLoopFilterBetaOffset(rpcSlice->getPPS()->getLoopFilterBetaOffset());
-        rpcSlice->setLoopFilterTcOffset(rpcSlice->getPPS()->getLoopFilterTcOffset());
+        rpcSlice->setDeblockingFilterDisable   ( rpcSlice->getPPS()->getPicDisableDeblockingFilterFlag() );
+        rpcSlice->setDeblockingFilterBetaOffsetDiv2( rpcSlice->getPPS()->getDeblockingFilterBetaOffsetDiv2() );
+        rpcSlice->setDeblockingFilterTcOffsetDiv2  ( rpcSlice->getPPS()->getDeblockingFilterTcOffsetDiv2() );
       }
     }
 #if !SLICEHEADER_SYNTAX_FIX
@@ -1487,7 +1478,7 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
 #else
     Bool isSAOEnabled = (!rpcSlice->getSPS()->getUseSAO())?(false):(rpcSlice->getSaoEnabledFlag()||rpcSlice->getSaoEnabledFlagChroma());
 #endif
-    Bool isDBFEnabled = (!rpcSlice->getLoopFilterDisable());
+    Bool isDBFEnabled = (!rpcSlice->getDeblockingFilterDisable());
 
 #if REMOVE_ALF
 #if MOVE_LOOP_FILTER_SLICES_FLAG

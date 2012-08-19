@@ -684,7 +684,7 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
 
     //-- Loop filter
     Bool bLFCrossTileBoundary = pcSlice->getPPS()->getLoopFilterAcrossTilesEnabledFlag();
-    m_pcLoopFilter->setCfg(pcSlice->getPPS()->getDeblockingFilterControlPresent(), pcSlice->getLoopFilterDisable(), pcSlice->getLoopFilterBetaOffset(), pcSlice->getLoopFilterTcOffset(), bLFCrossTileBoundary);
+    m_pcLoopFilter->setCfg(pcSlice->getPPS()->getDeblockingFilterControlPresentFlag(), pcSlice->getDeblockingFilterDisable(), pcSlice->getDeblockingFilterBetaOffsetDiv2(), pcSlice->getDeblockingFilterTcOffsetDiv2(), bLFCrossTileBoundary);
     m_pcLoopFilter->loopFilterPic( pcPic );
 
     pcSlice = pcPic->getSlice(0);
@@ -1422,7 +1422,7 @@ Void TEncGOP::preLoopFilterPicAll( TComPic* pcPic, UInt64& ruiDist, UInt64& ruiB
 {
   TComSlice* pcSlice = pcPic->getSlice(pcPic->getCurrSliceIdx());
   Bool bCalcDist = false;
-  m_pcLoopFilter->setCfg(pcSlice->getPPS()->getDeblockingFilterControlPresent(), pcSlice->getLoopFilterDisable(), m_pcCfg->getLoopFilterBetaOffset(), m_pcCfg->getLoopFilterTcOffset(), m_pcCfg->getLFCrossTileBoundaryFlag());
+  m_pcLoopFilter->setCfg(pcSlice->getPPS()->getDeblockingFilterControlPresentFlag(), pcSlice->getDeblockingFilterDisable(), m_pcCfg->getLoopFilterBetaOffset(), m_pcCfg->getLoopFilterTcOffset(), m_pcCfg->getLFCrossTileBoundaryFlag());
   m_pcLoopFilter->loopFilterPic( pcPic );
   
   m_pcEntropyCoder->setEntropyCoder ( m_pcEncTop->getRDGoOnSbacCoder(), pcSlice );

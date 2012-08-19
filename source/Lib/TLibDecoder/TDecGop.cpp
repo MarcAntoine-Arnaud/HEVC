@@ -211,19 +211,19 @@ Void TDecGop::filterPicture(TComPic*& rpcPic)
 
   // deblocking filter
   Bool bLFCrossTileBoundary = pcSlice->getPPS()->getLoopFilterAcrossTilesEnabledFlag();
-  if (pcSlice->getPPS()->getDeblockingFilterControlPresent())
+  if (pcSlice->getPPS()->getDeblockingFilterControlPresentFlag())
   {
-    if(pcSlice->getPPS()->getLoopFilterOffsetInPPS())
+    if(pcSlice->getPPS()->getDeblockingFilterOverrideEnabledFlag())
     {
-      pcSlice->setLoopFilterDisable(pcSlice->getPPS()->getLoopFilterDisable());
-      if (!pcSlice->getLoopFilterDisable())
+      pcSlice->setDeblockingFilterDisable(pcSlice->getPPS()->getPicDisableDeblockingFilterFlag());
+      if (!pcSlice->getDeblockingFilterDisable())
       {
-        pcSlice->setLoopFilterBetaOffset(pcSlice->getPPS()->getLoopFilterBetaOffset());
-        pcSlice->setLoopFilterTcOffset(pcSlice->getPPS()->getLoopFilterTcOffset());
+        pcSlice->setDeblockingFilterBetaOffsetDiv2(pcSlice->getPPS()->getDeblockingFilterBetaOffsetDiv2());
+        pcSlice->setDeblockingFilterTcOffsetDiv2(pcSlice->getPPS()->getDeblockingFilterTcOffsetDiv2());
       }
     }
   }
-  m_pcLoopFilter->setCfg(pcSlice->getPPS()->getDeblockingFilterControlPresent(), pcSlice->getLoopFilterDisable(), pcSlice->getLoopFilterBetaOffset(), pcSlice->getLoopFilterTcOffset(), bLFCrossTileBoundary);
+  m_pcLoopFilter->setCfg(pcSlice->getPPS()->getDeblockingFilterControlPresentFlag(), pcSlice->getDeblockingFilterDisable(), pcSlice->getDeblockingFilterBetaOffsetDiv2(), pcSlice->getDeblockingFilterTcOffsetDiv2(), bLFCrossTileBoundary);
   m_pcLoopFilter->loopFilterPic( rpcPic );
 
   pcSlice = rpcPic->getSlice(0);

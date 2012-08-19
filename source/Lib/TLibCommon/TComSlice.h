@@ -657,12 +657,12 @@ private:
 #if MOVE_LOOP_FILTER_SLICES_FLAG
   Bool        m_loopFilterAcrossSlicesEnabledFlag;
 #endif
-  Bool     m_DeblockingFilterControlPresent;
-  Bool     m_loopFilterOffsetInPPS;
-  Bool     m_loopFilterDisable;
-  Int      m_loopFilterBetaOffsetDiv2;    //< beta offset for deblocking filter
-  Int      m_loopFilterTcOffsetDiv2;      //< tc offset for deblocking filter
-  Bool        m_scalingListPresentFlag;
+  Bool     m_deblockingFilterControlPresentFlag;
+  Bool     m_deblockingFilterOverrideEnabledFlag;
+  Bool     m_picDisableDeblockingFilterFlag;
+  Int      m_deblockingFilterBetaOffsetDiv2;    //< beta offset for deblocking filter
+  Int      m_deblockingFilterTcOffsetDiv2;      //< tc offset for deblocking filter
+  Bool     m_scalingListPresentFlag;
   TComScalingList*     m_scalingList;   //!< ScalingList class pointer
   UInt m_log2ParallelMergeLevelMinus2;
 public:
@@ -785,16 +785,16 @@ public:
   Void     setEncCABACTableIdx( Int idx )           { m_encCABACTableIdx = idx;         }
   Bool     getCabacInitPresentFlag()                { return m_cabacInitPresentFlag;    }
   UInt     getEncCABACTableIdx()                    { return m_encCABACTableIdx;        }
-  Void setDeblockingFilterControlPresent    ( Bool bValue )       { m_DeblockingFilterControlPresent = bValue; }
-  Bool getDeblockingFilterControlPresent    ()                    { return m_DeblockingFilterControlPresent; }
-  Void     setLoopFilterDisable(Bool val)      {m_loopFilterDisable = val; }           //!< set offset for deblocking filter disabled
-  Bool     getLoopFilterDisable()              {return m_loopFilterDisable; }          //!< get offset for deblocking filter disabled
-  Void     setLoopFilterOffsetInPPS( Bool b )  { m_loopFilterOffsetInPPS = b;    }
-  Bool     getLoopFilterOffsetInPPS()          { return m_loopFilterOffsetInPPS; }
-  Void     setLoopFilterBetaOffset(Int val)    {m_loopFilterBetaOffsetDiv2 = val; }    //!< set beta offset for deblocking filter
-  Int      getLoopFilterBetaOffset()           {return m_loopFilterBetaOffsetDiv2; }   //!< get beta offset for deblocking filter
-  Void     setLoopFilterTcOffset(Int val)      {m_loopFilterTcOffsetDiv2 = val; }      //!< set tc offset for deblocking filter
-  Int      getLoopFilterTcOffset()             {return m_loopFilterTcOffsetDiv2; }     //!< get tc offset for deblocking filter
+  Void     setDeblockingFilterControlPresentFlag( Bool val )  { m_deblockingFilterControlPresentFlag = val; }
+  Bool     getDeblockingFilterControlPresentFlag()            { return m_deblockingFilterControlPresentFlag; }
+  Void     setDeblockingFilterOverrideEnabledFlag( Bool val ) { m_deblockingFilterOverrideEnabledFlag = val; }
+  Bool     getDeblockingFilterOverrideEnabledFlag()           { return m_deblockingFilterOverrideEnabledFlag; }
+  Void     setPicDisableDeblockingFilterFlag(Bool val)        { m_picDisableDeblockingFilterFlag = val; }       //!< set offset for deblocking filter disabled
+  Bool     getPicDisableDeblockingFilterFlag()                { return m_picDisableDeblockingFilterFlag; }      //!< get offset for deblocking filter disabled
+  Void     setDeblockingFilterBetaOffsetDiv2(Int val)         { m_deblockingFilterBetaOffsetDiv2 = val; }       //!< set beta offset for deblocking filter
+  Int      getDeblockingFilterBetaOffsetDiv2()                { return m_deblockingFilterBetaOffsetDiv2; }      //!< get beta offset for deblocking filter
+  Void     setDeblockingFilterTcOffsetDiv2(Int val)           { m_deblockingFilterTcOffsetDiv2 = val; }               //!< set tc offset for deblocking filter
+  Int      getDeblockingFilterTcOffsetDiv2()                  { return m_deblockingFilterTcOffsetDiv2; }              //!< get tc offset for deblocking filter
   Bool     getScalingListPresentFlag()         { return m_scalingListPresentFlag;     }
   Void     setScalingListPresentFlag( Bool b ) { m_scalingListPresentFlag  = b;       }
   Void     setScalingList      ( TComScalingList *scalingList);
@@ -906,11 +906,10 @@ private:
 #if ADAPTIVE_QP_SELECTION
   Int         m_iSliceQpBase;
 #endif
-  Bool        m_bLoopFilterDisable;
-  Bool        m_loopFilterOffsetInPPS;
-  Bool        m_inheritDblParamFromPPS;      //< offsets for deblocking filter inherit from PPS
-  Int         m_loopFilterBetaOffsetDiv2;    //< beta offset for deblocking filter
-  Int         m_loopFilterTcOffsetDiv2;      //< tc offset for deblocking filter
+  Bool        m_deblockingFilterDisable;
+  Bool        m_deblockingFilterOverrideFlag;      //< offsets for deblocking filter inherit from PPS
+  Int         m_deblockingFilterBetaOffsetDiv2;    //< beta offset for deblocking filter
+  Int         m_deblockingFilterTcOffsetDiv2;      //< tc offset for deblocking filter
   
   Int         m_aiNumRefIdx   [3];    //  for multiple reference of current slice
 
@@ -1081,11 +1080,10 @@ public:
   Int       getSliceQpDeltaCb ()                          { return  m_iSliceQpDeltaCb;      }
   Int       getSliceQpDeltaCr ()                          { return  m_iSliceQpDeltaCr;      }
 #endif
-  Bool      getLoopFilterDisable()                      { return  m_bLoopFilterDisable; }
-  Bool      getLoopFilterOffsetInPPS()                  { return  m_loopFilterOffsetInPPS;}
-  Bool      getInheritDblParamFromPPS()                 { return  m_inheritDblParamFromPPS; }
-  Int       getLoopFilterBetaOffset()                   { return  m_loopFilterBetaOffsetDiv2; }
-  Int       getLoopFilterTcOffset()                     { return  m_loopFilterTcOffsetDiv2; }
+  Bool      getDeblockingFilterDisable()                { return  m_deblockingFilterDisable; }
+  Bool      getDeblockingFilterOverrideFlag()           { return  m_deblockingFilterOverrideFlag; }
+  Int       getDeblockingFilterBetaOffsetDiv2()         { return  m_deblockingFilterBetaOffsetDiv2; }
+  Int       getDeblockingFilterTcOffsetDiv2()           { return  m_deblockingFilterTcOffsetDiv2; }
 
   Int       getNumRefIdx        ( RefPicList e )                { return  m_aiNumRefIdx[e];             }
   TComPic*  getPic              ()                              { return  m_pcPic;                      }
@@ -1142,11 +1140,10 @@ public:
   Void      setSliceQpDeltaCb   ( Int i )                       { m_iSliceQpDeltaCb   = i;      }
   Void      setSliceQpDeltaCr   ( Int i )                       { m_iSliceQpDeltaCr   = i;      }
 #endif
-  Void      setLoopFilterDisable( Bool b )                      { m_bLoopFilterDisable= b;      }
-  Void      setLoopFilterOffsetInPPS( Bool b )                  { m_loopFilterOffsetInPPS = b;}
-  Void      setInheritDblParamFromPPS( Bool b )                 { m_inheritDblParamFromPPS = b; }
-  Void      setLoopFilterBetaOffset( Int i )                    { m_loopFilterBetaOffsetDiv2 = i; }
-  Void      setLoopFilterTcOffset( Int i )                      { m_loopFilterTcOffsetDiv2 = i; }
+  Void      setDeblockingFilterDisable( Bool b )                { m_deblockingFilterDisable= b;      }
+  Void      setDeblockingFilterOverrideFlag( Bool b )           { m_deblockingFilterOverrideFlag = b; }
+  Void      setDeblockingFilterBetaOffsetDiv2( Int i )          { m_deblockingFilterBetaOffsetDiv2 = i; }
+  Void      setDeblockingFilterTcOffsetDiv2( Int i )            { m_deblockingFilterTcOffsetDiv2 = i; }
   
   Void      setRefPic           ( TComPic* p, RefPicList e, Int iRefIdx ) { m_apcRefPicList[e][iRefIdx] = p; }
   Void      setRefPOC           ( Int i, RefPicList e, Int iRefIdx ) { m_aiRefPOCList[e][iRefIdx] = i; }

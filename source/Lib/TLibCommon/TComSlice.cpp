@@ -58,10 +58,10 @@ TComSlice::TComSlice()
 #if ADAPTIVE_QP_SELECTION
 , m_iSliceQpBase                  ( 0 )
 #endif
-, m_bLoopFilterDisable            ( false )
-, m_inheritDblParamFromPPS       ( true )
-, m_loopFilterBetaOffsetDiv2    ( 0 )
-, m_loopFilterTcOffsetDiv2      ( 0 )
+, m_deblockingFilterDisable        ( false )
+, m_deblockingFilterOverrideFlag   ( false )
+, m_deblockingFilterBetaOffsetDiv2 ( 0 )
+, m_deblockingFilterTcOffsetDiv2   ( 0 )
 , m_bRefPicListModificationFlagLC ( false )
 , m_bRefPicListCombinationFlag    ( false )
 , m_bCheckLDC                     ( false )
@@ -746,10 +746,10 @@ Void TComSlice::copySliceInfo(TComSlice *pSrc)
 #if ADAPTIVE_QP_SELECTION
   m_iSliceQpBase         = pSrc->m_iSliceQpBase;
 #endif
-  m_bLoopFilterDisable   = pSrc->m_bLoopFilterDisable;
-  m_inheritDblParamFromPPS = pSrc->m_inheritDblParamFromPPS;
-  m_loopFilterBetaOffsetDiv2 = pSrc->m_loopFilterBetaOffsetDiv2;
-  m_loopFilterTcOffsetDiv2 = pSrc->m_loopFilterTcOffsetDiv2;
+  m_deblockingFilterDisable   = pSrc->m_deblockingFilterDisable;
+  m_deblockingFilterOverrideFlag = pSrc->m_deblockingFilterOverrideFlag;
+  m_deblockingFilterBetaOffsetDiv2 = pSrc->m_deblockingFilterBetaOffsetDiv2;
+  m_deblockingFilterTcOffsetDiv2 = pSrc->m_deblockingFilterTcOffsetDiv2;
   
   for (i = 0; i < 3; i++)
   {

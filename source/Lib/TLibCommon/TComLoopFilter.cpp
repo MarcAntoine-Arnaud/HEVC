@@ -71,11 +71,12 @@ const UChar betatable_8x8[52] =
 // ====================================================================================================================
 
 TComLoopFilter::TComLoopFilter()
-: m_uiNumPartitions( 0 )
+: m_disableDeblockingFilterFlag(false)
+, m_betaOffsetDiv2(0)
+, m_tcOffsetDiv2(0)
+, m_uiNumPartitions(0)
+, m_bLFCrossTileBoundary(true)
 {
-  m_uiDisableDeblockingFilterIdc = 0;
-  m_bLFCrossTileBoundary = true;
- 
   for( UInt uiDir = 0; uiDir < 2; uiDir++ )
   {
     m_aapucBS       [uiDir] = NULL;
@@ -93,19 +94,19 @@ TComLoopFilter::~TComLoopFilter()
 // ====================================================================================================================
 // Public member functions
 // ====================================================================================================================
-Void TComLoopFilter::setCfg( Bool DeblockingFilterControlPresent, UInt uiDisableDblkIdc, Int iBetaOffset_div2, Int iTcOffset_div2, Bool bLFCrossTileBoundary)
+Void TComLoopFilter::setCfg( Bool deblockingFilterControlPresentFlag, Bool disableDeblockingFilterFlag, Int betaOffsetDiv2, Int tcOffsetDiv2, Bool bLFCrossTileBoundary )
 {
   m_bLFCrossTileBoundary = bLFCrossTileBoundary;
 
-  if (DeblockingFilterControlPresent)
+  if (deblockingFilterControlPresentFlag)
   {
-    m_uiDisableDeblockingFilterIdc  = uiDisableDblkIdc;
-    m_betaOffsetDiv2 = iBetaOffset_div2;
-    m_tcOffsetDiv2 = iTcOffset_div2;
+    m_disableDeblockingFilterFlag  = disableDeblockingFilterFlag;
+    m_betaOffsetDiv2 = betaOffsetDiv2;
+    m_tcOffsetDiv2 = tcOffsetDiv2;
   } 
   else // use default values
   {
-    m_uiDisableDeblockingFilterIdc = 0;
+    m_disableDeblockingFilterFlag = false;
     m_betaOffsetDiv2 = 0;
     m_tcOffsetDiv2 = 0;
   }
@@ -152,7 +153,7 @@ Void TComLoopFilter::destroy()
  */
 Void TComLoopFilter::loopFilterPic( TComPic* pcPic )
 {
-  if (m_uiDisableDeblockingFilterIdc == 1)
+  if ( m_disableDeblockingFilterFlag )
   {
     return;
   }
@@ -395,9 +396,9 @@ Void TComLoopFilter::xSetLoopfilterParam( TComDataCU* pcCU, UInt uiAbsZorderIdx 
   TComDataCU* pcTempCU;
   UInt        uiTempPartIdx;
 
-  m_stLFCUParam.bInternalEdge = m_uiDisableDeblockingFilterIdc ? false : true ;
+  m_stLFCUParam.bInternalEdge = !m_disableDeblockingFilterFlag;
   
-  if ( (uiX == 0) || (m_uiDisableDeblockingFilterIdc == 1) )
+  if ( (uiX == 0) || m_disableDeblockingFilterFlag )
   {
     m_stLFCUParam.bLeftEdge = false;
   }
@@ -418,7 +419,7 @@ Void TComLoopFilter::xSetLoopfilterParam( TComDataCU* pcCU, UInt uiAbsZorderIdx 
     }
   }
   
-  if ( (uiY == 0 ) || (m_uiDisableDeblockingFilterIdc == 1) )
+  if ( (uiY == 0 ) || m_disableDeblockingFilterFlag )
   {
     m_stLFCUParam.bTopEdge = false;
   }

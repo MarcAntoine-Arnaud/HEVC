@@ -622,7 +622,7 @@ Void TEncTop::xInitPPS()
   m_cPPS.setWPBiPred( m_useWeightedBiPred );
   m_cPPS.setOutputFlagPresentFlag( false );
   m_cPPS.setSignHideFlag(getSignHideFlag());
-  m_cPPS.setDeblockingFilterControlPresent (m_DeblockingFilterControlPresent );
+  m_cPPS.setDeblockingFilterControlPresentFlag (m_DeblockingFilterControlPresent );
   m_cPPS.setLog2ParallelMergeLevelMinus2   (m_log2ParallelMergeLevelMinus2 );
   m_cPPS.setCabacInitPresentFlag(CABAC_INIT_PRESENT_FLAG);
 #if MOVE_LOOP_FILTER_SLICES_FLAG

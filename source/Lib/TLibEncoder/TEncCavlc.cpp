@@ -354,18 +354,15 @@ Void TEncCavlc::codePPS( TComPPS* pcPPS )
 #if MOVE_LOOP_FILTER_SLICES_FLAG
   WRITE_FLAG( pcPPS->getLoopFilterAcrossSlicesEnabledFlag()?1 : 0,        "loop_filter_across_slices_enabled_flag");
 #endif
-  WRITE_FLAG( pcPPS->getDeblockingFilterControlPresent()?1 : 0, "deblocking_filter_control_present_flag");
-  if(pcPPS->getDeblockingFilterControlPresent())
+  WRITE_FLAG( pcPPS->getDeblockingFilterControlPresentFlag()?1 : 0,       "deblocking_filter_control_present_flag");
+  if(pcPPS->getDeblockingFilterControlPresentFlag())
   {
-    WRITE_FLAG( pcPPS->getLoopFilterOffsetInPPS() ? 1 : 0,                          "pps_deblocking_filter_flag" ); 
-    if(pcPPS->getLoopFilterOffsetInPPS())
+    WRITE_FLAG( pcPPS->getDeblockingFilterOverrideEnabledFlag() ? 1 : 0,  "deblocking_filter_override_enabled_flag" ); 
+    WRITE_FLAG( pcPPS->getPicDisableDeblockingFilterFlag(),               "pic_disable_deblocking_filter_flag" );
+    if(!pcPPS->getPicDisableDeblockingFilterFlag())
     {
-      WRITE_FLAG(pcPPS->getLoopFilterDisable(), "loop_filter_disable");  // should be an IDC
-      if(!pcPPS->getLoopFilterDisable())
-      {
-        WRITE_SVLC( pcPPS->getLoopFilterBetaOffset(),                                 "pps_beta_offset_div2");
-        WRITE_SVLC( pcPPS->getLoopFilterTcOffset(),                                   "pps_tc_offset_div2");
-      }
+      WRITE_SVLC( pcPPS->getDeblockingFilterBetaOffsetDiv2(),             "pps_beta_offset_div2" );
+      WRITE_SVLC( pcPPS->getDeblockingFilterTcOffsetDiv2(),               "pps_tc_offset_div2" );
     }
   }
   WRITE_FLAG( pcPPS->getScalingListPresentFlag() ? 1 : 0,                          "pps_scaling_list_data_present_flag" ); 
@@ -970,19 +967,19 @@ Void TEncCavlc::codeSliceHeader         ( TComSlice* pcSlice )
       WRITE_SVLC( iCode, "slice_qp_delta_cr" );
     }
 #endif
-    if (pcSlice->getPPS()->getDeblockingFilterControlPresent())
+    if (pcSlice->getPPS()->getDeblockingFilterControlPresentFlag())
     {
-      if (pcSlice->getPPS()->getLoopFilterOffsetInPPS() )
+      if (pcSlice->getPPS()->getDeblockingFilterOverrideEnabledFlag() )
       {
-        WRITE_FLAG(pcSlice->getInheritDblParamFromPPS(), "inherit_dbl_param_from_PPS_flag");
+        WRITE_FLAG(pcSlice->getDeblockingFilterOverrideFlag(), "deblocking_filter_override_flag");
       }
-      if (!pcSlice->getInheritDblParamFromPPS())
+      if (pcSlice->getDeblockingFilterOverrideFlag())
       {
-        WRITE_FLAG(pcSlice->getLoopFilterDisable(), "loop_filter_disable");  // should be an IDC
-        if(!pcSlice->getLoopFilterDisable())
+        WRITE_FLAG(pcSlice->getDeblockingFilterDisable(), "slice_disable_deblocking_filter_flag");
+        if(!pcSlice->getDeblockingFilterDisable())
         {
-          WRITE_SVLC (pcSlice->getLoopFilterBetaOffset(), "beta_offset_div2");
-          WRITE_SVLC (pcSlice->getLoopFilterTcOffset(), "tc_offset_div2");
+          WRITE_SVLC (pcSlice->getDeblockingFilterBetaOffsetDiv2(), "beta_offset_div2");
+          WRITE_SVLC (pcSlice->getDeblockingFilterTcOffsetDiv2(),   "tc_offset_div2");
         }
       }
     }
@@ -1037,7 +1034,7 @@ Void TEncCavlc::codeSliceHeader         ( TComSlice* pcSlice )
 #else
     Bool isSAOEnabled = (!pcSlice->getSPS()->getUseSAO())?(false):(pcSlice->getSaoEnabledFlag()||pcSlice->getSaoEnabledFlagChroma());
 #endif
-    Bool isDBFEnabled = (!pcSlice->getLoopFilterDisable());
+    Bool isDBFEnabled = (!pcSlice->getDeblockingFilterDisable());
 
 #if REMOVE_ALF
 #if MOVE_LOOP_FILTER_SLICES_FLAG

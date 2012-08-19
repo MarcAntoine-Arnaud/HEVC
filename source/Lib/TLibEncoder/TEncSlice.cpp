@@ -369,18 +369,18 @@ Void TEncSlice::initEncSlice( TComPic* pcPic, Int iPOCLast, UInt uiPOCCurr, Int 
   rpcSlice->setNumRefIdx(REF_PIC_LIST_0,m_pcCfg->getGOPEntry(iGOPid).m_numRefPicsActive);
   rpcSlice->setNumRefIdx(REF_PIC_LIST_1,m_pcCfg->getGOPEntry(iGOPid).m_numRefPicsActive);
   
-  if (rpcSlice->getPPS()->getDeblockingFilterControlPresent())
+  if (rpcSlice->getPPS()->getDeblockingFilterControlPresentFlag())
   {
-    rpcSlice->getPPS()->setLoopFilterOffsetInPPS( m_pcCfg->getLoopFilterOffsetInPPS() ? 1 : 0 );
-    rpcSlice->setInheritDblParamFromPPS( m_pcCfg->getLoopFilterOffsetInPPS() ? 1 : 0 );
-    rpcSlice->getPPS()->setLoopFilterDisable( m_pcCfg->getLoopFilterDisable() );
-    rpcSlice->setLoopFilterDisable( m_pcCfg->getLoopFilterDisable() );
-    if ( !rpcSlice->getLoopFilterDisable())
+    rpcSlice->getPPS()->setDeblockingFilterOverrideEnabledFlag( !m_pcCfg->getLoopFilterOffsetInPPS() );
+    rpcSlice->setDeblockingFilterOverrideFlag( !m_pcCfg->getLoopFilterOffsetInPPS() );
+    rpcSlice->getPPS()->setPicDisableDeblockingFilterFlag( m_pcCfg->getLoopFilterDisable() );
+    rpcSlice->setDeblockingFilterDisable( m_pcCfg->getLoopFilterDisable() );
+    if ( !rpcSlice->getDeblockingFilterDisable())
     {
-      rpcSlice->getPPS()->setLoopFilterBetaOffset( m_pcCfg->getLoopFilterBetaOffset() );
-      rpcSlice->getPPS()->setLoopFilterTcOffset( m_pcCfg->getLoopFilterTcOffset() );
-      rpcSlice->setLoopFilterBetaOffset( m_pcCfg->getLoopFilterBetaOffset() );
-      rpcSlice->setLoopFilterTcOffset( m_pcCfg->getLoopFilterTcOffset() );
+      rpcSlice->getPPS()->setDeblockingFilterBetaOffsetDiv2( m_pcCfg->getLoopFilterBetaOffset() );
+      rpcSlice->getPPS()->setDeblockingFilterTcOffsetDiv2( m_pcCfg->getLoopFilterTcOffset() );
+      rpcSlice->setDeblockingFilterBetaOffsetDiv2( m_pcCfg->getLoopFilterBetaOffset() );
+      rpcSlice->setDeblockingFilterTcOffsetDiv2( m_pcCfg->getLoopFilterTcOffset() );
     }
   }
 
