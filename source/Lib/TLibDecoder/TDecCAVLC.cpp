@@ -1559,7 +1559,7 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
       else if ( pps->getEntropyCodingSyncEnabledFlag() )
 #endif
       {
-        Int numSubstreams = pps->getNumSubstreams();
+      Int numSubstreams = rpcSlice->getNumEntryPointOffsets()+1;
         rpcSlice->allocSubstreamSizes(numSubstreams);
         UInt *pSubstreamSizes       = rpcSlice->getSubstreamSizes();
         for (Int idx=0; idx<numSubstreams-1; idx++)

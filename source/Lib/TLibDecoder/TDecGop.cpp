@@ -130,7 +130,11 @@ Void TDecGop::decompressSlice(TComInputBitstream* pcBitstream, TComPic*& rpcPic)
   m_pcSbacDecoder->init( (TDecBinIf*)m_pcBinCABAC );
   m_pcEntropyDecoder->setEntropyDecoder (m_pcSbacDecoder);
 
-  UInt uiNumSubstreams = pcSlice->getPPS()->getNumSubstreams();
+#if TILES_WPP_ENTROPYSLICES_FLAGS
+  UInt uiNumSubstreams = pcSlice->getPPS()->getEntropyCodingSyncEnabledFlag() ? pcSlice->getNumEntryPointOffsets()+1 : pcSlice->getPPS()->getNumSubstreams();
+#else
+  UInt uiNumSubstreams = pcSlice->getPPS()->getTilesOrEntropyCodingSyncIdc() == 2 ? pcSlice->getNumEntryPointOffsets()+1 : pcSlice->getPPS()->getNumSubstreams();
+#endif
 
   // init each couple {EntropyDecoder, Substream}
   UInt *puiSubstreamSizes = pcSlice->getSubstreamSizes();

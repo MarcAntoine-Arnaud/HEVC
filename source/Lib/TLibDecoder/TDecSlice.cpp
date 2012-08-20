@@ -210,7 +210,8 @@ Void TDecSlice::decompressSlice(TComInputBitstream* pcBitstream, TComInputBitstr
     uiTileWidth = rpcPic->getPicSym()->getTComTile(rpcPic->getPicSym()->getTileIdxMap(iCUAddr))->getTileWidth();
     uiTileHeight = rpcPic->getPicSym()->getTComTile(rpcPic->getPicSym()->getTileIdxMap(iCUAddr))->getTileHeight();
     uiCol     = iCUAddr % uiWidthInLCUs;
-    uiLin     = iCUAddr / uiWidthInLCUs;
+    // The 'line' is now relative to the 1st line in the slice, not the 1st line in the picture.
+    uiLin     = (iCUAddr/uiWidthInLCUs)-(iStartCUAddr/uiWidthInLCUs);
     // inherit from TR if necessary, select substream to use.
 #if DEPENDENT_SLICES
 #if TILES_WPP_ENTROPYSLICES_FLAGS

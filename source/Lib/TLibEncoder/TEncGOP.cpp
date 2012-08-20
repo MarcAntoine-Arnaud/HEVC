@@ -1033,9 +1033,21 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
               }
             }
 #endif
-            for ( UInt ui = 0 ; ui < pcSlice->getPPS()->getNumSubstreams(); ui++ )
-            {
-              pcOut->addSubstream(&pcSubstreamsOut[ui]);
+          Int offs = 0;
+          Int nss = pcSlice->getPPS()->getNumSubstreams();
+#if TILES_WPP_ENTROPYSLICES_FLAGS
+          if (pcSlice->getPPS()->getEntropyCodingSyncEnabledFlag())
+#else
+          if (pcSlice->getPPS()->getTilesOrEntropyCodingSyncIdc() == 2)
+#endif
+          {
+            // 1st line present for WPP.
+            offs = pcSlice->getSliceCurStartCUAddr()/pcSlice->getPic()->getNumPartInCU()/pcSlice->getPic()->getFrameWidthInCU();
+            nss  = pcSlice->getNumEntryPointOffsets()+1;
+          }
+          for ( UInt ui = 0 ; ui < nss; ui++ )
+          {
+            pcOut->addSubstream(&pcSubstreamsOut[ui+offs]);
             }
           }
 

@@ -1115,6 +1115,7 @@ Void  TEncCavlc::codeTilesWPPEntryPoint( TComSlice* pSlice )
   }
 
   UInt numEntryPointOffsets = 0, offsetLenMinus1 = 0, maxOffset = 0;
+  Int  numZeroSubstreamsAtStartOfSlice  = 0;
   UInt *entryPointOffset = NULL;
 #if TILES_WPP_ENTROPYSLICES_FLAGS
   if ( pSlice->getPPS()->getTilesEnabledFlag() )
@@ -1147,25 +1148,16 @@ Void  TEncCavlc::codeTilesWPPEntryPoint( TComSlice* pSlice )
   else if (tilesOrEntropyCodingSyncIdc == 2) // wavefront
 #endif
   {
-    Int  numZeroSubstreamsAtEndOfSlice  = 0;
     UInt* pSubstreamSizes               = pSlice->getSubstreamSizes();
-    // Find number of zero substreams at the end of slice
-    for (Int idx=pSlice->getPPS()->getNumSubstreams()-2; idx>=0; idx--)
-    {
-      if ( pSubstreamSizes[ idx ] ==  0 )
-      {
-        numZeroSubstreamsAtEndOfSlice++; 
-      }
-      else
-      {
-        break;
-      }
-    }
-    numEntryPointOffsets       = pSlice->getPPS()->getNumSubstreams() - 1 - numZeroSubstreamsAtEndOfSlice;
+    Int maxNumParts                       = pSlice->getPic()->getNumPartInCU();
+    numZeroSubstreamsAtStartOfSlice       = pSlice->getSliceCurStartCUAddr()/maxNumParts/pSlice->getPic()->getFrameWidthInCU();
+    Int  numZeroSubstreamsAtEndOfSlice    = pSlice->getPic()->getFrameHeightInCU()-1 - ((pSlice->getSliceCurEndCUAddr()-1)/maxNumParts/pSlice->getPic()->getFrameWidthInCU());
+    numEntryPointOffsets                  = pSlice->getPPS()->getNumSubstreams() - numZeroSubstreamsAtStartOfSlice - numZeroSubstreamsAtEndOfSlice - 1;
+    pSlice->setNumEntryPointOffsets(numEntryPointOffsets);
     entryPointOffset           = new UInt[numEntryPointOffsets];
     for (Int idx=0; idx<numEntryPointOffsets; idx++)
     {
-      entryPointOffset[ idx ] = ( pSubstreamSizes[ idx ] >> 3 ) ;
+      entryPointOffset[ idx ] = ( pSubstreamSizes[ idx+numZeroSubstreamsAtStartOfSlice ] >> 3 ) ;
       if ( entryPointOffset[ idx ] > maxOffset )
       {
         maxOffset = entryPointOffset[ idx ];
