@@ -118,7 +118,7 @@ protected:
   
   // Misc.
   Pel*            m_pTempPel;
-  UInt*           m_puiDFilter;
+  const UInt*     m_puiDFilter;
   Int             m_iMaxDeltaQP;
   
   // AMVP cost computation

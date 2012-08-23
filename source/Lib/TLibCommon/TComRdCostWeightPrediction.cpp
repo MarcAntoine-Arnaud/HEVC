@@ -505,11 +505,8 @@ UInt TComRdCostWeightPrediction::xGetHADsw( DistParam* pcDtParam )
   UInt            uiComp    = pcDtParam->uiComp;
   assert(uiComp<3);
   wpScalingParam  *wpCur    = &(pcDtParam->wpCur[uiComp]);
-  Int   w0      = wpCur->w,
-        offset  = wpCur->offset,
-        shift   = wpCur->shift,
-        round   = wpCur->round; 
-  xSetWPscale(w0, 0, shift, offset, round);
+
+  xSetWPscale(wpCur->w, 0, wpCur->shift, wpCur->offset, wpCur->round);
 
   UInt uiSum = 0;
   

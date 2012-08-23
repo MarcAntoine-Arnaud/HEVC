@@ -396,7 +396,6 @@ struct SAOParam
 #endif
   SAOQTPart* psSaoPart[3];
   Int        iMaxSplitLevel;
-  Int        iNumClass[MAX_NUM_SAO_TYPE];
   Bool         oneUnitFlag[3];
   SaoLcuParam* saoLcuParam[3];
   Int          numCuInHeight;

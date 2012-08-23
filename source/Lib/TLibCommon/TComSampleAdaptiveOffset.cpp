@@ -104,7 +104,7 @@ const UInt TComSampleAdaptiveOffset::m_auiEoTable[9] =
   0
 };
 
-Int TComSampleAdaptiveOffset::m_iNumClass[MAX_NUM_SAO_TYPE] =
+const Int TComSampleAdaptiveOffset::m_iNumClass[MAX_NUM_SAO_TYPE] =
 {
   SAO_EO_LEN,
   SAO_EO_LEN,
@@ -113,7 +113,7 @@ Int TComSampleAdaptiveOffset::m_iNumClass[MAX_NUM_SAO_TYPE] =
   SAO_BO_LEN
 };
 
-UInt TComSampleAdaptiveOffset::m_uiMaxDepth = SAO_MAX_DEPTH;
+const UInt TComSampleAdaptiveOffset::m_uiMaxDepth = SAO_MAX_DEPTH;
 
 
 /** convert Level Row Col to Idx
@@ -288,10 +288,6 @@ Void TComSampleAdaptiveOffset::allocSaoParam(SAOParam *pcSaoParam)
   pcSaoParam->psSaoPart[2] = new SAOQTPart[ m_aiNumCulPartsLevel[pcSaoParam->iMaxSplitLevel] ];
   initSAOParam(pcSaoParam, 0, 0, 0, -1, 0, m_iNumCuInWidth-1,  0, m_iNumCuInHeight-1,1);
   initSAOParam(pcSaoParam, 0, 0, 0, -1, 0, m_iNumCuInWidth-1,  0, m_iNumCuInHeight-1,2);
-  for(Int j=0;j<MAX_NUM_SAO_TYPE;j++)
-  {
-    pcSaoParam->iNumClass[j] = m_iNumClass[j];
-  }
   pcSaoParam->numCuInWidth  = m_iNumCuInWidth;
   pcSaoParam->numCuInHeight = m_iNumCuInHeight;
   pcSaoParam->saoLcuParam[0] = new SaoLcuParam [m_iNumCuInHeight*m_iNumCuInWidth];

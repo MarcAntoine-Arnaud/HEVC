@@ -44,7 +44,7 @@
 //! \ingroup TLibEncoder
 //! \{
 
-static TComMv s_acMvRefineH[9] =
+static const TComMv s_acMvRefineH[9] =
 {
   TComMv(  0,  0 ), // 0
   TComMv(  0, -1 ), // 1
@@ -57,7 +57,7 @@ static TComMv s_acMvRefineH[9] =
   TComMv(  1,  1 )  // 8
 };
 
-static TComMv s_acMvRefineQ[9] =
+static const TComMv s_acMvRefineQ[9] =
 {
   TComMv(  0,  0 ), // 0
   TComMv(  0, -1 ), // 1
@@ -70,7 +70,7 @@ static TComMv s_acMvRefineQ[9] =
   TComMv(  1,  1 )  // 8
 };
 
-static UInt s_auiDFilter[9] =
+static const UInt s_auiDFilter[9] =
 {
   0, 1, 0,
   2, 3, 2,
@@ -724,7 +724,7 @@ UInt TEncSearch::xPatternRefinement( TComPattern* pcPatternKey,
   m_pcRdCost->setDistParam( pcPatternKey, m_filteredBlock[0][0].getLumaAddr(), iRefStride, 1, m_cDistParam, m_pcEncCfg->getUseHADME() );
 #endif
   
-  TComMv* pcMvRefine = (iFrac == 2 ? s_acMvRefineH : s_acMvRefineQ);
+  const TComMv* pcMvRefine = (iFrac == 2 ? s_acMvRefineH : s_acMvRefineQ);
   
   for (UInt i = 0; i < 9; i++)
   {

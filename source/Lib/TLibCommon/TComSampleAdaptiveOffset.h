@@ -63,7 +63,7 @@ class TComSampleAdaptiveOffset
 protected:
   TComPic*          m_pcPic;
 
-  static UInt m_uiMaxDepth;
+  static const UInt m_uiMaxDepth;
   static const Int m_aiNumCulPartsLevel[5];
   static const UInt m_auiEoTable[9];
   Int *m_iOffsetBo;
@@ -77,7 +77,7 @@ protected:
   Int  m_iNumCuInWidth;
   Int  m_iNumCuInHeight;
   Int  m_iNumTotalParts;
-  static Int m_iNumClass[MAX_NUM_SAO_TYPE];
+  static const Int m_iNumClass[MAX_NUM_SAO_TYPE];
   SliceType  m_eSliceType;
   Int        m_iPicNalReferenceIdc;
 
