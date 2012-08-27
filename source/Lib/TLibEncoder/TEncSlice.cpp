@@ -62,7 +62,25 @@ TEncSlice::TEncSlice()
 
 TEncSlice::~TEncSlice()
 {
+#if DEPENDENT_SLICES
+  for (std::vector<TEncSbac*>::iterator i = CTXMem.begin(); i != CTXMem.end(); i++)
+  {
+    delete (*i);
+  }
+#endif
 }
+
+#if DEPENDENT_SLICES
+Void TEncSlice::initCtxMem(  UInt i )                
+{   
+  for (std::vector<TEncSbac*>::iterator j = CTXMem.begin(); j != CTXMem.end(); j++)
+  {
+    delete (*j);
+  }
+  CTXMem.clear(); 
+  CTXMem.resize(i); 
+}
+#endif
 
 Void TEncSlice::create( Int iWidth, Int iHeight, UInt iMaxCUWidth, UInt iMaxCUHeight, UChar uhTotalDepth )
 {
@@ -773,33 +791,29 @@ Void TEncSlice::compressSlice( TComPic*& rpcPic )
 #if TILES_WPP_ENTROPYSLICES_FLAGS
   if( pcSlice->getPPS()->getDependentSliceEnabledFlag()&&(!pcSlice->getPPS()->getEntropySliceEnabledFlag()) )
 #else
-  if( pcSlice->getPPS()->getDependentSlicesEnabledFlag()&&(!pcSlice->getPPS()->getCabacIndependentFlag()) )
+  if( pcSlice->getPPS()->getDependentSliceEnabledFlag()&&(!pcSlice->getPPS()->getCabacIndependentFlag()) )
 #endif
   {
     bAllowDependence = true;
   }
   if( bAllowDependence )
   {
-    if(rpcPic->getCurrDepSliceIdx())
+    if(pcSlice->getDependentSliceCurStartCUAddr()!= pcSlice->getSliceCurStartCUAddr())
     {
       if( m_pcCfg->getWaveFrontsynchro() )
       {
-        m_pcBufferSbacCoders[uiTileCol].loadContexts( pcSlice->getCTXMem_enc(0) );
+        m_pcBufferSbacCoders[uiTileCol].loadContexts( CTXMem[1] );
       }
-      m_pppcRDSbacCoder[0][CI_CURR_BEST]->loadContexts( pcSlice->getCTXMem_enc( 1 ) );
-      ppppcRDSbacCoders[uiSubStrm][0][CI_CURR_BEST]->loadContexts(pcSlice->getCTXMem_enc( 1 ) );
+      m_pppcRDSbacCoder[0][CI_CURR_BEST]->loadContexts( CTXMem[0] );
+      ppppcRDSbacCoders[uiSubStrm][0][CI_CURR_BEST]->loadContexts( CTXMem[0] );
     }
     else
     {
-      pcSlice->initCTXMem_enc( 2 );
-      for ( UInt st = 0; st < 2; st++ )
+      if(m_pcCfg->getWaveFrontsynchro())
       {
-        TEncSbac* ctx = NULL;
-        ctx = new TEncSbac;
-        ctx->init( (TEncBinIf*)m_pcBinCABAC );
-        ctx->load( m_pcSbacCoder );
-        pcSlice->setCTXMem_enc( ctx, st );
+        CTXMem[1]->loadContexts(m_pcSbacCoder);
       }
+      CTXMem[0]->loadContexts(m_pcSbacCoder);
     }
   }
 #endif
@@ -984,10 +998,9 @@ Void TEncSlice::compressSlice( TComPic*& rpcPic )
   {
     if (m_pcCfg->getWaveFrontsynchro())
     {
-      pcSlice->getCTXMem_enc(0)->loadContexts( &m_pcBufferSbacCoders[uiTileCol] );//ctx 2.LCU
+      CTXMem[1]->loadContexts( &m_pcBufferSbacCoders[uiTileCol] );//ctx 2.LCU
     }
-    pcSlice->getCTXMem_enc(1)->loadContexts( m_pppcRDSbacCoder[0][CI_CURR_BEST] );//ctx end of dep.slice
-    rpcPic->setCurrDepSliceIdx( rpcPic->getCurrDepSliceIdx() + 1 );
+     CTXMem[0]->loadContexts( m_pppcRDSbacCoder[0][CI_CURR_BEST] );//ctx end of dep.slice
   }
 #endif
   xRestoreWPparam( pcSlice );
@@ -1063,7 +1076,7 @@ Void TEncSlice::encodeSlice   ( TComPic*& rpcPic, TComOutputBitstream* pcBitstre
 #if TILES_WPP_ENTROPYSLICES_FLAGS
   if( pcSlice->getPPS()->getDependentSliceEnabledFlag()&&(!pcSlice->getPPS()->getEntropySliceEnabledFlag()) )
 #else
-  if( pcSlice->getPPS()->getDependentSlicesEnabledFlag()&&(!pcSlice->getPPS()->getCabacIndependentFlag()) )
+  if( pcSlice->getPPS()->getDependentSliceEnabledFlag()&&(!pcSlice->getPPS()->getCabacIndependentFlag()) )
 #endif
   {
     bAllowDependence = true;
@@ -1072,23 +1085,19 @@ Void TEncSlice::encodeSlice   ( TComPic*& rpcPic, TComOutputBitstream* pcBitstre
   {
     if(pcSlice->isNextSlice())
     {
-      pcSlice->initCTXMem_enc( 2 );
-      for ( UInt st = 0; st < 2; st++ )
+      if(m_pcCfg->getWaveFrontsynchro())
       {
-        TEncSbac* ctx = NULL;
-        ctx = new TEncSbac;
-        ctx->init( (TEncBinIf*)m_pcBinCABAC );
-        ctx->load( m_pcSbacCoder );
-        pcSlice->setCTXMem_enc( ctx, st );
+        CTXMem[1]->loadContexts(m_pcSbacCoder);
       }
+      CTXMem[0]->loadContexts(m_pcSbacCoder);
     }
     else
     {
       if(m_pcCfg->getWaveFrontsynchro())
       {
-        m_pcBufferSbacCoders[uiTileCol].loadContexts( pcSlice->getCTXMem_enc(0) );
+        m_pcBufferSbacCoders[uiTileCol].loadContexts( CTXMem[1] );
       }
-      pcSbacCoders[uiSubStrm].loadContexts( pcSlice->getCTXMem_enc(1) );
+      pcSbacCoders[uiSubStrm].loadContexts( CTXMem[0] );
     }
   }
 #endif
@@ -1392,9 +1401,9 @@ Void TEncSlice::encodeSlice   ( TComPic*& rpcPic, TComOutputBitstream* pcBitstre
   {
     if (m_pcCfg->getWaveFrontsynchro())
     {
-      pcSlice->getCTXMem_enc(0)->loadContexts( &m_pcBufferSbacCoders[uiTileCol] );//ctx 2.LCU
+      CTXMem[1]->loadContexts( &m_pcBufferSbacCoders[uiTileCol] );//ctx 2.LCU
     }
-    pcSlice->getCTXMem_enc(1)->loadContexts( m_pcSbacCoder );//ctx end of dep.slice
+    CTXMem[0]->loadContexts( m_pcSbacCoder );//ctx end of dep.slice
   }
 #endif
 #if ADAPTIVE_QP_SELECTION

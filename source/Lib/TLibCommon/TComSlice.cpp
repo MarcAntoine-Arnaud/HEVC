@@ -150,38 +150,6 @@ TComSlice::~TComSlice()
   }
   delete[] m_puiSubstreamSizes;
   m_puiSubstreamSizes = NULL;
-#if DEPENDENT_SLICES
-  for (std::vector<TEncSbac*>::iterator i = CTXMem_enc.begin(); i != CTXMem_enc.end(); i++)
-  {
-    delete (*i);
-  }
-  CTXMem_enc.clear();
-  for (std::vector<TDecSbac*>::iterator i = CTXMem_dec.begin(); i != CTXMem_dec.end(); i++)
-  {
-    delete (*i);
-  }
-  CTXMem_dec.clear();
-#endif
-}
-
-Void TComSlice::initCTXMem_enc(  UInt i )                
-{   
-  for (std::vector<TEncSbac*>::iterator j = CTXMem_enc.begin(); j != CTXMem_enc.end(); j++)
-  {
-    delete (*j);
-  }
-  CTXMem_enc.clear(); 
-  CTXMem_enc.resize(i); 
-}
-
-Void TComSlice::initCTXMem_dec(  UInt i )                
-{   
-  for (std::vector<TDecSbac*>::iterator j = CTXMem_dec.begin(); j != CTXMem_dec.end(); j++)
-  {
-    delete (*j);
-  }
-  CTXMem_dec.clear(); 
-  CTXMem_dec.resize(i); 
 }
 
 
@@ -213,10 +181,6 @@ Void TComSlice::initSlice()
   m_cabacInitFlag        = false;
   m_numEntryPointOffsets = 0;
   m_enableTMVPFlag = true;
-#if DEPENDENT_SLICES
-  CTXMem_enc.clear();
-  CTXMem_dec.clear();
-#endif
 }
 
 Void TComSlice::initTiles()
@@ -1472,7 +1436,7 @@ TComPPS::TComPPS()
   m_scalingList = new TComScalingList;
 #if !TILES_WPP_ENTROPYSLICES_FLAGS
 #if DEPENDENT_SLICES
-  m_bDependentSlicesEnabledFlag = false;
+  m_bDependentSliceEnabledFlag = false;
   m_bCabacIndependentFlag = false;
 #endif
 #endif

@@ -664,9 +664,31 @@ Void TEncTop::xInitPPS()
   }
 #else
 #if DEPENDENT_SLICES
-  m_cPPS.setDependentSlicesEnabledFlag( m_iDependentSliceMode );
+  m_cPPS.setDependentSliceEnabledFlag( m_iDependentSliceMode );
   m_cPPS.setCabacIndependentFlag( m_bCabacIndependentFlag ? 1 : 0 );
 #endif
+#endif
+#if DEPENDENT_SLICES
+#if TILES_WPP_ENTROPYSLICES_FLAGS
+  if( m_cPPS.getDependentSliceEnabledFlag()&&(!m_cPPS.getEntropySliceEnabledFlag()) )
+#else
+  if( m_cPPS.getDependentSliceEnabledFlag()&&(!m_cPPS.getCabacIndependentFlag()) )
+#endif
+  {
+#if TILES_WPP_ENTROPYSLICES_FLAGS
+    int NumCtx = m_cPPS.getEntropyCodingSyncEnabledFlag()?2:1;
+#else
+    int NumCtx = (m_cPPS.getTilesOrEntropyCodingSyncIdc() == 2)?2:1;
+#endif
+    m_cSliceEncoder.initCtxMem( NumCtx );
+    for ( UInt st = 0; st < NumCtx; st++ )
+    {
+      TEncSbac* ctx = NULL;
+      ctx = new TEncSbac;
+      ctx->init( &m_cBinCoderCABAC );
+      m_cSliceEncoder.setCtxMem( ctx, st );
+    }
+  }
 #endif
 }
 

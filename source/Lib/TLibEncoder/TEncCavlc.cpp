@@ -306,7 +306,7 @@ Void TEncCavlc::codePPS( TComPPS* pcPPS )
     tilesOrEntropyCodingSyncIdc = 2;
   }
 #if DEPENDENT_SLICES
-  else if( pcPPS->getDependentSlicesEnabledFlag() )
+  else if( pcPPS->getDependentSliceEnabledFlag() )
   {
     if(pcPPS->getTilesOrEntropyCodingSyncIdc() != 2)
     {
@@ -1105,7 +1105,7 @@ Void  TEncCavlc::codeTilesWPPEntryPoint( TComSlice* pSlice )
 #else
   Int tilesOrEntropyCodingSyncIdc = pSlice->getPPS()->getTilesOrEntropyCodingSyncIdc();
 #if DEPENDENT_SLICES
-  if ( (tilesOrEntropyCodingSyncIdc == 0) || pSlice->getPPS()->getDependentSlicesEnabledFlag() )
+  if ( (tilesOrEntropyCodingSyncIdc == 0) || pSlice->getPPS()->getDependentSliceEnabledFlag() )
 #else
   if ( tilesOrEntropyCodingSyncIdc == 0 )
 #endif
@@ -1113,7 +1113,6 @@ Void  TEncCavlc::codeTilesWPPEntryPoint( TComSlice* pSlice )
   {
     return;
   }
-
   UInt numEntryPointOffsets = 0, offsetLenMinus1 = 0, maxOffset = 0;
   Int  numZeroSubstreamsAtStartOfSlice  = 0;
   UInt *entryPointOffset = NULL;

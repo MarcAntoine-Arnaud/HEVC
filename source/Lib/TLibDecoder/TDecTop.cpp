@@ -646,6 +646,28 @@ Void TDecTop::xDecodePPS()
   m_apcSlicePilot->setPPSId(pps->getPPSId());
   xActivateParameterSets();
   m_apcSlicePilot->initTiles();
+#if DEPENDENT_SLICES
+#if TILES_WPP_ENTROPYSLICES_FLAGS
+  if( pps->getDependentSliceEnabledFlag() && (!pps->getEntropySliceEnabledFlag()) )
+#else
+  if( pps->getDependentSliceEnabledFlag() && (!pps->getCabacIndependentFlag()) )
+#endif
+  {
+#if TILES_WPP_ENTROPYSLICES_FLAGS
+    int NumCtx = pps->getEntropyCodingSyncEnabledFlag()?2:1;
+#else
+    int NumCtx = (pps->getTilesOrEntropyCodingSyncIdc() == 2)?2:1;
+#endif
+    m_cSliceDecoder.initCtxMem(NumCtx);
+    for ( UInt st = 0; st < NumCtx; st++ )
+    {
+      TDecSbac* ctx = NULL;
+      ctx = new TDecSbac;
+      ctx->init( &m_cBinCABAC );
+      m_cSliceDecoder.setCtxMem( ctx, st );
+    }
+  }
+#endif
 }
 
 #if !REMOVE_APS

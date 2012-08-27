@@ -498,7 +498,7 @@ Void TDecCavlc::parsePPS(TComPPS* pcPPS)
 #if !TILES_WPP_ENTROPYSLICES_FLAGS
 #if DEPENDENT_SLICES
   READ_FLAG( uiCode, "dependent_slices_enabled_flag" );
-  pcPPS->setDependentSlicesEnabledFlag( uiCode==1 );
+  pcPPS->setDependentSliceEnabledFlag( uiCode==1 );
 #endif
 #endif
 
@@ -932,7 +932,7 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
     READ_FLAG( uiCode, "dependent_slice_flag" );
     Bool bDependentSlice = uiCode ? true : false;
 #if DEPENDENT_SLICES
-    if( rpcSlice->getPPS()->getDependentSlicesEnabledFlag())
+    if( rpcSlice->getPPS()->getDependentSliceEnabledFlag())
     {
       if(bDependentSlice)
       {

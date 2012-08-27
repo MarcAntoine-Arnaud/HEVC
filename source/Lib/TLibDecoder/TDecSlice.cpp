@@ -54,7 +54,26 @@ TDecSlice::TDecSlice()
 
 TDecSlice::~TDecSlice()
 {
+#if DEPENDENT_SLICES
+  for (std::vector<TDecSbac*>::iterator i = CTXMem.begin(); i != CTXMem.end(); i++)
+  {
+    delete (*i);
+  }
+  CTXMem.clear();
+#endif
 }
+
+#if DEPENDENT_SLICES
+Void TDecSlice::initCtxMem(  UInt i )                
+{   
+  for (std::vector<TDecSbac*>::iterator j = CTXMem.begin(); j != CTXMem.end(); j++)
+  {
+    delete (*j);
+  }
+  CTXMem.clear(); 
+  CTXMem.resize(i); 
+}
+#endif
 
 Void TDecSlice::create( TComSlice* pcSlice, Int iWidth, Int iHeight, UInt uiMaxWidth, UInt uiMaxHeight, UInt uiMaxDepth )
 {
@@ -176,7 +195,7 @@ Void TDecSlice::decompressSlice(TComInputBitstream* pcBitstream, TComInputBitstr
 #if TILES_WPP_ENTROPYSLICES_FLAGS
   if( rpcPic->getSlice(rpcPic->getCurrSliceIdx())->getPPS()->getDependentSliceEnabledFlag()&& (!rpcPic->getSlice(rpcPic->getCurrSliceIdx())->getPPS()->getEntropySliceEnabledFlag()) )
 #else
-  if( rpcPic->getSlice(rpcPic->getCurrSliceIdx())->getPPS()->getDependentSlicesEnabledFlag()&& (!rpcPic->getSlice(rpcPic->getCurrSliceIdx())->getPPS()->getCabacIndependentFlag()) )
+  if( rpcPic->getSlice(rpcPic->getCurrSliceIdx())->getPPS()->getDependentSliceEnabledFlag()&& (!rpcPic->getSlice(rpcPic->getCurrSliceIdx())->getPPS()->getCabacIndependentFlag()) )
 #endif
   {
     bAllowDependence = true;
@@ -192,10 +211,22 @@ Void TDecSlice::decompressSlice(TComInputBitstream* pcBitstream, TComInputBitstr
       if(pcSlice->getPPS()->getTilesOrEntropyCodingSyncIdc()==2)
 #endif
       {
-        m_pcBufferSbacDecoders[uiTileCol].loadContexts( rpcPic->getSlice(rpcPic->getCurrSliceIdx()-1)->getCTXMem_dec( 0 ) );//2.LCU
+        m_pcBufferSbacDecoders[uiTileCol].loadContexts( CTXMem[1]  );//2.LCU
       }
-      pcSbacDecoder->loadContexts( rpcPic->getSlice( rpcPic->getCurrSliceIdx() - 1 )->getCTXMem_dec( 1 ) ); //end of depSlice-1
+      pcSbacDecoder->loadContexts(CTXMem[0] ); //end of depSlice-1
       pcSbacDecoders[uiSubStrm].loadContexts(pcSbacDecoder);
+    }
+    else
+    {
+#if TILES_WPP_ENTROPYSLICES_FLAGS
+      if(pcSlice->getPPS()->getEntropyCodingSyncEnabledFlag())
+#else
+      if(pcSlice->getPPS()->getTilesOrEntropyCodingSyncIdc()==2)
+#endif
+      {
+        CTXMem[1]->loadContexts(pcSbacDecoder);
+      }
+      CTXMem[0]->loadContexts(pcSbacDecoder);
     }
   }
 #endif
@@ -420,9 +451,9 @@ Void TDecSlice::decompressSlice(TComInputBitstream* pcBitstream, TComInputBitstr
       if (pcSlice->getPPS()->getTilesOrEntropyCodingSyncIdc()==2)
 #endif
        {
-         rpcPic->getSlice( rpcPic->getCurrSliceIdx() )->getCTXMem_dec( 0 )->loadContexts( &m_pcBufferSbacDecoders[uiTileCol] );//ctx 2.LCU
+         CTXMem[1]->loadContexts( &m_pcBufferSbacDecoders[uiTileCol] );//ctx 2.LCU
        }
-      rpcPic->getSlice( rpcPic->getCurrSliceIdx() )->getCTXMem_dec( 1 )->loadContexts( pcSbacDecoder );//ctx end of dep.slice
+      CTXMem[0]->loadContexts( pcSbacDecoder );//ctx end of dep.slice
       return;
     }
 #endif

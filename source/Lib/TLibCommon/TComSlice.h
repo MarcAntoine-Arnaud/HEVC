@@ -46,11 +46,6 @@
 
 //! \ingroup TLibCommon
 //! \{
-#if DEPENDENT_SLICES
-#include<vector>
-class TDecSbac;
-class TEncSbac;
-#endif
 
 class TComPic;
 class TComTrQuant;
@@ -626,7 +621,7 @@ private:
 #endif
 #if !TILES_WPP_ENTROPYSLICES_FLAGS
 #if DEPENDENT_SLICES
-  Bool        m_bDependentSlicesEnabledFlag;   // Indicates the presence of dependent_slices_flag in slice header
+  Bool        m_bDependentSliceEnabledFlag;   // Indicates the presence of dependent_slices_flag in slice header
   Bool        m_bCabacIndependentFlag;   // Indicates the presence of dependent_slices_flag in slice header
 #endif
   UInt        m_tilesOrEntropyCodingSyncIdc;
@@ -714,8 +709,8 @@ public:
   Bool      getOutputFlagPresentFlag()          { return m_OutputFlagPresentFlag; }
 #if !TILES_WPP_ENTROPYSLICES_FLAGS
 #if DEPENDENT_SLICES
-  Void      setDependentSlicesEnabledFlag( Bool b )  { m_bDependentSlicesEnabledFlag = b;    }
-  Bool      getDependentSlicesEnabledFlag()          { return m_bDependentSlicesEnabledFlag; }
+  Void      setDependentSliceEnabledFlag( Bool b )  { m_bDependentSliceEnabledFlag = b;    }
+  Bool      getDependentSliceEnabledFlag()          { return m_bDependentSliceEnabledFlag; }
   Void      setCabacIndependentFlag( Bool b )  { m_bCabacIndependentFlag = b;    }
   Bool      getCabacIndependentFlag()          { return m_bCabacIndependentFlag; }
 #endif
@@ -996,10 +991,6 @@ private:
 #if !REFERENCE_PICTURE_DEFN
   Bool        m_nalRefFlag;
 #endif
-#if DEPENDENT_SLICES
-  std::vector<TDecSbac*> CTXMem_dec;
-  std::vector<TEncSbac*> CTXMem_enc;
-#endif
   Bool       m_LFCrossSliceBoundaryFlag;
 
   Bool       m_enableTMVPFlag;
@@ -1265,14 +1256,6 @@ public:
 #if !REFERENCE_PICTURE_DEFN
   Bool      getNalRefFlag()       { return m_nalRefFlag;}
   Void      setNalRefFlag(Bool x) { m_nalRefFlag = x;}
-#endif
-#if DEPENDENT_SLICES
-  Void      initCTXMem_dec(  UInt i );                
-  TDecSbac* getCTXMem_dec( int b )                 { return CTXMem_dec[b]; }
-  Void      setCTXMem_dec( TDecSbac* sb, int b )   { CTXMem_dec[b] = sb; }
-  Void      initCTXMem_enc( UInt i );
-  TEncSbac* getCTXMem_enc( int b )                 { return CTXMem_enc[b]; }
-  Void      setCTXMem_enc( TEncSbac* sb, int b )   { CTXMem_enc[b] = sb; }
 #endif
   Void      setLFCrossSliceBoundaryFlag     ( Bool   val )    { m_LFCrossSliceBoundaryFlag = val; }
   Bool      getLFCrossSliceBoundaryFlag     ()                { return m_LFCrossSliceBoundaryFlag;} 

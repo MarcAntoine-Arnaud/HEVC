@@ -70,6 +70,9 @@ private:
   TDecBinCABAC*   m_pcBufferBinCABACs;
   TDecSbac*       m_pcBufferLowLatSbacDecoders;   ///< dependent tiles: line to store temporary contexts, one per column of tiles.
   TDecBinCABAC*   m_pcBufferLowLatBinCABACs;
+#if DEPENDENT_SLICES
+  std::vector<TDecSbac*> CTXMem;
+#endif
   
 public:
   TDecSlice();
@@ -80,6 +83,10 @@ public:
   Void  destroy           ();
   
   Void  decompressSlice   ( TComInputBitstream* pcBitstream, TComInputBitstream** ppcSubstreams,   TComPic*& rpcPic, TDecSbac* pcSbacDecoder, TDecSbac* pcSbacDecoders );
+#if DEPENDENT_SLICES
+  Void      initCtxMem(  UInt i );
+  Void      setCtxMem( TDecSbac* sb, int b )   { CTXMem[b] = sb; }
+#endif
 };
 
 
