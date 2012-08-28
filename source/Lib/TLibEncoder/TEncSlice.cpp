@@ -805,6 +805,14 @@ Void TEncSlice::compressSlice( TComPic*& rpcPic )
         m_pcBufferSbacCoders[uiTileCol].loadContexts( CTXMem[1] );
       }
       m_pppcRDSbacCoder[0][CI_CURR_BEST]->loadContexts( CTXMem[0] );
+      if (pcSlice->getPPS()->getNumSubstreams() > 1)
+      {
+        Int iNumSubstreamsPerTile = iNumSubstreams/rpcPic->getPicSym()->getNumTiles();
+        uiCUAddr = rpcPic->getPicSym()->getCUOrderMap( uiStartCUAddr /rpcPic->getNumPartInCU()); 
+        uiLin     = uiCUAddr / uiWidthInLCUs;
+        uiSubStrm = rpcPic->getPicSym()->getTileIdxMap(rpcPic->getPicSym()->getCUOrderMap(uiCUAddr))*iNumSubstreamsPerTile
+          + uiLin%iNumSubstreamsPerTile;
+      }
       ppppcRDSbacCoders[uiSubStrm][0][CI_CURR_BEST]->loadContexts( CTXMem[0] );
     }
     else
@@ -989,7 +997,11 @@ Void TEncSlice::compressSlice( TComPic*& rpcPic )
       m_pcRateCtrl->updataRCUnitStatus();
     }
   }
+#if DEPENDENT_SLICES
+  if ((pcSlice->getPPS()->getNumSubstreams() > 1) && !bAllowDependence)
+#else
   if (pcSlice->getPPS()->getNumSubstreams() > 1)
+#endif
   {
     pcSlice->setNextSlice( true );
   }
@@ -1096,6 +1108,14 @@ Void TEncSlice::encodeSlice   ( TComPic*& rpcPic, TComOutputBitstream* pcBitstre
       if(m_pcCfg->getWaveFrontsynchro())
       {
         m_pcBufferSbacCoders[uiTileCol].loadContexts( CTXMem[1] );
+      }
+      if(pcSlice->getPPS()->getNumSubstreams() > 1)
+      {
+        Int iNumSubstreamsPerTile = iNumSubstreams/rpcPic->getPicSym()->getNumTiles();
+        uiCUAddr = rpcPic->getPicSym()->getCUOrderMap( uiStartCUAddr /rpcPic->getNumPartInCU());
+        uiLin     = uiCUAddr / uiWidthInLCUs;
+        uiSubStrm = rpcPic->getPicSym()->getTileIdxMap(rpcPic->getPicSym()->getCUOrderMap( uiCUAddr))*iNumSubstreamsPerTile
+          + uiLin%iNumSubstreamsPerTile;
       }
       pcSbacCoders[uiSubStrm].loadContexts( CTXMem[0] );
     }

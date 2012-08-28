@@ -1504,10 +1504,8 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
 
 #if !SLICEHEADER_SYNTAX_FIX
   }
-#if DEPENDENT_SLICES
-  if( pps->getDependentSliceEnabledFlag()== false )
-#endif
 #else
+  }
     if( pps->getTilesEnabledFlag() || pps->getEntropyCodingSyncEnabledFlag() )
 #endif
     {
@@ -1586,7 +1584,6 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
       rpcSlice->setNumEntryPointOffsets ( 0 );
     }
 #endif
-  }
 
 #if SLICE_HEADER_EXTENSION
   if(pps->getSliceHeaderExtensionPresentFlag())

@@ -1036,7 +1036,11 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
 #endif
           {
             // 1st line present for WPP.
+#if DEPENDENT_SLICES
+            offs = pcSlice->getDependentSliceCurStartCUAddr()/pcSlice->getPic()->getNumPartInCU()/pcSlice->getPic()->getFrameWidthInCU();
+#else
             offs = pcSlice->getSliceCurStartCUAddr()/pcSlice->getPic()->getNumPartInCU()/pcSlice->getPic()->getFrameWidthInCU();
+#endif
             nss  = pcSlice->getNumEntryPointOffsets()+1;
           }
           for ( UInt ui = 0 ; ui < nss; ui++ )

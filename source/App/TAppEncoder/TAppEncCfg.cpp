@@ -465,12 +465,6 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
     }
   }
   m_iWaveFrontSubstreams = m_iWaveFrontSynchro ? (m_iSourceHeight + m_uiMaxCUHeight - 1) / m_uiMaxCUHeight : 1;
-#if DEPENDENT_SLICES
-  if( m_iDependentSliceMode )
-  {
-    m_iWaveFrontSubstreams = 1;
-  }
-#endif
   // check validity of input parameters
   xCheckParameter();
   
