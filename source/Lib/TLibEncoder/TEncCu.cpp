@@ -888,13 +888,13 @@ Void TEncCu::xCompressCU( TComDataCU*& rpcBestCU, TComDataCU*& rpcTempCU, UInt u
 
       if( (g_uiMaxCUWidth>>uiDepth) == rpcTempCU->getSlice()->getPPS()->getMinCuDQPSize() && rpcTempCU->getSlice()->getPPS()->getUseDQP())
       {
-        Bool bHasRedisual = false;
+        Bool hasResidual = false;
         for( UInt uiBlkIdx = 0; uiBlkIdx < rpcTempCU->getTotalNumPart(); uiBlkIdx ++)
         {
           if( ( pcPic->getCU( rpcTempCU->getAddr() )->getDependentSliceStartCU(uiBlkIdx+rpcTempCU->getZorderIdxInCU()) == rpcTempCU->getSlice()->getDependentSliceCurStartCUAddr() ) && 
               ( rpcTempCU->getCbf( uiBlkIdx, TEXT_LUMA ) || rpcTempCU->getCbf( uiBlkIdx, TEXT_CHROMA_U ) || rpcTempCU->getCbf( uiBlkIdx, TEXT_CHROMA_V ) ) )
           {
-            bHasRedisual = true;
+            hasResidual = true;
             break;
           }
         }
@@ -908,7 +908,7 @@ Void TEncCu::xCompressCU( TComDataCU*& rpcBestCU, TComDataCU*& rpcTempCU, UInt u
         {
           uiTargetPartIdx = 0;
         }
-        if ( bHasRedisual )
+        if ( hasResidual )
         {
 #if !RDO_WITHOUT_DQP_BITS
           m_pcEntropyCoder->resetBits();
