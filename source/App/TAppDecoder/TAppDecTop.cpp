@@ -142,7 +142,12 @@ Void TAppDecTop::decode()
       {
         assert(nalu.m_temporalId == 0);
       }
+
+#if TARGET_DECLAYERID_SET
+      if( (m_iMaxTemporalLayer >= 0 && nalu.m_temporalId > m_iMaxTemporalLayer) || !isNaluWithinTargetDecLayerIdSet(&nalu)  )
+#else
       if(m_iMaxTemporalLayer >= 0 && nalu.m_temporalId > m_iMaxTemporalLayer)
+#endif
       {
         if(bPreviousPictureDecoded)
         {
@@ -361,5 +366,25 @@ Void TAppDecTop::xFlushOutput( TComList<TComPic*>* pcListPic )
   pcListPic->clear();
   m_iPOCLastDisplay = -MAX_INT;
 }
+
+#if TARGET_DECLAYERID_SET
+/** \param nalu Input nalu to check whether its LayerId is within targetDecLayerIdSet
+ */
+Bool TAppDecTop::isNaluWithinTargetDecLayerIdSet( InputNALUnit* nalu )
+{
+  if ( m_targetDecLayerIdSet.size() == 0 ) // By default, the set is empty, meaning all LayerIds are allowed
+  {
+    return true;
+  }
+  for (std::vector<Int>::iterator it = m_targetDecLayerIdSet.begin(); it != m_targetDecLayerIdSet.end(); it++)
+  {
+    if ( nalu->m_reserved_one_6bits == (*it) )
+    {
+      return true;
+    }
+  }
+  return false;
+}
+#endif
 
 //! \}

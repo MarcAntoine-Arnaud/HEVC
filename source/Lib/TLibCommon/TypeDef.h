@@ -42,6 +42,11 @@
 
 //! \ingroup TLibCommon
 //! \{
+#define TARGET_DECLAYERID_SET            1  ///< J0074:  targetDecLayerIdSet for sub-bitstream extraction process
+#if TARGET_DECLAYERID_SET
+#define MAX_NUM_LAYER_IDS                64
+#endif
+
 #define TILES_WPP_ENTROPYSLICES_FLAGS    1  ///< J0123: Introduce tiles_enabled_flag, entropy_coding_sync_enabled_flag, entropy_slice_enabled_flag
                                             ///<        and remove tiles_or_entropy_coding_sync_idc
 #define SLICEHEADER_SYNTAX_FIX           1  ///< fixes for aligning slice header syntax with HM8 text
