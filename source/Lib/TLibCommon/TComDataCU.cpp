@@ -2159,7 +2159,7 @@ Void TComDataCU::setSkipFlagSubParts( Bool skip, UInt absPartIdx, UInt depth )
 
 Void TComDataCU::setPredModeSubParts( PredMode eMode, UInt uiAbsPartIdx, UInt uiDepth )
 {
-  assert( sizeof( *m_pePartSize) == 1 );
+  assert( sizeof( *m_pePredMode) == 1 );
   memset( m_pePredMode + uiAbsPartIdx, eMode, m_pcPic->getNumPartInCU() >> ( 2 * uiDepth ) );
 }
 
