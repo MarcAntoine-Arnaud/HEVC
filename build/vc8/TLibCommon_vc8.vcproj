@@ -410,6 +410,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\source\Lib\TLibCommon\NAL.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\source\Lib\TLibCommon\SEI.h"
 				>
 			</File>
