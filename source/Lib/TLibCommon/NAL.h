@@ -67,10 +67,10 @@ struct NALUnit
 #if !REMOVE_NAL_REF_FLAG
     ,m_nalRefFlag  (nalRefFlag)
 #endif
+    ,m_temporalId  (temporalId)
 #if TARGET_DECLAYERID_SET
     ,m_reserved_one_6bits(reserved_one_6bits)
 #endif
-    ,m_temporalId  (temporalId)
   {}
 
   /** default constructor - no initialization; must be perfomed by user */
