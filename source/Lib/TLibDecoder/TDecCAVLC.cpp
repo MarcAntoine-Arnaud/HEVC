@@ -1360,6 +1360,10 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
         READ_FLAG( uiCode, "collocated_from_l0_flag" );
         rpcSlice->setColDir(uiCode);
       }
+      else
+      {
+        rpcSlice->setColDir( 0 );
+      }
 
       if ( rpcSlice->getSliceType() != I_SLICE &&
         ((rpcSlice->getColDir()==0 && rpcSlice->getNumRefIdx(REF_PIC_LIST_0)>1)||
