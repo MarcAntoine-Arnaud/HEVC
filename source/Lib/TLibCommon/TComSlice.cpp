@@ -1361,8 +1361,10 @@ TComSPS::TComSPS()
 , m_vuiParameters             ()
 #endif
 {
+#if !SPS_AMVP_CLEANUP
   // AMVP parameter
   ::memset( m_aeAMVPMode, 0, sizeof( m_aeAMVPMode ) );
+#endif
   for ( Int i = 0; i < MAX_TLAYER; i++ )
   {
     m_uiMaxLatencyIncrease[i] = 0;

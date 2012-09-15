@@ -485,7 +485,9 @@ private:
   Bool        m_listsModificationPresentFlag;
 
   // Parameter
+#if !SPS_AMVP_CLEANUP
   AMVP_MODE   m_aeAMVPMode[MAX_CU_DEPTH];
+#endif
   UInt        m_uiBitDepth;
   UInt        m_uiBitIncrement;
   Int         m_qpBDOffsetY;
@@ -655,10 +657,12 @@ public:
   Bool getListsModificationPresentFlag ()          { return m_listsModificationPresentFlag; }
   Void setListsModificationPresentFlag ( Bool b )  { m_listsModificationPresentFlag = b;    }
 
+#if !SPS_AMVP_CLEANUP
   // AMVP mode (for each depth)
   AMVP_MODE getAMVPMode ( UInt uiDepth ) { assert(uiDepth < g_uiMaxCUDepth);  return m_aeAMVPMode[uiDepth]; }
   Void      setAMVPMode ( UInt uiDepth, AMVP_MODE eMode) { assert(uiDepth < g_uiMaxCUDepth);  m_aeAMVPMode[uiDepth] = eMode; }
-  
+#endif
+
   // AMP accuracy
   Int       getAMPAcc   ( UInt uiDepth ) { return m_iAMPAcc[uiDepth]; }
   Void      setAMPAcc   ( UInt uiDepth, Int iAccu ) { assert( uiDepth < g_uiMaxCUDepth);  m_iAMPAcc[uiDepth] = iAccu; }

@@ -857,12 +857,14 @@ Void TDecCavlc::parseSPS(TComSPS* pcSPS)
     parseVUI(pcSPS->getVuiParameters());
   }
 #endif
+#if !SPS_AMVP_CLEANUP
   // AMVP mode for each depth (AM_NONE or AM_EXPL)
   for (Int i = 0; i < pcSPS->getMaxCUDepth(); i++)
   {
     xReadFlag( uiCode );
     pcSPS->setAMVPMode( i, (AMVP_MODE)uiCode );
   }
+#endif
 
   READ_FLAG( uiCode, "sps_extension_flag");
   if (uiCode)

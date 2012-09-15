@@ -606,11 +606,13 @@ Void TEncCavlc::codeSPS( TComSPS* pcSPS )
       codeVUI(pcSPS->getVuiParameters(), pcSPS);
   }
 #endif
+#if !SPS_AMVP_CLEANUP
   // AMVP mode for each depth
   for (Int i = 0; i < pcSPS->getMaxCUDepth(); i++)
   {
     xWriteFlag( pcSPS->getAMVPMode(i) ? 1 : 0);
   }
+#endif
 
   WRITE_FLAG( 0, "sps_extension_flag" );
 }

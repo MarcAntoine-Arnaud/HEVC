@@ -42,6 +42,7 @@
 
 //! \ingroup TLibCommon
 //! \{
+#define SPS_AMVP_CLEANUP                 1  ///< remove old AMVP related code for alignment with draft text
 #define SUPPORT_FOR_VUI                  1  ///< new: add support for VUI and hrd_parameters
 #define TARGET_DECLAYERID_SET            1  ///< J0074:  targetDecLayerIdSet for sub-bitstream extraction process
 #if TARGET_DECLAYERID_SET
@@ -577,12 +578,14 @@ enum MVP_DIR
   MD_ABOVE_LEFT         ///< MVP of above left block
 };
 
+#if !SPS_AMVP_CLEANUP
 /// motion vector prediction mode used in AMVP
 enum AMVP_MODE
 {
   AM_NONE = 0,          ///< no AMVP mode
   AM_EXPL,              ///< explicit signalling of motion vector index
 };
+#endif
 
 /// coefficient scanning type used in ACS
 enum COEFF_SCAN_TYPE
