@@ -104,6 +104,9 @@ public:
   Void  parseVPS            ( TComVPS* pcVPS );
   Void  parseSPS            ( TComSPS* pcSPS );
   Void  parsePPS            ( TComPPS* pcPPS);
+#if SUPPORT_FOR_VUI
+  Void  parseVUI            ( TComVUI* pcVUI );
+#endif
   Void  parseSEI(SEImessages&);
 #if !REMOVE_APS
   Void  parseAPS            ( TComAPS* pAPS );

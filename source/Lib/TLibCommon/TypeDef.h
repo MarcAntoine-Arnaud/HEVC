@@ -42,6 +42,7 @@
 
 //! \ingroup TLibCommon
 //! \{
+#define SUPPORT_FOR_VUI                  1  ///< new: add support for VUI and hrd_parameters
 #define TARGET_DECLAYERID_SET            1  ///< J0074:  targetDecLayerIdSet for sub-bitstream extraction process
 #if TARGET_DECLAYERID_SET
 #define MAX_NUM_LAYER_IDS                64

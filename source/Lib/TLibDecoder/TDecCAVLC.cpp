@@ -595,6 +595,73 @@ Void TDecCavlc::parsePPS(TComPPS* pcPPS)
   }
 }
 
+#if SUPPORT_FOR_VUI
+Void  TDecCavlc::parseVUI(TComVUI* pcVUI)
+{
+#if ENC_DEC_TRACE
+  fprintf( g_hTrace, "----------- vui_parameters -----------\n");
+#endif
+  UInt  uiCode;
+
+  READ_FLAG(     uiCode, "aspect_ratio_info_present_flag");           pcVUI->setAspectRatioInfoPresentFlag(uiCode);
+  if (pcVUI->getAspectRatioInfoPresentFlag())
+  {
+    READ_CODE(8, uiCode, "aspect_ratio_idc");                         pcVUI->setAspectRatioIdc(uiCode);
+    if (pcVUI->getAspectRatioIdc() == 255)
+    {
+      READ_CODE(16, uiCode, "sar_width");                             pcVUI->setSarWidth(uiCode);
+      READ_CODE(16, uiCode, "sar_height");                            pcVUI->setSarWidth(uiCode);
+    }
+  }
+
+  READ_FLAG(     uiCode, "overscan_info_present_flag");               pcVUI->setOverscanInfoPresentFlag(uiCode);
+  if (pcVUI->getOverscanInfoPresentFlag())
+  {
+    READ_FLAG(   uiCode, "overscan_appropriate_flag");                pcVUI->setOverscanAppropriateFlag(uiCode);
+  }
+
+  READ_FLAG(     uiCode, "video_signal_type_present_flag");           pcVUI->setVideoSignalTypePresentFlag(uiCode);
+  if (pcVUI->getVideoSignalTypePresentFlag())
+  {
+    READ_CODE(3, uiCode, "video_format");                             pcVUI->setVideoFormat(uiCode);
+    READ_FLAG(   uiCode, "video_full_range_flag");                    pcVUI->setVideoFullRangeFlag(uiCode);
+    READ_FLAG(   uiCode, "colour_description_present_flag");          pcVUI->setColourDescriptionPresentFlag(uiCode);
+    if (pcVUI->getColourDescriptionPresentFlag())
+    {
+      READ_CODE(8, uiCode, "colour_primaries");                       pcVUI->setColourPrimaries(uiCode);
+      READ_CODE(8, uiCode, "transfer_characteristics");               pcVUI->setTransferCharacteristics(uiCode);
+      READ_CODE(8, uiCode, "matrix_coefficients");                    pcVUI->setMatrixCoefficients(uiCode);
+    }
+  }
+
+  READ_FLAG(     uiCode, "chroma_loc_info_present_flag");             pcVUI->setChromaLocInfoPresentFlag(uiCode);
+  if (pcVUI->getChromaLocInfoPresentFlag())
+  {
+    READ_UVLC(   uiCode, "chroma_sample_loc_type_top_field" );        pcVUI->setChromaSampleLocTypeTopField(uiCode);
+    READ_UVLC(   uiCode, "chroma_sample_loc_type_bottom_field" );     pcVUI->setChromaSampleLocTypeBottomField(uiCode);
+  }
+
+  READ_FLAG(     uiCode, "neutral_chroma_indication_flag");           pcVUI->setNeutralChromaIndicationFlag(uiCode);
+
+  READ_FLAG(     uiCode, "field_seq_flag");                           pcVUI->setFieldSeqFlag(uiCode);
+  assert(pcVUI->getFieldSeqFlag() == false);        // not supported yet
+
+  READ_FLAG(     uiCode, "hrd_parameters_present_flag");              pcVUI->setHrdParametersPresentFlag(uiCode);
+  assert(pcVUI->getHrdParametersPresentFlag() == false);  // not supported yet
+
+  READ_FLAG(     uiCode, "bitstream_restriction_flag");               pcVUI->setBitstreamRestrictionFlag(uiCode);
+  if (pcVUI->getBitstreamRestrictionFlag())
+  {
+    READ_FLAG(   uiCode, "tiles_fixed_structure_flag");               pcVUI->setTilesFixedStructureFlag(uiCode);
+    READ_FLAG(   uiCode, "motion_vectors_over_pic_boundaries_flag");  pcVUI->setMotionVectorsOverPicBoundariesFlag(uiCode);
+    READ_UVLC(   uiCode, "max_bytes_per_pic_denom" );                 pcVUI->setMaxBytesPerPicDenom(uiCode);
+    READ_UVLC(   uiCode, "max_bits_per_mincu_denom" );                pcVUI->setMaxBitsPerMinCuDenom(uiCode);
+    READ_UVLC(   uiCode, "log2_max_mv_length_horizontal" );           pcVUI->setLog2MaxMvLengthHorizontal(uiCode);
+    READ_UVLC(   uiCode, "log2_max_mv_length_vertical" );             pcVUI->setLog2MaxMvLengthVertical(uiCode);
+  }
+}
+#endif
+
 Void TDecCavlc::parseSPS(TComSPS* pcSPS)
 {
 #if ENC_DEC_TRACE  
@@ -782,6 +849,14 @@ Void TDecCavlc::parseSPS(TComSPS* pcSPS)
   }
 #endif
   READ_FLAG( uiCode, "sps_temporal_mvp_enable_flag" );            pcSPS->setTMVPFlagsPresent(uiCode);
+#if SUPPORT_FOR_VUI
+  READ_FLAG( uiCode, "vui_parameters_present_flag" );             pcSPS->setVuiParametersPresentFlag(uiCode);
+
+  if (pcSPS->getVuiParametersPresentFlag())
+  {
+    parseVUI(pcSPS->getVuiParameters());
+  }
+#endif
   // AMVP mode for each depth (AM_NONE or AM_EXPL)
   for (Int i = 0; i < pcSPS->getMaxCUDepth(); i++)
   {

@@ -561,6 +561,39 @@ Void TEncTop::xInitSPS()
   m_cSPS.setPCMFilterDisableFlag  ( m_bPCMFilterDisableFlag );
 
   m_cSPS.setScalingListFlag ( (m_useScalingListId == 0) ? 0 : 1 );
+
+#if SUPPORT_FOR_VUI
+  m_cSPS.setVuiParametersPresentFlag(getVuiParametersPresentFlag());
+  if (m_cSPS.getVuiParametersPresentFlag())
+  {
+      TComVUI* pcVUI = m_cSPS.getVuiParameters();
+      pcVUI->setAspectRatioInfoPresentFlag(getAspectRatioIdc() != -1);
+      pcVUI->setAspectRatioIdc(getAspectRatioIdc());
+      pcVUI->setSarWidth(getSarWidth());
+      pcVUI->setSarHeight(getSarHeight());
+      pcVUI->setOverscanInfoPresentFlag(getOverscanInfoPresentFlag());
+      pcVUI->setOverscanAppropriateFlag(getOverscanAppropriateFlag());
+      pcVUI->setVideoSignalTypePresentFlag(getVideoSignalTypePresentFlag());
+      pcVUI->setVideoFormat(getVideoFormat());
+      pcVUI->setVideoFullRangeFlag(getVideoFullRangeFlag());
+      pcVUI->setColourDescriptionPresentFlag(getColourDescriptionPresentFlag());
+      pcVUI->setTransferCharacteristics(getTransferCharacteristics());
+      pcVUI->setMatrixCoefficients(getMatrixCoefficients());
+      pcVUI->setChromaLocInfoPresentFlag(getChromaLocInfoPresentFlag());
+      pcVUI->setChromaSampleLocTypeTopField(getChromaSampleLocTypeTopField());
+      pcVUI->setChromaSampleLocTypeBottomField(getChromaSampleLocTypeBottomField());
+      pcVUI->setNeutralChromaIndicationFlag(getNeutralChromaIndicationFlag());
+      pcVUI->setFieldSeqFlag(false);
+      pcVUI->setHrdParametersPresentFlag(false);
+      pcVUI->setBitstreamRestrictionFlag(getBitstreamRestrictionFlag());
+      pcVUI->setTilesFixedStructureFlag(getTilesFixedStructureFlag());
+      pcVUI->setMotionVectorsOverPicBoundariesFlag(getMotionVectorsOverPicBoundariesFlag());
+      pcVUI->setMaxBytesPerPicDenom(getMaxBytesPerPicDenom());
+      pcVUI->setMaxBitsPerMinCuDenom(getMaxBitsPerMinCuDenom());
+      pcVUI->setLog2MaxMvLengthHorizontal(getLog2MaxMvLengthHorizontal());
+      pcVUI->setLog2MaxMvLengthVertical(getLog2MaxMvLengthVertical());
+  }
+#endif
 }
 
 Void TEncTop::xInitPPS()

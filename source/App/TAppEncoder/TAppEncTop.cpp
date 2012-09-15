@@ -274,6 +274,32 @@ Void TAppEncTop::xInitLibCfg()
 #if RECALCULATE_QP_ACCORDING_LAMBDA
   m_cTEncTop.setUseRecalculateQPAccordingToLambda( m_recalculateQPAccordingToLambda );
 #endif
+#if SUPPORT_FOR_VUI
+  m_cTEncTop.setVuiParametersPresentFlag( m_vuiParametersPresentFlag );
+  m_cTEncTop.setAspectRatioIdc( m_aspectRatioIdc );
+  m_cTEncTop.setSarWidth( m_sarWidth );
+  m_cTEncTop.setSarHeight( m_sarHeight );
+  m_cTEncTop.setOverscanInfoPresentFlag( m_overscanInfoPresentFlag );
+  m_cTEncTop.setOverscanAppropriateFlag( m_overscanAppropriateFlag );
+  m_cTEncTop.setVideoSignalTypePresentFlag( m_videoSignalTypePresentFlag );
+  m_cTEncTop.setVideoFormat( m_videoFormat );
+  m_cTEncTop.setVideoFullRangeFlag( m_videoFullRangeFlag );
+  m_cTEncTop.setColourDescriptionPresentFlag( m_colourDescriptionPresentFlag );
+  m_cTEncTop.setColourPrimaries( m_colourPrimaries );
+  m_cTEncTop.setTransferCharacteristics( m_transferCharacteristics );
+  m_cTEncTop.setMatrixCoefficients( m_matrixCoefficients );
+  m_cTEncTop.setChromaLocInfoPresentFlag( m_chromaLocInfoPresentFlag );
+  m_cTEncTop.setChromaSampleLocTypeTopField( m_chromaSampleLocTypeTopField );
+  m_cTEncTop.setChromaSampleLocTypeBottomField( m_chromaSampleLocTypeBottomField );
+  m_cTEncTop.setNeutralChromaIndicationFlag( m_neutralChromaIndicationFlag );
+  m_cTEncTop.setBitstreamRestrictionFlag( m_bitstreamRestrictionFlag );
+  m_cTEncTop.setTilesFixedStructureFlag( m_tilesFixedStructureFlag );
+  m_cTEncTop.setMotionVectorsOverPicBoundariesFlag( m_motionVectorsOverPicBoundariesFlag );
+  m_cTEncTop.setMaxBytesPerPicDenom( m_maxBytesPerPicDenom );
+  m_cTEncTop.setMaxBitsPerMinCuDenom( m_maxBitsPerMinCuDenom );
+  m_cTEncTop.setLog2MaxMvLengthHorizontal( m_log2MaxMvLengthHorizontal );
+  m_cTEncTop.setLog2MaxMvLengthVertical( m_log2MaxMvLengthVertical );
+#endif
 }
 
 Void TAppEncTop::xCreateLib()

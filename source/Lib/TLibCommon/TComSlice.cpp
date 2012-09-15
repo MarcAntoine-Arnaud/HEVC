@@ -1356,6 +1356,10 @@ TComSPS::TComSPS()
 , m_bUseSAO                   (false) 
 , m_bTemporalIdNestingFlag    (false)
 , m_scalingListEnabledFlag    (false)
+#if SUPPORT_FOR_VUI
+, m_vuiParametersPresentFlag  (false)
+, m_vuiParameters             ()
+#endif
 {
   // AMVP parameter
   ::memset( m_aeAMVPMode, 0, sizeof( m_aeAMVPMode ) );

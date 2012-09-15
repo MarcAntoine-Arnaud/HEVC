@@ -256,7 +256,33 @@ protected:
 #if RECALCULATE_QP_ACCORDING_LAMBDA
   Bool      m_recalculateQPAccordingToLambda;                 ///< recalculate QP value according to the lambda value
 #endif
-  
+#if SUPPORT_FOR_VUI
+  Bool      m_vuiParametersPresentFlag;                       ///< enable generation of VUI parameters
+  Bool      m_aspectRatioInfoPresentFlag;                     ///< Signals whether aspect_ratio_idc is present
+  Int       m_aspectRatioIdc;                                 ///< aspect_ratio_idc
+  Int       m_sarWidth;                                       ///< horizontal size of the sample aspect ratio
+  Int       m_sarHeight;                                      ///< vertical size of the sample aspect ratio
+  Bool      m_overscanInfoPresentFlag;                        ///< Signals whether overscan_appropriate_flag is present
+  Bool      m_overscanAppropriateFlag;                        ///< Indicates whether cropped decoded pictures are suitable for display using overscan
+  Bool      m_videoSignalTypePresentFlag;                     ///< Signals whether video_format, video_full_range_flag, and colour_description_present_flag are present
+  Int       m_videoFormat;                                    ///< Indicates representation of pictures
+  Bool      m_videoFullRangeFlag;                             ///< Indicates the black level and range of luma and chroma signals
+  Bool      m_colourDescriptionPresentFlag;                   ///< Signals whether colour_primaries, transfer_characteristics and matrix_coefficients are present
+  Int       m_colourPrimaries;                                ///< Indicates chromaticity coordinates of the source primaries
+  Int       m_transferCharacteristics;                        ///< Indicates the opto-electronic transfer characteristics of the source
+  Int       m_matrixCoefficients;                             ///< Describes the matrix coefficients used in deriving luma and chroma from RGB primaries
+  Bool      m_chromaLocInfoPresentFlag;                       ///< Signals whether chroma_sample_loc_type_top_field and chroma_sample_loc_type_bottom_field are present
+  Int       m_chromaSampleLocTypeTopField;                    ///< Specifies the location of chroma samples for top field
+  Int       m_chromaSampleLocTypeBottomField;                 ///< Specifies the location of chroma samples for bottom field
+  Bool      m_neutralChromaIndicationFlag;                    ///< Indicates that the value of all decoded chroma samples is equal to 1<<(BitDepthCr-1)
+  Bool      m_bitstreamRestrictionFlag;                       ///< Signals whether bitstream restriction parameters are present
+  Bool      m_tilesFixedStructureFlag;                        ///< Indicates that each active picture parameter set has the same values of the syntax elements related to tiles
+  Bool      m_motionVectorsOverPicBoundariesFlag;             ///< Indicates that no samples outside the picture boundaries are used for inter prediction
+  Int       m_maxBytesPerPicDenom;                            ///< Indicates a number of bytes not exceeded by the sum of the sizes of the VCL NAL units associated with any coded picture
+  Int       m_maxBitsPerMinCuDenom;                           ///< Indicates an upper bound for the number of bits of coding_unit() data
+  Int       m_log2MaxMvLengthHorizontal;                      ///< Indicate the maximum absolute value of a decoded horizontal MV component in quarter-pel luma units
+  Int       m_log2MaxMvLengthVertical;                        ///< Indicate the maximum absolute value of a decoded vertical MV component in quarter-pel luma units
+#endif
 public:
   TEncCfg()
   : m_puiColumnWidth()
@@ -591,6 +617,58 @@ public:
 #if RECALCULATE_QP_ACCORDING_LAMBDA
   Void      setUseRecalculateQPAccordingToLambda ( Bool b ) { m_recalculateQPAccordingToLambda = b;    }
   Bool      getUseRecalculateQPAccordingToLambda ()         { return m_recalculateQPAccordingToLambda; }
+#endif
+#if SUPPORT_FOR_VUI
+  Bool      getVuiParametersPresentFlag()                 { return m_vuiParametersPresentFlag; }
+  Void      setVuiParametersPresentFlag(Bool i)           { m_vuiParametersPresentFlag = i; }
+  Bool      getAspectRatioInfoPresentFlag()               { return m_aspectRatioInfoPresentFlag; }
+  Void      setAspectRatioInfoPresentFlag(Bool i)         { m_aspectRatioInfoPresentFlag = i; }
+  Int       getAspectRatioIdc()                           { return m_aspectRatioIdc; }
+  Void      setAspectRatioIdc(Int i)                      { m_aspectRatioIdc = i; }
+  Int       getSarWidth()                                 { return m_sarWidth; }
+  Void      setSarWidth(Int i)                            { m_sarWidth = i; }
+  Int       getSarHeight()                                { return m_sarHeight; }
+  Void      setSarHeight(Int i)                           { m_sarHeight = i; }
+  Bool      getOverscanInfoPresentFlag()                  { return m_overscanInfoPresentFlag; }
+  Void      setOverscanInfoPresentFlag(Bool i)            { m_overscanInfoPresentFlag = i; }
+  Bool      getOverscanAppropriateFlag()                  { return m_overscanAppropriateFlag; }
+  Void      setOverscanAppropriateFlag(Bool i)            { m_overscanAppropriateFlag = i; }
+  Bool      getVideoSignalTypePresentFlag()               { return m_videoSignalTypePresentFlag; }
+  Void      setVideoSignalTypePresentFlag(Bool i)         { m_videoSignalTypePresentFlag = i; }
+  Int       getVideoFormat()                              { return m_videoFormat; }
+  Void      setVideoFormat(Int i)                         { m_videoFormat = i; }
+  Bool      getVideoFullRangeFlag()                       { return m_videoFullRangeFlag; }
+  Void      setVideoFullRangeFlag(Bool i)                 { m_videoFullRangeFlag = i; }
+  Bool      getColourDescriptionPresentFlag()             { return m_colourDescriptionPresentFlag; }
+  Void      setColourDescriptionPresentFlag(Bool i)       { m_colourDescriptionPresentFlag = i; }
+  Int       getColourPrimaries()                          { return m_colourPrimaries; }
+  Void      setColourPrimaries(Int i)                     { m_colourPrimaries = i; }
+  Int       getTransferCharacteristics()                  { return m_transferCharacteristics; }
+  Void      setTransferCharacteristics(Int i)             { m_transferCharacteristics = i; }
+  Int       getMatrixCoefficients()                       { return m_matrixCoefficients; }
+  Void      setMatrixCoefficients(Int i)                  { m_matrixCoefficients = i; }
+  Bool      getChromaLocInfoPresentFlag()                 { return m_chromaLocInfoPresentFlag; }
+  Void      setChromaLocInfoPresentFlag(Bool i)           { m_chromaLocInfoPresentFlag = i; }
+  Int       getChromaSampleLocTypeTopField()              { return m_chromaSampleLocTypeTopField; }
+  Void      setChromaSampleLocTypeTopField(Int i)         { m_chromaSampleLocTypeTopField = i; }
+  Int       getChromaSampleLocTypeBottomField()           { return m_chromaSampleLocTypeBottomField; }
+  Void      setChromaSampleLocTypeBottomField(Int i)      { m_chromaSampleLocTypeBottomField = i; }
+  Bool      getNeutralChromaIndicationFlag()              { return m_neutralChromaIndicationFlag; }
+  Void      setNeutralChromaIndicationFlag(Bool i)        { m_neutralChromaIndicationFlag = i; }
+  Bool      getBitstreamRestrictionFlag()                 { return m_bitstreamRestrictionFlag; }
+  Void      setBitstreamRestrictionFlag(Bool i)           { m_bitstreamRestrictionFlag = i; }
+  Bool      getTilesFixedStructureFlag()                  { return m_tilesFixedStructureFlag; }
+  Void      setTilesFixedStructureFlag(Bool i)            { m_tilesFixedStructureFlag = i; }
+  Bool      getMotionVectorsOverPicBoundariesFlag()       { return m_motionVectorsOverPicBoundariesFlag; }
+  Void      setMotionVectorsOverPicBoundariesFlag(Bool i) { m_motionVectorsOverPicBoundariesFlag = i; }
+  Int       getMaxBytesPerPicDenom()                      { return m_maxBytesPerPicDenom; }
+  Void      setMaxBytesPerPicDenom(Int i)                 { m_maxBytesPerPicDenom = i; }
+  Int       getMaxBitsPerMinCuDenom()                     { return m_maxBitsPerMinCuDenom; }
+  Void      setMaxBitsPerMinCuDenom(Int i)                { m_maxBitsPerMinCuDenom = i; }
+  Int       getLog2MaxMvLengthHorizontal()                { return m_log2MaxMvLengthHorizontal; }
+  Void      setLog2MaxMvLengthHorizontal(Int i)           { m_log2MaxMvLengthHorizontal = i; }
+  Int       getLog2MaxMvLengthVertical()                  { return m_log2MaxMvLengthVertical; }
+  Void      setLog2MaxMvLengthVertical(Int i)             { m_log2MaxMvLengthVertical = i; }
 #endif
 };
 

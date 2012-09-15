@@ -276,6 +276,150 @@ public:
 #endif  
 };
 
+#if SUPPORT_FOR_VUI
+class TComVUI
+{
+private:
+  Bool m_aspectRatioInfoPresentFlag;
+  Int  m_aspectRatioIdc;
+  Int  m_sarWidth;
+  Int  m_sarHeight;
+  Bool m_overscanInfoPresentFlag;
+  Bool m_overscanAppropriateFlag;
+  Bool m_videoSignalTypePresentFlag;
+  Int  m_videoFormat;
+  Bool m_videoFullRangeFlag;
+  Bool m_colourDescriptionPresentFlag;
+  Int  m_colourPrimaries;
+  Int  m_transferCharacteristics;
+  Int  m_matrixCoefficients;
+  Bool m_chromaLocInfoPresentFlag;
+  Int  m_chromaSampleLocTypeTopField;
+  Int  m_chromaSampleLocTypeBottomField;
+  Bool m_neutralChromaIndicationFlag;
+  Bool m_fieldSeqFlag;
+  Bool m_hrdParametersPresentFlag;
+  Bool m_bitstreamRestrictionFlag;
+  Bool m_tilesFixedStructureFlag;
+  Bool m_motionVectorsOverPicBoundariesFlag;
+  Int  m_maxBytesPerPicDenom;
+  Int  m_maxBitsPerMinCuDenom;
+  Int  m_log2MaxMvLengthHorizontal;
+  Int  m_log2MaxMvLengthVertical;
+
+public:
+  TComVUI()
+    :
+    m_aspectRatioInfoPresentFlag(false),
+    m_aspectRatioIdc(0),
+    m_sarWidth(0),
+    m_sarHeight(0),
+    m_overscanInfoPresentFlag(false),
+    m_overscanAppropriateFlag(false),
+    m_videoSignalTypePresentFlag(false),
+    m_videoFormat(5),
+    m_videoFullRangeFlag(false),
+    m_colourDescriptionPresentFlag(false),
+    m_colourPrimaries(2),
+    m_transferCharacteristics(2),
+    m_matrixCoefficients(2),
+    m_chromaLocInfoPresentFlag(false),
+    m_chromaSampleLocTypeTopField(0),
+    m_chromaSampleLocTypeBottomField(0),
+    m_neutralChromaIndicationFlag(false),
+    m_fieldSeqFlag(false),
+    m_hrdParametersPresentFlag(false),
+    m_bitstreamRestrictionFlag(false),
+    m_tilesFixedStructureFlag(false),
+    m_motionVectorsOverPicBoundariesFlag(true),
+    m_maxBytesPerPicDenom(2),
+    m_maxBitsPerMinCuDenom(1),
+    m_log2MaxMvLengthHorizontal(15),
+    m_log2MaxMvLengthVertical(15)
+  {}
+
+  virtual ~TComVUI() {}
+
+  Bool getAspectRatioInfoPresentFlag() { return m_aspectRatioInfoPresentFlag; }
+  Void setAspectRatioInfoPresentFlag(Bool i) { m_aspectRatioInfoPresentFlag = i; }
+
+  Int getAspectRatioIdc() { return m_aspectRatioIdc; }
+  Void setAspectRatioIdc(Int i) { m_aspectRatioIdc = i; }
+
+  Int getSarWidth() { return m_sarWidth; }
+  Void setSarWidth(Int i) { m_sarWidth = i; }
+
+  Int getSarHeight() { return m_sarHeight; }
+  Void setSarHeight(Int i) { m_sarHeight = i; }
+
+  Bool getOverscanInfoPresentFlag() { return m_overscanInfoPresentFlag; }
+  Void setOverscanInfoPresentFlag(Bool i) { m_overscanInfoPresentFlag = i; }
+
+  Bool getOverscanAppropriateFlag() { return m_overscanAppropriateFlag; }
+  Void setOverscanAppropriateFlag(Bool i) { m_overscanAppropriateFlag = i; }
+
+  Bool getVideoSignalTypePresentFlag() { return m_videoSignalTypePresentFlag; }
+  Void setVideoSignalTypePresentFlag(Bool i) { m_videoSignalTypePresentFlag = i; }
+
+  Int getVideoFormat() { return m_videoFormat; }
+  Void setVideoFormat(Int i) { m_videoFormat = i; }
+
+  Bool getVideoFullRangeFlag() { return m_videoFullRangeFlag; }
+  Void setVideoFullRangeFlag(Bool i) { m_videoFullRangeFlag = i; }
+
+  Bool getColourDescriptionPresentFlag() { return m_colourDescriptionPresentFlag; }
+  Void setColourDescriptionPresentFlag(Bool i) { m_colourDescriptionPresentFlag = i; }
+
+  Int getColourPrimaries() { return m_colourPrimaries; }
+  Void setColourPrimaries(Int i) { m_colourPrimaries = i; }
+
+  Int getTransferCharacteristics() { return m_transferCharacteristics; }
+  Void setTransferCharacteristics(Int i) { m_transferCharacteristics = i; }
+
+  Int getMatrixCoefficients() { return m_matrixCoefficients; }
+  Void setMatrixCoefficients(Int i) { m_matrixCoefficients = i; }
+
+  Bool getChromaLocInfoPresentFlag() { return m_chromaLocInfoPresentFlag; }
+  Void setChromaLocInfoPresentFlag(Bool i) { m_chromaLocInfoPresentFlag = i; }
+
+  Int getChromaSampleLocTypeTopField() { return m_chromaSampleLocTypeTopField; }
+  Void setChromaSampleLocTypeTopField(Int i) { m_chromaSampleLocTypeTopField = i; }
+
+  Int getChromaSampleLocTypeBottomField() { return m_chromaSampleLocTypeBottomField; }
+  Void setChromaSampleLocTypeBottomField(Int i) { m_chromaSampleLocTypeBottomField = i; }
+
+  Bool getNeutralChromaIndicationFlag() { return m_neutralChromaIndicationFlag; }
+  Void setNeutralChromaIndicationFlag(Bool i) { m_neutralChromaIndicationFlag = i; }
+
+  Bool getFieldSeqFlag() { return m_fieldSeqFlag; }
+  Void setFieldSeqFlag(Bool i) { m_fieldSeqFlag = i; }
+
+  Bool getHrdParametersPresentFlag() { return m_hrdParametersPresentFlag; }
+  Void setHrdParametersPresentFlag(Bool i) { m_hrdParametersPresentFlag = i; }
+
+  Bool getBitstreamRestrictionFlag() { return m_bitstreamRestrictionFlag; }
+  Void setBitstreamRestrictionFlag(Bool i) { m_bitstreamRestrictionFlag = i; }
+
+  Bool getTilesFixedStructureFlag() { return m_tilesFixedStructureFlag; }
+  Void setTilesFixedStructureFlag(Bool i) { m_tilesFixedStructureFlag = i; }
+
+  Bool getMotionVectorsOverPicBoundariesFlag() { return m_motionVectorsOverPicBoundariesFlag; }
+  Void setMotionVectorsOverPicBoundariesFlag(Bool i) { m_motionVectorsOverPicBoundariesFlag = i; }
+
+  Int getMaxBytesPerPicDenom() { return m_maxBytesPerPicDenom; }
+  Void setMaxBytesPerPicDenom(Int i) { m_maxBytesPerPicDenom = i; }
+
+  Int getMaxBitsPerMinCuDenom() { return m_maxBitsPerMinCuDenom; }
+  Void setMaxBitsPerMinCuDenom(Int i) { m_maxBitsPerMinCuDenom = i; }
+
+  Int getLog2MaxMvLengthHorizontal() { return m_log2MaxMvLengthHorizontal; }
+  Void setLog2MaxMvLengthHorizontal(Int i) { m_log2MaxMvLengthHorizontal = i; }
+
+  Int getLog2MaxMvLengthVertical() { return m_log2MaxMvLengthVertical; }
+  Void setLog2MaxMvLengthVertical(Int i) { m_log2MaxMvLengthVertical = i; }
+};
+#endif
+
 /// SPS class
 class TComSPS
 {
@@ -377,6 +521,11 @@ private:
   UInt        m_uiMaxLatencyIncrease[MAX_TLAYER];
 
   Bool        m_useDF;
+
+#if SUPPORT_FOR_VUI
+  Bool        m_vuiParametersPresentFlag;
+  TComVUI     m_vuiParameters;
+#endif
 
   static const Int   m_cropUnitX[MAX_CHROMA_FORMAT_IDC+1];
   static const Int   m_cropUnitY[MAX_CHROMA_FORMAT_IDC+1];
@@ -552,6 +701,13 @@ public:
   Void setMaxDecPicBuffering  ( UInt ui, UInt tlayer ) { m_uiMaxDecPicBuffering[tlayer] = ui;   }
   UInt getMaxLatencyIncrease  (UInt tlayer)            { return m_uiMaxLatencyIncrease[tlayer];   }
   Void setMaxLatencyIncrease  ( UInt ui , UInt tlayer) { m_uiMaxLatencyIncrease[tlayer] = ui;      }
+
+#if SUPPORT_FOR_VUI
+  Bool getVuiParametersPresentFlag() { return m_vuiParametersPresentFlag; }
+  Void setVuiParametersPresentFlag(Bool b) { m_vuiParametersPresentFlag = b; }
+  TComVUI* getVuiParameters() { return &m_vuiParameters; }
+#endif
+
 #if SPS_SYNTAX_CHANGES
   TComPTL* getPTL()     { return &m_pcPTL; }
 #endif

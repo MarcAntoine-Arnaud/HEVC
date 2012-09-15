@@ -380,6 +380,68 @@ Void TEncCavlc::codePPS( TComPPS* pcPPS )
   WRITE_FLAG( 0, "pps_extension_flag" );
 }
 
+#if SUPPORT_FOR_VUI
+Void TEncCavlc::codeVUI( TComVUI *pcVUI, TComSPS* pcSPS )
+{
+#if ENC_DEC_TRACE
+  fprintf( g_hTrace, "----------- vui_parameters -----------\n");
+#endif
+  WRITE_FLAG(pcVUI->getAspectRatioInfoPresentFlag(),            "aspect_ratio_info_present_flag");
+  if (pcVUI->getAspectRatioIdc())
+  {
+    WRITE_CODE(pcVUI->getAspectRatioIdc(), 8,                   "vui_parameters_present_flag" );
+    if (pcVUI->getAspectRatioIdc() == 255)
+    {
+      WRITE_CODE(pcVUI->getSarWidth(), 16,                      "sar_width");
+      WRITE_CODE(pcVUI->getSarHeight(), 16,                     "sar_height");
+    }
+  }
+  WRITE_FLAG(pcVUI->getOverscanInfoPresentFlag(),               "overscan_info_present_flag");
+  if (pcVUI->getOverscanInfoPresentFlag())
+  {
+    WRITE_FLAG(pcVUI->getOverscanAppropriateFlag(),             "overscan_appropriate_flag");
+  }
+  WRITE_FLAG(pcVUI->getVideoSignalTypePresentFlag(),            "video_signal_type_present_flag");
+  if (pcVUI->getVideoSignalTypePresentFlag())
+  {
+    WRITE_CODE(pcVUI->getVideoFormat(), 3,                      "video_format");
+    WRITE_FLAG(pcVUI->getVideoFullRangeFlag(),                  "video_full_range_flag");
+    WRITE_FLAG(pcVUI->getColourDescriptionPresentFlag(),        "colour_description_present_flag");
+    if (pcVUI->getColourDescriptionPresentFlag())
+    {
+      WRITE_CODE(pcVUI->getColourPrimaries(), 8,                "colour_primaries");
+      WRITE_CODE(pcVUI->getTransferCharacteristics(), 8,        "transfer_characteristics");
+      WRITE_CODE(pcVUI->getMatrixCoefficients(), 8,             "matrix_coefficients");
+    }
+  }
+
+  WRITE_FLAG(pcVUI->getChromaLocInfoPresentFlag(),              "chroma_loc_info_present_flag");
+  if (pcVUI->getChromaLocInfoPresentFlag())
+  {
+    WRITE_UVLC(pcVUI->getChromaSampleLocTypeTopField(),         "chroma_sample_loc_type_top_field");
+    WRITE_UVLC(pcVUI->getChromaSampleLocTypeBottomField(),      "chroma_sample_loc_type_bottom_field");
+  }
+
+  WRITE_FLAG(pcVUI->getNeutralChromaIndicationFlag(),           "neutral_chroma_indication_flag");
+  WRITE_FLAG(pcVUI->getFieldSeqFlag(),                          "field_seq_flag");
+  assert(pcVUI->getFieldSeqFlag() == 0);                        // not currently supported
+  WRITE_FLAG(pcVUI->getHrdParametersPresentFlag(),              "hrd_parameters_present_flag");
+  assert(pcVUI->getHrdParametersPresentFlag() == 0);            // not currently supported
+
+  WRITE_FLAG(pcVUI->getBitstreamRestrictionFlag(),              "bitstream_restriction_flag");
+  if (pcVUI->getBitstreamRestrictionFlag())
+  {
+    WRITE_FLAG(pcVUI->getTilesFixedStructureFlag(),             "tiles_fixed_structure_flag");
+    WRITE_FLAG(pcVUI->getMotionVectorsOverPicBoundariesFlag(),  "motion_vectors_over_pic_boundaries_flag");
+    WRITE_UVLC(pcVUI->getMaxBytesPerPicDenom(),                 "max_bytes_per_pic_denom");
+    WRITE_UVLC(pcVUI->getMaxBitsPerMinCuDenom(),                "max_bits_per_mincu_denom");
+    WRITE_UVLC(pcVUI->getLog2MaxMvLengthHorizontal(),           "log2_max_mv_length_horizontal");
+    WRITE_UVLC(pcVUI->getLog2MaxMvLengthVertical(),             "log2_max_mv_length_vertical");
+  }
+
+}
+#endif
+
 Void TEncCavlc::codeSPS( TComSPS* pcSPS )
 {
 #if ENC_DEC_TRACE  
@@ -537,6 +599,13 @@ Void TEncCavlc::codeSPS( TComSPS* pcSPS )
   }
 #endif
   WRITE_FLAG( pcSPS->getTMVPFlagsPresent()  ? 1 : 0,           "sps_temporal_mvp_enable_flag" );
+#if SUPPORT_FOR_VUI
+  WRITE_FLAG( pcSPS->getVuiParametersPresentFlag(),             "vui_parameters_present_flag" );
+  if (pcSPS->getVuiParametersPresentFlag())
+  {
+      codeVUI(pcSPS->getVuiParameters(), pcSPS);
+  }
+#endif
   // AMVP mode for each depth
   for (Int i = 0; i < pcSPS->getMaxCUDepth(); i++)
   {
