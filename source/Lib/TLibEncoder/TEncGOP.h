@@ -53,6 +53,7 @@
 #include "TEncEntropy.h"
 #include "TEncCavlc.h"
 #include "TEncSbac.h"
+#include "SEIwrite.h"
 
 #include "TEncAnalyze.h"
 #include "TEncRateCtrl.h"
@@ -95,6 +96,8 @@ private:
   TEncSbac*               m_pcSbacCoder;
   TEncBinCABAC*           m_pcBinCABAC;
   TComLoopFilter*         m_pcLoopFilter;
+
+  SEIWriter               m_seiWriter;
   
 #if !REMOVE_ALF
   // Adaptive Loop filter

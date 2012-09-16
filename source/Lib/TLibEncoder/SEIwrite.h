@@ -33,12 +33,26 @@
 
 #pragma once
 
+#include "SyntaxElementWriter.h"
+#include "TLibCommon/SEI.h"
+
 class TComBitIf;
-class SEI;
 
 //! \ingroup TLibEncoder
 //! \{
+class SEIWriter:public SyntaxElementWriter
+{
+public:
+  SEIWriter() {};
+  virtual ~SEIWriter() {};
 
-void writeSEImessage(TComBitIf& bs, const SEI& sei);
+  void writeSEImessage(TComBitIf& bs, const SEI& sei);
+
+protected:
+  Void xWriteSEIpayloadData(const SEI& sei);
+  Void xWriteSEIuserDataUnregistered(const SEIuserDataUnregistered &sei);
+  Void xWriteSEIpictureDigest(const SEIpictureDigest& sei);
+
+};
 
 //! \}

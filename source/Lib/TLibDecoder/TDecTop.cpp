@@ -674,10 +674,10 @@ Void TDecTop::xDecodeAPS()
 }
 #endif
 
-Void TDecTop::xDecodeSEI()
+Void TDecTop::xDecodeSEI( TComInputBitstream* bs )
 {
   m_SEIs = new SEImessages;
-  m_cEntropyDecoder.decodeSEI(*m_SEIs);
+  m_seiReader.parseSEImessage( bs, *m_SEIs );
 }
 
 Bool TDecTop::decode(InputNALUnit& nalu, Int& iSkipFrame, Int& iPOCLastDisplay)
@@ -706,7 +706,7 @@ Bool TDecTop::decode(InputNALUnit& nalu, Int& iSkipFrame, Int& iPOCLastDisplay)
 #endif
       
     case NAL_UNIT_SEI:
-      xDecodeSEI();
+      xDecodeSEI( nalu.m_Bitstream );
       return false;
 
 #if NAL_UNIT_TYPES_J1003_D7

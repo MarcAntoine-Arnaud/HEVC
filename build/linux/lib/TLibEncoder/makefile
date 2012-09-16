@@ -34,6 +34,7 @@ DEFS			= -DMSYS_LINUX
 OBJS          	= \
 			$(OBJ_DIR)/NALwrite.o \
 			$(OBJ_DIR)/SEIwrite.o \
+			$(OBJ_DIR)/SyntaxElementWriter.o \
 			$(OBJ_DIR)/TEncBinCoderCABAC.o \
 			$(OBJ_DIR)/TEncBinCoderCABACCounter.o \
 			$(OBJ_DIR)/TEncAdaptiveLoopFilter.o \

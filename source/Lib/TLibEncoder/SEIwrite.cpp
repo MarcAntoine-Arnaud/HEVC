@@ -39,18 +39,38 @@
 //! \ingroup TLibEncoder
 //! \{
 
-static void writeSEIuserDataUnregistered(TComBitIf& bs, const SEIuserDataUnregistered &sei);
-static void writeSEIpictureDigest(TComBitIf& bs, const SEIpictureDigest& sei);
+#if ENC_DEC_TRACE
+Void  xTraceSEIHeader()
+{
+  fprintf( g_hTrace, "=========== SEI message ===========\n");
+}
 
-void writeSEIpayloadData(TComBitIf& bs, const SEI& sei)
+Void  xTraceSEIMessageType(SEI::PayloadType payloadType)
+{
+  switch (payloadType)
+  {
+  case SEI::PICTURE_DIGEST:
+    fprintf( g_hTrace, "=========== Decoded picture hash SEI message ===========\n");
+    break;
+  case SEI::USER_DATA_UNREGISTERED:
+    fprintf( g_hTrace, "=========== User Data Unregistered SEI message ===========\n");
+    break;
+  default:
+    fprintf( g_hTrace, "=========== Unknown SEI message ===========\n");
+    break;
+  }
+}
+#endif
+
+void SEIWriter::xWriteSEIpayloadData(const SEI& sei)
 {
   switch (sei.payloadType())
   {
   case SEI::USER_DATA_UNREGISTERED:
-    writeSEIuserDataUnregistered(bs, *static_cast<const SEIuserDataUnregistered*>(&sei));
+    xWriteSEIuserDataUnregistered(*static_cast<const SEIuserDataUnregistered*>(&sei));
     break;
   case SEI::PICTURE_DIGEST:
-    writeSEIpictureDigest(bs, *static_cast<const SEIpictureDigest*>(&sei));
+    xWriteSEIpictureDigest(*static_cast<const SEIpictureDigest*>(&sei));
     break;
   default:
     assert(!"Unhandled SEI message");
@@ -61,48 +81,66 @@ void writeSEIpayloadData(TComBitIf& bs, const SEI& sei)
  * marshal a single SEI message sei, storing the marshalled representation
  * in bitstream bs.
  */
-void writeSEImessage(TComBitIf& bs, const SEI& sei)
+Void SEIWriter::writeSEImessage(TComBitIf& bs, const SEI& sei)
 {
   /* calculate how large the payload data is */
   /* TODO: this would be far nicer if it used vectored buffers */
   TComBitCounter bs_count;
   bs_count.resetBits();
-  writeSEIpayloadData(bs_count, sei);
+  setBitstream(&bs_count);
+
+#if ENC_DEC_TRACE
+  g_HLSTraceEnable = false;
+#endif
+  xWriteSEIpayloadData(sei);
+#if ENC_DEC_TRACE
+  g_HLSTraceEnable = true;
+#endif
   unsigned payload_data_num_bits = bs_count.getNumberOfWrittenBits();
   assert(0 == payload_data_num_bits % 8);
 
-  unsigned payloadType = sei.payloadType();
+  setBitstream(&bs);
+
+#if ENC_DEC_TRACE
+  xTraceSEIHeader();
+#endif
+
+  UInt payloadType = sei.payloadType();
   for (; payloadType >= 0xff; payloadType -= 0xff)
   {
-    bs.write(0xff, 8);
+    WRITE_CODE(0xff, 8, "payload_type");
   }
-  bs.write(payloadType, 8);
+  WRITE_CODE(payloadType, 8, "payload_type");
 
-  unsigned payloadSize = payload_data_num_bits/8;
+  UInt payloadSize = payload_data_num_bits/8;
   for (; payloadSize >= 0xff; payloadSize -= 0xff)
   {
-    bs.write(0xff, 8);
+    WRITE_CODE(0xff, 8, "payload_size");
   }
-  bs.write(payloadSize, 8);
+  WRITE_CODE(payloadSize, 8, "payload_size");
 
   /* payloadData */
-  writeSEIpayloadData(bs, sei);
+#if ENC_DEC_TRACE
+  xTraceSEIMessageType(sei.payloadType());
+#endif
+
+  xWriteSEIpayloadData(sei);
 }
 
 /**
  * marshal a user_data_unregistered SEI message sei, storing the marshalled
  * representation in bitstream bs.
  */
-static void writeSEIuserDataUnregistered(TComBitIf& bs, const SEIuserDataUnregistered &sei)
+Void SEIWriter::xWriteSEIuserDataUnregistered(const SEIuserDataUnregistered &sei)
 {
-  for (unsigned i = 0; i < 16; i++)
+  for (UInt i = 0; i < 16; i++)
   {
-    bs.write(sei.uuid_iso_iec_11578[i], 8);
+    WRITE_CODE(sei.uuid_iso_iec_11578[i], 8 , "sei.uuid_iso_iec_11578[i]");
   }
 
-  for (unsigned i = 0; i < sei.userDataLength; i++)
+  for (UInt i = 0; i < sei.userDataLength; i++)
   {
-    bs.write(sei.userData[i], 8);
+    WRITE_CODE(sei.userData[i], 8 , "user_data");
   }
 }
 
@@ -110,27 +148,30 @@ static void writeSEIuserDataUnregistered(TComBitIf& bs, const SEIuserDataUnregis
  * marshal a picture_digest SEI message, storing the marshalled
  * representation in bitstream bs.
  */
-static void writeSEIpictureDigest(TComBitIf& bs, const SEIpictureDigest& sei)
+Void SEIWriter::xWriteSEIpictureDigest(const SEIpictureDigest& sei)
 {
-  int numChar=0;
-  bs.write(sei.method, 8);
-  if(sei.method == SEIpictureDigest::MD5)
-  {
-    numChar = 16;
-  }
-  else if(sei.method == SEIpictureDigest::CRC)
-  {
-    numChar = 2;
-  }
-  else if(sei.method == SEIpictureDigest::CHECKSUM)
-  {
-    numChar = 4;
-  }
+  UInt val;
+
+  WRITE_CODE(sei.method, 8, "hash_type");
+
   for(int yuvIdx = 0; yuvIdx < 3; yuvIdx++)
   {
-    for (unsigned i = 0; i < numChar; i++)
+    if(sei.method == SEIpictureDigest::MD5)
     {
-      bs.write(sei.digest[yuvIdx][i], 8);
+      for (unsigned i = 0; i < 16; i++)
+      {
+        WRITE_CODE(sei.digest[yuvIdx][i], 8, "picture_md5");
+      }
+    }
+    else if(sei.method == SEIpictureDigest::CRC)
+    {
+      val = (sei.digest[yuvIdx][0] << 8)  + sei.digest[yuvIdx][1];
+      WRITE_CODE(val, 16, "picture_crc");
+    }
+    else if(sei.method == SEIpictureDigest::CHECKSUM)
+    {
+      val = (sei.digest[yuvIdx][0] << 24)  + (sei.digest[yuvIdx][1] << 16) + (sei.digest[yuvIdx][2] << 8) + sei.digest[yuvIdx][3];
+      WRITE_CODE(val, 32, "picture_checksum");
     }
   }
 }

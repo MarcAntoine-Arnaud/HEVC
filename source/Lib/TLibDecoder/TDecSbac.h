@@ -84,8 +84,6 @@ public:
   Void  parseAPS                  ( TComAPS* pAPS          ) {}
 #endif
 
-  void parseSEI(SEImessages&) {}
-
   Void  parseSliceHeader          ( TComSlice*& rpcSlice, ParameterSetManagerDecoder *parameterSetManager) {}
   Void  parseTerminatingBit       ( UInt& ruiBit );
   Void  parseMVPIdx               ( Int& riMVPIdx          );

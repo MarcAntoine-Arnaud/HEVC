@@ -49,6 +49,7 @@
 #include "TDecEntropy.h"
 #include "TDecSbac.h"
 #include "TDecCAVLC.h"
+#include "SEIread.h"
 
 struct InputNALUnit;
 
@@ -88,6 +89,7 @@ private:
   TDecCavlc               m_cCavlcDecoder;
   TDecSbac                m_cSbacDecoder;
   TDecBinCABAC            m_cBinCABAC;
+  SEIReader               m_seiReader;
   TComLoopFilter          m_cLoopFilter;
 #if !REMOVE_ALF
   TComAdaptiveLoopFilter  m_cAdaptiveLoopFilter;
@@ -134,7 +136,7 @@ protected:
 #if !REMOVE_APS
   Void      xDecodeAPS();
 #endif
-  Void      xDecodeSEI();
+  Void      xDecodeSEI( TComInputBitstream* bs );
 
 #if !REMOVE_APS
   Void      allocAPS (TComAPS* pAPS); //!< memory allocation for APS

@@ -1252,8 +1252,7 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
 
         /* write the SEI messages */
         m_pcEntropyCoder->setEntropyCoder(m_pcCavlcCoder, pcSlice);
-        m_pcEntropyCoder->setBitstream(&nalu.m_Bitstream);
-        m_pcEntropyCoder->encodeSEI(sei_recon_picture_digest);
+        m_seiWriter.writeSEImessage(nalu.m_Bitstream, sei_recon_picture_digest);
         writeRBSPTrailingBits(nalu.m_Bitstream);
 
         /* insert the SEI message NALUnit before any Slice NALUnits */

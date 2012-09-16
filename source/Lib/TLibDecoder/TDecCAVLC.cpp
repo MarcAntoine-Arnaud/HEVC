@@ -44,11 +44,6 @@
 
 #if ENC_DEC_TRACE
 
-#define READ_CODE(length, code, name)     xReadCodeTr ( length, code, name )
-#define READ_UVLC(        code, name)     xReadUvlcTr (         code, name )
-#define READ_SVLC(        code, name)     xReadSvlcTr (         code, name )
-#define READ_FLAG(        code, name)     xReadFlagTr (         code, name )
-
 Void  xTraceSPSHeader (TComSPS *pSPS)
 {
   fprintf( g_hTrace, "=========== Sequence Parameter Set ID: %d ===========\n", pSPS->getSPSId() );
@@ -71,49 +66,7 @@ Void  xTraceSliceHeader (TComSlice *pSlice)
   fprintf( g_hTrace, "=========== Slice ===========\n");
 }
 
-
-Void  TDecCavlc::xReadCodeTr           (UInt length, UInt& rValue, const Char *pSymbolName)
-{
-  xReadCode (length, rValue);
-  fprintf( g_hTrace, "%8lld  ", g_nSymbolCounter++ );
-  fprintf( g_hTrace, "%-40s u(%d) : %d\n", pSymbolName, length, rValue ); 
-  fflush ( g_hTrace );
-}
-
-Void  TDecCavlc::xReadUvlcTr           (UInt& rValue, const Char *pSymbolName)
-{
-  xReadUvlc (rValue);
-  fprintf( g_hTrace, "%8lld  ", g_nSymbolCounter++ );
-  fprintf( g_hTrace, "%-40s u(v) : %d\n", pSymbolName, rValue ); 
-  fflush ( g_hTrace );
-}
-
-Void  TDecCavlc::xReadSvlcTr           (Int& rValue, const Char *pSymbolName)
-{
-  xReadSvlc(rValue);
-  fprintf( g_hTrace, "%8lld  ", g_nSymbolCounter++ );
-  fprintf( g_hTrace, "%-40s s(v) : %d\n", pSymbolName, rValue ); 
-  fflush ( g_hTrace );
-}
-
-Void  TDecCavlc::xReadFlagTr           (UInt& rValue, const Char *pSymbolName)
-{
-  xReadFlag(rValue);
-  fprintf( g_hTrace, "%8lld  ", g_nSymbolCounter++ );
-  fprintf( g_hTrace, "%-40s u(1) : %d\n", pSymbolName, rValue ); 
-  fflush ( g_hTrace );
-}
-
-#else
-
-#define READ_CODE(length, code, name)     xReadCode ( length, code )
-#define READ_UVLC(        code, name)     xReadUvlc (         code )
-#define READ_SVLC(        code, name)     xReadSvlc (         code )
-#define READ_FLAG(        code, name)     xReadFlag (         code )
-
 #endif
-
-
 
 // ====================================================================================================================
 // Constructor / destructor / create / destroy
@@ -135,21 +88,6 @@ TDecCavlc::~TDecCavlc()
 // Public member functions
 // ====================================================================================================================
 
-/**
-* unmarshal a sequence of SEI messages from bitstream.
-*/
-void TDecCavlc::parseSEI(SEImessages& seis)
-{
-  assert(!m_pcBitstream->getNumBitsUntilByteAligned());
-  do
-  {
-    parseSEImessage(*m_pcBitstream, seis);
-    /* SEI messages are an integer number of bytes, something has failed
-    * in the parsing if bitstream not byte-aligned */
-    assert(!m_pcBitstream->getNumBitsUntilByteAligned());
-  } while (0x80 != m_pcBitstream->peekBits(8));
-  assert(m_pcBitstream->getNumBitsLeft() == 8); /* rsbp_trailing_bits */
-}
 void TDecCavlc::parseShortTermRefPicSet( TComSPS* sps, TComReferencePictureSet* rps, Int idx )
 {
   UInt code;
@@ -1864,66 +1802,6 @@ Void TDecCavlc::parseMergeIndex ( TComDataCU* pcCU, UInt& ruiMergeIndex, UInt ui
 // Protected member functions
 // ====================================================================================================================
 
-Void TDecCavlc::xReadCode (UInt uiLength, UInt& ruiCode)
-{
-  assert ( uiLength > 0 );
-  m_pcBitstream->read (uiLength, ruiCode);
-}
-
-Void TDecCavlc::xReadUvlc( UInt& ruiVal)
-{
-  UInt uiVal = 0;
-  UInt uiCode = 0;
-  UInt uiLength;
-  m_pcBitstream->read( 1, uiCode );
-
-  if( 0 == uiCode )
-  {
-    uiLength = 0;
-
-    while( ! ( uiCode & 1 ))
-    {
-      m_pcBitstream->read( 1, uiCode );
-      uiLength++;
-    }
-
-    m_pcBitstream->read( uiLength, uiVal );
-
-    uiVal += (1 << uiLength)-1;
-  }
-
-  ruiVal = uiVal;
-}
-
-Void TDecCavlc::xReadSvlc( Int& riVal)
-{
-  UInt uiBits = 0;
-  m_pcBitstream->read( 1, uiBits );
-  if( 0 == uiBits )
-  {
-    UInt uiLength = 0;
-
-    while( ! ( uiBits & 1 ))
-    {
-      m_pcBitstream->read( 1, uiBits );
-      uiLength++;
-    }
-
-    m_pcBitstream->read( uiLength, uiBits );
-
-    uiBits += (1 << uiLength);
-    riVal = ( uiBits & 1) ? -(Int)(uiBits>>1) : (Int)(uiBits>>1);
-  }
-  else
-  {
-    riVal = 0;
-  }
-}
-
-Void TDecCavlc::xReadFlag (UInt& ruiCode)
-{
-  m_pcBitstream->read( 1, ruiCode );
-}
 
 /** Parse PCM alignment zero bits.
 * \returns Void

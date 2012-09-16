@@ -290,11 +290,6 @@ Void TEncSbac::updateContextTables( SliceType eSliceType, Int iQp, Bool bExecute
   m_pcBinIf->start();
 }
 
-void TEncSbac::codeSEI(const SEI&)
-{
-  assert(0);
-}
-
 Void TEncSbac::codeVPS( TComVPS* pcVPS )
 {
   assert (0);

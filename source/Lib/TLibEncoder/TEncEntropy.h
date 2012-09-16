@@ -71,7 +71,6 @@ public:
   virtual Void  codeVPS                 ( TComVPS* pcVPS )                                      = 0;
   virtual Void  codeSPS                 ( TComSPS* pcSPS )                                      = 0;
   virtual Void  codePPS                 ( TComPPS* pcPPS )                                      = 0;
-  virtual void codeSEI(const SEI&) = 0;
   virtual Void  codeSliceHeader         ( TComSlice* pcSlice )                                  = 0;
 
   virtual Void  codeTilesWPPEntryPoint  ( TComSlice* pSlice )     = 0;
@@ -190,7 +189,6 @@ public:
   // SPS
   Void encodeSPS               ( TComSPS* pcSPS );
   Void encodePPS               ( TComPPS* pcPPS );
-  void encodeSEI(const SEI&);
   Void encodeSplitFlag         ( TComDataCU* pcCU, UInt uiAbsPartIdx, UInt uiDepth, Bool bRD = false );
   Void encodeCUTransquantBypassFlag( TComDataCU* pcCU, UInt uiAbsPartIdx, Bool bRD = false );
   Void encodeSkipFlag          ( TComDataCU* pcCU, UInt uiAbsPartIdx, Bool bRD = false );

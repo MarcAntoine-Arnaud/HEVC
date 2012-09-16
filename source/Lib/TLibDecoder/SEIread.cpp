@@ -31,42 +31,90 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "TLibCommon/CommonDef.h"
 #include "TLibCommon/TComBitStream.h"
 #include "TLibCommon/SEI.h"
+#include "SyntaxElementParser.h"
 #include "SEIread.h"
 
 //! \ingroup TLibDecoder
 //! \{
 
-static void parseSEIuserDataUnregistered(TComInputBitstream& bs, SEIuserDataUnregistered &sei, unsigned payloadSize);
-static void parseSEIpictureDigest(TComInputBitstream& bs, SEIpictureDigest& sei, unsigned payloadSize);
+#if ENC_DEC_TRACE
+Void  xTraceSEIHeader()
+{
+  fprintf( g_hTrace, "=========== SEI message ===========\n");
+}
+
+Void  xTraceSEIMessageType(SEI::PayloadType payloadType)
+{
+  switch (payloadType)
+  {
+  case SEI::PICTURE_DIGEST:
+    fprintf( g_hTrace, "=========== Decoded picture hash SEI message ===========\n");
+    break;
+  case SEI::USER_DATA_UNREGISTERED:
+    fprintf( g_hTrace, "=========== User Data Unregistered SEI message ===========\n");
+    break;
+  default:
+    fprintf( g_hTrace, "=========== Unknown SEI message ===========\n");
+    break;
+  }
+}
+#endif
 
 /**
  * unmarshal a single SEI message from bitstream bs
  */
-void parseSEImessage(TComInputBitstream& bs, SEImessages& seis)
+void SEIReader::parseSEImessage(TComInputBitstream* bs, SEImessages& seis)
 {
-  unsigned payloadType = 0;
-  for (unsigned char byte = 0xff; 0xff == byte; )
-  {
-    payloadType += byte = bs.read(8);
-  }
+  setBitstream(bs);
 
-  unsigned payloadSize = 0;
-  for (unsigned char byte = 0xff; 0xff == byte; )
+  assert(!m_pcBitstream->getNumBitsUntilByteAligned());
+  do
   {
-    payloadSize += byte = bs.read(8);
-  }
+    xReadSEImessage(seis);
+    /* SEI messages are an integer number of bytes, something has failed
+    * in the parsing if bitstream not byte-aligned */
+    assert(!m_pcBitstream->getNumBitsUntilByteAligned());
+  } while (0x80 != m_pcBitstream->peekBits(8));
+  assert(m_pcBitstream->getNumBitsLeft() == 8); /* rsbp_trailing_bits */
+}
+
+Void SEIReader::xReadSEImessage(SEImessages& seis)
+{
+#if ENC_DEC_TRACE
+  xTraceSEIHeader();
+#endif
+  Int payloadType = 0;
+  UInt val = 0;
+
+  do
+  {
+    READ_CODE (8, val, "payload_type");
+    payloadType += val;
+  } while (val==0xFF);
+
+  UInt payloadSize = 0;
+  do
+  {
+    READ_CODE (8, val, "payload_size");
+    payloadSize += val;
+  } while (val==0xFF);
+
+#if ENC_DEC_TRACE
+  xTraceSEIMessageType((SEI::PayloadType)payloadType);
+#endif
 
   switch (payloadType)
   {
   case SEI::USER_DATA_UNREGISTERED:
     seis.user_data_unregistered = new SEIuserDataUnregistered;
-    parseSEIuserDataUnregistered(bs, *seis.user_data_unregistered, payloadSize);
+    xParseSEIuserDataUnregistered(*seis.user_data_unregistered, payloadSize);
     break;
   case SEI::PICTURE_DIGEST:
     seis.picture_digest = new SEIpictureDigest;
-    parseSEIpictureDigest(bs, *seis.picture_digest, payloadSize);
+    xParseSEIpictureDigest(*seis.picture_digest, payloadSize);
     break;
   default:
     assert(!"Unhandled SEI message");
@@ -77,12 +125,15 @@ void parseSEImessage(TComInputBitstream& bs, SEImessages& seis)
  * parse bitstream bs and unpack a user_data_unregistered SEI message
  * of payloasSize bytes into sei.
  */
-static void parseSEIuserDataUnregistered(TComInputBitstream& bs, SEIuserDataUnregistered &sei, unsigned payloadSize)
+Void SEIReader::xParseSEIuserDataUnregistered(SEIuserDataUnregistered &sei, unsigned payloadSize)
 {
   assert(payloadSize >= 16);
-  for (unsigned i = 0; i < 16; i++)
+  UInt val;
+
+  for (UInt i = 0; i < 16; i++)
   {
-    sei.uuid_iso_iec_11578[i] = bs.read(8);
+    READ_CODE (8, val, "uuid_iso_iec_11578");
+    sei.uuid_iso_iec_11578[i] = val;
   }
 
   sei.userDataLength = payloadSize - 16;
@@ -92,10 +143,11 @@ static void parseSEIuserDataUnregistered(TComInputBitstream& bs, SEIuserDataUnre
     return;
   }
 
-  sei.userData = new unsigned char[sei.userDataLength];
-  for (unsigned i = 0; i < sei.userDataLength; i++)
+  sei.userData = new UChar[sei.userDataLength];
+  for (UInt i = 0; i < sei.userDataLength; i++)
   {
-    sei.userData[i] = bs.read(8);
+    READ_CODE (8, val, "user_data" );
+    sei.userData[i] = val;
   }
 }
 
@@ -103,29 +155,34 @@ static void parseSEIuserDataUnregistered(TComInputBitstream& bs, SEIuserDataUnre
  * parse bitstream bs and unpack a picture_digest SEI message
  * of payloadSize bytes into sei.
  */
-static void parseSEIpictureDigest(TComInputBitstream& bs, SEIpictureDigest& sei, unsigned payloadSize)
+Void SEIReader::xParseSEIpictureDigest(SEIpictureDigest& sei, unsigned payloadSize)
 {
-  int numChar=0;
-
-  sei.method = static_cast<SEIpictureDigest::Method>(bs.read(8));
-  if(SEIpictureDigest::MD5 == sei.method)
-  {
-    numChar = 16;
-  }
-  else if(SEIpictureDigest::CRC == sei.method)
-  {
-    numChar = 2;
-  }
-  else if(SEIpictureDigest::CHECKSUM == sei.method)
-  {
-    numChar = 4;
-  }
-
+  UInt val;
+  READ_CODE (8, val, "hash_type");
+  sei.method = static_cast<SEIpictureDigest::Method>(val);
   for(int yuvIdx = 0; yuvIdx < 3; yuvIdx++)
   {
-    for (unsigned i = 0; i < numChar; i++)
+    if(SEIpictureDigest::MD5 == sei.method)
     {
-      sei.digest[yuvIdx][i] = bs.read(8);
+      for (unsigned i = 0; i < 16; i++)
+      {
+        READ_CODE(8, val, "picture_md5");
+        sei.digest[yuvIdx][i] = val;
+      }
+    }
+    else if(SEIpictureDigest::CRC == sei.method)
+    {
+      READ_CODE(16, val, "picture_crc");
+      sei.digest[yuvIdx][0] = val >> 8 & 0xFF;
+      sei.digest[yuvIdx][1] = val & 0xFF;
+    }
+    else if(SEIpictureDigest::CHECKSUM == sei.method)
+    {
+      READ_CODE(32, val, "picture_checksum");
+      sei.digest[yuvIdx][0] = (val>>24) & 0xff;
+      sei.digest[yuvIdx][1] = (val>>16) & 0xff;
+      sei.digest[yuvIdx][2] = (val>>8)  & 0xff;
+      sei.digest[yuvIdx][3] =  val      & 0xff;
     }
   }
 }

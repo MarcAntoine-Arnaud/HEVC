@@ -44,15 +44,6 @@
 
 #if ENC_DEC_TRACE
 
-#define WRITE_CODE( value, length, name)    xWriteCodeTr ( value, length, name )
-#define WRITE_UVLC( value,         name)    xWriteUvlcTr ( value,         name )
-#define WRITE_SVLC( value,         name)    xWriteSvlcTr ( value,         name )
-#define WRITE_FLAG( value,         name)    xWriteFlagTr ( value,         name )
-
-Void  xWriteUvlcTr          ( UInt value,               const Char *pSymbolName);
-Void  xWriteSvlcTr          ( Int  value,               const Char *pSymbolName);
-Void  xWriteFlagTr          ( UInt value,               const Char *pSymbolName);
-
 Void  xTraceSPSHeader (TComSPS *pSPS)
 {
   fprintf( g_hTrace, "=========== Sequence Parameter Set ID: %d ===========\n", pSPS->getSPSId() );
@@ -74,42 +65,6 @@ Void  xTraceSliceHeader (TComSlice *pSlice)
 {
   fprintf( g_hTrace, "=========== Slice ===========\n");
 }
-
-
-Void  TEncCavlc::xWriteCodeTr (UInt value, UInt  length, const Char *pSymbolName)
-{
-  xWriteCode (value,length);
-  fprintf( g_hTrace, "%8lld  ", g_nSymbolCounter++ );
-  fprintf( g_hTrace, "%-40s u(%d) : %d\n", pSymbolName, length, value ); 
-}
-
-Void  TEncCavlc::xWriteUvlcTr (UInt value, const Char *pSymbolName)
-{
-  xWriteUvlc (value);
-  fprintf( g_hTrace, "%8lld  ", g_nSymbolCounter++ );
-  fprintf( g_hTrace, "%-40s u(v) : %d\n", pSymbolName, value ); 
-}
-
-Void  TEncCavlc::xWriteSvlcTr (Int value, const Char *pSymbolName)
-{
-  xWriteSvlc(value);
-  fprintf( g_hTrace, "%8lld  ", g_nSymbolCounter++ );
-  fprintf( g_hTrace, "%-40s s(v) : %d\n", pSymbolName, value ); 
-}
-
-Void  TEncCavlc::xWriteFlagTr(UInt value, const Char *pSymbolName)
-{
-  xWriteFlag(value);
-  fprintf( g_hTrace, "%8lld  ", g_nSymbolCounter++ );
-  fprintf( g_hTrace, "%-40s u(1) : %d\n", pSymbolName, value ); 
-}
-
-#else
-
-#define WRITE_CODE( value, length, name)     xWriteCode ( value, length )
-#define WRITE_UVLC( value,         name)     xWriteUvlc ( value )
-#define WRITE_SVLC( value,         name)     xWriteSvlc ( value )
-#define WRITE_FLAG( value,         name)     xWriteFlag ( value )
 
 #endif
 
@@ -141,13 +96,6 @@ Void TEncCavlc::resetEntropy()
 {
 }
 
-/**
- * marshall the SEI message sei.
- */
-void TEncCavlc::codeSEI(const SEI& sei)
-{
-  writeSEImessage(*m_pcBitIf, sei);
-}
 
 #if !REMOVE_APS
 Void  TEncCavlc::codeAPSInitInfo(TComAPS* pcAPS)
@@ -1484,43 +1432,6 @@ Void TEncCavlc::estBit( estBitsSbacStruct* pcEstBitsCabac, Int width, Int height
 // Protected member functions
 // ====================================================================================================================
 
-Void TEncCavlc::xWriteCode     ( UInt uiCode, UInt uiLength )
-{
-  assert ( uiLength > 0 );
-  m_pcBitIf->write( uiCode, uiLength );
-}
-
-Void TEncCavlc::xWriteUvlc     ( UInt uiCode )
-{
-  UInt uiLength = 1;
-  UInt uiTemp = ++uiCode;
-  
-  assert ( uiTemp );
-  
-  while( 1 != uiTemp )
-  {
-    uiTemp >>= 1;
-    uiLength += 2;
-  }
-  
-  //m_pcBitIf->write( uiCode, uiLength );
-  // Take care of cases where uiLength > 32
-  m_pcBitIf->write( 0, uiLength >> 1);
-  m_pcBitIf->write( uiCode, (uiLength+1) >> 1);
-}
-
-Void TEncCavlc::xWriteSvlc     ( Int iCode )
-{
-  UInt uiCode;
-  
-  uiCode = xConvertToUInt( iCode );
-  xWriteUvlc( uiCode );
-}
-
-Void TEncCavlc::xWriteFlag( UInt uiCode )
-{
-  m_pcBitIf->write( uiCode, 1 );
-}
 
 /** Write PCM alignment bits. 
  * \returns Void
