@@ -313,7 +313,7 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
     ("ScalingListFile",             cfg_ScalingListFile,             string(""), "Scaling list file name")
     ("SignHideFlag,-SBH",                m_signHideFlag, 1)
   /* Misc. */
-  ("SEIpictureDigest", m_pictureDigestEnabled, 0, "Control generation of picture_digest SEI messages\n"
+  ("SEIpictureDigest",  m_decodePictureHashSEIEnabled, 0, "Control generation of decode picture hash SEI messages\n"
                                               "\t3: checksum\n"
                                               "\t2: CRC\n"
                                               "\t1: use MD5\n"
@@ -512,7 +512,7 @@ Bool confirmPara(Bool bflag, const char* message);
 
 Void TAppEncCfg::xCheckParameter()
 {
-  if (!m_pictureDigestEnabled)
+  if (!m_decodePictureHashSEIEnabled)
   {
     fprintf(stderr, "*************************************************************\n");
     fprintf(stderr, "** WARNING: --SEIpictureDigest is now disabled by default. **\n");
@@ -933,7 +933,7 @@ Void TAppEncCfg::xCheckParameter()
   xConfirmPara( m_iWaveFrontSubstreams <= 0, "WaveFrontSubstreams must be positive" );
   xConfirmPara( m_iWaveFrontSubstreams > 1 && !m_iWaveFrontSynchro, "Must have WaveFrontSynchro > 0 in order to have WaveFrontSubstreams > 1" );
 
-  xConfirmPara( m_pictureDigestEnabled<0 || m_pictureDigestEnabled>3, "this hash type is not correct!\n");
+  xConfirmPara( m_decodePictureHashSEIEnabled<0 || m_decodePictureHashSEIEnabled>3, "this hash type is not correct!\n");
 
   if(m_enableRateCtrl)
   {

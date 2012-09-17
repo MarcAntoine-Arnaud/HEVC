@@ -197,7 +197,7 @@ protected:
 
   Bool      m_bUseConstrainedIntraPred;                       ///< flag for using constrained intra prediction
   
-  Int       m_pictureDigestEnabled;                          ///< Checksum(3)/CRC(2)/MD5(1)/disable(0) acting on SEI picture_digest message
+  Int       m_decodePictureHashSEIEnabled;                    ///< Checksum(3)/CRC(2)/MD5(1)/disable(0) acting on decoded picture hash SEI message
 
   // weighted prediction
   Bool      m_bUseWeightPred;                                 ///< Use of explicit Weighting Prediction for P_SLICE

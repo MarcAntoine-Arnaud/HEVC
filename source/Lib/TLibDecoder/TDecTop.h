@@ -111,7 +111,7 @@ public:
   Void  create  ();
   Void  destroy ();
 
-  void setPictureDigestEnabled(Int enabled) { m_cGopDecoder.setPictureDigestEnabled(enabled); }
+  void setDecodedPictureHashSEIEnabled(Int enabled) { m_cGopDecoder.setDecodedPictureHashSEIEnabled(enabled); }
 
   Void  init();
   Bool  decode(InputNALUnit& nalu, Int& iSkipFrame, Int& iPOCLastDisplay);

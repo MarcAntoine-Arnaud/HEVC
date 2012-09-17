@@ -86,7 +86,7 @@ private:
 #endif
   TComSampleAdaptiveOffset*     m_pcSAO;
   Double                m_dDecTime;
-  Int m_pictureDigestEnabled;  ///< Checksum(3)/CRC(2)/MD5(1)/disable(0) acting on SEI picture_digest message
+  Int                   m_decodedPictureHashSEIEnabled;  ///< Checksum(3)/CRC(2)/MD5(1)/disable(0) acting on decoded picture hash SEI message
 
   //! list that contains the CU address of each slice plus the end address 
   std::vector<Int> m_sliceStartCUAddress;
@@ -117,7 +117,7 @@ public:
   Void  filterPicture  (TComPic*& rpcPic );
   Void  setGopSize( Int i) { m_iGopSize = i; }
 
-  void setPictureDigestEnabled(Int enabled) { m_pictureDigestEnabled = enabled; }
+  void setDecodedPictureHashSEIEnabled(Int enabled) { m_decodedPictureHashSEIEnabled = enabled; }
 
 };
 

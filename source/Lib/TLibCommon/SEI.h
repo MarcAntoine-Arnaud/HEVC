@@ -45,7 +45,7 @@ public:
   enum PayloadType
   {
     USER_DATA_UNREGISTERED = 5,
-    PICTURE_DIGEST = 256,
+    DECODED_PICTURE_HASH = 256,
   };
   
   SEI() {}
@@ -73,13 +73,13 @@ public:
   unsigned char *userData;
 };
 
-class SEIpictureDigest : public SEI
+class SEIDecodedPictureHash : public SEI
 {
 public:
-  PayloadType payloadType() const { return PICTURE_DIGEST; }
+  PayloadType payloadType() const { return DECODED_PICTURE_HASH; }
 
-  SEIpictureDigest() {}
-  virtual ~SEIpictureDigest() {}
+  SEIDecodedPictureHash() {}
+  virtual ~SEIDecodedPictureHash() {}
   
   enum Method
   {
@@ -111,6 +111,6 @@ public:
   }
 
   SEIuserDataUnregistered* user_data_unregistered;
-  SEIpictureDigest* picture_digest;
+  SEIDecodedPictureHash* picture_digest;
 };
 //! \}

@@ -54,8 +54,8 @@ public:
   Void parseSEImessage(TComInputBitstream* bs, SEImessages& seis);
 protected:
   Void xReadSEImessage                (SEImessages& seis);
-  Void xParseSEIuserDataUnregistered (SEIuserDataUnregistered &sei, unsigned payloadSize);
-  Void xParseSEIpictureDigest        (SEIpictureDigest& sei, unsigned payloadSize);
+  Void xParseSEIuserDataUnregistered  (SEIuserDataUnregistered &sei, UInt payloadSize);
+  Void xParseSEIDecodedPictureHash    (SEIDecodedPictureHash& sei, UInt payloadSize);
 };
 
 

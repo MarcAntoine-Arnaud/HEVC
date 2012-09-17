@@ -1222,25 +1222,25 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
       Double dEncTime = (double)(clock()-iBeforeTime) / CLOCKS_PER_SEC;
 
       const char* digestStr = NULL;
-      if (m_pcCfg->getPictureDigestEnabled())
+      if (m_pcCfg->getDecodedPictureHashSEIEnabled())
       {
         /* calculate MD5sum for entire reconstructed picture */
-        SEIpictureDigest sei_recon_picture_digest;
-        if(m_pcCfg->getPictureDigestEnabled() == 1)
+        SEIDecodedPictureHash sei_recon_picture_digest;
+        if(m_pcCfg->getDecodedPictureHashSEIEnabled() == 1)
         {
-          sei_recon_picture_digest.method = SEIpictureDigest::MD5;
+          sei_recon_picture_digest.method = SEIDecodedPictureHash::MD5;
           calcMD5(*pcPic->getPicYuvRec(), sei_recon_picture_digest.digest);
           digestStr = digestToString(sei_recon_picture_digest.digest, 16);
         }
-        else if(m_pcCfg->getPictureDigestEnabled() == 2)
+        else if(m_pcCfg->getDecodedPictureHashSEIEnabled() == 2)
         {
-          sei_recon_picture_digest.method = SEIpictureDigest::CRC;
+          sei_recon_picture_digest.method = SEIDecodedPictureHash::CRC;
           calcCRC(*pcPic->getPicYuvRec(), sei_recon_picture_digest.digest);
           digestStr = digestToString(sei_recon_picture_digest.digest, 2);
         }
-        else if(m_pcCfg->getPictureDigestEnabled() == 3)
+        else if(m_pcCfg->getDecodedPictureHashSEIEnabled() == 3)
         {
-          sei_recon_picture_digest.method = SEIpictureDigest::CHECKSUM;
+          sei_recon_picture_digest.method = SEIDecodedPictureHash::CHECKSUM;
           calcChecksum(*pcPic->getPicYuvRec(), sei_recon_picture_digest.digest);
           digestStr = digestToString(sei_recon_picture_digest.digest, 4);
         }
@@ -1264,15 +1264,15 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
 
       if (digestStr)
       {
-        if(m_pcCfg->getPictureDigestEnabled() == 1)
+        if(m_pcCfg->getDecodedPictureHashSEIEnabled() == 1)
         {
           printf(" [MD5:%s]", digestStr);
         }
-        else if(m_pcCfg->getPictureDigestEnabled() == 2)
+        else if(m_pcCfg->getDecodedPictureHashSEIEnabled() == 2)
         {
           printf(" [CRC:%s]", digestStr);
         }
-        else if(m_pcCfg->getPictureDigestEnabled() == 3)
+        else if(m_pcCfg->getDecodedPictureHashSEIEnabled() == 3)
         {
           printf(" [Checksum:%s]", digestStr);
         }

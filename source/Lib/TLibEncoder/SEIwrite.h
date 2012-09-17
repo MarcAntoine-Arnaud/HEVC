@@ -51,7 +51,7 @@ public:
 protected:
   Void xWriteSEIpayloadData(const SEI& sei);
   Void xWriteSEIuserDataUnregistered(const SEIuserDataUnregistered &sei);
-  Void xWriteSEIpictureDigest(const SEIpictureDigest& sei);
+  Void xWriteSEIDecodedPictureHash(const SEIDecodedPictureHash& sei);
 
 };
 

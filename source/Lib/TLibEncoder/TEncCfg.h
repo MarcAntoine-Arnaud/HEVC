@@ -238,7 +238,7 @@ protected:
   Int       m_iWaveFrontSynchro;
   Int       m_iWaveFrontSubstreams;
 
-  Int m_pictureDigestEnabled;              ///< Checksum(3)/CRC(2)/MD5(1)/disable(0) acting on SEI picture_digest message
+  Int       m_decodedPictureHashSEIEnabled;              ///< Checksum(3)/CRC(2)/MD5(1)/disable(0) acting on decoded picture hash SEI message
   //====== Weighted Prediction ========
   Bool      m_bUseWeightPred;       //< Use of Weighting Prediction (P_SLICE)
   Bool      m_useWeightedBiPred;    //< Use of Bi-directional Weighting Prediction (B_SLICE)
@@ -585,8 +585,8 @@ public:
   Int   getWaveFrontsynchro()                            { return m_iWaveFrontSynchro; }
   Void  setWaveFrontSubstreams(Int iWaveFrontSubstreams) { m_iWaveFrontSubstreams = iWaveFrontSubstreams; }
   Int   getWaveFrontSubstreams()                         { return m_iWaveFrontSubstreams; }
-  void setPictureDigestEnabled(Int b) { m_pictureDigestEnabled = b; }
-  Int getPictureDigestEnabled() { return m_pictureDigestEnabled; }
+  Void  setDecodedPictureHashSEIEnabled(Int b)           { m_decodedPictureHashSEIEnabled = b; }
+  Int   getDecodedPictureHashSEIEnabled()                { return m_decodedPictureHashSEIEnabled; }
 
   Void      setUseWP               ( Bool  b )   { m_bUseWeightPred    = b;    }
   Void      setWPBiPred            ( Bool b )    { m_useWeightedBiPred = b;    }

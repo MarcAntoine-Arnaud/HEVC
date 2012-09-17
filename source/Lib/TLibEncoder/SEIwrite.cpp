@@ -49,7 +49,7 @@ Void  xTraceSEIMessageType(SEI::PayloadType payloadType)
 {
   switch (payloadType)
   {
-  case SEI::PICTURE_DIGEST:
+  case SEI::DECODED_PICTURE_HASH:
     fprintf( g_hTrace, "=========== Decoded picture hash SEI message ===========\n");
     break;
   case SEI::USER_DATA_UNREGISTERED:
@@ -69,8 +69,8 @@ void SEIWriter::xWriteSEIpayloadData(const SEI& sei)
   case SEI::USER_DATA_UNREGISTERED:
     xWriteSEIuserDataUnregistered(*static_cast<const SEIuserDataUnregistered*>(&sei));
     break;
-  case SEI::PICTURE_DIGEST:
-    xWriteSEIpictureDigest(*static_cast<const SEIpictureDigest*>(&sei));
+  case SEI::DECODED_PICTURE_HASH:
+    xWriteSEIDecodedPictureHash(*static_cast<const SEIDecodedPictureHash*>(&sei));
     break;
   default:
     assert(!"Unhandled SEI message");
@@ -145,10 +145,10 @@ Void SEIWriter::xWriteSEIuserDataUnregistered(const SEIuserDataUnregistered &sei
 }
 
 /**
- * marshal a picture_digest SEI message, storing the marshalled
+ * marshal a decoded picture hash SEI message, storing the marshalled
  * representation in bitstream bs.
  */
-Void SEIWriter::xWriteSEIpictureDigest(const SEIpictureDigest& sei)
+Void SEIWriter::xWriteSEIDecodedPictureHash(const SEIDecodedPictureHash& sei)
 {
   UInt val;
 
@@ -156,19 +156,19 @@ Void SEIWriter::xWriteSEIpictureDigest(const SEIpictureDigest& sei)
 
   for(int yuvIdx = 0; yuvIdx < 3; yuvIdx++)
   {
-    if(sei.method == SEIpictureDigest::MD5)
+    if(sei.method == SEIDecodedPictureHash::MD5)
     {
       for (unsigned i = 0; i < 16; i++)
       {
         WRITE_CODE(sei.digest[yuvIdx][i], 8, "picture_md5");
       }
     }
-    else if(sei.method == SEIpictureDigest::CRC)
+    else if(sei.method == SEIDecodedPictureHash::CRC)
     {
       val = (sei.digest[yuvIdx][0] << 8)  + sei.digest[yuvIdx][1];
       WRITE_CODE(val, 16, "picture_crc");
     }
-    else if(sei.method == SEIpictureDigest::CHECKSUM)
+    else if(sei.method == SEIDecodedPictureHash::CHECKSUM)
     {
       val = (sei.digest[yuvIdx][0] << 24)  + (sei.digest[yuvIdx][1] << 16) + (sei.digest[yuvIdx][2] << 8) + sei.digest[yuvIdx][3];
       WRITE_CODE(val, 32, "picture_checksum");

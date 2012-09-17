@@ -50,7 +50,7 @@ Void  xTraceSEIMessageType(SEI::PayloadType payloadType)
 {
   switch (payloadType)
   {
-  case SEI::PICTURE_DIGEST:
+  case SEI::DECODED_PICTURE_HASH:
     fprintf( g_hTrace, "=========== Decoded picture hash SEI message ===========\n");
     break;
   case SEI::USER_DATA_UNREGISTERED:
@@ -112,9 +112,9 @@ Void SEIReader::xReadSEImessage(SEImessages& seis)
     seis.user_data_unregistered = new SEIuserDataUnregistered;
     xParseSEIuserDataUnregistered(*seis.user_data_unregistered, payloadSize);
     break;
-  case SEI::PICTURE_DIGEST:
-    seis.picture_digest = new SEIpictureDigest;
-    xParseSEIpictureDigest(*seis.picture_digest, payloadSize);
+  case SEI::DECODED_PICTURE_HASH:
+    seis.picture_digest = new SEIDecodedPictureHash;
+    xParseSEIDecodedPictureHash(*seis.picture_digest, payloadSize);
     break;
   default:
     assert(!"Unhandled SEI message");
@@ -152,17 +152,17 @@ Void SEIReader::xParseSEIuserDataUnregistered(SEIuserDataUnregistered &sei, unsi
 }
 
 /**
- * parse bitstream bs and unpack a picture_digest SEI message
+ * parse bitstream bs and unpack a decoded picture hash SEI message
  * of payloadSize bytes into sei.
  */
-Void SEIReader::xParseSEIpictureDigest(SEIpictureDigest& sei, unsigned payloadSize)
+Void SEIReader::xParseSEIDecodedPictureHash(SEIDecodedPictureHash& sei, unsigned payloadSize)
 {
   UInt val;
   READ_CODE (8, val, "hash_type");
-  sei.method = static_cast<SEIpictureDigest::Method>(val);
+  sei.method = static_cast<SEIDecodedPictureHash::Method>(val);
   for(int yuvIdx = 0; yuvIdx < 3; yuvIdx++)
   {
-    if(SEIpictureDigest::MD5 == sei.method)
+    if(SEIDecodedPictureHash::MD5 == sei.method)
     {
       for (unsigned i = 0; i < 16; i++)
       {
@@ -170,13 +170,13 @@ Void SEIReader::xParseSEIpictureDigest(SEIpictureDigest& sei, unsigned payloadSi
         sei.digest[yuvIdx][i] = val;
       }
     }
-    else if(SEIpictureDigest::CRC == sei.method)
+    else if(SEIDecodedPictureHash::CRC == sei.method)
     {
       READ_CODE(16, val, "picture_crc");
       sei.digest[yuvIdx][0] = val >> 8 & 0xFF;
       sei.digest[yuvIdx][1] = val & 0xFF;
     }
-    else if(SEIpictureDigest::CHECKSUM == sei.method)
+    else if(SEIDecodedPictureHash::CHECKSUM == sei.method)
     {
       READ_CODE(32, val, "picture_checksum");
       sei.digest[yuvIdx][0] = (val>>24) & 0xff;
