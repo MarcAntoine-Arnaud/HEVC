@@ -944,7 +944,9 @@ Void TComSlice::applyReferencePictureSet( TComList<TComPic*>& rcListPic, TComRef
       rpcPic->getSlice( 0 )->setReferenced( false );   
       rpcPic->setIsLongTerm(0);
     }
-  }  
+    //check that pictures of higher temporal layers are not used
+    assert(rpcPic->getSlice( 0 )->isReferenced()==0||rpcPic->getUsedByCurr()==0||rpcPic->getTLayer()<=this->getTLayer());
+  }
 }
 
 /** Function for applying picture marking based on the Reference Picture Set in pReferencePictureSet.
