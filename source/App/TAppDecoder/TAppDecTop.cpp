@@ -138,11 +138,6 @@ Void TAppDecTop::decode()
     else
     {
       read(nalu, nalUnit);
-      if(nalu.m_nalUnitType == NAL_UNIT_SPS)
-      {
-        assert(nalu.m_temporalId == 0);
-      }
-
 #if TARGET_DECLAYERID_SET
       if( (m_iMaxTemporalLayer >= 0 && nalu.m_temporalId > m_iMaxTemporalLayer) || !isNaluWithinTargetDecLayerIdSet(&nalu)  )
 #else

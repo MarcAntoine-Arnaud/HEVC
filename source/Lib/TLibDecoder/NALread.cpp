@@ -87,13 +87,30 @@ Void readNalUnitHeader(InputNALUnit& nalu)
          && nalu.m_nalUnitType != NAL_UNIT_CODED_SLICE_BLA_N_LP
          && nalu.m_nalUnitType != NAL_UNIT_CODED_SLICE_IDR
          && nalu.m_nalUnitType != NAL_UNIT_CODED_SLICE_IDR_N_LP
-         && nalu.m_nalUnitType != NAL_UNIT_CODED_SLICE_CRA );
+         && nalu.m_nalUnitType != NAL_UNIT_CODED_SLICE_CRA
+         && nalu.m_nalUnitType != NAL_UNIT_VPS
+         && nalu.m_nalUnitType != NAL_UNIT_SPS
+         && nalu.m_nalUnitType != NAL_UNIT_EOS
+         && nalu.m_nalUnitType != NAL_UNIT_EOB );
 #else
     assert( nalu.m_nalUnitType != NAL_UNIT_CODED_SLICE_CRA
          && nalu.m_nalUnitType != NAL_UNIT_CODED_SLICE_CRANT
          && nalu.m_nalUnitType != NAL_UNIT_CODED_SLICE_BLA
          && nalu.m_nalUnitType != NAL_UNIT_CODED_SLICE_BLANT
-         && nalu.m_nalUnitType != NAL_UNIT_CODED_SLICE_IDR );
+         && nalu.m_nalUnitType != NAL_UNIT_CODED_SLICE_IDR
+         && nalu.m_nalUnitType != NAL_UNIT_VPS
+         && nalu.m_nalUnitType != NAL_UNIT_SPS );
+#endif
+  }
+  else
+  {
+#if NAL_UNIT_TYPES_J1003_D7
+    assert( nalu.m_nalUnitType != NAL_UNIT_CODED_SLICE_TLA
+         && nalu.m_nalUnitType != NAL_UNIT_CODED_SLICE_TSA_N
+         && nalu.m_nalUnitType != NAL_UNIT_CODED_SLICE_STSA_R
+         && nalu.m_nalUnitType != NAL_UNIT_CODED_SLICE_STSA_N );
+#else
+    assert( nalu.m_nalUnitType != NAL_UNIT_CODED_SLICE_TLA );
 #endif
   }
 }
