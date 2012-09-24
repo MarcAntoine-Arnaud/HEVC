@@ -1148,7 +1148,10 @@ private:
 
   Bool       m_bLMvdL1Zero;
   Int         m_numEntryPointOffsets;
-#if !REFERENCE_PICTURE_DEFN
+#if TEMPORAL_LAYER_NON_REFERENCE
+  Bool       m_temporalLayerNonReferenceFlag;
+#endif
+#if !REMOVE_NAL_REF_FLAG
   Bool        m_nalRefFlag;
 #endif
   Bool       m_LFCrossSliceBoundaryFlag;
@@ -1413,7 +1416,11 @@ public:
   Bool      getCabacInitFlag  ()           { return m_cabacInitFlag;     }  //!< get CABAC initial flag 
   Void      setNumEntryPointOffsets(Int val)  { m_numEntryPointOffsets = val;     }
   Int       getNumEntryPointOffsets()         { return m_numEntryPointOffsets;    }
-#if !REFERENCE_PICTURE_DEFN
+#if TEMPORAL_LAYER_NON_REFERENCE
+  Bool      getTemporalLayerNonReferenceFlag()       { return m_temporalLayerNonReferenceFlag;}
+  Void      setTemporalLayerNonReferenceFlag(Bool x) { m_temporalLayerNonReferenceFlag = x;}
+#endif
+#if !REMOVE_NAL_REF_FLAG
   Bool      getNalRefFlag()       { return m_nalRefFlag;}
   Void      setNalRefFlag(Bool x) { m_nalRefFlag = x;}
 #endif

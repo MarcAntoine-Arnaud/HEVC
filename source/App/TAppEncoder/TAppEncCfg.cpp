@@ -100,7 +100,9 @@ std::istringstream &operator>>(std::istringstream &in, GOPEntry &entry)     //in
   in>>entry.m_QPFactor;
   in>>entry.m_temporalId;
   in>>entry.m_numRefPicsActive;
+#if !TEMPORAL_LAYER_NON_REFERENCE
   in>>entry.m_refPic;
+#endif
   in>>entry.m_numRefPics;
   for ( Int i = 0; i < entry.m_numRefPics; i++ )
   {
@@ -706,6 +708,12 @@ Void TAppEncCfg::xCheckParameter()
               {
                 if(absPOC%m_iGOPSize == m_GOPList[k].m_POC%m_iGOPSize)
                 {
+#if TEMPORAL_LAYER_NON_REFERENCE
+                  if(m_GOPList[k].m_temporalId==m_GOPList[curGOP].m_temporalId)
+                  {
+                    m_GOPList[k].m_refPic = true;
+                  }
+#endif
                   m_GOPList[curGOP].m_usedByCurrPic[i]=m_GOPList[k].m_temporalId<=m_GOPList[curGOP].m_temporalId;
                 }
               }
@@ -753,7 +761,11 @@ Void TAppEncCfg::xCheckParameter()
           //step backwards in coding order and include any extra available pictures we might find useful to replace the ones with POC < 0.
           Int offGOP = (checkGOP-1+offset)%m_iGOPSize;
           Int offPOC = ((checkGOP-1+offset)/m_iGOPSize)*m_iGOPSize + m_GOPList[offGOP].m_POC;
+#if TEMPORAL_LAYER_NON_REFERENCE
+          if(offPOC>=0&&m_GOPList[offGOP].m_temporalId<=m_GOPList[curGOP].m_temporalId)
+#else
           if(offPOC>=0&&m_GOPList[offGOP].m_refPic&&m_GOPList[offGOP].m_temporalId<=m_GOPList[curGOP].m_temporalId) 
+#endif
           {
             Bool newRef=false;
             for(Int i=0; i<numRefs; i++)
@@ -774,6 +786,12 @@ Void TAppEncCfg::xCheckParameter()
             {
               Int insertPoint=newRefs;
               //this picture can be added, find appropriate place in list and insert it.
+#if TEMPORAL_LAYER_NON_REFERENCE
+              if(m_GOPList[offGOP].m_temporalId==m_GOPList[curGOP].m_temporalId)
+              {
+                m_GOPList[offGOP].m_refPic = true;
+              }
+#endif
               for(Int j=0; j<newRefs; j++)
               {
                 if(m_GOPList[m_iGOPSize+m_extraRPSs].m_referencePics[j]<offPOC-curPOC||m_GOPList[m_iGOPSize+m_extraRPSs].m_referencePics[j]>0)

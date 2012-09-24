@@ -107,7 +107,10 @@ TComSlice::TComSlice()
 , m_cabacInitFlag                 ( false )
 , m_bLMvdL1Zero                   ( false )
 , m_numEntryPointOffsets          ( 0 )
-#if !REFERENCE_PICTURE_DEFN
+#if TEMPORAL_LAYER_NON_REFERENCE
+, m_temporalLayerNonReferenceFlag ( false )
+#endif
+#if !REMOVE_NAL_REF_FLAG
 , m_nalRefFlag                    ( 0 )
 #endif
 , m_enableTMVPFlag                ( true )
@@ -955,6 +958,13 @@ Void TComSlice::applyReferencePictureSet( TComList<TComPic*>& rcListPic, TComRef
     {
       assert(rpcPic->getSlice( 0 )->isReferenced()==0||rpcPic->getTLayer()<this->getTLayer());
     }
+#if TEMPORAL_LAYER_NON_REFERENCE
+    //check that pictures marked as temporal layer non-reference pictures are not used for reference
+    if(rpcPic->getPicSym()->getSlice(0)->getPOC() != this->getPOC() && rpcPic->getTLayer()==this->getTLayer())
+    {
+      assert(rpcPic->getSlice( 0 )->isReferenced()==0||rpcPic->getUsedByCurr()==0||rpcPic->getSlice( 0 )->getTemporalLayerNonReferenceFlag()==false);
+    }
+#endif
   }
 }
 

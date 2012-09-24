@@ -57,6 +57,7 @@
 // Place macro definitions that deal with new NAL unit types introduced in J1003-d7 (as opposed to I1003-d7) here
 #define SUPPORT_FOR_RAP_N_LP             1  ///< J0344: Add support for IDR_N_LP and BLA_N_LP NAL unit types
 #define STSA                             1        ///STSA (GTLA) pictures labeling
+#define TEMPORAL_LAYER_NON_REFERENCE     1  ///< J0549: Nal unit types for indicating non-reference pictures in the same temporal sub-layer
 #endif
 
 #define SPS_SYNTAX_CHANGES               1  ///< J0550: changes to SPS syntax
@@ -78,10 +79,12 @@
 #endif
 
 #define NAL_UNIT_HEADER                  1  ///< J0550: Define nal_unit_header() method
-#define REMOVE_NAL_REF_FLAG              1  ///< J0550: Remove nal_ref_flag, and allocate extra bit to reserved bits, and re-order syntax to put reserved bits after nal_unit_type
 #define TEMPORAL_ID_PLUS1                1  ///< J0550: Signal temporal_id_plus1 instead of temporal_id in NAL unit, and change reserved_one_5bits
                                             ///<        value to zero
 #define REFERENCE_PICTURE_DEFN           1  ///< J0118: Reflect change of defn. of referece picture in semantics of delta_poc_msb_present_flag
+#if REFERENCE_PICTURE_DEFN
+#define REMOVE_NAL_REF_FLAG              1  ///< J0550: Remove nal_ref_flag, and allocate extra bit to reserved bits, and re-order syntax to put reserved bits after nal_unit_type
+#endif
 #define MOVE_LOOP_FILTER_SLICES_FLAG     1  ///< J0288: Move seq_loop_filter_across_slices_enabled_flag from SPS to PPS
 #define SPLICING_FRIENDLY_PARAMS         1  ///< J0108: Remove rap_pic_id and move no_output_prior_pic_flag
 
