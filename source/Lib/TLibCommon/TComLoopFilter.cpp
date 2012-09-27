@@ -649,15 +649,17 @@ Void TComLoopFilter::xEdgeFilterLuma( TComDataCU* pcCU, UInt uiAbsZorderIdx, UIn
         Int dq = dq0 + dq3;
         Int d =  d0 + d3;
         
-        if (bPCMFilter)
+        if (bPCMFilter || pcCU->getSlice()->getPPS()->getTransquantBypassEnableFlag())
         {
-          // Check if each of PUs is I_PCM
-          bPartPNoFilter = (pcCUP->getIPCMFlag(uiPartPIdx));
-          bPartQNoFilter = (pcCUQ->getIPCMFlag(uiPartQIdx));
+          // Check if each of PUs is I_PCM with LF disabling
+          bPartPNoFilter = (bPCMFilter && pcCUP->getIPCMFlag(uiPartPIdx));
+          bPartQNoFilter = (bPCMFilter && pcCUQ->getIPCMFlag(uiPartQIdx));
+
+          // check if each of PUs is lossless coded
+          bPartPNoFilter = bPartPNoFilter || (pcCUP->isLosslessCoded(uiPartPIdx) );
+          bPartQNoFilter = bPartQNoFilter || (pcCUQ->isLosslessCoded(uiPartQIdx) );
         }
-        // check if each of PUs is lossless coded
-        bPartPNoFilter = bPartPNoFilter || (pcCUP->isLosslessCoded(uiPartPIdx) );
-        bPartQNoFilter = bPartQNoFilter || (pcCUQ->isLosslessCoded(uiPartQIdx) );
+
         if (d < iBeta)
         { 
           Bool bFilterP = (dp < iSideThreshold);
@@ -762,16 +764,17 @@ Void TComLoopFilter::xEdgeFilterChroma( TComDataCU* pcCU, UInt uiAbsZorderIdx, U
       Int iIndexTC = Clip3(0, MAX_QP+DEFAULT_INTRA_TC_OFFSET, iQP + DEFAULT_INTRA_TC_OFFSET*(ucBs - 1) + (m_tcOffsetDiv2 << 1));
       Int iTc =  tctable_8x8[iIndexTC]*iBitdepthScale;
       
-      if(bPCMFilter)
+      if (bPCMFilter || pcCU->getSlice()->getPPS()->getTransquantBypassEnableFlag())
       {
-        // Check if each of PUs is IPCM
-        bPartPNoFilter = (pcCUP->getIPCMFlag(uiPartPIdx));
-        bPartQNoFilter = (pcCUQ->getIPCMFlag(uiPartQIdx));
+        // Check if each of PUs is I_PCM with LF disabling
+        bPartPNoFilter = (bPCMFilter && pcCUP->getIPCMFlag(uiPartPIdx));
+        bPartQNoFilter = (bPCMFilter && pcCUQ->getIPCMFlag(uiPartQIdx));
+
+        // check if each of PUs is lossless coded
+        bPartPNoFilter = bPartPNoFilter || (pcCUP->isLosslessCoded(uiPartPIdx));
+        bPartQNoFilter = bPartQNoFilter || (pcCUQ->isLosslessCoded(uiPartQIdx));
       }
       
-      // check if each of PUs is lossless coded
-      bPartPNoFilter = bPartPNoFilter || (pcCUP->isLosslessCoded(uiPartPIdx));
-      bPartQNoFilter = bPartQNoFilter || (pcCUQ->isLosslessCoded(uiPartQIdx));
       for ( UInt uiStep = 0; uiStep < uiPelsInPartChroma; uiStep++ )
       {
         xPelFilterChroma( piTmpSrcCb + iSrcStep*(uiStep+iIdx*uiPelsInPartChroma), iOffset, iTc , bPartPNoFilter, bPartQNoFilter);
