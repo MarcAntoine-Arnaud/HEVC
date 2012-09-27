@@ -1297,6 +1297,8 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
               m_pcSAO->endSaoEnc();
 #if !REMOVE_ALF
               m_pcAdaptiveLoopFilter->PCMLFDisableProcess(pcPic);
+#else
+              m_pcSAO->PCMLFDisableProcess(pcPic);
 #endif
             }
 #if SAO_RDO

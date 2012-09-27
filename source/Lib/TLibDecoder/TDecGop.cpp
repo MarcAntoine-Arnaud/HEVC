@@ -242,6 +242,8 @@ Void TDecGop::filterPicture(TComPic*& rpcPic)
       m_pcSAO->SAOProcess(rpcPic, saoParam);
 #if !REMOVE_ALF
       m_pcAdaptiveLoopFilter->PCMLFDisableProcess(rpcPic);
+#else
+      m_pcSAO->PCMLFDisableProcess(rpcPic);
 #endif
       m_pcSAO->destroyPicSaoInfo();
     }
