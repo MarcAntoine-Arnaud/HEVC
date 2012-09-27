@@ -1560,7 +1560,7 @@ TEncSearch::xRecurIntraCodingQT( TComDataCU*  pcCU,
           if(uiSingleCbfV == 0)
           {
             pcCU ->setTransformSkipSubParts ( 0, TEXT_CHROMA_V, uiAbsPartIdx, uiFullDepth); 
-            bestModeIdUV[0] = 0;
+            bestModeIdUV[1] = 0;
           }
         }
       }
