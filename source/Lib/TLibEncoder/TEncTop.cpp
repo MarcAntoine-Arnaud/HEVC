@@ -332,7 +332,7 @@ Void TEncTop::init()
                   0,
                   aTable4, aTable8, 
                   aTableLastPosVlcIndex, m_bUseRDOQ, true 
-                  ,m_useTansformSkipFast
+                  ,m_useTransformSkipFast
 #if ADAPTIVE_QP_SELECTION                  
                   , m_bUseAdaptQpSelect
 #endif
@@ -503,7 +503,7 @@ Void TEncTop::xInitSPS()
   m_cSPS.setUseLMChroma   ( m_bUseLMChroma           );  
 #endif
 #if !PPS_TS_FLAG
-  m_cSPS.setUseTransformSkip ( m_useTansformSkip );
+  m_cSPS.setUseTransformSkip ( m_useTransformSkip );
 #endif
 
   m_cSPS.setMaxTrSize   ( 1 << m_uiQuadtreeTULog2MaxSize );
@@ -689,7 +689,7 @@ Void TEncTop::xInitPPS()
   m_cPPS.setNumRefIdxL1DefaultActive(bestPos);
   m_cPPS.setTransquantBypassEnableFlag(getTransquantBypassEnableFlag());
 #if PPS_TS_FLAG
-  m_cPPS.setUseTransformSkip( m_useTansformSkip );
+  m_cPPS.setUseTransformSkip( m_useTransformSkip );
 #endif
 #if TILES_WPP_ENTROPYSLICES_FLAGS
   if (m_iDependentSliceMode)

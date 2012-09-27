@@ -197,8 +197,8 @@ protected:
 #if !REMOVE_LMCHROMA
   Bool      m_bUseLMChroma;
 #endif
-  Bool      m_useTansformSkip;
-  Bool      m_useTansformSkipFast;
+  Bool      m_useTransformSkip;
+  Bool      m_useTransformSkipFast;
   Int*      m_aidQP;
   UInt      m_uiDeltaQpRD;
   
@@ -477,10 +477,10 @@ public:
   Bool getUseLMChroma                       ()      { return m_bUseLMChroma;        }
   Void setUseLMChroma                       ( Bool b ) { m_bUseLMChroma  = b;       }
 #endif
-  Bool getUseTransformSkip                             ()      { return m_useTansformSkip;        }
-  Void setUseTransformSkip                             ( Bool b ) { m_useTansformSkip  = b;       }
-  Bool getUseTransformSkipFast                         ()      { return m_useTansformSkipFast;    }
-  Void setUseTransformSkipFast                         ( Bool b ) { m_useTansformSkipFast  = b;   }
+  Bool getUseTransformSkip                             ()      { return m_useTransformSkip;        }
+  Void setUseTransformSkip                             ( Bool b ) { m_useTransformSkip  = b;       }
+  Bool getUseTransformSkipFast                         ()      { return m_useTransformSkipFast;    }
+  Void setUseTransformSkipFast                         ( Bool b ) { m_useTransformSkipFast  = b;   }
   Int*      getdQPs                         ()      { return m_aidQP;       }
   UInt      getDeltaQpRD                    ()      { return m_uiDeltaQpRD; }
 

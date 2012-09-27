@@ -1351,8 +1351,8 @@ TComSPS::TComSPS()
 , m_bUseLMChroma              (false)
 #endif
 #if !PPS_TS_FLAG
-, m_useTansformSkip           (false)
-, m_useTansformSkipFast       (false)
+, m_useTransformSkip           (false)
+, m_useTransformSkipFast       (false)
 #endif
 , m_bUseLComb                 (false)
 , m_restrictedRefPicListsFlag   (  1)
@@ -1521,7 +1521,7 @@ TComPPS::TComPPS()
 #endif
 , m_TransquantBypassEnableFlag  (false)
 #if PPS_TS_FLAG
-, m_useTansformSkip             (false)
+, m_useTransformSkip             (false)
 #endif
 #if TILES_WPP_ENTROPYSLICES_FLAGS
 , m_dependentSliceEnabledFlag    (false)

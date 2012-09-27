@@ -978,12 +978,12 @@ void TEncSbac::codeTransformSkipFlags (TComDataCU* pcCU, UInt uiAbsPartIdx, UInt
     return;
   }
 
-  UInt useTansformSkip = pcCU->getTransformSkip( uiAbsPartIdx,eTType);
-  m_pcBinIf->encodeBin( useTansformSkip, m_cTransformSkipSCModel.get( 0, eTType? TEXT_CHROMA: TEXT_LUMA, 0 ) );
+  UInt useTransformSkip = pcCU->getTransformSkip( uiAbsPartIdx,eTType);
+  m_pcBinIf->encodeBin( useTransformSkip, m_cTransformSkipSCModel.get( 0, eTType? TEXT_CHROMA: TEXT_LUMA, 0 ) );
   DTRACE_CABAC_VL( g_nSymbolCounter++ )
   DTRACE_CABAC_T("\tparseTransformSkip()");
   DTRACE_CABAC_T( "\tsymbol=" )
-  DTRACE_CABAC_V( useTansformSkip )
+  DTRACE_CABAC_V( useTransformSkip )
   DTRACE_CABAC_T( "\tAddr=" )
   DTRACE_CABAC_V( pcCU->getAddr() )
   DTRACE_CABAC_T( "\tetype=" )

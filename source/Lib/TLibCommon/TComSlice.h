@@ -579,8 +579,8 @@ private:
 #endif
 
 #if !PPS_TS_FLAG
-  Bool        m_useTansformSkip;
-  Bool        m_useTansformSkipFast;
+  Bool        m_useTransformSkip;
+  Bool        m_useTransformSkipFast;
 #endif
 
   Bool        m_bUseLComb;
@@ -746,10 +746,10 @@ public:
 #endif
 
 #if !PPS_TS_FLAG
-  Bool getUseTransformSkip       ()         { return m_useTansformSkip;     }
-  Void setUseTransformSkip       ( Bool b ) { m_useTansformSkip  = b;       }
-  Bool getUseTransformSkipFast   ()         { return m_useTansformSkipFast; }
-  Void setUseTransformSkipFast   ( Bool b ) { m_useTansformSkipFast  = b;   }
+  Bool getUseTransformSkip       ()         { return m_useTransformSkip;     }
+  Void setUseTransformSkip       ( Bool b ) { m_useTransformSkip  = b;       }
+  Bool getUseTransformSkipFast   ()         { return m_useTransformSkipFast; }
+  Void setUseTransformSkipFast   ( Bool b ) { m_useTransformSkipFast  = b;   }
 #endif
 
   Bool getUseLossless ()         { return m_useLossless; }
@@ -887,7 +887,7 @@ private:
 
   Bool        m_TransquantBypassEnableFlag; // Indicates presence of cu_transquant_bypass_flag in CUs.
 #if PPS_TS_FLAG
-  Bool        m_useTansformSkip;
+  Bool        m_useTransformSkip;
 #endif
 #if !TILES_WPP_ENTROPYSLICES_FLAGS
 #if DEPENDENT_SLICES
@@ -989,8 +989,8 @@ public:
   Bool      getTransquantBypassEnableFlag()         { return m_TransquantBypassEnableFlag; }
 
 #if PPS_TS_FLAG
-  Bool      getUseTransformSkip       ()         { return m_useTansformSkip;     }
-  Void      setUseTransformSkip       ( Bool b ) { m_useTansformSkip  = b;       }
+  Bool      getUseTransformSkip       ()         { return m_useTransformSkip;     }
+  Void      setUseTransformSkip       ( Bool b ) { m_useTransformSkip  = b;       }
 #endif
 
   Void    setLoopFilterAcrossTilesEnabledFlag  (Bool b)    { m_loopFilterAcrossTilesEnabledFlag = b; }
