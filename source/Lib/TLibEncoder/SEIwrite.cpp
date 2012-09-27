@@ -56,6 +56,11 @@ Void  xTraceSEIMessageType(SEI::PayloadType payloadType)
   case SEI::USER_DATA_UNREGISTERED:
     fprintf( g_hTrace, "=========== User Data Unregistered SEI message ===========\n");
     break;
+#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE
+  case SEI::ACTIVE_PARAMETER_SETS:
+    fprintf( g_hTrace, "=========== Active Parameter sets SEI message ===========\n");
+    break;
+#endif 
   default:
     fprintf( g_hTrace, "=========== Unknown SEI message ===========\n");
     break;
@@ -70,6 +75,11 @@ void SEIWriter::xWriteSEIpayloadData(const SEI& sei)
   case SEI::USER_DATA_UNREGISTERED:
     xWriteSEIuserDataUnregistered(*static_cast<const SEIuserDataUnregistered*>(&sei));
     break;
+#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE  
+  case SEI::ACTIVE_PARAMETER_SETS:
+    xWriteSEIActiveParameterSets(*static_cast<const SEIActiveParameterSets*>(& sei)); 
+    break; 
+#endif 
   case SEI::DECODED_PICTURE_HASH:
     xWriteSEIDecodedPictureHash(*static_cast<const SEIDecodedPictureHash*>(&sei));
     break;
@@ -189,6 +199,34 @@ Void SEIWriter::xWriteSEIDecodedPictureHash(const SEIDecodedPictureHash& sei)
     }
   }
 }
+
+#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE  
+Void SEIWriter::xWriteSEIActiveParameterSets(const SEIActiveParameterSets& sei)
+{
+  WRITE_CODE(sei.activeVPSId, 4, "active_vps_id");
+  WRITE_CODE(sei.activeSPSIdPresentFlag, 1, "active_sps_id_present_flag");
+
+  if (sei.activeSPSIdPresentFlag) 
+  {
+    WRITE_UVLC(sei.activeSeqParamSetId, "active_seq_param_set_id"); 
+  }
+
+  WRITE_CODE(sei.activeParamSetSEIExtensionFlag, 1, "active_param_set_sei_extension_flag"); 
+
+  unsigned uiBits = m_pcBitIf->getNumberOfWrittenBits(); 
+  UInt uiAlignedBits = ( 8 - (uiBits&7) ) % 8;  
+  if(uiAlignedBits) 
+  {
+    WRITE_FLAG(1, "alignment_bit" );
+    uiAlignedBits--; 
+    while(uiAlignedBits--)
+    {
+      WRITE_FLAG(0, "alignment_bit" );
+    }
+  }
+}
+#endif 
+
 #if BUFFERING_PERIOD_AND_TIMING_SEI
 Void SEIWriter::xWriteSEIBufferingPeriod(const SEIBufferingPeriod& sei)
 {

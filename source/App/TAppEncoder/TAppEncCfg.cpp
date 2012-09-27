@@ -335,6 +335,12 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
 #if RECALCULATE_QP_ACCORDING_LAMBDA
   ("RecalculateQPAccordingToLambda", m_recalculateQPAccordingToLambda, false, "Recalculate QP values according to lambda values. Do not suggest to be enabled in all intra case")
 #endif
+#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE 
+  ("ActiveParameterSets", m_activeParameterSetsSEIEnabled, 0, "Control generation of active parameter sets SEI messages\n"
+                                                              "\t2: enable active parameter sets SEI message with active_sps_id\n"
+                                                              "\t1: enable active parameter sets SEI message without active_sps_id\n"
+                                                              "\t0: disable")
+#endif 
 #if SUPPORT_FOR_VUI
   ("VuiParametersPresent,-vui",      m_vuiParametersPresentFlag,           false, "Enable generation of vui_parameters()")
   ("AspectRatioInfoPresent",         m_aspectRatioInfoPresentFlag,         false, "Signals whether aspect_ratio_idc is present")
@@ -975,6 +981,10 @@ Void TAppEncCfg::xCheckParameter()
   xConfirmPara(!m_TransquantBypassEnableFlag && m_CUTransquantBypassFlagValue, "CUTransquantBypassFlagValue cannot be 1 when TransquantBypassEnableFlag is 0");
 
   xConfirmPara(m_log2ParallelMergeLevel < 2, "Log2ParallelMergeLevel should be larger than or equal to 2");
+
+#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE
+  xConfirmPara(m_activeParameterSetsSEIEnabled < 0 || m_activeParameterSetsSEIEnabled > 2, "ActiveParametersSEIEnabled exceeds supported range (0 to 2)"); 
+#endif 
 
 #undef xConfirmPara
   if (check_failed)

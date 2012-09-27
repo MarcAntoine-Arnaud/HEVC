@@ -263,6 +263,9 @@ protected:
 #if RECALCULATE_QP_ACCORDING_LAMBDA
   Bool      m_recalculateQPAccordingToLambda;                 ///< recalculate QP value according to the lambda value
 #endif
+#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE  
+  Int       m_activeParameterSetsSEIEnabled;                  ///< enable active parameter set SEI message 
+#endif 
 #if SUPPORT_FOR_VUI
   Bool      m_vuiParametersPresentFlag;                       ///< enable generation of VUI parameters
   Bool      m_aspectRatioInfoPresentFlag;                     ///< Signals whether aspect_ratio_idc is present
@@ -634,6 +637,10 @@ public:
   Void      setUseRecalculateQPAccordingToLambda ( Bool b ) { m_recalculateQPAccordingToLambda = b;    }
   Bool      getUseRecalculateQPAccordingToLambda ()         { return m_recalculateQPAccordingToLambda; }
 #endif
+#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE 
+  Void      setActiveParameterSetsSEIEnabled ( Int b )  { m_activeParameterSetsSEIEnabled = b; }  
+  Int       getActiveParameterSetsSEIEnabled ()         { return m_activeParameterSetsSEIEnabled; }
+#endif 
 #if SUPPORT_FOR_VUI
   Bool      getVuiParametersPresentFlag()                 { return m_vuiParametersPresentFlag; }
   Void      setVuiParametersPresentFlag(Bool i)           { m_vuiParametersPresentFlag = i; }

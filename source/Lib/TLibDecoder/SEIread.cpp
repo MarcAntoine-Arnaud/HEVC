@@ -54,6 +54,11 @@ Void  xTraceSEIMessageType(SEI::PayloadType payloadType)
   case SEI::DECODED_PICTURE_HASH:
     fprintf( g_hTrace, "=========== Decoded picture hash SEI message ===========\n");
     break;
+#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE 
+  case SEI::ACTIVE_PARAMETER_SETS:
+    fprintf( g_hTrace, "=========== Active Parameter Sets SEI message ===========\n");
+    break;
+#endif
   case SEI::USER_DATA_UNREGISTERED:
     fprintf( g_hTrace, "=========== User Data Unregistered SEI message ===========\n");
     break;
@@ -113,6 +118,12 @@ Void SEIReader::xReadSEImessage(SEImessages& seis)
     seis.user_data_unregistered = new SEIuserDataUnregistered;
     xParseSEIuserDataUnregistered(*seis.user_data_unregistered, payloadSize);
     break;
+#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE    
+  case SEI::ACTIVE_PARAMETER_SETS:
+    seis.active_parameter_sets = new SEIActiveParameterSets; 
+    xParseSEIActiveParameterSets(*seis.active_parameter_sets, payloadSize); 
+    break; 
+#endif 
   case SEI::DECODED_PICTURE_HASH:
     seis.picture_digest = new SEIDecodedPictureHash;
     xParseSEIDecodedPictureHash(*seis.picture_digest, payloadSize);
@@ -205,6 +216,34 @@ Void SEIReader::xParseSEIDecodedPictureHash(SEIDecodedPictureHash& sei, UInt pay
     }
   }
 }
+#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE 
+Void SEIReader::xParseSEIActiveParameterSets(SEIActiveParameterSets& sei, unsigned payloadSize)
+{
+  UInt val; 
+  READ_CODE(4, val, "active_vps_id");
+  sei.activeVPSId = val; 
+
+  READ_CODE(1, val, "active_sps_id_present_flag");
+  sei.activeSPSIdPresentFlag = val; 
+
+  if(sei.activeSPSIdPresentFlag)
+  {
+    READ_UVLC(val, "active_seq_param_set_id");
+    sei.activeSeqParamSetId = val; 
+  }
+
+  READ_CODE(1, val, "active_param_set_sei_extension_flag");
+  sei.activeParamSetSEIExtensionFlag = val; 
+  
+  UInt uibits = m_pcBitstream->getNumBitsUntilByteAligned(); 
+  
+  while(uibits--)
+  {
+    READ_FLAG(val, "alignment_bit");
+  }
+}
+#endif
+
 #if BUFFERING_PERIOD_AND_TIMING_SEI
 Void SEIReader::xParseSEIBufferingPeriod(SEIBufferingPeriod& sei, UInt payloadSize)
 {

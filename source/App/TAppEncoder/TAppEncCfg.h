@@ -225,6 +225,9 @@ protected:
 #if RECALCULATE_QP_ACCORDING_LAMBDA
   Bool      m_recalculateQPAccordingToLambda;                 ///< recalculate QP value according to the lambda value
 #endif
+#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE
+  Int       m_activeParameterSetsSEIEnabled;
+#endif 
 
 #if SUPPORT_FOR_VUI
   Bool      m_vuiParametersPresentFlag;                       ///< enable generation of VUI parameters

@@ -55,6 +55,9 @@ public:
 #if RECOVERY_POINT_SEI
     RECOVERY_POINT         = 6,
 #endif
+#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE 
+    ACTIVE_PARAMETER_SETS = 131, 
+#endif 
     DECODED_PICTURE_HASH   = 256,
   };
   
@@ -101,6 +104,26 @@ public:
 
   unsigned char digest[3][16];
 };
+
+#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE  
+class SEIActiveParameterSets : public SEI 
+{
+public:
+  PayloadType payloadType() const { return ACTIVE_PARAMETER_SETS; }
+
+  SEIActiveParameterSets() 
+    :activeSPSIdPresentFlag(1)
+    ,activeParamSetSEIExtensionFlag(0)
+  {}
+  virtual ~SEIActiveParameterSets() {}
+
+  Int activeVPSId; 
+  Int activeSPSIdPresentFlag;
+  Int activeSeqParamSetId; 
+  Int activeParamSetSEIExtensionFlag; 
+};
+#endif 
+
 #if BUFFERING_PERIOD_AND_TIMING_SEI
 class SEIBufferingPeriod : public SEI
 {
@@ -175,6 +198,9 @@ class SEImessages
 public:
   SEImessages()
     : user_data_unregistered(0)
+#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE  
+    , active_parameter_sets(0)
+#endif 
     , picture_digest(0)
 #if BUFFERING_PERIOD_AND_TIMING_SEI
     , buffering_period(0)
@@ -188,6 +214,9 @@ public:
   ~SEImessages()
   {
     delete user_data_unregistered;
+#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE  
+    delete active_parameter_sets; 
+#endif 
     delete picture_digest;
 #if BUFFERING_PERIOD_AND_TIMING_SEI
     delete buffering_period;
@@ -199,6 +228,9 @@ public:
   }
 
   SEIuserDataUnregistered* user_data_unregistered;
+#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE  
+  SEIActiveParameterSets* active_parameter_sets; 
+#endif 
   SEIDecodedPictureHash* picture_digest;
 #if BUFFERING_PERIOD_AND_TIMING_SEI
   SEIBufferingPeriod* buffering_period;
@@ -209,4 +241,5 @@ public:
   SEIRecoveryPoint* recovery_point;
 #endif
 };
+
 //! \}

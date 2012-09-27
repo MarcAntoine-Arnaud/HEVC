@@ -280,6 +280,9 @@ Void TAppEncTop::xInitLibCfg()
 #if RECALCULATE_QP_ACCORDING_LAMBDA
   m_cTEncTop.setUseRecalculateQPAccordingToLambda( m_recalculateQPAccordingToLambda );
 #endif
+#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE
+  m_cTEncTop.setActiveParameterSetsSEIEnabled ( m_activeParameterSetsSEIEnabled ); 
+#endif 
 #if SUPPORT_FOR_VUI
   m_cTEncTop.setVuiParametersPresentFlag( m_vuiParametersPresentFlag );
   m_cTEncTop.setAspectRatioIdc( m_aspectRatioIdc );
