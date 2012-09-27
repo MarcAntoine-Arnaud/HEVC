@@ -60,9 +60,11 @@ struct NALUnit
     Bool        nalRefFlag,
 #endif
 #if TARGET_DECLAYERID_SET
-    Int         reserved_one_6bits = 0,
-#endif
+    Int         temporalId = 0,
+    Int         reserved_one_6bits = 0)
+#else
     Int         temporalId = 0)
+#endif
     :m_nalUnitType (nalUnitType)
 #if !REMOVE_NAL_REF_FLAG
     ,m_nalRefFlag  (nalRefFlag)
