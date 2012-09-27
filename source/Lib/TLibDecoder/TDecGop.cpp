@@ -327,29 +327,38 @@ static void calcAndPrintHashStatus(TComPicYuv& pic, const SEImessages* seis)
   /* calculate MD5sum for entire reconstructed picture */
   unsigned char recon_digest[3][16];
   int numChar=0;
-  const char* hashType;
+  const char* hashType = "\0";
 
-  if(seis && seis->picture_digest->method == SEIDecodedPictureHash::MD5)
+  if (seis && seis->picture_digest)
   {
-    hashType = "MD5";
-    calcMD5(pic, recon_digest);
-    numChar = 16;    
-  }
-  else if(seis && seis->picture_digest->method == SEIDecodedPictureHash::CRC)
-  {
-    hashType = "CRC";
-    calcCRC(pic, recon_digest);
-    numChar = 2;
-  }
-  else if(seis && seis->picture_digest->method == SEIDecodedPictureHash::CHECKSUM)
-  {
-    hashType = "Checksum";
-    calcChecksum(pic, recon_digest);
-    numChar = 4;
-  }
-  else
-  {
-    hashType = "\0";
+    switch (seis->picture_digest->method)
+    {
+    case SEIDecodedPictureHash::MD5:
+      {
+        hashType = "MD5";
+        calcMD5(pic, recon_digest);
+        numChar = 16;
+        break;
+      }
+    case SEIDecodedPictureHash::CRC:
+      {
+        hashType = "CRC";
+        calcCRC(pic, recon_digest);
+        numChar = 2;
+        break;
+      }
+    case SEIDecodedPictureHash::CHECKSUM:
+      {
+        hashType = "Checksum";
+        calcChecksum(pic, recon_digest);
+        numChar = 4;
+        break;
+      }
+    default:
+      {
+        assert (!"unknown hash type");
+      }
+    }
   }
 
   /* compare digest against received version */
