@@ -52,7 +52,17 @@ protected:
   Void xWriteSEIpayloadData(const SEI& sei);
   Void xWriteSEIuserDataUnregistered(const SEIuserDataUnregistered &sei);
   Void xWriteSEIDecodedPictureHash(const SEIDecodedPictureHash& sei);
-
+#if BUFFERING_PERIOD_AND_TIMING_SEI
+  Void xWriteSEIBufferingPeriod(const SEIBufferingPeriod& sei);
+  Void xWriteSEIPictureTiming(const SEIPictureTiming& sei);
+  TComSPS *m_pSPS;
+#endif
+#if RECOVERY_POINT_SEI
+  Void xWriteSEIRecoveryPoint(const SEIRecoveryPoint& sei);
+#endif
+#if RECOVERY_POINT_SEI || BUFFERING_PERIOD_AND_TIMING_SEI
+  Void xWriteByteAlign();
+#endif
 };
 
 //! \}

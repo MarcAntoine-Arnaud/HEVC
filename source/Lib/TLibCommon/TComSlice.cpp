@@ -41,7 +41,6 @@
 #include "TLibEncoder/TEncSbac.h"
 #include "TLibDecoder/TDecSbac.h"
 
-
 //! \ingroup TLibCommon
 //! \{
 
@@ -1410,7 +1409,94 @@ Void  TComSPS::createRPSList( Int numRPS )
   m_RPSList.destroy();
   m_RPSList.create(numRPS);
 }
+#if BUFFERING_PERIOD_AND_TIMING_SEI
+Void TComSPS::setHrdParameters( UInt frameRate, UInt numDU, UInt bitRate, Bool randomAccess )
+{
+  if( !getVuiParametersPresentFlag() )
+  {
+    return;
+  }
 
+  TComVUI *vui = getVuiParameters();
+
+  vui->setTimingInfoPresentFlag( true );
+  switch( frameRate )
+  {
+  case 24:
+    vui->setNumUnitsInTick( 1125000 );    vui->setTimeScale    ( 27000000 );
+    break;
+  case 25:
+    vui->setNumUnitsInTick( 1080000 );    vui->setTimeScale    ( 27000000 );
+    break;
+  case 30:
+    vui->setNumUnitsInTick( 900900 );     vui->setTimeScale    ( 27000000 );
+    break;
+  case 50:
+    vui->setNumUnitsInTick( 540000 );     vui->setTimeScale    ( 27000000 );
+    break;
+  case 60:
+    vui->setNumUnitsInTick( 450450 );     vui->setTimeScale    ( 27000000 );
+    break;
+  default:
+    vui->setNumUnitsInTick( 1001 );       vui->setTimeScale    ( 60000 );
+    break;
+  }
+
+  Bool rateCnt = ( bitRate > 0 );
+  vui->setNalHrdParametersPresentFlag( rateCnt );
+  vui->setVclHrdParametersPresentFlag( rateCnt );
+
+  vui->setSubPicCpbParamsPresentFlag( ( numDU > 1 ) );
+
+  if( vui->getSubPicCpbParamsPresentFlag() )
+  {
+    vui->setTickDivisorMinus2( 100 - 2 );                          // 
+    vui->setDuCpbRemovalDelayLengthMinus1( 7 );                    // 8-bit precision ( plus 1 for last DU in AU )
+  }
+
+  vui->setBitRateScale( 4 );                                       // in units of 2~( 6 + 4 ) = 1,024 bps
+  vui->setCpbSizeScale( 6 );                                       // in units of 2~( 4 + 4 ) = 1,024 bit
+
+  vui->setInitialCpbRemovalDelayLengthMinus1(15);                  // assuming 0.5 sec, log2( 90,000 * 0.5 ) = 16-bit
+  if( randomAccess )
+  {
+    vui->setCpbRemovalDelayLengthMinus1(5);                        // 32 = 2^5 (plus 1)
+    vui->setDpbOutputDelayLengthMinus1 (5);                        // 32 + 3 = 2^6
+  }
+  else
+  {
+    vui->setCpbRemovalDelayLengthMinus1(9);                        // max. 2^10
+    vui->setDpbOutputDelayLengthMinus1 (9);                        // max. 2^10
+  }
+
+/*
+   Note: only the case of "vps_max_temporal_layers_minus1 = 0" is supported.
+*/
+  Int i, j;
+  UInt birateValue, cpbSizeValue;
+
+  for( i = 0; i < MAX_TLAYER; i ++ )
+  {
+    vui->setFixedPicRateFlag( i, 1 );
+    vui->setPicDurationInTcMinus1( i, 0 );
+    vui->setLowDelayHrdFlag( i, 0 );
+    vui->setCpbCntMinus1( i, 0 );
+
+    birateValue  = bitRate;
+    cpbSizeValue = bitRate;                                     // 1 second
+    for( j = 0; j < ( vui->getCpbCntMinus1( i ) + 1 ); j ++ )
+    {
+      vui->setBitRateValueMinus1( i, j, 0, ( birateValue  - 1 ) );
+      vui->setCpbSizeValueMinus1( i, j, 0, ( cpbSizeValue - 1 ) );
+      vui->setCbrFlag( i, j, 0, ( j == 0 ) );
+
+      vui->setBitRateValueMinus1( i, j, 1, ( birateValue  - 1) );
+      vui->setCpbSizeValueMinus1( i, j, 1, ( cpbSizeValue - 1 ) );
+      vui->setCbrFlag( i, j, 1, ( j == 0 ) );
+    }
+  }
+}
+#endif
 const Int TComSPS::m_cropUnitX[]={1,2,2,1};
 const Int TComSPS::m_cropUnitY[]={1,2,1,1};
 

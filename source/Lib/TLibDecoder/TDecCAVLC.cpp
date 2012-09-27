@@ -534,7 +534,11 @@ Void TDecCavlc::parsePPS(TComPPS* pcPPS)
 }
 
 #if SUPPORT_FOR_VUI
+#if !BUFFERING_PERIOD_AND_TIMING_SEI
 Void  TDecCavlc::parseVUI(TComVUI* pcVUI)
+#else
+Void  TDecCavlc::parseVUI(TComVUI* pcVUI, TComSPS *pcSPS)
+#endif
 {
 #if ENC_DEC_TRACE
   fprintf( g_hTrace, "----------- vui_parameters -----------\n");
@@ -585,8 +589,60 @@ Void  TDecCavlc::parseVUI(TComVUI* pcVUI)
   assert(pcVUI->getFieldSeqFlag() == false);        // not supported yet
 
   READ_FLAG(     uiCode, "hrd_parameters_present_flag");              pcVUI->setHrdParametersPresentFlag(uiCode);
+#if !BUFFERING_PERIOD_AND_TIMING_SEI
   assert(pcVUI->getHrdParametersPresentFlag() == false);  // not supported yet
+#else
+  if( pcVUI->getHrdParametersPresentFlag() )
+  {
+    READ_FLAG( uiCode, "timing_info_present_flag" );                  pcVUI->setTimingInfoPresentFlag( uiCode );
+    if( pcVUI->getTimingInfoPresentFlag() )
+    {
+      READ_CODE( 32, uiCode, "num_units_in_tick" );                   pcVUI->setNumUnitsInTick( uiCode );
+      READ_CODE( 32, uiCode, "time_scale" );                          pcVUI->setTimeScale( uiCode );
+    }
+    READ_FLAG( uiCode, "nal_hrd_parameters_present_flag" );           pcVUI->setNalHrdParametersPresentFlag( uiCode );
+    READ_FLAG( uiCode, "vcl_hrd_parameters_present_flag" );           pcVUI->setVclHrdParametersPresentFlag( uiCode );
+    if( pcVUI->getNalHrdParametersPresentFlag() || pcVUI->getVclHrdParametersPresentFlag() )
+    {
+      READ_FLAG( uiCode, "sub_pic_Cpb_params_present_flag" );         pcVUI->setSubPicCpbParamsPresentFlag( uiCode );
+      if( pcVUI->getSubPicCpbParamsPresentFlag() )
+      {
+        READ_CODE( 8, uiCode, "tick_divisor_minus2" );                pcVUI->setTickDivisorMinus2( uiCode );
+        READ_CODE( 5, uiCode, "du_cpb_removal_delay_length_minus1" ); pcVUI->setDuCpbRemovalDelayLengthMinus1( uiCode );
+      }
+      READ_CODE( 4, uiCode, "bit_rate_scale" );                       pcVUI->setBitRateScale( uiCode );
+      READ_CODE( 4, uiCode, "cpb_size_scale" );                       pcVUI->setCpbSizeScale( uiCode );
+      READ_CODE( 5, uiCode, "initial_cpb_removal_delay_length_minus1" ); pcVUI->setInitialCpbRemovalDelayLengthMinus1( uiCode );
+      READ_CODE( 5, uiCode, "cpb_removal_delay_length_minus1" );      pcVUI->setCpbRemovalDelayLengthMinus1( uiCode );
+      READ_CODE( 5, uiCode, "dpb_output_delay_length_minus1" );       pcVUI->setDpbOutputDelayLengthMinus1( uiCode );
+    }
 
+    Int i, j, nalOrVcl;
+    for( i = 0; i < pcSPS->getMaxTLayers(); i ++ )
+    {
+      READ_FLAG( uiCode, "fixed_pic_rate_flag" );                     pcVUI->setFixedPicRateFlag( i, uiCode );
+      if( pcVUI->getFixedPicRateFlag( i ) )
+      {
+        READ_UVLC( uiCode, "pic_duration_in_tc_minus1" );             pcVUI->setPicDurationInTcMinus1( i, uiCode );
+      }
+      READ_FLAG( uiCode, "low_delay_hrd_flag" );                      pcVUI->setLowDelayHrdFlag( i, uiCode );
+      READ_UVLC( uiCode, "cpb_cnt_minus1" );                          pcVUI->setCpbCntMinus1( i, uiCode );
+      for( nalOrVcl = 0; nalOrVcl < 2; nalOrVcl ++ )
+      {
+        if( ( ( nalOrVcl == 0 ) && ( pcVUI->getNalHrdParametersPresentFlag() ) ) ||
+            ( ( nalOrVcl == 1 ) && ( pcVUI->getVclHrdParametersPresentFlag() ) ) )
+        {
+          for( j = 0; j < ( pcVUI->getCpbCntMinus1( i ) + 1 ); j ++ )
+          {
+            READ_UVLC( uiCode, "bit_size_value_minus1" );             pcVUI->setBitRateValueMinus1( i, j, nalOrVcl, uiCode );
+            READ_UVLC( uiCode, "cpb_size_value_minus1" );             pcVUI->setCpbSizeValueMinus1( i, j, nalOrVcl, uiCode );
+            READ_FLAG( uiCode, "cbr_flag" );                          pcVUI->setCbrFlag( i, j, nalOrVcl, uiCode );
+          }
+        }
+      }
+    }
+  }
+#endif
   READ_FLAG(     uiCode, "bitstream_restriction_flag");               pcVUI->setBitstreamRestrictionFlag(uiCode);
   if (pcVUI->getBitstreamRestrictionFlag())
   {
@@ -792,7 +848,11 @@ Void TDecCavlc::parseSPS(TComSPS* pcSPS)
 
   if (pcSPS->getVuiParametersPresentFlag())
   {
+#if !BUFFERING_PERIOD_AND_TIMING_SEI
     parseVUI(pcSPS->getVuiParameters());
+#else
+    parseVUI(pcSPS->getVuiParameters(), pcSPS);
+#endif
   }
 #endif
 #if !SPS_AMVP_CLEANUP

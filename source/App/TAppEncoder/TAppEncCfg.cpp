@@ -362,6 +362,13 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
   ("Log2MaxMvLengthHorizontal",      m_log2MaxMvLengthHorizontal,             15, "Indicate the maximum absolute value of a decoded horizontal MV component in quarter-pel luma units")
   ("Log2MaxMvLengthVertical",        m_log2MaxMvLengthVertical,               15, "Indicate the maximum absolute value of a decoded vertical MV component in quarter-pel luma units")
 #endif
+#if RECOVERY_POINT_SEI
+  ("SEIRecoveryPoint",               m_recoveryPointSEIEnabled,                0, "Control generation of recovery point SEI messages")
+#endif
+#if BUFFERING_PERIOD_AND_TIMING_SEI
+  ("SEIBufferingPeriod",             m_bufferingPeriodSEIEnabled,              0, "Control generation of buffering period SEI messages")
+  ("SEIPictureTiming",               m_pictureTimingSEIEnabled,                0, "Control generation of picture timing SEI messages")
+#endif
   ;
   
   for(Int i=1; i<MAX_GOP+1; i++) {

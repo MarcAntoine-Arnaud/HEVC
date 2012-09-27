@@ -42,8 +42,15 @@
 
 //! \ingroup TLibCommon
 //! \{
+#define RECOVERY_POINT_SEI               1  ///< I0044/J0107, Recovery point SEI
 #define SPS_AMVP_CLEANUP                 1  ///< remove old AMVP related code for alignment with draft text
 #define SUPPORT_FOR_VUI                  1  ///< new: add support for VUI and hrd_parameters
+#if SUPPORT_FOR_VUI
+#define BUFFERING_PERIOD_AND_TIMING_SEI  1  ///< Buffering period SEI and Picture timing SEI
+#if BUFFERING_PERIOD_AND_TIMING_SEI
+#define MAX_CPB_CNT                     32  ///< Upper bound of (cpb_cnt_minus1 + 1)
+#endif
+#endif
 #define TARGET_DECLAYERID_SET            1  ///< J0074:  targetDecLayerIdSet for sub-bitstream extraction process
 #if TARGET_DECLAYERID_SET
 #define MAX_NUM_LAYER_IDS                64

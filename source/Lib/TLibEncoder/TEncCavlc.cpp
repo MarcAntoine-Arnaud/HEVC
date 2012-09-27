@@ -374,8 +374,60 @@ Void TEncCavlc::codeVUI( TComVUI *pcVUI, TComSPS* pcSPS )
   WRITE_FLAG(pcVUI->getFieldSeqFlag(),                          "field_seq_flag");
   assert(pcVUI->getFieldSeqFlag() == 0);                        // not currently supported
   WRITE_FLAG(pcVUI->getHrdParametersPresentFlag(),              "hrd_parameters_present_flag");
+#if !BUFFERING_PERIOD_AND_TIMING_SEI
   assert(pcVUI->getHrdParametersPresentFlag() == 0);            // not currently supported
-
+#else
+  if( pcVUI->getHrdParametersPresentFlag() )
+  {
+    WRITE_FLAG(pcVUI->getTimingInfoPresentFlag(),               "timing_info_present_flag");
+    if( pcVUI->getTimingInfoPresentFlag() )
+    {
+      WRITE_CODE(pcVUI->getNumUnitsInTick(), 32,                "num_units_in_tick");
+      WRITE_CODE(pcVUI->getTimeScale(),      32,                "time_scale");
+    }
+    WRITE_FLAG(pcVUI->getNalHrdParametersPresentFlag(),         "nal_hrd_parameters_present_flag");
+    WRITE_FLAG(pcVUI->getVclHrdParametersPresentFlag(),         "vcl_hrd_parameters_present_flag");
+    if( pcVUI->getNalHrdParametersPresentFlag() || pcVUI->getVclHrdParametersPresentFlag() )
+    {
+      WRITE_FLAG(pcVUI->getSubPicCpbParamsPresentFlag(),        "sub_pic_cpb_params_present_flag");
+      if( pcVUI->getSubPicCpbParamsPresentFlag() )
+      {
+        WRITE_CODE(pcVUI->getTickDivisorMinus2(), 8,            "tick_divisor_minus2");
+        WRITE_CODE(pcVUI->getDuCpbRemovalDelayLengthMinus1(), 5,  "du_cpb_removal_delay_length_minus1");
+      }
+      WRITE_CODE(pcVUI->getBitRateScale(), 4,                   "bit_rate_scale");
+      WRITE_CODE(pcVUI->getCpbSizeScale(), 4,                   "cpb_size_scale");
+      WRITE_CODE(pcVUI->getInitialCpbRemovalDelayLengthMinus1(), 5, "initial_cpb_removal_delay_length_minus1");
+      WRITE_CODE(pcVUI->getCpbRemovalDelayLengthMinus1(),        5, "cpb_removal_delay_length_minus1");
+      WRITE_CODE(pcVUI->getDpbOutputDelayLengthMinus1(),         5, "dpb_output_delay_length_minus1");
+    }
+    Int i, j, nalOrVcl;
+    for( i = 0; i <= pcSPS->getMaxTLayers(); i ++ )
+    {
+      WRITE_FLAG(pcVUI->getFixedPicRateFlag(i),                 "fixed_pic_rate_flag");
+      if( pcVUI->getFixedPicRateFlag( i ) )
+      {
+        WRITE_UVLC(pcVUI->getPicDurationInTcMinus1(i),          "pic_duration_in_tc_minus1");
+      }
+      WRITE_FLAG(pcVUI->getLowDelayHrdFlag(i),                  "low_delay_hrd_flag");
+      WRITE_UVLC(pcVUI->getCpbCntMinus1(i),                     "cpb_cnt_minus1");
+     
+      for( nalOrVcl = 0; nalOrVcl < 2; nalOrVcl ++ )
+      {
+        if( ( ( nalOrVcl == 0 ) && ( pcVUI->getNalHrdParametersPresentFlag() ) ) ||
+            ( ( nalOrVcl == 1 ) && ( pcVUI->getVclHrdParametersPresentFlag() ) ) )
+        {
+          for( j = 0; j < ( pcVUI->getCpbCntMinus1( i ) + 1 ); j ++ )
+          {
+            WRITE_UVLC(pcVUI->getBitRateValueMinus1(i, j, nalOrVcl), "bit_size_value_minus1");
+            WRITE_UVLC(pcVUI->getCpbSizeValueMinus1(i, j, nalOrVcl), "cpb_size_value_minus1");
+            WRITE_FLAG(pcVUI->getCbrFlag(i, j, nalOrVcl),            "cbr_flag");
+          }
+        }
+      }
+    }
+  }
+#endif
   WRITE_FLAG(pcVUI->getBitstreamRestrictionFlag(),              "bitstream_restriction_flag");
   if (pcVUI->getBitstreamRestrictionFlag())
   {

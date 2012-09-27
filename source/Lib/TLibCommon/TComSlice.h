@@ -276,6 +276,18 @@ public:
 #endif  
 };
 
+#if BUFFERING_PERIOD_AND_TIMING_SEI
+struct HrdSubLayerInfo
+{
+  Bool fixedPicRateFlag;
+  UInt picDurationInTcMinus1;
+  Bool lowDelayHrdFlag;
+  UInt cpbCntMinus1;
+  UInt bitRateValueMinus1[MAX_CPB_CNT][2];
+  UInt cpbSizeValue      [MAX_CPB_CNT][2];
+  UInt cbrFlag           [MAX_CPB_CNT][2];
+};
+#endif
 #if SUPPORT_FOR_VUI
 class TComVUI
 {
@@ -306,36 +318,66 @@ private:
   Int  m_maxBitsPerMinCuDenom;
   Int  m_log2MaxMvLengthHorizontal;
   Int  m_log2MaxMvLengthVertical;
-
+#if BUFFERING_PERIOD_AND_TIMING_SEI
+  Bool m_timingInfoPresentFlag;
+  UInt m_numUnitsInTick;
+  UInt m_timeScale;
+  Bool m_nalHrdParametersPresentFlag;
+  Bool m_vclHrdParametersPresentFlag;
+  Bool m_subPicCpbParamsPresentFlag;
+  UInt m_tickDivisorMinus2;
+  UInt m_duCpbRemovalDelayLengthMinus1;
+  UInt m_bitRateScale;
+  UInt m_cpbSizeScale;
+  UInt m_initialCpbRemovalDelayLengthMinus1;
+  UInt m_cpbRemovalDelayLengthMinus1;
+  UInt m_dpbOutputDelayLengthMinus1;
+  UInt m_numDU;
+  HrdSubLayerInfo m_HRD[MAX_TLAYER];
+#endif
 public:
   TComVUI()
-    :
-    m_aspectRatioInfoPresentFlag(false),
-    m_aspectRatioIdc(0),
-    m_sarWidth(0),
-    m_sarHeight(0),
-    m_overscanInfoPresentFlag(false),
-    m_overscanAppropriateFlag(false),
-    m_videoSignalTypePresentFlag(false),
-    m_videoFormat(5),
-    m_videoFullRangeFlag(false),
-    m_colourDescriptionPresentFlag(false),
-    m_colourPrimaries(2),
-    m_transferCharacteristics(2),
-    m_matrixCoefficients(2),
-    m_chromaLocInfoPresentFlag(false),
-    m_chromaSampleLocTypeTopField(0),
-    m_chromaSampleLocTypeBottomField(0),
-    m_neutralChromaIndicationFlag(false),
-    m_fieldSeqFlag(false),
-    m_hrdParametersPresentFlag(false),
-    m_bitstreamRestrictionFlag(false),
-    m_tilesFixedStructureFlag(false),
-    m_motionVectorsOverPicBoundariesFlag(true),
-    m_maxBytesPerPicDenom(2),
-    m_maxBitsPerMinCuDenom(1),
-    m_log2MaxMvLengthHorizontal(15),
-    m_log2MaxMvLengthVertical(15)
+    :m_aspectRatioInfoPresentFlag(false)
+    ,m_aspectRatioIdc(0)
+    ,m_sarWidth(0)
+    ,m_sarHeight(0)
+    ,m_overscanInfoPresentFlag(false)
+    ,m_overscanAppropriateFlag(false)
+    ,m_videoSignalTypePresentFlag(false)
+    ,m_videoFormat(5)
+    ,m_videoFullRangeFlag(false)
+    ,m_colourDescriptionPresentFlag(false)
+    ,m_colourPrimaries(2)
+    ,m_transferCharacteristics(2)
+    ,m_matrixCoefficients(2)
+    ,m_chromaLocInfoPresentFlag(false)
+    ,m_chromaSampleLocTypeTopField(0)
+    ,m_chromaSampleLocTypeBottomField(0)
+    ,m_neutralChromaIndicationFlag(false)
+    ,m_fieldSeqFlag(false)
+    ,m_hrdParametersPresentFlag(false)
+    ,m_bitstreamRestrictionFlag(false)
+    ,m_tilesFixedStructureFlag(false)
+    ,m_motionVectorsOverPicBoundariesFlag(true)
+    ,m_maxBytesPerPicDenom(2)
+    ,m_maxBitsPerMinCuDenom(1)
+    ,m_log2MaxMvLengthHorizontal(15)
+    ,m_log2MaxMvLengthVertical(15)
+#if BUFFERING_PERIOD_AND_TIMING_SEI
+    ,m_timingInfoPresentFlag(false)
+    ,m_numUnitsInTick(1001)
+    ,m_timeScale(60000)
+    ,m_nalHrdParametersPresentFlag(0)
+    ,m_vclHrdParametersPresentFlag(0)
+    ,m_subPicCpbParamsPresentFlag(false)
+    ,m_tickDivisorMinus2(0)
+    ,m_duCpbRemovalDelayLengthMinus1(0)
+    ,m_bitRateScale(0)
+    ,m_cpbSizeScale(0)
+    ,m_initialCpbRemovalDelayLengthMinus1(0)
+    ,m_cpbRemovalDelayLengthMinus1(0)
+    ,m_dpbOutputDelayLengthMinus1(0)
+#endif
   {}
 
   virtual ~TComVUI() {}
@@ -417,6 +459,71 @@ public:
 
   Int getLog2MaxMvLengthVertical() { return m_log2MaxMvLengthVertical; }
   Void setLog2MaxMvLengthVertical(Int i) { m_log2MaxMvLengthVertical = i; }
+
+#if BUFFERING_PERIOD_AND_TIMING_SEI
+  Void setTimingInfoPresentFlag             ( Bool flag )  { m_timingInfoPresentFlag = flag;               }
+  Bool getTimingInfoPresentFlag             ( )            { return m_timingInfoPresentFlag;               }
+
+  Void setNumUnitsInTick                    ( UInt value ) { m_numUnitsInTick = value;                     }
+  UInt getNumUnitsInTick                    ( )            { return m_numUnitsInTick;                      }
+
+  Void setTimeScale                         ( UInt value ) { m_timeScale = value;                          }
+  UInt getTimeScale                         ( )            { return m_timeScale;                           }
+
+  Void setNalHrdParametersPresentFlag       ( Bool flag )  { m_nalHrdParametersPresentFlag = flag;         }
+  Bool getNalHrdParametersPresentFlag       ( )            { return m_nalHrdParametersPresentFlag;         }
+
+  Void setVclHrdParametersPresentFlag       ( Bool flag )  { m_vclHrdParametersPresentFlag = flag;         }
+  Bool getVclHrdParametersPresentFlag       ( )            { return m_vclHrdParametersPresentFlag;         }
+
+  Void setSubPicCpbParamsPresentFlag        ( Bool flag )  { m_subPicCpbParamsPresentFlag = flag;          }
+  Bool getSubPicCpbParamsPresentFlag        ( )            { return m_subPicCpbParamsPresentFlag;          }
+  
+  Void setTickDivisorMinus2                 ( UInt value ) { m_tickDivisorMinus2 = value;                  }
+  UInt getTickDivisorMinus2                 ( )            { return m_tickDivisorMinus2;                   }
+
+  Void setDuCpbRemovalDelayLengthMinus1     ( UInt value ) { m_duCpbRemovalDelayLengthMinus1 = value;      }
+  UInt getDuCpbRemovalDelayLengthMinus1     ( )            { return m_duCpbRemovalDelayLengthMinus1;       }
+
+  Void setBitRateScale                      ( UInt value ) { m_bitRateScale = value;                       }
+  UInt getBitRateScale                      ( )            { return m_bitRateScale;                        }
+
+  Void setCpbSizeScale                      ( UInt value ) { m_cpbSizeScale = value;                       }
+  UInt getCpbSizeScale                      ( )            { return m_cpbSizeScale;                        }
+
+  Void setInitialCpbRemovalDelayLengthMinus1( UInt value ) { m_initialCpbRemovalDelayLengthMinus1 = value; }
+  UInt getInitialCpbRemovalDelayLengthMinus1( )            { return m_initialCpbRemovalDelayLengthMinus1;  }
+
+  Void setCpbRemovalDelayLengthMinus1       ( UInt value ) { m_cpbRemovalDelayLengthMinus1 = value;        }
+  UInt getCpbRemovalDelayLengthMinus1       ( )            { return m_cpbRemovalDelayLengthMinus1;         }
+
+  Void setDpbOutputDelayLengthMinus1        ( UInt value ) { m_dpbOutputDelayLengthMinus1 = value;         }
+  UInt getDpbOutputDelayLengthMinus1        ( )            { return m_dpbOutputDelayLengthMinus1;          }
+
+  Void setFixedPicRateFlag       ( Int layer, Bool flag )  { m_HRD[layer].fixedPicRateFlag = flag;         }
+  Bool getFixedPicRateFlag       ( Int layer            )  { return m_HRD[layer].fixedPicRateFlag;         }
+
+  Void setPicDurationInTcMinus1  ( Int layer, UInt value ) { m_HRD[layer].picDurationInTcMinus1 = value;   }
+  UInt getPicDurationInTcMinus1  ( Int layer             ) { return m_HRD[layer].picDurationInTcMinus1;    }
+
+  Void setLowDelayHrdFlag        ( Int layer, Bool flag )  { m_HRD[layer].lowDelayHrdFlag = flag;          }
+  Bool getLowDelayHrdFlag        ( Int layer            )  { return m_HRD[layer].lowDelayHrdFlag;          }
+
+  Void setCpbCntMinus1           ( Int layer, UInt value ) { m_HRD[layer].cpbCntMinus1 = value; }
+  UInt getCpbCntMinus1           ( Int layer            )  { return m_HRD[layer].cpbCntMinus1; }
+
+  Void setBitRateValueMinus1     ( Int layer, Int cpbcnt, Int nalOrVcl, UInt value ) { m_HRD[layer].bitRateValueMinus1[cpbcnt][nalOrVcl] = value; }
+  UInt getBitRateValueMinus1     ( Int layer, Int cpbcnt, Int nalOrVcl             ) { return m_HRD[layer].bitRateValueMinus1[cpbcnt][nalOrVcl];  }
+
+  Void setCpbSizeValueMinus1     ( Int layer, Int cpbcnt, Int nalOrVcl, UInt value ) { m_HRD[layer].cpbSizeValue[cpbcnt][nalOrVcl] = value;       }
+  UInt getCpbSizeValueMinus1     ( Int layer, Int cpbcnt, Int nalOrVcl            )  { return m_HRD[layer].cpbSizeValue[cpbcnt][nalOrVcl];        }
+
+  Void setCbrFlag                ( Int layer, Int cpbcnt, Int nalOrVcl, UInt value ) { m_HRD[layer].cbrFlag[cpbcnt][nalOrVcl] = value;            }
+  Bool getCbrFlag                ( Int layer, Int cpbcnt, Int nalOrVcl             ) { return m_HRD[layer].cbrFlag[cpbcnt][nalOrVcl];             }
+
+  Void setNumDU                              ( UInt value ) { m_numDU = value;                            }
+  UInt getNumDU                              ( )            { return m_numDU;          }
+#endif
 };
 #endif
 
@@ -710,6 +817,9 @@ public:
   Bool getVuiParametersPresentFlag() { return m_vuiParametersPresentFlag; }
   Void setVuiParametersPresentFlag(Bool b) { m_vuiParametersPresentFlag = b; }
   TComVUI* getVuiParameters() { return &m_vuiParameters; }
+#if BUFFERING_PERIOD_AND_TIMING_SEI
+  Void setHrdParameters( UInt frameRate, UInt numDU, UInt bitRate, Bool randomAccess );
+#endif
 #endif
 
 #if SPS_SYNTAX_CHANGES

@@ -241,7 +241,13 @@ Void TAppEncTop::xInitLibCfg()
   m_cTEncTop.setPCMFilterDisableFlag  ( m_bPCMFilterDisableFlag); 
 
   m_cTEncTop.setDecodedPictureHashSEIEnabled(m_decodePictureHashSEIEnabled);
-
+#if RECOVERY_POINT_SEI
+  m_cTEncTop.setRecoveryPointSEIEnabled( m_recoveryPointSEIEnabled );
+#endif
+#if BUFFERING_PERIOD_AND_TIMING_SEI
+  m_cTEncTop.setBufferingPeriodSEIEnabled( m_bufferingPeriodSEIEnabled );
+  m_cTEncTop.setPictureTimingSEIEnabled( m_pictureTimingSEIEnabled );
+#endif
   m_cTEncTop.setUniformSpacingIdr          ( m_iUniformSpacingIdr );
   m_cTEncTop.setNumColumnsMinus1           ( m_iNumColumnsMinus1 );
   m_cTEncTop.setNumRowsMinus1              ( m_iNumRowsMinus1 );

@@ -34,6 +34,7 @@
 #include "TLibCommon/TComBitCounter.h"
 #include "TLibCommon/TComBitStream.h"
 #include "TLibCommon/SEI.h"
+#include "TLibCommon/TComSlice.h"
 #include "SEIwrite.h"
 
 //! \ingroup TLibEncoder
@@ -72,6 +73,19 @@ void SEIWriter::xWriteSEIpayloadData(const SEI& sei)
   case SEI::DECODED_PICTURE_HASH:
     xWriteSEIDecodedPictureHash(*static_cast<const SEIDecodedPictureHash*>(&sei));
     break;
+#if BUFFERING_PERIOD_AND_TIMING_SEI
+  case SEI::BUFFERING_PERIOD:
+    xWriteSEIBufferingPeriod(*static_cast<const SEIBufferingPeriod*>(&sei));
+    break;
+  case SEI::PICTURE_TIMING:
+    xWriteSEIPictureTiming(*static_cast<const SEIPictureTiming*>(&sei));
+    break;
+#endif
+#if RECOVERY_POINT_SEI
+  case SEI::RECOVERY_POINT:
+    xWriteSEIRecoveryPoint(*static_cast<const SEIRecoveryPoint*>(&sei));
+    break;
+#endif
   default:
     assert(!"Unhandled SEI message");
   }
@@ -175,4 +189,87 @@ Void SEIWriter::xWriteSEIDecodedPictureHash(const SEIDecodedPictureHash& sei)
     }
   }
 }
+#if BUFFERING_PERIOD_AND_TIMING_SEI
+Void SEIWriter::xWriteSEIBufferingPeriod(const SEIBufferingPeriod& sei)
+{
+  Int i, nalOrVcl;
+  TComVUI *vui = sei.m_sps->getVuiParameters();
+  WRITE_UVLC( sei.m_seqParameterSetId, "seq_parameter_set_id" );
+  if( !vui->getSubPicCpbParamsPresentFlag() )
+  {
+    WRITE_FLAG( sei.m_altCpbParamsPresentFlag, "alt_cpb_params_present_flag" );
+  }
+  for( nalOrVcl = 0; nalOrVcl < 2; nalOrVcl ++ )
+  {
+    if( ( ( nalOrVcl == 0 ) && ( vui->getNalHrdParametersPresentFlag() ) ) ||
+        ( ( nalOrVcl == 1 ) && ( vui->getVclHrdParametersPresentFlag() ) ) )
+    {
+      for( i = 0; i < ( vui->getCpbCntMinus1( 0 ) + 1 ); i ++ )
+      {
+        WRITE_CODE( sei.m_initialCpbRemovalDelay[i][nalOrVcl],( vui->getInitialCpbRemovalDelayLengthMinus1() + 1 ) ,           "initial_cpb_removal_delay" );
+        WRITE_CODE( sei.m_initialCpbRemovalDelayOffset[i][nalOrVcl],( vui->getInitialCpbRemovalDelayLengthMinus1() + 1 ),      "initial_cpb_removal_delay_offset" );
+        if( vui->getSubPicCpbParamsPresentFlag() || sei.m_altCpbParamsPresentFlag )
+        {
+          WRITE_CODE( sei.m_initialAltCpbRemovalDelay[i][nalOrVcl], ( vui->getInitialCpbRemovalDelayLengthMinus1() + 1 ) ,     "initial_alt_cpb_removal_delay" );
+          WRITE_CODE( sei.m_initialAltCpbRemovalDelayOffset[i][nalOrVcl], ( vui->getInitialCpbRemovalDelayLengthMinus1() + 1 ),"initial_alt_cpb_removal_delay_offset" );
+        }
+      }
+    }
+  }
+  xWriteByteAlign();
+}
+Void SEIWriter::xWriteSEIPictureTiming(const SEIPictureTiming& sei)
+{
+  Int i;
+  TComVUI *vui = sei.m_sps->getVuiParameters();
+
+  if( !vui->getNalHrdParametersPresentFlag() && !vui->getVclHrdParametersPresentFlag() )
+    return;
+
+  WRITE_CODE( sei.m_auCpbRemovalDelay, ( vui->getCpbRemovalDelayLengthMinus1() + 1 ),                                         "au_cpb_removal_delay" );
+  WRITE_CODE( sei.m_picDpbOutputDelay, ( vui->getDpbOutputDelayLengthMinus1() + 1 ),                                          "pic_dpb_output_delay" );
+  if( sei.m_sps->getVuiParameters()->getSubPicCpbParamsPresentFlag() )
+  {
+    WRITE_UVLC( sei.m_numDecodingUnitsMinus1,     "num_decoding_units_minus1" );
+    WRITE_FLAG( sei.m_duCommonCpbRemovalDelayFlag, "du_common_cpb_removal_delay_flag" );
+    if( sei.m_duCommonCpbRemovalDelayFlag )
+    {
+      WRITE_CODE( sei.m_duCommonCpbRemovalDelayMinus1, ( vui->getDuCpbRemovalDelayLengthMinus1() + 1 ),                       "du_common_cpb_removal_delay_minus1" );
+    }
+    else
+    {
+      for( i = 0; i < ( sei.m_numDecodingUnitsMinus1 + 1 ); i ++ )
+      {
+        WRITE_UVLC( sei.m_numNalusInDuMinus1[ i ],  "num_nalus_in_du_minus1");
+        WRITE_CODE( sei.m_duCpbRemovalDelayMinus1[ i ], ( vui->getDuCpbRemovalDelayLengthMinus1() + 1 ),                        "du_cpb_removal_delay_minus1" );
+      }
+    }
+  }
+  xWriteByteAlign();
+}
+#endif
+#if RECOVERY_POINT_SEI
+Void SEIWriter::xWriteSEIRecoveryPoint(const SEIRecoveryPoint& sei)
+{
+  WRITE_SVLC( sei.m_recoveryPocCnt,    "recovery_poc_cnt"    );
+  WRITE_FLAG( sei.m_exactMatchingFlag, "exact_matching_flag" );
+  WRITE_FLAG( sei.m_brokenLinkFlag,    "broken_link_flag"    );
+  xWriteByteAlign();
+}
+#endif
+
+#if RECOVERY_POINT_SEI || BUFFERING_PERIOD_AND_TIMING_SEI
+Void SEIWriter::xWriteByteAlign()
+{
+  if( m_pcBitIf->getNumberOfWrittenBits() % 8 != 0)
+  {
+    WRITE_FLAG( 1, "bit_equal_to_one" );
+    while( m_pcBitIf->getNumberOfWrittenBits() % 8 != 0 )
+    {
+      WRITE_FLAG( 0, "bit_equal_to_zero" );
+    }
+  }
+};
+#endif
+
 //! \}

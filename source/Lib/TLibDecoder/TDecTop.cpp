@@ -684,7 +684,13 @@ Void TDecTop::xDecodeAPS()
 
 Void TDecTop::xDecodeSEI( TComInputBitstream* bs )
 {
+#if RECOVERY_POINT_SEI || BUFFERING_PERIOD_AND_TIMING_SEI
+  if ( m_SEIs == NULL )
+#endif
   m_SEIs = new SEImessages;
+#if BUFFERING_PERIOD_AND_TIMING_SEI
+  m_SEIs->m_pSPS = m_parameterSetManagerDecoder.getSPS(0);
+#endif
   m_seiReader.parseSEImessage( bs, *m_SEIs );
 }
 

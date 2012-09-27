@@ -239,6 +239,13 @@ protected:
   Int       m_iWaveFrontSubstreams;
 
   Int       m_decodedPictureHashSEIEnabled;              ///< Checksum(3)/CRC(2)/MD5(1)/disable(0) acting on decoded picture hash SEI message
+#if BUFFERING_PERIOD_AND_TIMING_SEI
+  Int       m_bufferingPeriodSEIEnabled;
+  Int       m_pictureTimingSEIEnabled;
+#endif
+#if RECOVERY_POINT_SEI
+  Int       m_recoveryPointSEIEnabled;
+#endif
   //====== Weighted Prediction ========
   Bool      m_bUseWeightPred;       //< Use of Weighting Prediction (P_SLICE)
   Bool      m_useWeightedBiPred;    //< Use of Bi-directional Weighting Prediction (B_SLICE)
@@ -587,7 +594,16 @@ public:
   Int   getWaveFrontSubstreams()                         { return m_iWaveFrontSubstreams; }
   Void  setDecodedPictureHashSEIEnabled(Int b)           { m_decodedPictureHashSEIEnabled = b; }
   Int   getDecodedPictureHashSEIEnabled()                { return m_decodedPictureHashSEIEnabled; }
-
+#if BUFFERING_PERIOD_AND_TIMING_SEI
+  Void  setBufferingPeriodSEIEnabled(Int b)              { m_bufferingPeriodSEIEnabled = b; }
+  Int   getBufferingPeriodSEIEnabled()                   { return m_bufferingPeriodSEIEnabled; }
+  Void  setPictureTimingSEIEnabled(Int b)                { m_pictureTimingSEIEnabled = b; }
+  Int   getPictureTimingSEIEnabled()                     { return m_pictureTimingSEIEnabled; }
+#endif
+#if RECOVERY_POINT_SEI
+  Void  setRecoveryPointSEIEnabled(Int b)                { m_recoveryPointSEIEnabled = b; }
+  Int   getRecoveryPointSEIEnabled()                     { return m_recoveryPointSEIEnabled; }
+#endif
   Void      setUseWP               ( Bool  b )   { m_bUseWeightPred    = b;    }
   Void      setWPBiPred            ( Bool b )    { m_useWeightedBiPred = b;    }
   Bool      getUseWP               ()            { return m_bUseWeightPred;    }

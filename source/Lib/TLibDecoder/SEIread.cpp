@@ -34,6 +34,7 @@
 #include "TLibCommon/CommonDef.h"
 #include "TLibCommon/TComBitStream.h"
 #include "TLibCommon/SEI.h"
+#include "TLibCommon/TComSlice.h"
 #include "SyntaxElementParser.h"
 #include "SEIread.h"
 
@@ -116,6 +117,24 @@ Void SEIReader::xReadSEImessage(SEImessages& seis)
     seis.picture_digest = new SEIDecodedPictureHash;
     xParseSEIDecodedPictureHash(*seis.picture_digest, payloadSize);
     break;
+#if BUFFERING_PERIOD_AND_TIMING_SEI
+  case SEI::BUFFERING_PERIOD:
+    seis.buffering_period = new SEIBufferingPeriod;
+    seis.buffering_period->m_sps = seis.m_pSPS;
+    xParseSEIBufferingPeriod(*seis.buffering_period, payloadSize);
+    break;
+  case SEI::PICTURE_TIMING:
+    seis.picture_timing = new SEIPictureTiming;
+    seis.picture_timing->m_sps = seis.m_pSPS;
+    xParseSEIPictureTiming(*seis.picture_timing, payloadSize);
+    break;
+#endif
+#if RECOVERY_POINT_SEI
+  case SEI::RECOVERY_POINT:
+    seis.recovery_point = new SEIRecoveryPoint;
+    xParseSEIRecoveryPoint(*seis.recovery_point, payloadSize);
+    break;
+#endif
   default:
     assert(!"Unhandled SEI message");
   }
@@ -125,7 +144,7 @@ Void SEIReader::xReadSEImessage(SEImessages& seis)
  * parse bitstream bs and unpack a user_data_unregistered SEI message
  * of payloasSize bytes into sei.
  */
-Void SEIReader::xParseSEIuserDataUnregistered(SEIuserDataUnregistered &sei, unsigned payloadSize)
+Void SEIReader::xParseSEIuserDataUnregistered(SEIuserDataUnregistered &sei, UInt payloadSize)
 {
   assert(payloadSize >= 16);
   UInt val;
@@ -155,7 +174,7 @@ Void SEIReader::xParseSEIuserDataUnregistered(SEIuserDataUnregistered &sei, unsi
  * parse bitstream bs and unpack a decoded picture hash SEI message
  * of payloadSize bytes into sei.
  */
-Void SEIReader::xParseSEIDecodedPictureHash(SEIDecodedPictureHash& sei, unsigned payloadSize)
+Void SEIReader::xParseSEIDecodedPictureHash(SEIDecodedPictureHash& sei, UInt payloadSize)
 {
   UInt val;
   READ_CODE (8, val, "hash_type");
@@ -186,5 +205,120 @@ Void SEIReader::xParseSEIDecodedPictureHash(SEIDecodedPictureHash& sei, unsigned
     }
   }
 }
+#if BUFFERING_PERIOD_AND_TIMING_SEI
+Void SEIReader::xParseSEIBufferingPeriod(SEIBufferingPeriod& sei, UInt payloadSize)
+{
+  Int i, nalOrVcl;
+  UInt code;
 
+  TComVUI *pVUI = sei.m_sps->getVuiParameters();
+
+  READ_UVLC( code, "seq_parameter_set_id" );                            sei.m_seqParameterSetId     = code;
+  if( !pVUI->getSubPicCpbParamsPresentFlag() )
+  {
+    READ_FLAG( code, "alt_cpb_params_present_flag" );                   sei.m_altCpbParamsPresentFlag = code;
+  }
+
+  for( nalOrVcl = 0; nalOrVcl < 2; nalOrVcl ++ )
+  {
+    if( ( ( nalOrVcl == 0 ) && ( pVUI->getNalHrdParametersPresentFlag() ) ) ||
+        ( ( nalOrVcl == 1 ) && ( pVUI->getVclHrdParametersPresentFlag() ) ) )
+    {
+      for( i = 0; i < ( pVUI->getCpbCntMinus1( 0 ) + 1 ); i ++ )
+      {
+        READ_CODE( ( pVUI->getInitialCpbRemovalDelayLengthMinus1() + 1 ) , code, "initial_cpb_removal_delay" );
+        sei.m_initialCpbRemovalDelay[i][nalOrVcl] = code;
+        READ_CODE( ( pVUI->getInitialCpbRemovalDelayLengthMinus1() + 1 ) , code, "initial_cpb_removal_delay_offset" );
+        sei.m_initialCpbRemovalDelayOffset[i][nalOrVcl] = code;
+        if( pVUI->getSubPicCpbParamsPresentFlag() || sei.m_altCpbParamsPresentFlag )
+        {
+          READ_CODE( ( pVUI->getInitialCpbRemovalDelayLengthMinus1() + 1 ) , code, "initial_alt_cpb_removal_delay" );
+          sei.m_initialAltCpbRemovalDelay[i][nalOrVcl] = code;
+          READ_CODE( ( pVUI->getInitialCpbRemovalDelayLengthMinus1() + 1 ) , code, "initial_alt_cpb_removal_delay_offset" );
+          sei.m_initialAltCpbRemovalDelayOffset[i][nalOrVcl] = code;
+        }
+      }
+    }
+  }
+  xParseByteAlign();
+}
+Void SEIReader::xParseSEIPictureTiming(SEIPictureTiming& sei, UInt payloadSize)
+{
+  Int i;
+  UInt code;
+
+  TComVUI *vui = sei.m_sps->getVuiParameters();
+
+  if( !vui->getNalHrdParametersPresentFlag() && !vui->getVclHrdParametersPresentFlag() )
+  {
+    return;
+  }
+
+  READ_CODE( ( vui->getCpbRemovalDelayLengthMinus1() + 1 ), code, "au_cpb_removal_delay" );
+  sei.m_auCpbRemovalDelay = code;
+  READ_CODE( ( vui->getDpbOutputDelayLengthMinus1() + 1 ), code, "pic_dpb_output_delay" );
+  sei.m_picDpbOutputDelay = code;
+
+  if( sei.m_sps->getVuiParameters()->getSubPicCpbParamsPresentFlag() )
+  {
+    READ_UVLC( code, "num_decoding_units_minus1");
+    sei.m_numDecodingUnitsMinus1 = code;
+    READ_FLAG( code, "du_common_cpb_removal_delay_flag" );
+    sei.m_duCommonCpbRemovalDelayFlag = code;
+    if( sei.m_duCommonCpbRemovalDelayFlag )
+    {
+      READ_CODE( ( vui->getDuCpbRemovalDelayLengthMinus1() + 1 ), code, "du_common_cpb_removal_delay_minus1" );
+      sei.m_duCommonCpbRemovalDelayMinus1 = code;
+    }
+    else
+    {
+      if( sei.m_numNalusInDuMinus1 != NULL )
+      {
+        delete sei.m_numNalusInDuMinus1;
+      }
+      sei.m_numNalusInDuMinus1 = new UInt[ ( sei.m_numDecodingUnitsMinus1 + 1 ) ];
+      if( sei.m_duCpbRemovalDelayMinus1  != NULL )
+      {
+        delete sei.m_duCpbRemovalDelayMinus1;
+      }
+      sei.m_duCpbRemovalDelayMinus1  = new UInt[ ( sei.m_numDecodingUnitsMinus1 + 1 ) ];
+
+      for( i = 0; i < ( sei.m_numDecodingUnitsMinus1 + 1 ); i ++ )
+      {
+        READ_UVLC( code, "num_nalus_in_du_minus1");
+        sei.m_numNalusInDuMinus1[ i ] = code;
+        READ_CODE( ( vui->getDuCpbRemovalDelayLengthMinus1() + 1 ), code, "du_cpb_removal_delay_minus1" );
+        sei.m_duCpbRemovalDelayMinus1[ i ] = code;
+      }
+    }
+  }
+  xParseByteAlign();
+}
+#endif
+#if RECOVERY_POINT_SEI
+Void SEIReader::xParseSEIRecoveryPoint(SEIRecoveryPoint& sei, UInt payloadSize)
+{
+  Int  iCode;
+  UInt uiCode;
+  READ_SVLC( iCode,  "recovery_poc_cnt" );      sei.m_recoveryPocCnt     = iCode;
+  READ_FLAG( uiCode, "exact_matching_flag" );   sei.m_exactMatchingFlag  = uiCode;
+  READ_FLAG( uiCode, "broken_link_flag" );      sei.m_brokenLinkFlag     = uiCode;
+  xParseByteAlign();
+}
+#endif
+
+#if RECOVERY_POINT_SEI || BUFFERING_PERIOD_AND_TIMING_SEI
+Void SEIReader::xParseByteAlign()
+{
+  UInt code;
+  if( m_pcBitstream->getNumBitsRead() % 8 != 0 )
+  {
+    READ_FLAG( code, "bit_equal_to_one" );          assert( code == 1 );
+  }
+  while( m_pcBitstream->getNumBitsRead() % 8 != 0 )
+  {
+    READ_FLAG( code, "bit_equal_to_zero" );         assert( code == 0 );
+  }
+}
+#endif
 //! \}
