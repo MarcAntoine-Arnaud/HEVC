@@ -335,9 +335,9 @@ Void TEncCavlc::codeVUI( TComVUI *pcVUI, TComSPS* pcSPS )
   fprintf( g_hTrace, "----------- vui_parameters -----------\n");
 #endif
   WRITE_FLAG(pcVUI->getAspectRatioInfoPresentFlag(),            "aspect_ratio_info_present_flag");
-  if (pcVUI->getAspectRatioIdc())
+  if (pcVUI->getAspectRatioInfoPresentFlag())
   {
-    WRITE_CODE(pcVUI->getAspectRatioIdc(), 8,                   "vui_parameters_present_flag" );
+    WRITE_CODE(pcVUI->getAspectRatioIdc(), 8,                   "aspect_ratio_idc" );
     if (pcVUI->getAspectRatioIdc() == 255)
     {
       WRITE_CODE(pcVUI->getSarWidth(), 16,                      "sar_width");
