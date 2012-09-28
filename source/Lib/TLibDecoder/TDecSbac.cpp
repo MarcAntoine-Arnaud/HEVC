@@ -519,9 +519,8 @@ Void TDecSbac::parseMergeFlag ( TComDataCU* pcCU, UInt uiAbsPartIdx, UInt uiDept
 
 Void TDecSbac::parseMergeIndex ( TComDataCU* pcCU, UInt& ruiMergeIndex, UInt uiAbsPartIdx, UInt uiDepth )
 {
-  UInt uiNumCand = MRG_MAX_NUM_CANDS;
   UInt uiUnaryIdx = 0;
-  uiNumCand = pcCU->getSlice()->getMaxNumMergeCand();
+  UInt uiNumCand = pcCU->getSlice()->getMaxNumMergeCand();
   if ( uiNumCand > 1 )
   {
     for( ; uiUnaryIdx < uiNumCand - 1; ++uiUnaryIdx )

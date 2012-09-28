@@ -77,7 +77,8 @@
 
 #define COEF_REMAIN_BIN_REDUCTION        3 ///< J0142: Maximum codeword length of coeff_abs_level_remaining reduced to 32.
                                            ///< COEF_REMAIN_BIN_REDUCTION is also used to indicate the level at which the VLC 
-                                           ///< transitions from Golomb-Rice to TU+EG(k)
+                                
+///< transitions from Golomb-Rice to TU+EG(k)
 
 #define CU_DQP_TU_EG                     1 ///< J0089: Bin reduction for delta QP coding
 #if (CU_DQP_TU_EG)

@@ -630,9 +630,8 @@ Void TEncSbac::codeMergeFlag( TComDataCU* pcCU, UInt uiAbsPartIdx )
  */
 Void TEncSbac::codeMergeIndex( TComDataCU* pcCU, UInt uiAbsPartIdx )
 {
-  UInt uiNumCand = MRG_MAX_NUM_CANDS;
   UInt uiUnaryIdx = pcCU->getMergeIndex( uiAbsPartIdx );
-  uiNumCand = pcCU->getSlice()->getMaxNumMergeCand();
+  UInt uiNumCand = pcCU->getSlice()->getMaxNumMergeCand();
   if ( uiNumCand > 1 )
   {
     for( UInt ui = 0; ui < uiNumCand - 1; ++ui )

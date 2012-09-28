@@ -159,7 +159,7 @@ Void TDecEntropy::decodePUWise( TComDataCU* pcCU, UInt uiAbsPartIdx, UInt uiDept
   TComMvField cMvFieldNeighbours[MRG_MAX_NUM_CANDS << 1]; // double length for mv of both lists
   UChar uhInterDirNeighbours[MRG_MAX_NUM_CANDS];
 
-  for ( UInt ui = 0; ui < MRG_MAX_NUM_CANDS; ui++ )
+  for ( UInt ui = 0; ui < pcCU->getSlice()->getMaxNumMergeCand(); ui++ )
   {
     uhInterDirNeighbours[ui] = 0;
   }

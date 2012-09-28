@@ -194,12 +194,7 @@ Void TEncEntropy::encodeMergeIndex( TComDataCU* pcCU, UInt uiAbsPartIdx, UInt ui
     uiAbsPartIdx = 0;
     assert( pcCU->getPartitionSize(uiAbsPartIdx) == SIZE_2Nx2N );
   }
-
-  UInt uiNumCand = MRG_MAX_NUM_CANDS;
-  if ( uiNumCand > 1 )
-  {
-    m_pcEntropyCoderIf->codeMergeIndex( pcCU, uiAbsPartIdx );
-  }
+  m_pcEntropyCoderIf->codeMergeIndex( pcCU, uiAbsPartIdx );
 }
 
 /** encode prediction mode

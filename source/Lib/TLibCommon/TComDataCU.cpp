@@ -2767,10 +2767,11 @@ Void TComDataCU::getInterMergeCandidates( UInt uiAbsPartIdx, UInt uiPUIdx, UInt 
   UInt uiAbsPartAddr = m_uiAbsIdxInLCU + uiAbsPartIdx;
   UInt uiIdx = 1;
   bool abCandIsInter[ MRG_MAX_NUM_CANDS ];
-  for( UInt ui = 0; ui < MRG_MAX_NUM_CANDS; ++ui )
+  for( UInt ui = 0; ui < getSlice()->getMaxNumMergeCand(); ++ui )
   {
     abCandIsInter[ui] = false;
   }
+  numValidMergeCand = getSlice()->getMaxNumMergeCand();
   // compute the location of the current PU
   Int xP, yP, nPSW, nPSH;
   this->getPartPosition(uiPUIdx, xP, yP, nPSW, nPSH);
@@ -2815,6 +2816,11 @@ Void TComDataCU::getInterMergeCandidates( UInt uiAbsPartIdx, UInt uiPUIdx, UInt 
   }
   }
 
+  // early termination
+  if (iCount == getSlice()->getMaxNumMergeCand()) 
+  {
+    return;
+  }
   // above
   UInt uiAbovePartIdx = 0;
   TComDataCU* pcCUAbove = 0;
@@ -2845,6 +2851,11 @@ Void TComDataCU::getInterMergeCandidates( UInt uiAbsPartIdx, UInt uiPUIdx, UInt 
     }
     iCount ++;
   }
+  // early termination
+  if (iCount == getSlice()->getMaxNumMergeCand()) 
+  {
+    return;
+  }
 
   // above right
   UInt uiAboveRightPartIdx = 0;
@@ -2873,6 +2884,11 @@ Void TComDataCU::getInterMergeCandidates( UInt uiAbsPartIdx, UInt uiPUIdx, UInt 
       return;
     }
     iCount ++;
+  }
+  // early termination
+  if (iCount == getSlice()->getMaxNumMergeCand()) 
+  {
+    return;
   }
 
   //left bottom
@@ -2903,7 +2919,11 @@ Void TComDataCU::getInterMergeCandidates( UInt uiAbsPartIdx, UInt uiPUIdx, UInt 
     }
     iCount ++;
   }
-
+  // early termination
+  if (iCount == getSlice()->getMaxNumMergeCand()) 
+  {
+    return;
+  }
   // above left 
   if( iCount < 4 )
   {
@@ -2938,8 +2958,12 @@ Void TComDataCU::getInterMergeCandidates( UInt uiAbsPartIdx, UInt uiPUIdx, UInt 
       iCount ++;
     }
   }
-
-  if ( getSlice()->getEnableTMVPFlag() )
+  // early termination
+  if (iCount == getSlice()->getMaxNumMergeCand()) 
+  {
+    return;
+  }
+  if ( getSlice()->getEnableTMVPFlag())
   {
     //>> MTK colocated-RightBottom
     UInt uiPartIdxRB;
@@ -3034,16 +3058,20 @@ Void TComDataCU::getInterMergeCandidates( UInt uiAbsPartIdx, UInt uiPUIdx, UInt 
     uiIdx++;
 
   }
-
+  // early termination
+  if (iCount == getSlice()->getMaxNumMergeCand()) 
+  {
+    return;
+  }
   UInt uiArrayAddr = iCount;
   UInt uiCutoff = uiArrayAddr;
     
-  if ( getSlice()->isInterB() )
+  if ( getSlice()->isInterB())
   {
     UInt uiPriorityList0[12] = {0 , 1, 0, 2, 1, 2, 0, 3, 1, 3, 2, 3};
     UInt uiPriorityList1[12] = {1 , 0, 2, 0, 2, 1, 3, 0, 3, 1, 3, 2};
 
-    for (Int idx=0; idx<uiCutoff*(uiCutoff-1) && uiArrayAddr!=MRG_MAX_NUM_CANDS; idx++)
+    for (Int idx=0; idx<uiCutoff*(uiCutoff-1) && uiArrayAddr!= getSlice()->getMaxNumMergeCand(); idx++)
     {
       Int i = uiPriorityList0[idx]; Int j = uiPriorityList1[idx];
       if (abCandIsInter[i] && abCandIsInter[j]&& (puhInterDirNeighbours[i]&0x1)&&(puhInterDirNeighbours[j]&0x2))
@@ -3068,11 +3096,15 @@ Void TComDataCU::getInterMergeCandidates( UInt uiAbsPartIdx, UInt uiPUIdx, UInt 
       }
     }
   }
-
+  // early termination
+  if (uiArrayAddr == getSlice()->getMaxNumMergeCand()) 
+  {
+    return;
+  }
   Int iNumRefIdx = (getSlice()->isInterB()) ? min(m_pcSlice->getNumRefIdx(REF_PIC_LIST_0), m_pcSlice->getNumRefIdx(REF_PIC_LIST_1)) : m_pcSlice->getNumRefIdx(REF_PIC_LIST_0);
   Int r = 0;
   Int refcnt = 0;
-  while (uiArrayAddr < MRG_MAX_NUM_CANDS)
+  while (uiArrayAddr < getSlice()->getMaxNumMergeCand())
   {
     abCandIsInter[uiArrayAddr] = true;
     puhInterDirNeighbours[uiArrayAddr] = 1;
@@ -3094,10 +3126,7 @@ Void TComDataCU::getInterMergeCandidates( UInt uiAbsPartIdx, UInt uiPUIdx, UInt 
       ++refcnt;
     }
   }
-  if (uiArrayAddr > getSlice()->getMaxNumMergeCand())
-  {
-    uiArrayAddr = getSlice()->getMaxNumMergeCand();
-  }
+
   numValidMergeCand = uiArrayAddr;
 }
 
