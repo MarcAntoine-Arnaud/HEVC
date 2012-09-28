@@ -1023,8 +1023,7 @@ Void TEncCavlc::codeSliceHeader         ( TComSlice* pcSlice )
     {
       xCodePredWeightTable( pcSlice );
     }
-    assert(pcSlice->getMaxNumMergeCand()<=MRG_MAX_NUM_CANDS_SIGNALED);
-    assert(MRG_MAX_NUM_CANDS_SIGNALED<=MRG_MAX_NUM_CANDS);
+    assert(pcSlice->getMaxNumMergeCand()<=MRG_MAX_NUM_CANDS);
     WRITE_UVLC(MRG_MAX_NUM_CANDS - pcSlice->getMaxNumMergeCand(), "five_minus_max_num_merge_cand");
 #endif
     Int iCode = pcSlice->getSliceQp() - ( pcSlice->getPPS()->getPicInitQPMinus26() + 26 );

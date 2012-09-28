@@ -179,6 +179,8 @@ Void TAppEncTop::xInitLibCfg()
   m_cTEncTop.setPCMLog2MinSize          ( m_uiPCMLog2MinSize);
   m_cTEncTop.setUsePCM                       ( m_usePCM );
   m_cTEncTop.setPCMLog2MaxSize               ( m_pcmLog2MaxSize);
+  m_cTEncTop.setMaxNumMergeCand              ( m_maxNumMergeCand );
+  
 
   //====== Weighted Prediction ========
   m_cTEncTop.setUseWP                   ( m_bUseWeightPred      );

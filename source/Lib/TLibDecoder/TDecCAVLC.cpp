@@ -1455,7 +1455,7 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
     }
     READ_UVLC( uiCode, "five_minus_max_num_merge_cand");
     rpcSlice->setMaxNumMergeCand(MRG_MAX_NUM_CANDS - uiCode);
-    assert(rpcSlice->getMaxNumMergeCand()==MRG_MAX_NUM_CANDS_SIGNALED);
+
 #endif
     READ_SVLC( iCode, "slice_qp_delta" ); 
     rpcSlice->setSliceQp (26 + pps->getPicInitQPMinus26() + iCode);
@@ -1534,7 +1534,6 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
 
     READ_UVLC( uiCode, "five_minus_max_num_merge_cand");
     rpcSlice->setMaxNumMergeCand(MRG_MAX_NUM_CANDS - uiCode);
-    assert(rpcSlice->getMaxNumMergeCand()==MRG_MAX_NUM_CANDS_SIGNALED);
 
   if (!bDependentSlice)
   {

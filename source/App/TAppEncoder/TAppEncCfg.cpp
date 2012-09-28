@@ -314,6 +314,8 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
     ("ScalingList",                 m_useScalingListId,              0,          "0: no scaling list, 1: default scaling lists, 2: scaling lists specified in ScalingListFile")
     ("ScalingListFile",             cfg_ScalingListFile,             string(""), "Scaling list file name")
     ("SignHideFlag,-SBH",                m_signHideFlag, 1)
+    ("MaxNumMergeCand",             m_maxNumMergeCand,             5u,         "Maximum number of merge candidates")
+
   /* Misc. */
   ("SEIpictureDigest",  m_decodePictureHashSEIEnabled, 0, "Control generation of decode picture hash SEI messages\n"
                                               "\t3: checksum\n"
@@ -585,6 +587,9 @@ Void TAppEncCfg::xCheckParameter()
   xConfirmPara( m_uiQuadtreeTUMaxDepthInter > m_uiQuadtreeTULog2MaxSize - m_uiQuadtreeTULog2MinSize + 1, "QuadtreeTUMaxDepthInter must be less than or equal to the difference between QuadtreeTULog2MaxSize and QuadtreeTULog2MinSize plus 1" );
   xConfirmPara( m_uiQuadtreeTUMaxDepthIntra < 1,                                                         "QuadtreeTUMaxDepthIntra must be greater than or equal to 1" );
   xConfirmPara( m_uiQuadtreeTUMaxDepthIntra > m_uiQuadtreeTULog2MaxSize - m_uiQuadtreeTULog2MinSize + 1, "QuadtreeTUMaxDepthIntra must be less than or equal to the difference between QuadtreeTULog2MaxSize and QuadtreeTULog2MinSize plus 1" );
+
+  xConfirmPara(  m_maxNumMergeCand < 1,  "MaxNumMergeCand must be 1 or greater.");
+  xConfirmPara(  m_maxNumMergeCand > 5,  "MaxNumMergeCand must be 5 or smaller.");
 
 #if ADAPTIVE_QP_SELECTION
   xConfirmPara( m_bUseAdaptQpSelect == true && m_iQP < 0,                                              "AdaptiveQpSelection must be disabled when QP < 0.");
@@ -1068,6 +1073,7 @@ Void TAppEncCfg::xPrintParameter()
     printf("TargetBitrate                : %d\n", m_targetBitrate);
     printf("NumLCUInUnit                 : %d\n", m_numLCUInUnit);
   }
+  printf("Max Num Merge Candidates     : %d\n", m_maxNumMergeCand);
   printf("\n");
   
   printf("TOOL CFG: ");

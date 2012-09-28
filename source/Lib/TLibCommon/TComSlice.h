@@ -1215,6 +1215,8 @@ private:
   UInt        m_colFromL0Flag;  // collocated picture from List0 flag
   
   UInt        m_colRefIdx;
+  UInt        m_maxNumMergeCand;
+
 
 #if ALF_CHROMA_LAMBDA || SAO_CHROMA_LAMBDA
   Double      m_dLambdaLuma;
@@ -1466,9 +1468,8 @@ public:
   Int       checkThatAllRefPicsAreAvailable( TComList<TComPic*>& rcListPic, TComReferencePictureSet *pReferencePictureSet, Bool printErrors, Int pocRandomAccess = 0);
   Void      createExplicitReferencePictureSetFromReference( TComList<TComPic*>& rcListPic, TComReferencePictureSet *pReferencePictureSet);
 
-  UInt m_uiMaxNumMergeCand;
-  Void setMaxNumMergeCand               (UInt maxNumMergeCand ) { m_uiMaxNumMergeCand = maxNumMergeCand;  }
-  UInt getMaxNumMergeCand               ()                  {return m_uiMaxNumMergeCand;                  }
+  Void setMaxNumMergeCand               (UInt val )         { m_maxNumMergeCand = val;                    }
+  UInt getMaxNumMergeCand               ()                  { return m_maxNumMergeCand;                   }
 
   Void setSliceMode                     ( UInt uiMode )     { m_uiSliceMode = uiMode;                     }
   UInt getSliceMode                     ()                  { return m_uiSliceMode;                       }

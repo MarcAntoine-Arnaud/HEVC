@@ -249,7 +249,8 @@ protected:
   //====== Weighted Prediction ========
   Bool      m_bUseWeightPred;       //< Use of Weighting Prediction (P_SLICE)
   Bool      m_useWeightedBiPred;    //< Use of Bi-directional Weighting Prediction (B_SLICE)
-  UInt      m_log2ParallelMergeLevelMinus2;       // Parallel merge estimation region
+  UInt      m_log2ParallelMergeLevelMinus2;       ///< Parallel merge estimation region
+  UInt      m_maxNumMergeCand;                    ///< Maximum number of merge candidates
   Int       m_useScalingListId;            ///< Using quantization matrix i.e. 0=off, 1=default, 2=file.
   char*     m_scalingListFile;          ///< quantization matrix file name
   Int       m_TMVPModeId;
@@ -613,6 +614,8 @@ public:
   Bool      getWPBiPred            ()            { return m_useWeightedBiPred; }
   Void      setLog2ParallelMergeLevelMinus2   ( UInt u )    { m_log2ParallelMergeLevelMinus2       = u;    }
   UInt      getLog2ParallelMergeLevelMinus2   ()            { return m_log2ParallelMergeLevelMinus2;       }
+  Void      setMaxNumMergeCand                ( UInt u )    { m_maxNumMergeCand = u;      }
+  UInt      getMaxNumMergeCand                ()            { return m_maxNumMergeCand;   }
   Void      setUseScalingListId    ( Int  u )    { m_useScalingListId       = u;   }
   Int       getUseScalingListId    ()            { return m_useScalingListId;      }
   Void      setScalingListFile     ( char*  pch ){ m_scalingListFile     = pch; }

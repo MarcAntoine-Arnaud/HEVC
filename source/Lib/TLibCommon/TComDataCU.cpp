@@ -3094,9 +3094,9 @@ Void TComDataCU::getInterMergeCandidates( UInt uiAbsPartIdx, UInt uiPUIdx, UInt 
       ++refcnt;
     }
   }
-  if (uiArrayAddr > MRG_MAX_NUM_CANDS_SIGNALED)
+  if (uiArrayAddr > getSlice()->getMaxNumMergeCand())
   {
-    uiArrayAddr = MRG_MAX_NUM_CANDS_SIGNALED;
+    uiArrayAddr = getSlice()->getMaxNumMergeCand();
   }
   numValidMergeCand = uiArrayAddr;
 }

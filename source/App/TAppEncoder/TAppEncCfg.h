@@ -209,7 +209,8 @@ protected:
   Bool      m_bUseWeightPred;                                 ///< Use of explicit Weighting Prediction for P_SLICE
   Bool      m_useWeightedBiPred;                                    ///< Use of Bi-Directional Weighting Prediction (B_SLICE)
   
-  UInt      m_log2ParallelMergeLevel;                 ///< Parallel merge estimation region
+  UInt      m_log2ParallelMergeLevel;                         ///< Parallel merge estimation region
+  UInt      m_maxNumMergeCand;                                ///< Max number of merge candidates
 
   Int       m_TMVPModeId;
   Int       m_signHideFlag;

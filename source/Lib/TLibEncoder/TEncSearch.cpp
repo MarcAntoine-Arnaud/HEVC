@@ -3130,7 +3130,7 @@ Void TEncSearch::xMergeEstimation( TComDataCU* pcCU, TComYuv* pcYuvOrg, Int iPUI
 
       xGetInterPredictionError( pcCU, pcYuvOrg, iPUIdx, uiCostCand, m_pcEncCfg->getUseHADME() );
       uiBitsCand = uiMergeCand + 1;
-      if (uiMergeCand == MRG_MAX_NUM_CANDS_SIGNALED -1)
+      if (uiMergeCand == m_pcEncCfg->getMaxNumMergeCand() -1)
       {
          uiBitsCand--;
       }
