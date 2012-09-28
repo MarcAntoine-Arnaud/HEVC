@@ -197,8 +197,8 @@ protected:
 #if !REMOVE_LMCHROMA
   Bool      m_bUseLMChroma;
 #endif
-  Bool      m_useTansformSkip;
-  Bool      m_useTansformSkipFast;
+  Bool      m_useTransformSkip;
+  Bool      m_useTransformSkipFast;
   Int*      m_aidQP;
   UInt      m_uiDeltaQpRD;
   
@@ -213,7 +213,11 @@ protected:
   Int       m_iDependentSliceMode;
   Int       m_iDependentSliceArgument;
 #if DEPENDENT_SLICES
+#if TILES_WPP_ENTROPYSLICES_FLAGS
+  Bool      m_entropySliceEnabledFlag;
+#else
   Bool      m_bCabacIndependentFlag;
+#endif
 #endif
 #if !REMOVE_FGS
   Int       m_iSliceGranularity;
@@ -224,7 +228,7 @@ protected:
   UInt      m_uiPCMBitDepthLuma;
   UInt      m_uiPCMBitDepthChroma;
   Bool      m_bPCMFilterDisableFlag;
-  Bool      m_bLFCrossTileBoundaryFlag;
+  Bool      m_loopFilterAcrossTilesEnabledFlag;
   Int       m_iUniformSpacingIdr;
   Int       m_iNumColumnsMinus1;
   UInt*     m_puiColumnWidth;
@@ -234,11 +238,19 @@ protected:
   Int       m_iWaveFrontSynchro;
   Int       m_iWaveFrontSubstreams;
 
-  Int m_pictureDigestEnabled;              ///< Checksum(3)/CRC(2)/MD5(1)/disable(0) acting on SEI picture_digest message
+  Int       m_decodedPictureHashSEIEnabled;              ///< Checksum(3)/CRC(2)/MD5(1)/disable(0) acting on decoded picture hash SEI message
+#if BUFFERING_PERIOD_AND_TIMING_SEI
+  Int       m_bufferingPeriodSEIEnabled;
+  Int       m_pictureTimingSEIEnabled;
+#endif
+#if RECOVERY_POINT_SEI
+  Int       m_recoveryPointSEIEnabled;
+#endif
   //====== Weighted Prediction ========
   Bool      m_bUseWeightPred;       //< Use of Weighting Prediction (P_SLICE)
   Bool      m_useWeightedBiPred;    //< Use of Bi-directional Weighting Prediction (B_SLICE)
-  UInt      m_log2ParallelMergeLevelMinus2;       // Parallel merge estimation region
+  UInt      m_log2ParallelMergeLevelMinus2;       ///< Parallel merge estimation region
+  UInt      m_maxNumMergeCand;                    ///< Maximum number of merge candidates
   Int       m_useScalingListId;            ///< Using quantization matrix i.e. 0=off, 1=default, 2=file.
   char*     m_scalingListFile;          ///< quantization matrix file name
   Int       m_TMVPModeId;
@@ -252,7 +264,36 @@ protected:
 #if RECALCULATE_QP_ACCORDING_LAMBDA
   Bool      m_recalculateQPAccordingToLambda;                 ///< recalculate QP value according to the lambda value
 #endif
-  
+#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE  
+  Int       m_activeParameterSetsSEIEnabled;                  ///< enable active parameter set SEI message 
+#endif 
+#if SUPPORT_FOR_VUI
+  Bool      m_vuiParametersPresentFlag;                       ///< enable generation of VUI parameters
+  Bool      m_aspectRatioInfoPresentFlag;                     ///< Signals whether aspect_ratio_idc is present
+  Int       m_aspectRatioIdc;                                 ///< aspect_ratio_idc
+  Int       m_sarWidth;                                       ///< horizontal size of the sample aspect ratio
+  Int       m_sarHeight;                                      ///< vertical size of the sample aspect ratio
+  Bool      m_overscanInfoPresentFlag;                        ///< Signals whether overscan_appropriate_flag is present
+  Bool      m_overscanAppropriateFlag;                        ///< Indicates whether cropped decoded pictures are suitable for display using overscan
+  Bool      m_videoSignalTypePresentFlag;                     ///< Signals whether video_format, video_full_range_flag, and colour_description_present_flag are present
+  Int       m_videoFormat;                                    ///< Indicates representation of pictures
+  Bool      m_videoFullRangeFlag;                             ///< Indicates the black level and range of luma and chroma signals
+  Bool      m_colourDescriptionPresentFlag;                   ///< Signals whether colour_primaries, transfer_characteristics and matrix_coefficients are present
+  Int       m_colourPrimaries;                                ///< Indicates chromaticity coordinates of the source primaries
+  Int       m_transferCharacteristics;                        ///< Indicates the opto-electronic transfer characteristics of the source
+  Int       m_matrixCoefficients;                             ///< Describes the matrix coefficients used in deriving luma and chroma from RGB primaries
+  Bool      m_chromaLocInfoPresentFlag;                       ///< Signals whether chroma_sample_loc_type_top_field and chroma_sample_loc_type_bottom_field are present
+  Int       m_chromaSampleLocTypeTopField;                    ///< Specifies the location of chroma samples for top field
+  Int       m_chromaSampleLocTypeBottomField;                 ///< Specifies the location of chroma samples for bottom field
+  Bool      m_neutralChromaIndicationFlag;                    ///< Indicates that the value of all decoded chroma samples is equal to 1<<(BitDepthCr-1)
+  Bool      m_bitstreamRestrictionFlag;                       ///< Signals whether bitstream restriction parameters are present
+  Bool      m_tilesFixedStructureFlag;                        ///< Indicates that each active picture parameter set has the same values of the syntax elements related to tiles
+  Bool      m_motionVectorsOverPicBoundariesFlag;             ///< Indicates that no samples outside the picture boundaries are used for inter prediction
+  Int       m_maxBytesPerPicDenom;                            ///< Indicates a number of bytes not exceeded by the sum of the sizes of the VCL NAL units associated with any coded picture
+  Int       m_maxBitsPerMinCuDenom;                           ///< Indicates an upper bound for the number of bits of coding_unit() data
+  Int       m_log2MaxMvLengthHorizontal;                      ///< Indicate the maximum absolute value of a decoded horizontal MV component in quarter-pel luma units
+  Int       m_log2MaxMvLengthVertical;                        ///< Indicate the maximum absolute value of a decoded vertical MV component in quarter-pel luma units
+#endif
 public:
   TEncCfg()
   : m_puiColumnWidth()
@@ -437,10 +478,10 @@ public:
   Bool getUseLMChroma                       ()      { return m_bUseLMChroma;        }
   Void setUseLMChroma                       ( Bool b ) { m_bUseLMChroma  = b;       }
 #endif
-  Bool getUseTransformSkip                             ()      { return m_useTansformSkip;        }
-  Void setUseTransformSkip                             ( Bool b ) { m_useTansformSkip  = b;       }
-  Bool getUseTransformSkipFast                         ()      { return m_useTansformSkipFast;    }
-  Void setUseTransformSkipFast                         ( Bool b ) { m_useTansformSkipFast  = b;   }
+  Bool getUseTransformSkip                             ()      { return m_useTransformSkip;        }
+  Void setUseTransformSkip                             ( Bool b ) { m_useTransformSkip  = b;       }
+  Bool getUseTransformSkipFast                         ()      { return m_useTransformSkipFast;    }
+  Void setUseTransformSkipFast                         ( Bool b ) { m_useTransformSkipFast  = b;   }
   Int*      getdQPs                         ()      { return m_aidQP;       }
   UInt      getDeltaQpRD                    ()      { return m_uiDeltaQpRD; }
 
@@ -455,8 +496,13 @@ public:
   Int   getDependentSliceMode            ()              { return m_iDependentSliceMode;    }
   Int   getDependentSliceArgument        ()              { return m_iDependentSliceArgument;}
 #if DEPENDENT_SLICES
+#if TILES_WPP_ENTROPYSLICES_FLAGS
+  Void  setEntropySliceEnabledFlag       ( Bool  b )     { m_entropySliceEnabledFlag = b;    }
+  Bool  getEntropySliceEnabledFlag       ()              { return m_entropySliceEnabledFlag; }
+#else
   Void  setCabacIndependentFlag            ( Bool  i )      { m_bCabacIndependentFlag = i;       }
   Bool  getCabacIndependentFlag     ()                    { return m_bCabacIndependentFlag;   }
+#endif
 #endif
 #if !REMOVE_FGS
   Void  setSliceGranularity            ( Int  i )      { m_iSliceGranularity = i;       }
@@ -470,13 +516,13 @@ public:
   Void  setMaxNumOffsetsPerPic                   (Int iVal)            { m_maxNumOffsetsPerPic = iVal; }
   Int   getMaxNumOffsetsPerPic                   ()                    { return m_maxNumOffsetsPerPic; }
 #if SAO_LCU_BOUNDARY
-  Void  setSaoLcuBoundary              (bool bVal)     { m_saoLcuBoundary = bVal; }
+  Void  setSaoLcuBoundary              (Bool val)      { m_saoLcuBoundary = val; }
   Bool  getSaoLcuBoundary              ()              { return m_saoLcuBoundary; }
 #endif
-  Void  setSaoLcuBasedOptimization               (bool bVal)           { m_saoLcuBasedOptimization = bVal; }
+  Void  setSaoLcuBasedOptimization               (Bool val)            { m_saoLcuBasedOptimization = val; }
   Bool  getSaoLcuBasedOptimization               ()                    { return m_saoLcuBasedOptimization; }
-  Void  setLFCrossTileBoundaryFlag               ( Bool   bValue  )    { m_bLFCrossTileBoundaryFlag = bValue; }
-  Bool  getLFCrossTileBoundaryFlag               ()                    { return m_bLFCrossTileBoundaryFlag;   }
+  Void  setLFCrossTileBoundaryFlag               ( Bool   val  )       { m_loopFilterAcrossTilesEnabledFlag = val; }
+  Bool  getLFCrossTileBoundaryFlag               ()                    { return m_loopFilterAcrossTilesEnabledFlag;   }
   Void  setUniformSpacingIdr           ( Int i )           { m_iUniformSpacingIdr = i; }
   Int   getUniformSpacingIdr           ()                  { return m_iUniformSpacingIdr; }
   Void  setNumColumnsMinus1            ( Int i )           { m_iNumColumnsMinus1 = i; }
@@ -550,15 +596,26 @@ public:
   Int   getWaveFrontsynchro()                            { return m_iWaveFrontSynchro; }
   Void  setWaveFrontSubstreams(Int iWaveFrontSubstreams) { m_iWaveFrontSubstreams = iWaveFrontSubstreams; }
   Int   getWaveFrontSubstreams()                         { return m_iWaveFrontSubstreams; }
-  void setPictureDigestEnabled(Int b) { m_pictureDigestEnabled = b; }
-  Int getPictureDigestEnabled() { return m_pictureDigestEnabled; }
-
+  Void  setDecodedPictureHashSEIEnabled(Int b)           { m_decodedPictureHashSEIEnabled = b; }
+  Int   getDecodedPictureHashSEIEnabled()                { return m_decodedPictureHashSEIEnabled; }
+#if BUFFERING_PERIOD_AND_TIMING_SEI
+  Void  setBufferingPeriodSEIEnabled(Int b)              { m_bufferingPeriodSEIEnabled = b; }
+  Int   getBufferingPeriodSEIEnabled()                   { return m_bufferingPeriodSEIEnabled; }
+  Void  setPictureTimingSEIEnabled(Int b)                { m_pictureTimingSEIEnabled = b; }
+  Int   getPictureTimingSEIEnabled()                     { return m_pictureTimingSEIEnabled; }
+#endif
+#if RECOVERY_POINT_SEI
+  Void  setRecoveryPointSEIEnabled(Int b)                { m_recoveryPointSEIEnabled = b; }
+  Int   getRecoveryPointSEIEnabled()                     { return m_recoveryPointSEIEnabled; }
+#endif
   Void      setUseWP               ( Bool  b )   { m_bUseWeightPred    = b;    }
   Void      setWPBiPred            ( Bool b )    { m_useWeightedBiPred = b;    }
   Bool      getUseWP               ()            { return m_bUseWeightPred;    }
   Bool      getWPBiPred            ()            { return m_useWeightedBiPred; }
   Void      setLog2ParallelMergeLevelMinus2   ( UInt u )    { m_log2ParallelMergeLevelMinus2       = u;    }
   UInt      getLog2ParallelMergeLevelMinus2   ()            { return m_log2ParallelMergeLevelMinus2;       }
+  Void      setMaxNumMergeCand                ( UInt u )    { m_maxNumMergeCand = u;      }
+  UInt      getMaxNumMergeCand                ()            { return m_maxNumMergeCand;   }
   Void      setUseScalingListId    ( Int  u )    { m_useScalingListId       = u;   }
   Int       getUseScalingListId    ()            { return m_useScalingListId;      }
   Void      setScalingListFile     ( char*  pch ){ m_scalingListFile     = pch; }
@@ -582,6 +639,62 @@ public:
 #if RECALCULATE_QP_ACCORDING_LAMBDA
   Void      setUseRecalculateQPAccordingToLambda ( Bool b ) { m_recalculateQPAccordingToLambda = b;    }
   Bool      getUseRecalculateQPAccordingToLambda ()         { return m_recalculateQPAccordingToLambda; }
+#endif
+#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE 
+  Void      setActiveParameterSetsSEIEnabled ( Int b )  { m_activeParameterSetsSEIEnabled = b; }  
+  Int       getActiveParameterSetsSEIEnabled ()         { return m_activeParameterSetsSEIEnabled; }
+#endif 
+#if SUPPORT_FOR_VUI
+  Bool      getVuiParametersPresentFlag()                 { return m_vuiParametersPresentFlag; }
+  Void      setVuiParametersPresentFlag(Bool i)           { m_vuiParametersPresentFlag = i; }
+  Bool      getAspectRatioInfoPresentFlag()               { return m_aspectRatioInfoPresentFlag; }
+  Void      setAspectRatioInfoPresentFlag(Bool i)         { m_aspectRatioInfoPresentFlag = i; }
+  Int       getAspectRatioIdc()                           { return m_aspectRatioIdc; }
+  Void      setAspectRatioIdc(Int i)                      { m_aspectRatioIdc = i; }
+  Int       getSarWidth()                                 { return m_sarWidth; }
+  Void      setSarWidth(Int i)                            { m_sarWidth = i; }
+  Int       getSarHeight()                                { return m_sarHeight; }
+  Void      setSarHeight(Int i)                           { m_sarHeight = i; }
+  Bool      getOverscanInfoPresentFlag()                  { return m_overscanInfoPresentFlag; }
+  Void      setOverscanInfoPresentFlag(Bool i)            { m_overscanInfoPresentFlag = i; }
+  Bool      getOverscanAppropriateFlag()                  { return m_overscanAppropriateFlag; }
+  Void      setOverscanAppropriateFlag(Bool i)            { m_overscanAppropriateFlag = i; }
+  Bool      getVideoSignalTypePresentFlag()               { return m_videoSignalTypePresentFlag; }
+  Void      setVideoSignalTypePresentFlag(Bool i)         { m_videoSignalTypePresentFlag = i; }
+  Int       getVideoFormat()                              { return m_videoFormat; }
+  Void      setVideoFormat(Int i)                         { m_videoFormat = i; }
+  Bool      getVideoFullRangeFlag()                       { return m_videoFullRangeFlag; }
+  Void      setVideoFullRangeFlag(Bool i)                 { m_videoFullRangeFlag = i; }
+  Bool      getColourDescriptionPresentFlag()             { return m_colourDescriptionPresentFlag; }
+  Void      setColourDescriptionPresentFlag(Bool i)       { m_colourDescriptionPresentFlag = i; }
+  Int       getColourPrimaries()                          { return m_colourPrimaries; }
+  Void      setColourPrimaries(Int i)                     { m_colourPrimaries = i; }
+  Int       getTransferCharacteristics()                  { return m_transferCharacteristics; }
+  Void      setTransferCharacteristics(Int i)             { m_transferCharacteristics = i; }
+  Int       getMatrixCoefficients()                       { return m_matrixCoefficients; }
+  Void      setMatrixCoefficients(Int i)                  { m_matrixCoefficients = i; }
+  Bool      getChromaLocInfoPresentFlag()                 { return m_chromaLocInfoPresentFlag; }
+  Void      setChromaLocInfoPresentFlag(Bool i)           { m_chromaLocInfoPresentFlag = i; }
+  Int       getChromaSampleLocTypeTopField()              { return m_chromaSampleLocTypeTopField; }
+  Void      setChromaSampleLocTypeTopField(Int i)         { m_chromaSampleLocTypeTopField = i; }
+  Int       getChromaSampleLocTypeBottomField()           { return m_chromaSampleLocTypeBottomField; }
+  Void      setChromaSampleLocTypeBottomField(Int i)      { m_chromaSampleLocTypeBottomField = i; }
+  Bool      getNeutralChromaIndicationFlag()              { return m_neutralChromaIndicationFlag; }
+  Void      setNeutralChromaIndicationFlag(Bool i)        { m_neutralChromaIndicationFlag = i; }
+  Bool      getBitstreamRestrictionFlag()                 { return m_bitstreamRestrictionFlag; }
+  Void      setBitstreamRestrictionFlag(Bool i)           { m_bitstreamRestrictionFlag = i; }
+  Bool      getTilesFixedStructureFlag()                  { return m_tilesFixedStructureFlag; }
+  Void      setTilesFixedStructureFlag(Bool i)            { m_tilesFixedStructureFlag = i; }
+  Bool      getMotionVectorsOverPicBoundariesFlag()       { return m_motionVectorsOverPicBoundariesFlag; }
+  Void      setMotionVectorsOverPicBoundariesFlag(Bool i) { m_motionVectorsOverPicBoundariesFlag = i; }
+  Int       getMaxBytesPerPicDenom()                      { return m_maxBytesPerPicDenom; }
+  Void      setMaxBytesPerPicDenom(Int i)                 { m_maxBytesPerPicDenom = i; }
+  Int       getMaxBitsPerMinCuDenom()                     { return m_maxBitsPerMinCuDenom; }
+  Void      setMaxBitsPerMinCuDenom(Int i)                { m_maxBitsPerMinCuDenom = i; }
+  Int       getLog2MaxMvLengthHorizontal()                { return m_log2MaxMvLengthHorizontal; }
+  Void      setLog2MaxMvLengthHorizontal(Int i)           { m_log2MaxMvLengthHorizontal = i; }
+  Int       getLog2MaxMvLengthVertical()                  { return m_log2MaxMvLengthVertical; }
+  Void      setLog2MaxMvLengthVertical(Int i)             { m_log2MaxMvLengthVertical = i; }
 #endif
 };
 

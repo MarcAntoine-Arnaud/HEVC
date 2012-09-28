@@ -888,13 +888,13 @@ Void TEncCu::xCompressCU( TComDataCU*& rpcBestCU, TComDataCU*& rpcTempCU, UInt u
 
       if( (g_uiMaxCUWidth>>uiDepth) == rpcTempCU->getSlice()->getPPS()->getMinCuDQPSize() && rpcTempCU->getSlice()->getPPS()->getUseDQP())
       {
-        Bool bHasRedisual = false;
+        Bool hasResidual = false;
         for( UInt uiBlkIdx = 0; uiBlkIdx < rpcTempCU->getTotalNumPart(); uiBlkIdx ++)
         {
           if( ( pcPic->getCU( rpcTempCU->getAddr() )->getDependentSliceStartCU(uiBlkIdx+rpcTempCU->getZorderIdxInCU()) == rpcTempCU->getSlice()->getDependentSliceCurStartCUAddr() ) && 
               ( rpcTempCU->getCbf( uiBlkIdx, TEXT_LUMA ) || rpcTempCU->getCbf( uiBlkIdx, TEXT_CHROMA_U ) || rpcTempCU->getCbf( uiBlkIdx, TEXT_CHROMA_V ) ) )
           {
-            bHasRedisual = true;
+            hasResidual = true;
             break;
           }
         }
@@ -908,7 +908,7 @@ Void TEncCu::xCompressCU( TComDataCU*& rpcBestCU, TComDataCU*& rpcTempCU, UInt u
         {
           uiTargetPartIdx = 0;
         }
-        if ( bHasRedisual )
+        if ( hasResidual )
         {
 #if !RDO_WITHOUT_DQP_BITS
           m_pcEntropyCoder->resetBits();
@@ -1252,7 +1252,7 @@ Void TEncCu::xCheckRDCostMerge2Nx2N( TComDataCU*& rpcBestCU, TComDataCU*& rpcTem
   UChar uhInterDirNeighbours[MRG_MAX_NUM_CANDS];
   Int numValidMergeCand = 0;
 
-  for( UInt ui = 0; ui < MRG_MAX_NUM_CANDS; ++ui )
+  for( UInt ui = 0; ui < rpcTempCU->getSlice()->getMaxNumMergeCand(); ++ui )
   {
     uhInterDirNeighbours[ui] = 0;
   }
@@ -1261,7 +1261,11 @@ Void TEncCu::xCheckRDCostMerge2Nx2N( TComDataCU*& rpcBestCU, TComDataCU*& rpcTem
   rpcTempCU->setCUTransquantBypassSubParts( m_pcEncCfg->getCUTransquantBypassFlagValue(), 0, uhDepth );
   rpcTempCU->getInterMergeCandidates( 0, 0, uhDepth, cMvFieldNeighbours,uhInterDirNeighbours, numValidMergeCand );
 
-  Int mergeCandBuffer[MRG_MAX_NUM_CANDS]={0};
+  Int mergeCandBuffer[MRG_MAX_NUM_CANDS];
+  for( UInt ui = 0; ui < rpcTempCU->getSlice()->getMaxNumMergeCand(); ++ui )
+  {
+    mergeCandBuffer[ui] = 0;
+  }
 
   Bool bestIsSkip = false;
 

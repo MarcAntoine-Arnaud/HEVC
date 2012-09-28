@@ -84,7 +84,6 @@ private:
 
   //  Access channel
   TEncCfg*                m_pcEncCfg;
-  TComPrediction*         m_pcPrediction;
   TEncSearch*             m_pcPredSearch;
   TComTrQuant*            m_pcTrQuant;
   TComBitCounter*         m_pcBitCounter;

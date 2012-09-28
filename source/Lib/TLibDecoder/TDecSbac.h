@@ -83,7 +83,6 @@ public:
 #if !REMOVE_APS
   Void  parseAPS                  ( TComAPS* pAPS          ) {}
 #endif
-  void parseSEI(SEImessages&) {}
 
   Void  parseSliceHeader          ( TComSlice*& rpcSlice, ParameterSetManagerDecoder *parameterSetManager) {}
   Void  parseTerminatingBit       ( UInt& ruiBit );

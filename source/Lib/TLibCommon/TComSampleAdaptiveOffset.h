@@ -63,7 +63,7 @@ class TComSampleAdaptiveOffset
 protected:
   TComPic*          m_pcPic;
 
-  static UInt m_uiMaxDepth;
+  static const UInt m_uiMaxDepth;
   static const Int m_aiNumCulPartsLevel[5];
   static const UInt m_auiEoTable[9];
   Int *m_iOffsetBo;
@@ -77,7 +77,7 @@ protected:
   Int  m_iNumCuInWidth;
   Int  m_iNumCuInHeight;
   Int  m_iNumTotalParts;
-  static Int m_iNumClass[MAX_NUM_SAO_TYPE];
+  static const Int m_iNumClass[MAX_NUM_SAO_TYPE];
   SliceType  m_eSliceType;
   Int        m_iPicNalReferenceIdc;
 
@@ -106,6 +106,12 @@ protected:
   Bool    m_saoLcuBoundary;
 #endif
   Bool    m_saoLcuBasedOptimization;
+
+#if REMOVE_ALF
+  Void xPCMRestoration        (TComPic* pcPic);
+  Void xPCMCURestoration      (TComDataCU* pcCU, UInt uiAbsZorderIdx, UInt uiDepth);
+  Void xPCMSampleRestoration  (TComDataCU* pcCU, UInt uiAbsZorderIdx, UInt uiDepth, TextType ttText);
+#endif
 public:
   TComSampleAdaptiveOffset         ();
   virtual ~TComSampleAdaptiveOffset();
@@ -146,6 +152,9 @@ public:
   Void resetSaoUnit(SaoLcuParam* saoUnit);
 #if SAO_SINGLE_MERGE
   Void copySaoUnit(SaoLcuParam* saoUnitDst, SaoLcuParam* saoUnitSrc );
+#endif
+#if REMOVE_ALF
+  Void PCMLFDisableProcess    ( TComPic* pcPic);                        ///< interface function for ALF process 
 #endif
 };
 

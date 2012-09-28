@@ -41,7 +41,6 @@
 #include "TLibEncoder/TEncSbac.h"
 #include "TLibDecoder/TDecSbac.h"
 
-
 //! \ingroup TLibCommon
 //! \{
 
@@ -52,13 +51,16 @@ TComSlice::TComSlice()
 , m_eNalUnitType                  ( NAL_UNIT_CODED_SLICE_IDR )
 , m_eSliceType                    ( I_SLICE )
 , m_iSliceQp                      ( 0 )
+#if SLICEHEADER_SYNTAX_FIX
+, m_dependentSliceFlag            ( false )
+#endif
 #if ADAPTIVE_QP_SELECTION
 , m_iSliceQpBase                  ( 0 )
 #endif
-, m_bLoopFilterDisable            ( false )
-, m_inheritDblParamFromPPS       ( true )
-, m_loopFilterBetaOffsetDiv2    ( 0 )
-, m_loopFilterTcOffsetDiv2      ( 0 )
+, m_deblockingFilterDisable        ( false )
+, m_deblockingFilterOverrideFlag   ( false )
+, m_deblockingFilterBetaOffsetDiv2 ( 0 )
+, m_deblockingFilterTcOffsetDiv2   ( 0 )
 , m_bRefPicListModificationFlagLC ( false )
 , m_bRefPicListCombinationFlag    ( false )
 , m_bCheckLDC                     ( false )
@@ -72,7 +74,7 @@ TComSlice::TComSlice()
 , m_pcSPS                         ( NULL )
 , m_pcPPS                         ( NULL )
 , m_pcPic                         ( NULL )
-, m_uiColDir                      ( 0 )
+, m_colFromL0Flag                 ( 1 )
 , m_colRefIdx                     ( 0 )
 #if ALF_CHROMA_LAMBDA || SAO_CHROMA_LAMBDA
 , m_dLambdaLuma( 0.0 )
@@ -97,13 +99,15 @@ TComSlice::TComSlice()
 , m_uiSliceBits                   ( 0 )
 , m_uiDependentSliceCounter         ( 0 )
 , m_bFinalized                    ( false )
-, m_uiTileByteLocation            ( NULL )
-, m_uiTileCount                   ( 0 )
 , m_uiTileOffstForMultES          ( 0 )
 , m_puiSubstreamSizes             ( NULL )
 , m_cabacInitFlag                 ( false )
+, m_bLMvdL1Zero                   ( false )
 , m_numEntryPointOffsets          ( 0 )
-#if !REFERENCE_PICTURE_DEFN
+#if TEMPORAL_LAYER_NON_REFERENCE
+, m_temporalLayerNonReferenceFlag ( false )
+#endif
+#if !REMOVE_NAL_REF_FLAG
 , m_nalRefFlag                    ( 0 )
 #endif
 , m_enableTMVPFlag                ( true )
@@ -139,45 +143,8 @@ TComSlice::TComSlice()
 
 TComSlice::~TComSlice()
 {
-  if (m_uiTileByteLocation) 
-  {
-    delete [] m_uiTileByteLocation;
-    m_uiTileByteLocation = NULL;
-  }
   delete[] m_puiSubstreamSizes;
   m_puiSubstreamSizes = NULL;
-#if DEPENDENT_SLICES
-  for (std::vector<TEncSbac*>::iterator i = CTXMem_enc.begin(); i != CTXMem_enc.end(); i++)
-  {
-    delete (*i);
-  }
-  CTXMem_enc.clear();
-  for (std::vector<TDecSbac*>::iterator i = CTXMem_dec.begin(); i != CTXMem_dec.end(); i++)
-  {
-    delete (*i);
-  }
-  CTXMem_dec.clear();
-#endif
-}
-
-Void TComSlice::initCTXMem_enc(  UInt i )                
-{   
-  for (std::vector<TEncSbac*>::iterator j = CTXMem_enc.begin(); j != CTXMem_enc.end(); j++)
-  {
-    delete (*j);
-  }
-  CTXMem_enc.clear(); 
-  CTXMem_enc.resize(i); 
-}
-
-Void TComSlice::initCTXMem_dec(  UInt i )                
-{   
-  for (std::vector<TDecSbac*>::iterator j = CTXMem_dec.begin(); j != CTXMem_dec.end(); j++)
-  {
-    delete (*j);
-  }
-  CTXMem_dec.clear(); 
-  CTXMem_dec.resize(i); 
 }
 
 
@@ -186,7 +153,7 @@ Void TComSlice::initSlice()
   m_aiNumRefIdx[0]      = 0;
   m_aiNumRefIdx[1]      = 0;
   
-  m_uiColDir = 0;
+  m_colFromL0Flag = 1;
   
   m_colRefIdx = 0;
   initEqualRef();
@@ -201,34 +168,30 @@ Void TComSlice::initSlice()
 
   m_aiNumRefIdx[REF_PIC_LIST_C]      = 0;
 
-  m_uiMaxNumMergeCand = MRG_MAX_NUM_CANDS_SIGNALED;
+  m_maxNumMergeCand = MRG_MAX_NUM_CANDS;
 
   m_bFinalized=false;
 
-  m_uiTileCount          = 0;
+  m_tileByteLocation.clear();
   m_cabacInitFlag        = false;
   m_numEntryPointOffsets = 0;
   m_enableTMVPFlag = true;
-#if DEPENDENT_SLICES
-  CTXMem_enc.clear();
-  CTXMem_dec.clear();
-#endif
 }
 
-Void TComSlice::initTiles()
+Bool TComSlice::getRapPicFlag()
 {
-  Int iWidth             = m_pcSPS->getPicWidthInLumaSamples();
-  Int iHeight            = m_pcSPS->getPicHeightInLumaSamples();
-  UInt uiWidthInCU       = ( iWidth %g_uiMaxCUWidth  ) ? iWidth /g_uiMaxCUWidth  + 1 : iWidth /g_uiMaxCUWidth;
-  UInt uiHeightInCU      = ( iHeight%g_uiMaxCUHeight ) ? iHeight/g_uiMaxCUHeight + 1 : iHeight/g_uiMaxCUHeight;
-  UInt uiNumCUsInFrame   = uiWidthInCU * uiHeightInCU;
-
-  if (m_uiTileByteLocation==NULL)
-  {
-    m_uiTileByteLocation   = new UInt[uiNumCUsInFrame];
-  }
+  return getNalUnitType() == NAL_UNIT_CODED_SLICE_IDR
+#if SUPPORT_FOR_RAP_N_LP
+      || getNalUnitType() == NAL_UNIT_CODED_SLICE_IDR_N_LP
+      || getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA_N_LP
+#endif
+      || getNalUnitType() == NAL_UNIT_CODED_SLICE_BLANT
+      || getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA
+#if !NAL_UNIT_TYPES_J1003_D7
+      || getNalUnitType() == NAL_UNIT_CODED_SLICE_CRANT
+#endif
+      || getNalUnitType() == NAL_UNIT_CODED_SLICE_CRA;
 }
-
 
 /**
  - allocate table to contain substream sizes to be written to the slice header.
@@ -569,7 +532,7 @@ Void TComSlice::checkColRefIdx(UInt curSliceIdx, TComPic* pic)
 {
   Int i;
   TComSlice* curSlice = pic->getSlice(curSliceIdx);
-  Int currColRefPOC =  curSlice->getRefPOC( RefPicList(curSlice->getColDir()), curSlice->getColRefIdx());
+  Int currColRefPOC =  curSlice->getRefPOC( RefPicList(1-curSlice->getColFromL0Flag()), curSlice->getColRefIdx());
   TComSlice* preSlice;
   Int preColRefPOC;
   for(i=curSliceIdx-1; i>=0; i--)
@@ -577,7 +540,7 @@ Void TComSlice::checkColRefIdx(UInt curSliceIdx, TComPic* pic)
     preSlice = pic->getSlice(i);
     if(preSlice->getSliceType() != I_SLICE)
     {
-      preColRefPOC  = preSlice->getRefPOC( RefPicList(preSlice->getColDir()), preSlice->getColRefIdx());
+      preColRefPOC  = preSlice->getRefPOC( RefPicList(1-preSlice->getColFromL0Flag()), preSlice->getColRefIdx());
       if(currColRefPOC != preColRefPOC)
       {
         printf("Collocated_ref_idx shall always be the same for all slices of a coded picture!\n");
@@ -607,16 +570,30 @@ Void TComSlice::checkCRA(TComReferencePictureSet *pReferencePictureSet, Int& poc
       assert(pReferencePictureSet->getPOC(i) >= pocCRA);
     }
   }
+#if SUPPORT_FOR_RAP_N_LP
+  if ( getNalUnitType() == NAL_UNIT_CODED_SLICE_IDR || getNalUnitType() == NAL_UNIT_CODED_SLICE_IDR_N_LP ) // IDR picture found
+#else
   if ( getNalUnitType() == NAL_UNIT_CODED_SLICE_IDR ) // IDR picture found
+#endif
   {
     prevRAPisBLA = false;
   }
+#if NAL_UNIT_TYPES_J1003_D7
+  else if ( getNalUnitType() == NAL_UNIT_CODED_SLICE_CRA ) // CRA picture found
+#else
   else if ( getNalUnitType() == NAL_UNIT_CODED_SLICE_CRA || getNalUnitType() == NAL_UNIT_CODED_SLICE_CRANT ) // CRA/CRANT picture found
+#endif
   {
     pocCRA = getPOC();
     prevRAPisBLA = false;
   }
+#if SUPPORT_FOR_RAP_N_LP
+  else if ( getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA
+         || getNalUnitType() == NAL_UNIT_CODED_SLICE_BLANT
+         || getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA_N_LP ) // BLA picture found
+#else
   else if ( getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA || getNalUnitType() == NAL_UNIT_CODED_SLICE_BLANT ) // BLA/BLANT picture found
+#endif
   {
     pocCRA = getPOC();
     prevRAPisBLA = true;
@@ -646,7 +623,15 @@ Void TComSlice::decodingRefreshMarking(Int& pocCRA, Bool& bRefreshPending, TComL
   TComPic*                 rpcPic;
   UInt uiPOCCurr = getPOC(); 
 
+#if SUPPORT_FOR_RAP_N_LP
+  if ( getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA
+    || getNalUnitType() == NAL_UNIT_CODED_SLICE_BLANT
+    || getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA_N_LP
+    || getNalUnitType() == NAL_UNIT_CODED_SLICE_IDR
+    || getNalUnitType() == NAL_UNIT_CODED_SLICE_IDR_N_LP )  // IDR or BLA picture
+#else
   if (getNalUnitType() == NAL_UNIT_CODED_SLICE_IDR || getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA || getNalUnitType() == NAL_UNIT_CODED_SLICE_BLANT)  // IDR/BLA/BLANT
+#endif
   {
     // mark all pictures as not used for reference
     TComList<TComPic*>::iterator        iterPic       = rcListPic.begin();
@@ -657,7 +642,13 @@ Void TComSlice::decodingRefreshMarking(Int& pocCRA, Bool& bRefreshPending, TComL
       if (rpcPic->getPOC() != uiPOCCurr) rpcPic->getSlice(0)->setReferenced(false);
       iterPic++;
     }
+#if SUPPORT_FOR_RAP_N_LP
+    if ( getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA
+      || getNalUnitType() == NAL_UNIT_CODED_SLICE_BLANT
+      || getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA_N_LP )
+#else
     if (getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA || getNalUnitType() == NAL_UNIT_CODED_SLICE_BLANT)
+#endif
     {
       pocCRA = uiPOCCurr;
     }
@@ -675,7 +666,11 @@ Void TComSlice::decodingRefreshMarking(Int& pocCRA, Bool& bRefreshPending, TComL
       }
       bRefreshPending = false; 
     }
+#if NAL_UNIT_TYPES_J1003_D7
+    if ( getNalUnitType() == NAL_UNIT_CODED_SLICE_CRA ) // CRA picture found
+#else
     if (getNalUnitType() == NAL_UNIT_CODED_SLICE_CRA || getNalUnitType() == NAL_UNIT_CODED_SLICE_CRANT) // CRA/CRANT picture found
+#endif
     {
       bRefreshPending = true; 
       pocCRA = uiPOCCurr;
@@ -696,10 +691,10 @@ Void TComSlice::copySliceInfo(TComSlice *pSrc)
 #if ADAPTIVE_QP_SELECTION
   m_iSliceQpBase         = pSrc->m_iSliceQpBase;
 #endif
-  m_bLoopFilterDisable   = pSrc->m_bLoopFilterDisable;
-  m_inheritDblParamFromPPS = pSrc->m_inheritDblParamFromPPS;
-  m_loopFilterBetaOffsetDiv2 = pSrc->m_loopFilterBetaOffsetDiv2;
-  m_loopFilterTcOffsetDiv2 = pSrc->m_loopFilterTcOffsetDiv2;
+  m_deblockingFilterDisable   = pSrc->m_deblockingFilterDisable;
+  m_deblockingFilterOverrideFlag = pSrc->m_deblockingFilterOverrideFlag;
+  m_deblockingFilterBetaOffsetDiv2 = pSrc->m_deblockingFilterBetaOffsetDiv2;
+  m_deblockingFilterTcOffsetDiv2 = pSrc->m_deblockingFilterTcOffsetDiv2;
   
   for (i = 0; i < 3; i++)
   {
@@ -753,7 +748,7 @@ Void TComSlice::copySliceInfo(TComSlice *pSrc)
   m_iAPSId               = pSrc->m_iAPSId;
 #endif
 
-  m_uiColDir             = pSrc->m_uiColDir;
+  m_colFromL0Flag        = pSrc->m_colFromL0Flag;
   m_colRefIdx            = pSrc->m_colRefIdx;
 #if ALF_CHROMA_LAMBDA || SAO_CHROMA_LAMBDA 
   m_dLambdaLuma          = pSrc->m_dLambdaLuma;
@@ -852,6 +847,29 @@ Bool TComSlice::isTemporalLayerSwitchingPoint( TComList<TComPic*>& rcListPic, TC
   return true;
 }
 
+#if STSA
+/** Function for checking if this is a STSA candidate 
+ */
+Bool TComSlice::isStepwiseTemporalLayerSwitchingPointCandidate( TComList<TComPic*>& rcListPic, TComReferencePictureSet *pReferencePictureSet)
+{
+    TComPic* rpcPic;
+    
+    TComList<TComPic*>::iterator iterPic = rcListPic.begin();
+    while ( iterPic != rcListPic.end())
+    {
+        rpcPic = *(iterPic++);
+        if(rpcPic->getSlice(0)->isReferenced() &&  (rpcPic->getUsedByCurr()==true) && rpcPic->getPOC() != getPOC())
+        {
+            if(rpcPic->getTLayer() >= getTLayer())
+            {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+#endif
+
 /** Function for applying picture marking based on the Reference Picture Set in pReferencePictureSet.
 */
 Void TComSlice::applyReferencePictureSet( TComList<TComPic*>& rcListPic, TComReferencePictureSet *pReferencePictureSet)
@@ -907,7 +925,25 @@ Void TComSlice::applyReferencePictureSet( TComList<TComPic*>& rcListPic, TComRef
       rpcPic->getSlice( 0 )->setReferenced( false );   
       rpcPic->setIsLongTerm(0);
     }
-  }  
+    //check that pictures of higher temporal layers are not used
+    assert(rpcPic->getSlice( 0 )->isReferenced()==0||rpcPic->getUsedByCurr()==0||rpcPic->getTLayer()<=this->getTLayer());
+    //check that pictures of higher or equal temporal layer are not in the RPS if the current picture is a TSA picture
+#if NAL_UNIT_TYPES_J1003_D7
+    if(this->getNalUnitType() == NAL_UNIT_CODED_SLICE_TLA || this->getNalUnitType() == NAL_UNIT_CODED_SLICE_TSA_N)
+#else
+    if(this->getNalUnitType() == NAL_UNIT_CODED_SLICE_TLA)
+#endif
+    {
+      assert(rpcPic->getSlice( 0 )->isReferenced()==0||rpcPic->getTLayer()<this->getTLayer());
+    }
+#if TEMPORAL_LAYER_NON_REFERENCE
+    //check that pictures marked as temporal layer non-reference pictures are not used for reference
+    if(rpcPic->getPicSym()->getSlice(0)->getPOC() != this->getPOC() && rpcPic->getTLayer()==this->getTLayer())
+    {
+      assert(rpcPic->getSlice( 0 )->isReferenced()==0||rpcPic->getUsedByCurr()==0||rpcPic->getSlice( 0 )->getTemporalLayerNonReferenceFlag()==false);
+    }
+#endif
+  }
 }
 
 /** Function for applying picture marking based on the Reference Picture Set in pReferencePictureSet.
@@ -1255,11 +1291,13 @@ TComVPS::~TComVPS()
 
 TComSPS::TComSPS()
 : m_SPSId                     (  0)
+#if !SPS_SYNTAX_CHANGES
 , m_ProfileSpace              (  0)
 , m_ProfileIdc                (  0)
 , m_ReservedIndicatorFlags    (  0)
 , m_LevelIdc                  (  0)
 , m_ProfileCompatibility      (  0)
+#endif
 , m_VPSId                     (  0)
 , m_chromaFormatIdc           (CHROMA_420)
 , m_uiMaxTLayers              (  1)
@@ -1292,8 +1330,8 @@ TComSPS::TComSPS()
 , m_bUseLMChroma              (false)
 #endif
 #if !PPS_TS_FLAG
-, m_useTansformSkip           (false)
-, m_useTansformSkipFast       (false)
+, m_useTransformSkip           (false)
+, m_useTransformSkipFast       (false)
 #endif
 , m_bUseLComb                 (false)
 , m_restrictedRefPicListsFlag   (  1)
@@ -1317,9 +1355,15 @@ TComSPS::TComSPS()
 , m_bUseSAO                   (false) 
 , m_bTemporalIdNestingFlag    (false)
 , m_scalingListEnabledFlag    (false)
+#if SUPPORT_FOR_VUI
+, m_vuiParametersPresentFlag  (false)
+, m_vuiParameters             ()
+#endif
 {
+#if !SPS_AMVP_CLEANUP
   // AMVP parameter
   ::memset( m_aeAMVPMode, 0, sizeof( m_aeAMVPMode ) );
+#endif
   for ( Int i = 0; i < MAX_TLAYER; i++ )
   {
     m_uiMaxLatencyIncrease[i] = 0;
@@ -1344,7 +1388,94 @@ Void  TComSPS::createRPSList( Int numRPS )
   m_RPSList.destroy();
   m_RPSList.create(numRPS);
 }
+#if BUFFERING_PERIOD_AND_TIMING_SEI
+Void TComSPS::setHrdParameters( UInt frameRate, UInt numDU, UInt bitRate, Bool randomAccess )
+{
+  if( !getVuiParametersPresentFlag() )
+  {
+    return;
+  }
 
+  TComVUI *vui = getVuiParameters();
+
+  vui->setTimingInfoPresentFlag( true );
+  switch( frameRate )
+  {
+  case 24:
+    vui->setNumUnitsInTick( 1125000 );    vui->setTimeScale    ( 27000000 );
+    break;
+  case 25:
+    vui->setNumUnitsInTick( 1080000 );    vui->setTimeScale    ( 27000000 );
+    break;
+  case 30:
+    vui->setNumUnitsInTick( 900900 );     vui->setTimeScale    ( 27000000 );
+    break;
+  case 50:
+    vui->setNumUnitsInTick( 540000 );     vui->setTimeScale    ( 27000000 );
+    break;
+  case 60:
+    vui->setNumUnitsInTick( 450450 );     vui->setTimeScale    ( 27000000 );
+    break;
+  default:
+    vui->setNumUnitsInTick( 1001 );       vui->setTimeScale    ( 60000 );
+    break;
+  }
+
+  Bool rateCnt = ( bitRate > 0 );
+  vui->setNalHrdParametersPresentFlag( rateCnt );
+  vui->setVclHrdParametersPresentFlag( rateCnt );
+
+  vui->setSubPicCpbParamsPresentFlag( ( numDU > 1 ) );
+
+  if( vui->getSubPicCpbParamsPresentFlag() )
+  {
+    vui->setTickDivisorMinus2( 100 - 2 );                          // 
+    vui->setDuCpbRemovalDelayLengthMinus1( 7 );                    // 8-bit precision ( plus 1 for last DU in AU )
+  }
+
+  vui->setBitRateScale( 4 );                                       // in units of 2~( 6 + 4 ) = 1,024 bps
+  vui->setCpbSizeScale( 6 );                                       // in units of 2~( 4 + 4 ) = 1,024 bit
+
+  vui->setInitialCpbRemovalDelayLengthMinus1(15);                  // assuming 0.5 sec, log2( 90,000 * 0.5 ) = 16-bit
+  if( randomAccess )
+  {
+    vui->setCpbRemovalDelayLengthMinus1(5);                        // 32 = 2^5 (plus 1)
+    vui->setDpbOutputDelayLengthMinus1 (5);                        // 32 + 3 = 2^6
+  }
+  else
+  {
+    vui->setCpbRemovalDelayLengthMinus1(9);                        // max. 2^10
+    vui->setDpbOutputDelayLengthMinus1 (9);                        // max. 2^10
+  }
+
+/*
+   Note: only the case of "vps_max_temporal_layers_minus1 = 0" is supported.
+*/
+  Int i, j;
+  UInt birateValue, cpbSizeValue;
+
+  for( i = 0; i < MAX_TLAYER; i ++ )
+  {
+    vui->setFixedPicRateFlag( i, 1 );
+    vui->setPicDurationInTcMinus1( i, 0 );
+    vui->setLowDelayHrdFlag( i, 0 );
+    vui->setCpbCntMinus1( i, 0 );
+
+    birateValue  = bitRate;
+    cpbSizeValue = bitRate;                                     // 1 second
+    for( j = 0; j < ( vui->getCpbCntMinus1( i ) + 1 ); j ++ )
+    {
+      vui->setBitRateValueMinus1( i, j, 0, ( birateValue  - 1 ) );
+      vui->setCpbSizeValueMinus1( i, j, 0, ( cpbSizeValue - 1 ) );
+      vui->setCbrFlag( i, j, 0, ( j == 0 ) );
+
+      vui->setBitRateValueMinus1( i, j, 1, ( birateValue  - 1) );
+      vui->setCpbSizeValueMinus1( i, j, 1, ( cpbSizeValue - 1 ) );
+      vui->setCbrFlag( i, j, 1, ( j == 0 ) );
+    }
+  }
+}
+#endif
 const Int TComSPS::m_cropUnitX[]={1,2,2,1};
 const Int TComSPS::m_cropUnitY[]={1,2,1,1};
 
@@ -1369,15 +1500,21 @@ TComPPS::TComPPS()
 #endif
 , m_TransquantBypassEnableFlag  (false)
 #if PPS_TS_FLAG
-, m_useTansformSkip             (false)
+, m_useTransformSkip             (false)
 #endif
-, m_bLFCrossTileBoundaryFlag     (true)
-, m_iUniformSpacingIdr           (0)
+#if TILES_WPP_ENTROPYSLICES_FLAGS
+, m_dependentSliceEnabledFlag    (false)
+, m_tilesEnabledFlag               (false)
+, m_entropyCodingSyncEnabledFlag   (false)
+, m_entropySliceEnabledFlag        (false)
+#endif
+, m_loopFilterAcrossTilesEnabledFlag  (true)
+, m_uniformSpacingFlag           (0)
 , m_iNumColumnsMinus1            (0)
 , m_puiColumnWidth               (NULL)
 , m_iNumRowsMinus1               (0)
 , m_puiRowHeight                 (NULL)
-,  m_iNumSubstreams             (1)
+, m_iNumSubstreams             (1)
 , m_signHideFlag(0)
 , m_cabacInitPresentFlag        (false)
 , m_encCABACTableIdx            (I_SLICE)
@@ -1385,24 +1522,26 @@ TComPPS::TComPPS()
 , m_sliceHeaderExtensionPresentFlag    (false)
 #endif
 #if MOVE_LOOP_FILTER_SLICES_FLAG
-, m_bLFCrossSliceBoundaryFlag (false)
+, m_loopFilterAcrossSlicesEnabledFlag (false)
 #endif
 {
   m_scalingList = new TComScalingList;
+#if !TILES_WPP_ENTROPYSLICES_FLAGS
 #if DEPENDENT_SLICES
-  m_bDependentSlicesEnabledFlag = false;
+  m_bDependentSliceEnabledFlag = false;
   m_bCabacIndependentFlag = false;
+#endif
 #endif
 }
 
 TComPPS::~TComPPS()
 {
-  if( m_iNumColumnsMinus1 > 0 && m_iUniformSpacingIdr == 0 )
+  if( m_iNumColumnsMinus1 > 0 && m_uniformSpacingFlag == 0 )
   {
     if (m_puiColumnWidth) delete [] m_puiColumnWidth; 
     m_puiColumnWidth = NULL;
   }
-  if( m_iNumRowsMinus1 > 0 && m_iUniformSpacingIdr == 0 )
+  if( m_iNumRowsMinus1 > 0 && m_uniformSpacingFlag == 0 )
   {
     if (m_puiRowHeight) delete [] m_puiRowHeight;
     m_puiRowHeight = NULL;
@@ -1919,4 +2058,19 @@ ParameterSetManager::~ParameterSetManager()
 {
 }
 
+#if PROFILE_TIER_LEVEL_SYNTAX
+ProfileTierLevel::ProfileTierLevel()
+  : m_profileSpace    (0)
+  , m_tierFlag        (false)
+  , m_profileIdc      (0)
+  , m_levelIdc        (0)
+{
+  ::memset(m_profileCompatibilityFlag, 0, sizeof(m_profileCompatibilityFlag));
+}
+TComPTL::TComPTL()
+{
+  ::memset(m_subLayerProfilePresentFlag, 0, sizeof(m_subLayerProfilePresentFlag));
+  ::memset(m_subLayerLevelPresentFlag,   0, sizeof(m_subLayerLevelPresentFlag  ));
+}
+#endif
 //! \}

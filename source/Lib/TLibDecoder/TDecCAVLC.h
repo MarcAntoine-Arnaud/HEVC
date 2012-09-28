@@ -43,6 +43,7 @@
 #endif // _MSC_VER > 1000
 
 #include "TDecEntropy.h"
+#include "SyntaxElementParser.h"
 
 //! \ingroup TLibDecoder
 //! \{
@@ -54,26 +55,16 @@
 class SEImessages;
 
 /// CAVLC decoder class
-class TDecCavlc : public TDecEntropyIf
+class TDecCavlc : public SyntaxElementParser, public TDecEntropyIf
 {
 public:
   TDecCavlc();
   virtual ~TDecCavlc();
   
 protected:
-  Void  xReadCode             (UInt   uiLength, UInt& ruiCode);
-  Void  xReadUvlc             (UInt&  ruiVal);
-  Void  xReadSvlc             (Int&   riVal);
-  Void  xReadFlag             (UInt&  ruiCode);
   Void  xReadEpExGolomb       ( UInt& ruiSymbol, UInt uiCount );
   Void  xReadExGolombLevel    ( UInt& ruiSymbol );
   Void  xReadUnaryMaxSymbol   ( UInt& ruiSymbol, UInt uiMaxSymbol );
-#if ENC_DEC_TRACE
-  Void  xReadCodeTr           (UInt  length, UInt& rValue, const Char *pSymbolName);
-  Void  xReadUvlcTr           (              UInt& rValue, const Char *pSymbolName);
-  Void  xReadSvlcTr           (               Int& rValue, const Char *pSymbolName);
-  Void  xReadFlagTr           (              UInt& rValue, const Char *pSymbolName);
-#endif
   
   Void  xReadPCMAlignZero     ();
 
@@ -81,7 +72,6 @@ protected:
   
   void  parseShortTermRefPicSet            (TComSPS* pcSPS, TComReferencePictureSet* pcRPS, Int idx);
 private:
-  TComInputBitstream*   m_pcBitstream;
 #if !REMOVE_FGS
   Int           m_iSliceGranularity; //!< slice granularity
 #endif
@@ -104,9 +94,20 @@ public:
   Void  parseVPS            ( TComVPS* pcVPS );
   Void  parseSPS            ( TComSPS* pcSPS );
   Void  parsePPS            ( TComPPS* pcPPS);
+#if SUPPORT_FOR_VUI
+#if !BUFFERING_PERIOD_AND_TIMING_SEI
+  Void  parseVUI            ( TComVUI* pcVUI );
+#else
+  Void  parseVUI            ( TComVUI* pcVUI, TComSPS* pcSPS );
+#endif
+#endif
   Void  parseSEI(SEImessages&);
 #if !REMOVE_APS
   Void  parseAPS            ( TComAPS* pAPS );
+#endif
+#if PROFILE_TIER_LEVEL_SYNTAX
+  Void  parsePTL            ( TComPTL *rpcPTL, Bool profilePresentFlag, Int maxNumSubLayersMinus1 );
+  Void  parseProfileTier    (ProfileTierLevel *ptl);
 #endif
   Void  parseSliceHeader    ( TComSlice*& rpcSlice, ParameterSetManagerDecoder *parameterSetManager);
   Void  parseTerminatingBit ( UInt& ruiBit );

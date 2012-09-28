@@ -114,12 +114,6 @@ Void TEncEntropy::encodeStart()
   m_pcEntropyCoderIf->encodeStart();
 }
 
-Void TEncEntropy::encodeSEI(const SEI& sei)
-{
-  m_pcEntropyCoderIf->codeSEI(sei);
-  return;
-}
-
 Void TEncEntropy::encodePPS( TComPPS* pcPPS )
 {
   m_pcEntropyCoderIf->codePPS( pcPPS );
@@ -200,12 +194,7 @@ Void TEncEntropy::encodeMergeIndex( TComDataCU* pcCU, UInt uiAbsPartIdx, UInt ui
     uiAbsPartIdx = 0;
     assert( pcCU->getPartitionSize(uiAbsPartIdx) == SIZE_2Nx2N );
   }
-
-  UInt uiNumCand = MRG_MAX_NUM_CANDS;
-  if ( uiNumCand > 1 )
-  {
-    m_pcEntropyCoderIf->codeMergeIndex( pcCU, uiAbsPartIdx );
-  }
+  m_pcEntropyCoderIf->codeMergeIndex( pcCU, uiAbsPartIdx );
 }
 
 /** encode prediction mode
@@ -663,7 +652,11 @@ Void TEncEntropy::encodeMvdPU( TComDataCU* pcCU, UInt uiAbsPartIdx, RefPicList e
 
 Void TEncEntropy::encodeMVPIdxPU( TComDataCU* pcCU, UInt uiAbsPartIdx, RefPicList eRefList )
 {
+#if !SPS_AMVP_CLEANUP
   if ( (pcCU->getInterDir( uiAbsPartIdx ) & ( 1 << eRefList )) && (pcCU->getAMVPMode(uiAbsPartIdx) == AM_EXPL) )
+#else
+  if ( (pcCU->getInterDir( uiAbsPartIdx ) & ( 1 << eRefList )) )
+#endif
   {
     m_pcEntropyCoderIf->codeMVPIdx( pcCU, uiAbsPartIdx, eRefList );
   }

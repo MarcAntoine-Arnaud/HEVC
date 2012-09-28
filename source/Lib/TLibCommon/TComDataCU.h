@@ -217,7 +217,6 @@ protected:
   Void          deriveRightBottomIdx        ( PartSize eCUMode, UInt uiPartIdx, UInt& ruiPartIdxRB );
   Bool          xGetColMVP( RefPicList eRefPicList, Int uiCUAddr, Int uiPartUnitIdx, TComMv& rcMv, Int& riRefIdx );
   
-  Void xCheckCornerCand( TComDataCU* pcCorner, UInt uiCornerIdx, UInt uiIter, Bool& rbValidCand );
   /// compute required bits to encode MVD (used in AMVP)
   UInt          xGetMvdBits           ( TComMv cMvd );
   UInt          xGetComponentBits     ( Int iVal );
@@ -227,8 +226,6 @@ protected:
   
   Void xDeriveCenterIdx( PartSize eCUMode, UInt uiPartIdx, UInt& ruiPartIdxCenter );
   Bool xGetCenterCol( UInt uiPartIdx, RefPicList eRefPicList, int iRefIdx, TComMv *pcMv );
-  
-  Void xCheckDuplicateCand(TComMvField* pcMvFieldNeighbours, UChar* puhInterDirNeighbours, bool* pbCandIsInter, UInt& ruiArrayAddr);
 
 public:
   TComDataCU();
@@ -440,7 +437,9 @@ public:
   
   Void          getMvField            ( TComDataCU* pcCU, UInt uiAbsPartIdx, RefPicList eRefPicList, TComMvField& rcMvField );
   
+#if !SPS_AMVP_CLEANUP
   AMVP_MODE     getAMVPMode           ( UInt uiIdx );
+#endif
   Void          fillMvpCand           ( UInt uiPartIdx, UInt uiPartAddr, RefPicList eRefPicList, Int iRefIdx, AMVPInfo* pInfo );
   Bool          isDiffMER             ( Int xN, Int yN, Int xP, Int yP);
   Void          getPartPosition       ( UInt partIdx, Int& xP, Int& yP, Int& nPSW, Int& nPSH);

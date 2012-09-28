@@ -100,7 +100,9 @@ std::istringstream &operator>>(std::istringstream &in, GOPEntry &entry)     //in
   in>>entry.m_QPFactor;
   in>>entry.m_temporalId;
   in>>entry.m_numRefPicsActive;
+#if !TEMPORAL_LAYER_NON_REFERENCE
   in>>entry.m_refPic;
+#endif
   in>>entry.m_numRefPics;
   for ( Int i = 0; i < entry.m_numRefPics; i++ )
   {
@@ -261,8 +263,8 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
 #if !REMOVE_LMCHROMA
   ("LMChroma",                m_bUseLMChroma,            true, "Intra chroma prediction based on reconstructed luma")
 #endif
-  ("TS",                      m_useTansformSkip,         false, "Intra transform skipping")
-  ("TSFast",                  m_useTansformSkipFast,     false, "Fast intra transform skipping")
+  ("TransformSkip",           m_useTransformSkip,        false, "Intra transform skipping")
+  ("TransformSkipFast",       m_useTransformSkipFast,    false, "Fast intra transform skipping")
 #if !REMOVE_ALF
   ("ALF",                     m_bUseALF,                 true, "Enable Adaptive Loop Filter")
 #endif
@@ -280,7 +282,11 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
     ("DependentSliceMode",     m_iDependentSliceMode,    0, "0: Disable all dependent slice limits, 1: Enforce max # of LCUs, 2: Enforce constraint based dependent slices")
     ("DependentSliceArgument", m_iDependentSliceArgument,0, "if DependentSliceMode==1 SliceArgument represents max # of LCUs. if DependentSliceMode==2 DependentSliceArgument represents max # of bins.")
 #if DEPENDENT_SLICES
+#if TILES_WPP_ENTROPYSLICES_FLAGS
+    ("EntropySliceEnabledFlag", m_entropySliceEnabledFlag, false, "Enable use of entropy slices instead of dependent slices." )
+#else
     ("CabacIndependentFlag", m_bCabacIndependentFlag, false)
+#endif
 #endif
 #if !REMOVE_FGS
     ("SliceGranularity",     m_iSliceGranularity,    0, "0: Slices always end at LCU borders. 1-3: slices may end at a depth of 1-3 below LCU level.")
@@ -308,8 +314,10 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
     ("ScalingList",                 m_useScalingListId,              0,          "0: no scaling list, 1: default scaling lists, 2: scaling lists specified in ScalingListFile")
     ("ScalingListFile",             cfg_ScalingListFile,             string(""), "Scaling list file name")
     ("SignHideFlag,-SBH",                m_signHideFlag, 1)
+    ("MaxNumMergeCand",             m_maxNumMergeCand,             5u,         "Maximum number of merge candidates")
+
   /* Misc. */
-  ("SEIpictureDigest", m_pictureDigestEnabled, 0, "Control generation of picture_digest SEI messages\n"
+  ("SEIpictureDigest",  m_decodePictureHashSEIEnabled, 0, "Control generation of decode picture hash SEI messages\n"
                                               "\t3: checksum\n"
                                               "\t2: CRC\n"
                                               "\t1: use MD5\n"
@@ -328,6 +336,46 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
   ("CUTransquantBypassFlagValue", m_CUTransquantBypassFlagValue, false, "Fixed cu_transquant_bypass_flag value, when transquant_bypass_enable_flag is enabled")
 #if RECALCULATE_QP_ACCORDING_LAMBDA
   ("RecalculateQPAccordingToLambda", m_recalculateQPAccordingToLambda, false, "Recalculate QP values according to lambda values. Do not suggest to be enabled in all intra case")
+#endif
+#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE 
+  ("ActiveParameterSets", m_activeParameterSetsSEIEnabled, 0, "Control generation of active parameter sets SEI messages\n"
+                                                              "\t2: enable active parameter sets SEI message with active_sps_id\n"
+                                                              "\t1: enable active parameter sets SEI message without active_sps_id\n"
+                                                              "\t0: disable")
+#endif 
+#if SUPPORT_FOR_VUI
+  ("VuiParametersPresent,-vui",      m_vuiParametersPresentFlag,           false, "Enable generation of vui_parameters()")
+  ("AspectRatioInfoPresent",         m_aspectRatioInfoPresentFlag,         false, "Signals whether aspect_ratio_idc is present")
+  ("AspectRatioIdc",                 m_aspectRatioIdc,                         0, "aspect_ratio_idc")
+  ("SarWidth",                       m_sarWidth,                               0, "horizontal size of the sample aspect ratio")
+  ("SarHeight",                      m_sarHeight,                              0, "vertical size of the sample aspect ratio")
+  ("OverscanInfoPresent",            m_overscanInfoPresentFlag,            false, "Indicates whether cropped decoded pictures are suitable for display using overscan\n")
+  ("OverscanAppropriate",            m_overscanAppropriateFlag,            false, "Indicates whether cropped decoded pictures are suitable for display using overscan\n")
+  ("VideoSignalTypePresent",         m_videoSignalTypePresentFlag,         false, "Signals whether video_format, video_full_range_flag, and colour_description_present_flag are present")
+  ("VideoFormat",                    m_videoFormat,                            5, "Indicates representation of pictures")
+  ("VideoFullRange",                 m_videoFullRangeFlag,                 false, "Indicates the black level and range of luma and chroma signals")
+  ("ColourDescriptionPresent",       m_colourDescriptionPresentFlag,       false, "Signals whether colour_primaries, transfer_characteristics and matrix_coefficients are present")
+  ("ColourPrimaries",                m_colourPrimaries,                        2, "Indicates chromaticity coordinates of the source primaries")
+  ("TransferCharateristics",         m_transferCharacteristics,                2, "Indicates the opto-electronic transfer characteristics of the source")
+  ("MatrixCoefficients",             m_matrixCoefficients,                     2, "Describes the matrix coefficients used in deriving luma and chroma from RGB primaries")
+  ("ChromaLocInfoPresent",           m_chromaLocInfoPresentFlag,           false, "Signals whether chroma_sample_loc_type_top_field and chroma_sample_loc_type_bottom_field are present")
+  ("ChromaSampleLocTypeTopField",    m_chromaSampleLocTypeTopField,            0, "Specifies the location of chroma samples for top field")
+  ("ChromaSampleLocTypeBottomField", m_chromaSampleLocTypeBottomField,         0, "Specifies the location of chroma samples for bottom field")
+  ("NeutralChromaIndication",        m_neutralChromaIndicationFlag,        false, "Indicates that the value of all decoded chroma samples is equal to 1<<(BitDepthCr-1)")
+  ("BitstreamRestriction",           m_bitstreamRestrictionFlag,           false, "Signals whether bitstream restriction parameters are present")
+  ("TilesFixedStructure",            m_tilesFixedStructureFlag,            false, "Indicates that each active picture parameter set has the same values of the syntax elements related to tiles")
+  ("MotionVectorsOverPicBoundaries", m_motionVectorsOverPicBoundariesFlag, false, "Indicates that no samples outside the picture boundaries are used for inter prediction")
+  ("MaxBytesPerPicDenom",            m_maxBytesPerPicDenom,                    2, "Indicates a number of bytes not exceeded by the sum of the sizes of the VCL NAL units associated with any coded picture")
+  ("MaxBitsPerMinCuDenom",           m_maxBitsPerMinCuDenom,                   1, "Indicates an upper bound for the number of bits of coding_unit() data")
+  ("Log2MaxMvLengthHorizontal",      m_log2MaxMvLengthHorizontal,             15, "Indicate the maximum absolute value of a decoded horizontal MV component in quarter-pel luma units")
+  ("Log2MaxMvLengthVertical",        m_log2MaxMvLengthVertical,               15, "Indicate the maximum absolute value of a decoded vertical MV component in quarter-pel luma units")
+#endif
+#if RECOVERY_POINT_SEI
+  ("SEIRecoveryPoint",               m_recoveryPointSEIEnabled,                0, "Control generation of recovery point SEI messages")
+#endif
+#if BUFFERING_PERIOD_AND_TIMING_SEI
+  ("SEIBufferingPeriod",             m_bufferingPeriodSEIEnabled,              0, "Control generation of buffering period SEI messages")
+  ("SEIPictureTiming",               m_pictureTimingSEIEnabled,                0, "Control generation of picture timing SEI messages")
 #endif
   ;
   
@@ -461,12 +509,6 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
     }
   }
   m_iWaveFrontSubstreams = m_iWaveFrontSynchro ? (m_iSourceHeight + m_uiMaxCUHeight - 1) / m_uiMaxCUHeight : 1;
-#if DEPENDENT_SLICES
-  if( m_iDependentSliceMode )
-  {
-    m_iWaveFrontSubstreams = 1;
-  }
-#endif
   // check validity of input parameters
   xCheckParameter();
   
@@ -487,7 +529,7 @@ Bool confirmPara(Bool bflag, const char* message);
 
 Void TAppEncCfg::xCheckParameter()
 {
-  if (!m_pictureDigestEnabled)
+  if (!m_decodePictureHashSEIEnabled)
   {
     fprintf(stderr, "*************************************************************\n");
     fprintf(stderr, "** WARNING: --SEIpictureDigest is now disabled by default. **\n");
@@ -545,6 +587,9 @@ Void TAppEncCfg::xCheckParameter()
   xConfirmPara( m_uiQuadtreeTUMaxDepthInter > m_uiQuadtreeTULog2MaxSize - m_uiQuadtreeTULog2MinSize + 1, "QuadtreeTUMaxDepthInter must be less than or equal to the difference between QuadtreeTULog2MaxSize and QuadtreeTULog2MinSize plus 1" );
   xConfirmPara( m_uiQuadtreeTUMaxDepthIntra < 1,                                                         "QuadtreeTUMaxDepthIntra must be greater than or equal to 1" );
   xConfirmPara( m_uiQuadtreeTUMaxDepthIntra > m_uiQuadtreeTULog2MaxSize - m_uiQuadtreeTULog2MinSize + 1, "QuadtreeTUMaxDepthIntra must be less than or equal to the difference between QuadtreeTULog2MaxSize and QuadtreeTULog2MinSize plus 1" );
+  
+  xConfirmPara(  m_maxNumMergeCand < 1,  "MaxNumMergeCand must be 1 or greater.");
+  xConfirmPara(  m_maxNumMergeCand > 5,  "MaxNumMergeCand must be 5 or smaller.");
 
 #if ADAPTIVE_QP_SELECTION
   xConfirmPara( m_bUseAdaptQpSelect == true && m_iQP < 0,                                              "AdaptiveQpSelection must be disabled when QP < 0.");
@@ -582,13 +627,19 @@ Void TAppEncCfg::xCheckParameter()
 #endif
   
   bool tileFlag = (m_iNumColumnsMinus1 > 0 || m_iNumRowsMinus1 > 0 );
+#if !TILES_WPP_ENTROPYSLICES_FLAGS
   xConfirmPara( tileFlag && m_iDependentSliceMode,            "Tile and Dependent Slice can not be applied together");
+#endif
   xConfirmPara( tileFlag && m_iWaveFrontSynchro,            "Tile and Wavefront can not be applied together");
 #if !DEPENDENT_SLICES
   xConfirmPara( m_iWaveFrontSynchro && m_iDependentSliceMode, "Wavefront and Dependent Slice can not be applied together");
 #endif
 #if DEPENDENT_SLICES
+#if TILES_WPP_ENTROPYSLICES_FLAGS
+  xConfirmPara( m_iWaveFrontSynchro && m_entropySliceEnabledFlag, "WaveFrontSynchro and EntropySliceEnabledFlag can not be applied together");
+#else
   xConfirmPara( m_iWaveFrontSynchro && m_bCabacIndependentFlag, "Wavefront and CabacIndependentFlag can not be applied together");
+#endif
 #endif
 
   //TODO:ChromaFmt assumes 4:2:0 below
@@ -675,6 +726,12 @@ Void TAppEncCfg::xCheckParameter()
               {
                 if(absPOC%m_iGOPSize == m_GOPList[k].m_POC%m_iGOPSize)
                 {
+#if TEMPORAL_LAYER_NON_REFERENCE
+                  if(m_GOPList[k].m_temporalId==m_GOPList[curGOP].m_temporalId)
+                  {
+                    m_GOPList[k].m_refPic = true;
+                  }
+#endif
                   m_GOPList[curGOP].m_usedByCurrPic[i]=m_GOPList[k].m_temporalId<=m_GOPList[curGOP].m_temporalId;
                 }
               }
@@ -722,7 +779,11 @@ Void TAppEncCfg::xCheckParameter()
           //step backwards in coding order and include any extra available pictures we might find useful to replace the ones with POC < 0.
           Int offGOP = (checkGOP-1+offset)%m_iGOPSize;
           Int offPOC = ((checkGOP-1+offset)/m_iGOPSize)*m_iGOPSize + m_GOPList[offGOP].m_POC;
+#if TEMPORAL_LAYER_NON_REFERENCE
+          if(offPOC>=0&&m_GOPList[offGOP].m_temporalId<=m_GOPList[curGOP].m_temporalId)
+#else
           if(offPOC>=0&&m_GOPList[offGOP].m_refPic&&m_GOPList[offGOP].m_temporalId<=m_GOPList[curGOP].m_temporalId) 
+#endif
           {
             Bool newRef=false;
             for(Int i=0; i<numRefs; i++)
@@ -743,6 +804,12 @@ Void TAppEncCfg::xCheckParameter()
             {
               Int insertPoint=newRefs;
               //this picture can be added, find appropriate place in list and insert it.
+#if TEMPORAL_LAYER_NON_REFERENCE
+              if(m_GOPList[offGOP].m_temporalId==m_GOPList[curGOP].m_temporalId)
+              {
+                m_GOPList[offGOP].m_refPic = true;
+              }
+#endif
               for(Int j=0; j<newRefs; j++)
               {
                 if(m_GOPList[m_iGOPSize+m_extraRPSs].m_referencePics[j]<offPOC-curPOC||m_GOPList[m_iGOPSize+m_extraRPSs].m_referencePics[j]>0)
@@ -902,7 +969,7 @@ Void TAppEncCfg::xCheckParameter()
   xConfirmPara( m_iWaveFrontSubstreams <= 0, "WaveFrontSubstreams must be positive" );
   xConfirmPara( m_iWaveFrontSubstreams > 1 && !m_iWaveFrontSynchro, "Must have WaveFrontSynchro > 0 in order to have WaveFrontSubstreams > 1" );
 
-  xConfirmPara( m_pictureDigestEnabled<0 || m_pictureDigestEnabled>3, "this hash type is not correct!\n");
+  xConfirmPara( m_decodePictureHashSEIEnabled<0 || m_decodePictureHashSEIEnabled>3, "this hash type is not correct!\n");
 
   if(m_enableRateCtrl)
   {
@@ -919,6 +986,10 @@ Void TAppEncCfg::xCheckParameter()
   xConfirmPara(!m_TransquantBypassEnableFlag && m_CUTransquantBypassFlagValue, "CUTransquantBypassFlagValue cannot be 1 when TransquantBypassEnableFlag is 0");
 
   xConfirmPara(m_log2ParallelMergeLevel < 2, "Log2ParallelMergeLevel should be larger than or equal to 2");
+
+#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE
+  xConfirmPara(m_activeParameterSetsSEIEnabled < 0 || m_activeParameterSetsSEIEnabled > 2, "ActiveParametersSEIEnabled exceeds supported range (0 to 2)"); 
+#endif 
 
 #undef xConfirmPara
   if (check_failed)
@@ -1002,6 +1073,7 @@ Void TAppEncCfg::xPrintParameter()
     printf("TargetBitrate                : %d\n", m_targetBitrate);
     printf("NumLCUInUnit                 : %d\n", m_numLCUInUnit);
   }
+  printf("Max Num Merge Candidates     : %d\n", m_maxNumMergeCand);
   printf("\n");
   
   printf("TOOL CFG: ");
@@ -1025,8 +1097,8 @@ Void TAppEncCfg::xPrintParameter()
 #if !REMOVE_LMCHROMA
   printf("LMC:%d ", m_bUseLMChroma        );
 #endif
-  printf("TS:%d ",  m_useTansformSkip              );
-  printf("TSFast:%d ", m_useTansformSkipFast       );
+  printf("TransformSkip:%d ",     m_useTransformSkip              );
+  printf("TransformSkipFast:%d ", m_useTransformSkipFast       );
 #if REMOVE_FGS
   printf("Slice: M=%d ", m_iSliceMode);
 #else

@@ -73,7 +73,6 @@ public:
 #if !REMOVE_APS
   virtual Void  parseAPS                  ( TComAPS* pAPS  )                                      = 0;
 #endif
-  virtual void parseSEI(SEImessages&) = 0;
 
   virtual Void parseSliceHeader          ( TComSlice*& rpcSlice, ParameterSetManagerDecoder *parameterSetManager)       = 0;
 
@@ -147,8 +146,6 @@ public:
 #if !REMOVE_APS
   Void    decodeAPS                   ( TComAPS* pAPS      )    { m_pcEntropyDecoderIf->parseAPS(pAPS);}
 #endif
-  void decodeSEI(SEImessages& seis) { m_pcEntropyDecoderIf->parseSEI(seis); }
-
   Void    decodeSliceHeader           ( TComSlice*& rpcSlice, ParameterSetManagerDecoder *parameterSetManager)  { m_pcEntropyDecoderIf->parseSliceHeader(rpcSlice, parameterSetManager);         }
 
   Void    decodeTerminatingBit        ( UInt& ruiIsLast )       { m_pcEntropyDecoderIf->parseTerminatingBit(ruiIsLast);     }

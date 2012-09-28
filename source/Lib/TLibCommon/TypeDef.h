@@ -42,7 +42,34 @@
 
 //! \ingroup TLibCommon
 //! \{
+#define RECOVERY_POINT_SEI               1  ///< I0044/J0107, Recovery point SEI
+#define SPS_AMVP_CLEANUP                 1  ///< remove old AMVP related code for alignment with draft text
+#define SUPPORT_FOR_VUI                  1  ///< new: add support for VUI and hrd_parameters
+#if SUPPORT_FOR_VUI
+#define BUFFERING_PERIOD_AND_TIMING_SEI  1  ///< Buffering period SEI and Picture timing SEI
+#if BUFFERING_PERIOD_AND_TIMING_SEI
+#define MAX_CPB_CNT                     32  ///< Upper bound of (cpb_cnt_minus1 + 1)
+#endif
+#endif
+#define TARGET_DECLAYERID_SET            1  ///< J0074:  targetDecLayerIdSet for sub-bitstream extraction process
+#if TARGET_DECLAYERID_SET
+#define MAX_NUM_LAYER_IDS                64
+#endif
 
+#define TILES_WPP_ENTROPYSLICES_FLAGS    1  ///< J0123: Introduce tiles_enabled_flag, entropy_coding_sync_enabled_flag, entropy_slice_enabled_flag
+                                            ///<        and remove tiles_or_entropy_coding_sync_idc
+#define SLICEHEADER_SYNTAX_FIX           1  ///< fixes for aligning slice header syntax with HM8 text
+#define NAL_UNIT_TYPES_J1003_D7          1  ///< J1003: Implements the new mapping for NAL unit types as defined in Table 7-1 of J1003-d7
+#if NAL_UNIT_TYPES_J1003_D7
+// Place macro definitions that deal with new NAL unit types introduced in J1003-d7 (as opposed to I1003-d7) here
+#define SUPPORT_FOR_RAP_N_LP             1  ///< J0344: Add support for IDR_N_LP and BLA_N_LP NAL unit types
+#define STSA                             1        ///STSA (GTLA) pictures labeling
+#define TEMPORAL_LAYER_NON_REFERENCE     1  ///< J0549: Nal unit types for indicating non-reference pictures in the same temporal sub-layer
+#endif
+
+#define SPS_SYNTAX_CHANGES               1  ///< J0550: changes to SPS syntax
+#define VPS_SYNTAX_CHANGES               1  ///< J0550/J0562: changes to VPS syntax
+#define PROFILE_TIER_LEVEL_SYNTAX        1  ///< J0562: Include profile_tier_level() syntax structure; not used for now
 #define SAO_LUM_CHROMA_ONOFF_FLAGS       1  ///< J0087: slice-level independent luma/chroma SAO on/off flag 
 #define LTRP_IN_SPS                      1  ///< J0116: Include support for signalling LTRP LSBs in the SPS, and index them in the slice header.
 #define CHROMA_QP_EXTENSION              1  ///< J0342: Extend mapping table from luma QP to chroma QP, introduce slice-level chroma offsets, apply limits on offset values
@@ -50,7 +77,8 @@
 
 #define COEF_REMAIN_BIN_REDUCTION        3 ///< J0142: Maximum codeword length of coeff_abs_level_remaining reduced to 32.
                                            ///< COEF_REMAIN_BIN_REDUCTION is also used to indicate the level at which the VLC 
-                                           ///< transitions from Golomb-Rice to TU+EG(k)
+                                
+///< transitions from Golomb-Rice to TU+EG(k)
 
 #define CU_DQP_TU_EG                     1 ///< J0089: Bin reduction for delta QP coding
 #if (CU_DQP_TU_EG)
@@ -59,10 +87,12 @@
 #endif
 
 #define NAL_UNIT_HEADER                  1  ///< J0550: Define nal_unit_header() method
-#define REMOVE_NAL_REF_FLAG              1  ///< J0550: Remove nal_ref_flag, and allocate extra bit to reserved bits, and re-order syntax to put reserved bits after nal_unit_type
 #define TEMPORAL_ID_PLUS1                1  ///< J0550: Signal temporal_id_plus1 instead of temporal_id in NAL unit, and change reserved_one_5bits
                                             ///<        value to zero
 #define REFERENCE_PICTURE_DEFN           1  ///< J0118: Reflect change of defn. of referece picture in semantics of delta_poc_msb_present_flag
+#if REFERENCE_PICTURE_DEFN
+#define REMOVE_NAL_REF_FLAG              1  ///< J0550: Remove nal_ref_flag, and allocate extra bit to reserved bits, and re-order syntax to put reserved bits after nal_unit_type
+#endif
 #define MOVE_LOOP_FILTER_SLICES_FLAG     1  ///< J0288: Move seq_loop_filter_across_slices_enabled_flag from SPS to PPS
 #define SPLICING_FRIENDLY_PARAMS         1  ///< J0108: Remove rap_pic_id and move no_output_prior_pic_flag
 
@@ -102,6 +132,9 @@
 #define WP_PARAM_RANGE_LIMIT             1  ///< J0221: Range limit of delta_weight and delta_offset for chroma.
 #define J0260 1 ///< Fix in rate control equations
 
+#define NO_MV_PRED_IF_DIFFERENT_TERM     1  ///< J0071/J0121: No MVP is used when cur:short-term and pred:long-term or vice-versa
+
+#define ACTIVE_PARAMETER_SETS_SEI_MESSAGE    1  ///< J0261: Signaling of VPS Activation
 #define SLICE_HEADER_EXTENSION           1  ///< II0235: Slice header extension mechanism
 
 #define REMOVE_NSQT 1 ///< Disable NSQT-related code
@@ -140,7 +173,6 @@
 #define MAX_NUM_PPS                256
 #define MAX_NUM_APS                32         //< !!!KS: number not defined in WD yet
 
-#define MRG_MAX_NUM_CANDS_SIGNALED         5   //<G091: value of maxNumMergeCand signaled in slice header 
 
 #define WEIGHTED_CHROMA_DISTORTION  1   ///< F386: weighting of chroma for RDO
 #define RDOQ_CHROMA_LAMBDA          1   ///< F386: weighting of chroma for RDOQ
@@ -382,7 +414,6 @@ struct SAOParam
 #endif
   SAOQTPart* psSaoPart[3];
   Int        iMaxSplitLevel;
-  Int        iNumClass[MAX_NUM_SAO_TYPE];
   Bool         oneUnitFlag[3];
   SaoLcuParam* saoLcuParam[3];
   Int          numCuInHeight;
@@ -558,12 +589,14 @@ enum MVP_DIR
   MD_ABOVE_LEFT         ///< MVP of above left block
 };
 
+#if !SPS_AMVP_CLEANUP
 /// motion vector prediction mode used in AMVP
 enum AMVP_MODE
 {
   AM_NONE = 0,          ///< no AMVP mode
   AM_EXPL,              ///< explicit signalling of motion vector index
 };
+#endif
 
 /// coefficient scanning type used in ACS
 enum COEFF_SCAN_TYPE

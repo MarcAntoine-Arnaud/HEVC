@@ -116,7 +116,7 @@ public:
   Void        create  ( Int iPicWidth, Int iPicHeight, UInt uiMaxWidth, UInt uiMaxHeight, UInt uiMaxDepth );
   Void        destroy ();
 
-  TComPicSym  ()                        { m_uiNumAllocatedSlice = 0;            }
+  TComPicSym  ();
   TComSlice*  getSlice(UInt i)          { return  m_apcTComSlice[i];            }
   UInt        getFrameWidthInCU()       { return m_uiWidthInCU;                 }
   UInt        getFrameHeightInCU()      { return m_uiHeightInCU;                }

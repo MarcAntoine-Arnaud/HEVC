@@ -92,7 +92,6 @@ public:
   Void  codeVPS                 ( TComVPS* pcVPS );
   Void  codeSPS                 ( TComSPS* pcSPS     );
   Void  codePPS                 ( TComPPS* pcPPS     );
-  void codeSEI(const SEI&);
   Void  codeSliceHeader         ( TComSlice* pcSlice );
   Void  codeTilesWPPEntryPoint( TComSlice* pSlice );
   Void  codeTerminatingBit      ( UInt uilsLast      );

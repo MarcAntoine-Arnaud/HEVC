@@ -222,7 +222,7 @@ protected:
 #if ADAPTIVE_QP_SELECTION
   Bool     m_bUseAdaptQpSelect;
 #endif
-  Bool     m_useTansformSkipFast;
+  Bool     m_useTransformSkipFast;
   Bool     m_scalingListEnabledFlag;
   Int      *m_quantCoef      [SCALING_LIST_SIZE_NUM][SCALING_LIST_NUM][SCALING_LIST_REM_NUM][SCALING_LIST_DIR_NUM]; ///< array of quantization matrix coefficient 4x4
   Int      *m_dequantCoef    [SCALING_LIST_SIZE_NUM][SCALING_LIST_NUM][SCALING_LIST_REM_NUM][SCALING_LIST_DIR_NUM]; ///< array of dequantization matrix coefficient 4x4

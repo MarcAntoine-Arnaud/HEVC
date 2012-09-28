@@ -305,7 +305,7 @@ Void TDecCu::xDecodeCU( TComDataCU* pcCU, UInt uiAbsPartIdx, UInt uiDepth, UInt&
     TComMvField cMvFieldNeighbours[MRG_MAX_NUM_CANDS << 1]; // double length for mv of both lists
     UChar uhInterDirNeighbours[MRG_MAX_NUM_CANDS];
     Int numValidMergeCand = 0;
-    for( UInt ui = 0; ui < MRG_MAX_NUM_CANDS; ++ui )
+    for( UInt ui = 0; ui < m_ppcCU[uiDepth]->getSlice()->getMaxNumMergeCand(); ++ui )
     {
       uhInterDirNeighbours[ui] = 0;
     }
@@ -659,31 +659,6 @@ TDecCu::xIntraRecChromaBlk( TComDataCU* pcCU,
   }
 }
 
-Void
-TDecCu::xIntraRecQT( TComDataCU* pcCU,
-                    UInt        uiTrDepth,
-                    UInt        uiAbsPartIdx,
-                    TComYuv*    pcRecoYuv,
-                    TComYuv*    pcPredYuv, 
-                    TComYuv*    pcResiYuv )
-{
-  UInt uiFullDepth  = pcCU->getDepth(0) + uiTrDepth;
-  UInt uiTrMode     = pcCU->getTransformIdx( uiAbsPartIdx );
-  if( uiTrMode == uiTrDepth )
-  {
-    xIntraRecLumaBlk  ( pcCU, uiTrDepth, uiAbsPartIdx, pcRecoYuv, pcPredYuv, pcResiYuv );
-    xIntraRecChromaBlk( pcCU, uiTrDepth, uiAbsPartIdx, pcRecoYuv, pcPredYuv, pcResiYuv, 0 );
-    xIntraRecChromaBlk( pcCU, uiTrDepth, uiAbsPartIdx, pcRecoYuv, pcPredYuv, pcResiYuv, 1 );
-  }
-  else
-  {
-    UInt uiNumQPart  = pcCU->getPic()->getNumPartInCU() >> ( ( uiFullDepth + 1 ) << 1 );
-    for( UInt uiPart = 0; uiPart < 4; uiPart++ )
-    {
-      xIntraRecQT( pcCU, uiTrDepth + 1, uiAbsPartIdx + uiPart * uiNumQPart, pcRecoYuv, pcPredYuv, pcResiYuv );
-    }
-  }
-}
 
 Void
 TDecCu::xReconIntraQT( TComDataCU* pcCU, UInt uiAbsPartIdx, UInt uiDepth )

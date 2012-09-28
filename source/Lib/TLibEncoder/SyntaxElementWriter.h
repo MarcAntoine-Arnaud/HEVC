@@ -1,7 +1,7 @@
 /* The copyright in this software is being made available under the BSD
  * License, included below. This software may be subject to other third party
  * and contributor rights, including patent rights, and no such rights are
- * granted under this license.
+ * granted under this license.  
  *
  * Copyright (c) 2010-2012, ITU/ISO/IEC
  * All rights reserved.
@@ -31,47 +31,67 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __SEIREAD__
-#define __SEIREAD__
+/** \file     SyntaxElementWriter.h
+    \brief    CAVLC encoder class (header)
+*/
+
+#ifndef __SYNTAXELEMENTWRITER__
+#define __SYNTAXELEMENTWRITER__
 
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
 
-//! \ingroup TLibDecoder
+#include "TLibCommon/CommonDef.h"
+#include "TLibCommon/TComBitStream.h"
+#include "TLibCommon/TComRom.h"
+
+//! \ingroup TLibEncoder
 //! \{
 
-#include "TLibCommon/SEI.h"
-class TComInputBitstream;
-class SEImessages;
+#if ENC_DEC_TRACE
 
+#define WRITE_CODE( value, length, name)    xWriteCodeTr ( value, length, name )
+#define WRITE_UVLC( value,         name)    xWriteUvlcTr ( value,         name )
+#define WRITE_SVLC( value,         name)    xWriteSvlcTr ( value,         name )
+#define WRITE_FLAG( value,         name)    xWriteFlagTr ( value,         name )
 
-class SEIReader: public SyntaxElementParser
+#else
+
+#define WRITE_CODE( value, length, name)     xWriteCode ( value, length )
+#define WRITE_UVLC( value,         name)     xWriteUvlc ( value )
+#define WRITE_SVLC( value,         name)     xWriteSvlc ( value )
+#define WRITE_FLAG( value,         name)     xWriteFlag ( value )
+
+#endif
+
+class SyntaxElementWriter
 {
-public:
-  SEIReader() {};
-  virtual ~SEIReader() {};
-  Void parseSEImessage(TComInputBitstream* bs, SEImessages& seis);
 protected:
-  Void xReadSEImessage                (SEImessages& seis);
-  Void xParseSEIuserDataUnregistered  (SEIuserDataUnregistered &sei, UInt payloadSize);
-#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE 
-  Void xParseSEIActiveParameterSets    (SEIActiveParameterSets& sei, UInt payloadSize);
-#endif
-  Void xParseSEIDecodedPictureHash    (SEIDecodedPictureHash& sei, UInt payloadSize);
-#if BUFFERING_PERIOD_AND_TIMING_SEI
-  Void xParseSEIBufferingPeriod       (SEIBufferingPeriod& sei, UInt payloadSize);
-  Void xParseSEIPictureTiming         (SEIPictureTiming& sei, UInt payloadSize);
-#endif
-#if RECOVERY_POINT_SEI
-  Void xParseSEIRecoveryPoint         (SEIRecoveryPoint& sei, UInt payloadSize);
-#endif
-#if RECOVERY_POINT_SEI || BUFFERING_PERIOD_AND_TIMING_SEI
-  Void xParseByteAlign();
-#endif
-};
+  TComBitIf*    m_pcBitIf;
 
+  SyntaxElementWriter()
+  :m_pcBitIf(NULL)
+  {};
+  virtual ~SyntaxElementWriter() {};
+
+  Void  setBitstream          ( TComBitIf* p )  { m_pcBitIf = p;  }
+
+  Void  xWriteCode            ( UInt uiCode, UInt uiLength );
+  Void  xWriteUvlc            ( UInt uiCode );
+  Void  xWriteSvlc            ( Int  iCode   );
+  Void  xWriteFlag            ( UInt uiCode );
+#if ENC_DEC_TRACE
+  Void  xWriteCodeTr          ( UInt value, UInt  length, const Char *pSymbolName);
+  Void  xWriteUvlcTr          ( UInt value,               const Char *pSymbolName);
+  Void  xWriteSvlcTr          ( Int  value,               const Char *pSymbolName);
+  Void  xWriteFlagTr          ( UInt value,               const Char *pSymbolName);
+#endif
+
+  UInt  xConvertToUInt        ( Int iValue ) {  return ( iValue <= 0) ? -iValue<<1 : (iValue<<1)-1; }
+};
 
 //! \}
 
-#endif
+#endif // !defined(__SYNTAXELEMENTWRITER__)
+

@@ -200,6 +200,7 @@ extern FILE*  g_hTrace;
 extern Bool   g_bJustDoIt;
 extern const Bool g_bEncDecTraceEnable;
 extern const Bool g_bEncDecTraceDisable;
+extern Bool   g_HLSTraceEnable;
 extern UInt64 g_nSymbolCounter;
 
 #define COUNTER_START    1

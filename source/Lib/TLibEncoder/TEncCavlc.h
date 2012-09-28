@@ -44,8 +44,9 @@
 
 #include "TLibCommon/CommonDef.h"
 #include "TLibCommon/TComBitStream.h"
-#include "TEncEntropy.h"
 #include "TLibCommon/TComRom.h"
+#include "TEncEntropy.h"
+#include "SyntaxElementWriter.h"
 
 //! \ingroup TLibEncoder
 //! \{
@@ -57,31 +58,19 @@ class TEncTop;
 // ====================================================================================================================
 
 /// CAVLC encoder class
-class TEncCavlc : public TEncEntropyIf
+class TEncCavlc : public SyntaxElementWriter, public TEncEntropyIf
 {
 public:
   TEncCavlc();
   virtual ~TEncCavlc();
   
 protected:
-  TComBitIf*    m_pcBitIf;
   TComSlice*    m_pcSlice;
   UInt          m_uiCoeffCost;
 #if !REMOVE_FGS
   Int           m_iSliceGranularity;  //!< slice granularity
 #endif
-  
-  Void  xWriteCode            ( UInt uiCode, UInt uiLength );
-  Void  xWriteUvlc            ( UInt uiCode );
-  Void  xWriteSvlc            ( Int  iCode   );
-  Void  xWriteFlag            ( UInt uiCode );
-#if ENC_DEC_TRACE
-  Void  xWriteCodeTr          ( UInt value, UInt  length, const Char *pSymbolName);
-  Void  xWriteUvlcTr          ( UInt value,               const Char *pSymbolName);
-  Void  xWriteSvlcTr          ( Int  value,               const Char *pSymbolName);
-  Void  xWriteFlagTr          ( UInt value,               const Char *pSymbolName);
-#endif
-  
+
   Void  xWritePCMAlignZero    ();
   Void  xWriteEpExGolomb      ( UInt uiSymbol, UInt uiCount );
   Void  xWriteExGolombLevel    ( UInt uiSymbol );
@@ -96,8 +85,6 @@ protected:
   Bool findMatchingLTRP ( TComSlice* pcSlice, UInt *ltrpsIndex, Int ltrpPOC, Bool usedFlag );
 #endif  
   
-  UInt  xConvertToUInt        ( Int iValue ) {  return ( iValue <= 0) ? -iValue<<1 : (iValue<<1)-1; }
-  
 public:
   
   Void  resetEntropy          ();
@@ -110,11 +97,16 @@ public:
   UInt  getNumberOfWrittenBits()                { return  m_pcBitIf->getNumberOfWrittenBits();  }
   UInt  getCoeffCost          ()                { return  m_uiCoeffCost;  }
   Void  codeVPS                 ( TComVPS* pcVPS );
+#if SUPPORT_FOR_VUI
+  Void  codeVUI                 ( TComVUI *pcVUI, TComSPS* pcSPS );
+#endif
   Void  codeSPS                 ( TComSPS* pcSPS );
   Void  codePPS                 ( TComPPS* pcPPS );
-  void codeSEI(const SEI&);
   Void  codeSliceHeader         ( TComSlice* pcSlice );
-
+#if PROFILE_TIER_LEVEL_SYNTAX
+  Void  codePTL                 ( TComPTL* pcPTL, Bool profilePresentFlag, Int maxNumSubLayersMinus1);
+  Void  codeProfileTier         ( ProfileTierLevel* ptl );
+#endif
   Void  codeTilesWPPEntryPoint( TComSlice* pSlice );
   Void  codeTerminatingBit      ( UInt uilsLast );
   Void  codeSliceFinish         ();

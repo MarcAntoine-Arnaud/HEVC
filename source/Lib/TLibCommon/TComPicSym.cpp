@@ -47,6 +47,31 @@
 // Constructor / destructor / create / destroy
 // ====================================================================================================================
 
+TComPicSym::TComPicSym()
+:m_uiWidthInCU(0)
+,m_uiHeightInCU(0)
+,m_uiMaxCUWidth(0)
+,m_uiMaxCUHeight(0)
+,m_uiMinCUWidth(0)
+,m_uiMinCUHeight(0)
+,m_uhTotalDepth(0)
+,m_uiNumPartitions(0)
+,m_uiNumPartInWidth(0)
+,m_uiNumPartInHeight(0)
+,m_uiNumCUsInFrame(0)
+,m_apcTComSlice(NULL)
+,m_uiNumAllocatedSlice (0)
+,m_apcTComDataCU (NULL)
+,m_iTileBoundaryIndependenceIdr (0)
+,m_iNumColumnsMinus1 (0)
+,m_iNumRowsMinus1(0)
+,m_apcTComTile(NULL)
+,m_puiCUOrderMap(0)
+,m_puiTileIdxMap(NULL)
+,m_puiInverseCUOrderMap(NULL)
+{};
+
+
 Void TComPicSym::create  ( Int iPicWidth, Int iPicHeight, UInt uiMaxWidth, UInt uiMaxHeight, UInt uiMaxDepth )
 {
   UInt i;
@@ -159,7 +184,6 @@ Void TComPicSym::allocateNewSlice()
   {
     m_apcTComSlice[m_uiNumAllocatedSlice-1]->copySliceInfo( m_apcTComSlice[m_uiNumAllocatedSlice-2] );
     m_apcTComSlice[m_uiNumAllocatedSlice-1]->initSlice();
-    m_apcTComSlice[m_uiNumAllocatedSlice-1]->initTiles();
   }
 }
 

@@ -43,6 +43,9 @@
 #endif // _MSC_VER > 1000
 
 #include "TLibCommon/CommonDef.h"
+#if TARGET_DECLAYERID_SET
+#include <vector>
+#endif
 
 //! \ingroup TAppDecoder
 //! \{
@@ -61,7 +64,11 @@ protected:
   UInt          m_outputBitDepth;                     ///< bit depth used for writing output
 
   Int           m_iMaxTemporalLayer;                  ///< maximum temporal layer to be decoded
-  Int m_pictureDigestEnabled;                         ///< Checksum(3)/CRC(2)/MD5(1)/disable(0) acting on SEI picture_digest message
+  Int           m_decodedPictureHashSEIEnabled;       ///< Checksum(3)/CRC(2)/MD5(1)/disable(0) acting on decoded picture hash SEI message
+
+#if TARGET_DECLAYERID_SET
+  std::vector<Int> m_targetDecLayerIdSet;             ///< set of LayerIds to be included in the sub-bitstream extraction process.
+#endif
   
 public:
   TAppDecCfg()          {}

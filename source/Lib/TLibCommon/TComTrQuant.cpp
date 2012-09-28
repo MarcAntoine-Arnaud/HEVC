@@ -1118,7 +1118,7 @@ Void TComTrQuant::xQuant( TComDataCU* pcCU,
 #endif
   Int   iAdd = 0;
  
-  Bool useRDOQForTransformSkip = !(m_useTansformSkipFast && pcCU->getTransformSkip(uiAbsPartIdx,eTType));
+  Bool useRDOQForTransformSkip = !(m_useTransformSkipFast && pcCU->getTransformSkip(uiAbsPartIdx,eTType));
   if ( m_bUseRDOQ && (eTType == TEXT_LUMA || RDOQ_CHROMA) && useRDOQForTransformSkip)
   {
 #if ADAPTIVE_QP_SELECTION
@@ -1367,7 +1367,7 @@ Void TComTrQuant::init( UInt uiMaxWidth, UInt uiMaxHeight, UInt uiMaxTrSize, Int
 #if ADAPTIVE_QP_SELECTION
   m_bUseAdaptQpSelect = bUseAdaptQpSelect;
 #endif
-  m_useTansformSkipFast = useTransformSkipFast;
+  m_useTransformSkipFast = useTransformSkipFast;
 }
 
 Void TComTrQuant::transformNxN( TComDataCU* pcCU, 

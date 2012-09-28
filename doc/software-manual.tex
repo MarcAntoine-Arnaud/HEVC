@@ -103,7 +103,7 @@
 	David Flynn
 	\email{davidf@rd.bbc.co.uk}
 	\and
-	Karsten Sühring
+	Karsten S\"uhring
 	\email{Karsten.Suehring@hhi.fraunhofer.de}
 }
 
@@ -117,7 +117,7 @@
 \maketitle
 \begin{abstract}
 This document is a user manual describing usage of reference software
-for the HEVC project. It applies to version 8.0
+for the HEVC project. It applies to version 8.1
 of the software.
 \end{abstract}
 
@@ -207,6 +207,7 @@ TAppEncoder 	[-h] [-c config.cfg] [--parameter=value]
 Sample configuration files are provided in the cfg/ folder.
 
 \subsection{GOP structure table}
+\label{sec:gop-structure}
 Defines the cyclic GOP structure that will be used repeatedly
 throughout the sequence. The table should contain GOPSize lines,
 named Frame1, Frame2, etc. The frames are listed in decoding
@@ -1147,14 +1148,14 @@ Controls the temporal motion vector prediction mode.
 \end{tabular}
 \\
 
-\Option{TS} &
+\Option{TransformSkip} &
 \ShortOption{\None} &
 \Default{false} &
 Enables or disables transform-skipping mode decision for 4x4 TUs
 \footnote{Enables transform_skip_enabled and per 4x4 TU tests}.
 \\
 
-\Option{TSFast} &
+\Option{TransformSkipFast} &
 \ShortOption{\None} &
 \Default{false} &
 Enables or disables reduced testing of the transform-skipping mode
@@ -1162,17 +1163,156 @@ decision for chroma TUs.  When enabled, no RDO search is performed for
 chroma TUs, instead they are transform-skipped if the four corresponding
 luma TUs are also skipped.
 \par
-This option has no effect if TS is disabled.
+This option has no effect if TransformSkip is disabled.
 \\
 \end{OptionTable}
 
-
+%%
+%% VUI parameters
+%%
+\begin{OptionTable}{VUI parameters}
+\Option{VuiParametersPresent} &
+\ShortOption{-vui} &
+\Default{false} &
+Enable generation of vui_parameters().
+\\
+\Option{AspectRatioInfoPresent} &
+\ShortOption{} &
+\Default{false} &
+Signals whether aspect_ratio_idc is present.
+\\
+\Option{AspectRatioIdc} &
+\ShortOption{} &
+\Default{0} &
+aspect_ratio_idc
+\\
+\Option{SarWidth} &
+\ShortOption{} &
+\Default{0} &
+Specifies the horizontal size of the sample aspect ratio.
+\\
+\Option{SarHeight} &
+\ShortOption{} &
+\Default{0} &
+Specifies the vertical size of the sample aspect ratio.
+\\
+\Option{OverscanInfoPresent} &
+\ShortOption{} &
+\Default{false} &
+Signals whether overscan_info_present_flag is present.
+\\
+\Option{OverscanAppropriate} &
+\ShortOption{} &
+\Default{false} &
+Indicates whether cropped decoded pictures are suitable for display using overscan.
+\par
+\begin{tabular}{cp{0.45\textwidth}}
+  0 & Indicates that the decoded pictures should not be displayed using overscan. \\
+  1 & Indicates that the decoded pictures may be displayed using overscan. \\
+\end{tabular}
+\\
+\Option{VideoSignalTypePresent} &
+\ShortOption{} &
+\Default{false} &
+Signals whether video_format, video_full_range_flag, and colour_description_present_flag are present.
+\\
+\Option{VideoFormat} &
+\ShortOption{} &
+\Default{5} &
+Indicates representation of pictures.
+\\
+\Option{VideoFullRange} &
+\ShortOption{} &
+\Default{false} &
+Indicates the black level and range of luma and chroma signals.
+\par
+\begin{tabular}{cp{0.45\textwidth}}
+  0 & Indicates that the luma and chroma signals are to be scaled prior to display. \\
+  1 & Indicates that the luma and chroma signals are not to be scaled prior to display. \\
+\end{tabular}
+\\
+\Option{ColourDescriptionPresent} &
+\ShortOption{} &
+\Default{false} &
+Signals whether colour_primaries, transfer_characteristics and matrix_coefficients are present.
+\\
+\Option{ColourPrimaries} &
+\ShortOption{} &
+\Default{2} &
+Indicates chromaticity coordinates of the source primaries.
+\\
+\Option{TransferCharateristics} &
+\ShortOption{} &
+\Default{2} &
+Indicates the opto-electronic transfer characteristics of the source.
+\\
+\Option{MatrixCoefficients} &
+\ShortOption{} &
+\Default{2} &
+Describes the matrix coefficients used in deriving luma and chroma from RGB primaries.
+\\
+\Option{ChromaLocInfoPresent} &
+\ShortOption{} &
+\Default{false} &
+Signals whether chroma_sample_loc_type_top_field and chroma_sample_loc_type_bottom_field are present.
+\\
+\Option{ChromaSampleLocTypeTopField} &
+\ShortOption{} &
+\Default{0} &
+Specifies the location of chroma samples for top field.
+\\
+\Option{ChromaSampleLocTypeBottomField} &
+\ShortOption{} &
+\Default{0} &
+Specifies the location of chroma samples for bottom field.
+\\
+\Option{NeutralChromaIndication} &
+\ShortOption{} &
+\Default{false} &
+Indicates that the value of all decoded chroma samples is equal to 1<<(BitDepthCr-1).
+\\
+\Option{BitstreamRestriction} &
+\ShortOption{} &
+\Default{false} &
+Signals whether bitstream restriction parameters are present.
+\\
+\Option{TilesFixedStructure} &
+\ShortOption{} &
+\Default{false} &
+Indicates that each active picture parameter set has the same values of the syntax elements related to tiles.
+\\
+\Option{MotionVectorsOverPicBoundaries} &
+\ShortOption{} &
+\Default{false} &
+Indicates that no samples outside the picture boundaries are used for inter prediction.
+\\
+\Option{MaxBytesPerPicDenom} &
+\ShortOption{} &
+\Default{2} &
+Indicates a number of bytes not exceeded by the sum of the sizes of the VCL NAL units associated with any coded picture.
+\\
+\Option{MaxBitsPerMinCuDenom} &
+\ShortOption{} &
+\Default{1} &
+Indicates an upper bound for the number of bits of coding_unit() data.
+\\
+\Option{Log2MaxMvLengthHorizontal} &
+\ShortOption{} &
+\Default{15} &
+Indicate the maximum absolute value of a decoded horizontal MV component in quarter-pel luma units.
+\\
+\Option{Log2MaxMvLengthVertical} &
+\ShortOption{} &
+\Default{15} &
+Indicate the maximum absolute value of a decoded vertical MV component in quarter-pel luma units.
+\\
+\end{OptionTable}
 
 %%
 %% Miscellaneous parameters
 %%
 \begin{OptionTable}{Miscellaneous parameters}
-\Option{SEIPictureDigest} &
+\Option{SEIpictureDigest} &
 \ShortOption{\None} &
 \Default{0} &
 Enables or disables the calculation and insertion of the picture_digest

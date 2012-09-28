@@ -173,12 +173,14 @@ Void TAppEncTop::xInitLibCfg()
 #if !REMOVE_LMCHROMA
   m_cTEncTop.setUseLMChroma                  ( m_bUseLMChroma );
 #endif
-  m_cTEncTop.setUseTransformSkip             ( m_useTansformSkip      );
-  m_cTEncTop.setUseTransformSkipFast         ( m_useTansformSkipFast  );
+  m_cTEncTop.setUseTransformSkip             ( m_useTransformSkip      );
+  m_cTEncTop.setUseTransformSkipFast         ( m_useTransformSkipFast  );
   m_cTEncTop.setUseConstrainedIntraPred      ( m_bUseConstrainedIntraPred );
   m_cTEncTop.setPCMLog2MinSize          ( m_uiPCMLog2MinSize);
   m_cTEncTop.setUsePCM                       ( m_usePCM );
   m_cTEncTop.setPCMLog2MaxSize               ( m_pcmLog2MaxSize);
+  m_cTEncTop.setMaxNumMergeCand              ( m_maxNumMergeCand );
+  
 
   //====== Weighted Prediction ========
   m_cTEncTop.setUseWP                   ( m_bUseWeightPred      );
@@ -194,7 +196,11 @@ Void TAppEncTop::xInitLibCfg()
   m_cTEncTop.setDependentSliceMode        ( m_iDependentSliceMode         );
   m_cTEncTop.setDependentSliceArgument    ( m_iDependentSliceArgument     );
 #if DEPENDENT_SLICES
+#if TILES_WPP_ENTROPYSLICES_FLAGS
+  m_cTEncTop.setEntropySliceEnabledFlag   ( m_entropySliceEnabledFlag );
+#else
   m_cTEncTop.setCabacIndependentFlag      ( m_bCabacIndependentFlag   );
+#endif
 #endif
   int iNumPartInCU = 1<<(m_uiMaxCUDepth<<1);
   if(m_iDependentSliceMode==SHARP_FIXED_NUMBER_OF_LCU_IN_DEPENDENT_SLICE)
@@ -236,8 +242,14 @@ Void TAppEncTop::xInitLibCfg()
   m_cTEncTop.setPCMInputBitDepthFlag  ( m_bPCMInputBitDepthFlag); 
   m_cTEncTop.setPCMFilterDisableFlag  ( m_bPCMFilterDisableFlag); 
 
-  m_cTEncTop.setPictureDigestEnabled(m_pictureDigestEnabled);
-
+  m_cTEncTop.setDecodedPictureHashSEIEnabled(m_decodePictureHashSEIEnabled);
+#if RECOVERY_POINT_SEI
+  m_cTEncTop.setRecoveryPointSEIEnabled( m_recoveryPointSEIEnabled );
+#endif
+#if BUFFERING_PERIOD_AND_TIMING_SEI
+  m_cTEncTop.setBufferingPeriodSEIEnabled( m_bufferingPeriodSEIEnabled );
+  m_cTEncTop.setPictureTimingSEIEnabled( m_pictureTimingSEIEnabled );
+#endif
   m_cTEncTop.setUniformSpacingIdr          ( m_iUniformSpacingIdr );
   m_cTEncTop.setNumColumnsMinus1           ( m_iNumColumnsMinus1 );
   m_cTEncTop.setNumRowsMinus1              ( m_iNumRowsMinus1 );
@@ -269,6 +281,35 @@ Void TAppEncTop::xInitLibCfg()
   m_cTEncTop.setCUTransquantBypassFlagValue(m_CUTransquantBypassFlagValue);
 #if RECALCULATE_QP_ACCORDING_LAMBDA
   m_cTEncTop.setUseRecalculateQPAccordingToLambda( m_recalculateQPAccordingToLambda );
+#endif
+#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE
+  m_cTEncTop.setActiveParameterSetsSEIEnabled ( m_activeParameterSetsSEIEnabled ); 
+#endif 
+#if SUPPORT_FOR_VUI
+  m_cTEncTop.setVuiParametersPresentFlag( m_vuiParametersPresentFlag );
+  m_cTEncTop.setAspectRatioIdc( m_aspectRatioIdc );
+  m_cTEncTop.setSarWidth( m_sarWidth );
+  m_cTEncTop.setSarHeight( m_sarHeight );
+  m_cTEncTop.setOverscanInfoPresentFlag( m_overscanInfoPresentFlag );
+  m_cTEncTop.setOverscanAppropriateFlag( m_overscanAppropriateFlag );
+  m_cTEncTop.setVideoSignalTypePresentFlag( m_videoSignalTypePresentFlag );
+  m_cTEncTop.setVideoFormat( m_videoFormat );
+  m_cTEncTop.setVideoFullRangeFlag( m_videoFullRangeFlag );
+  m_cTEncTop.setColourDescriptionPresentFlag( m_colourDescriptionPresentFlag );
+  m_cTEncTop.setColourPrimaries( m_colourPrimaries );
+  m_cTEncTop.setTransferCharacteristics( m_transferCharacteristics );
+  m_cTEncTop.setMatrixCoefficients( m_matrixCoefficients );
+  m_cTEncTop.setChromaLocInfoPresentFlag( m_chromaLocInfoPresentFlag );
+  m_cTEncTop.setChromaSampleLocTypeTopField( m_chromaSampleLocTypeTopField );
+  m_cTEncTop.setChromaSampleLocTypeBottomField( m_chromaSampleLocTypeBottomField );
+  m_cTEncTop.setNeutralChromaIndicationFlag( m_neutralChromaIndicationFlag );
+  m_cTEncTop.setBitstreamRestrictionFlag( m_bitstreamRestrictionFlag );
+  m_cTEncTop.setTilesFixedStructureFlag( m_tilesFixedStructureFlag );
+  m_cTEncTop.setMotionVectorsOverPicBoundariesFlag( m_motionVectorsOverPicBoundariesFlag );
+  m_cTEncTop.setMaxBytesPerPicDenom( m_maxBytesPerPicDenom );
+  m_cTEncTop.setMaxBitsPerMinCuDenom( m_maxBitsPerMinCuDenom );
+  m_cTEncTop.setLog2MaxMvLengthHorizontal( m_log2MaxMvLengthHorizontal );
+  m_cTEncTop.setLog2MaxMvLengthVertical( m_log2MaxMvLengthVertical );
 #endif
 }
 
@@ -465,6 +506,22 @@ void TAppEncTop::rateStatsAccum(const AccessUnit& au, const std::vector<unsigned
   {
     switch ((*it_au)->m_nalUnitType)
     {
+#if NAL_UNIT_TYPES_J1003_D7
+    case NAL_UNIT_CODED_SLICE_TRAIL_R:
+    case NAL_UNIT_CODED_SLICE_TRAIL_N:
+    case NAL_UNIT_CODED_SLICE_TLA:
+    case NAL_UNIT_CODED_SLICE_TSA_N:
+    case NAL_UNIT_CODED_SLICE_STSA_R:
+    case NAL_UNIT_CODED_SLICE_STSA_N:
+    case NAL_UNIT_CODED_SLICE_BLA:
+    case NAL_UNIT_CODED_SLICE_BLANT:
+    case NAL_UNIT_CODED_SLICE_BLA_N_LP:
+    case NAL_UNIT_CODED_SLICE_IDR:
+    case NAL_UNIT_CODED_SLICE_IDR_N_LP:
+    case NAL_UNIT_CODED_SLICE_CRA:
+    case NAL_UNIT_CODED_SLICE_DLP:
+    case NAL_UNIT_CODED_SLICE_TFD:
+#else
     case NAL_UNIT_CODED_SLICE:
     case NAL_UNIT_CODED_SLICE_TFD:
     case NAL_UNIT_CODED_SLICE_TLA:
@@ -473,6 +530,7 @@ void TAppEncTop::rateStatsAccum(const AccessUnit& au, const std::vector<unsigned
     case NAL_UNIT_CODED_SLICE_BLA:
     case NAL_UNIT_CODED_SLICE_BLANT:
     case NAL_UNIT_CODED_SLICE_IDR:
+#endif
     case NAL_UNIT_VPS:
     case NAL_UNIT_SPS:
     case NAL_UNIT_PPS:

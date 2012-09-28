@@ -48,7 +48,10 @@ struct NALUnit
 #if !REMOVE_NAL_REF_FLAG
   Bool        m_nalRefFlag;  ///< nal_ref_flag
 #endif
-  unsigned    m_temporalId;  ///< temporal_id
+  UInt        m_temporalId;  ///< temporal_id
+#if TARGET_DECLAYERID_SET
+  UInt        m_reservedZero6Bits; ///< reserved_zero_6bits
+#endif
 
   /** construct an NALunit structure with given header values. */
   NALUnit(
@@ -56,12 +59,20 @@ struct NALUnit
 #if !REMOVE_NAL_REF_FLAG
     Bool        nalRefFlag,
 #endif
+#if TARGET_DECLAYERID_SET
+    Int         temporalId = 0,
+    Int         reservedZero6Bits = 0)
+#else
     Int         temporalId = 0)
+#endif
     :m_nalUnitType (nalUnitType)
 #if !REMOVE_NAL_REF_FLAG
     ,m_nalRefFlag  (nalRefFlag)
 #endif
     ,m_temporalId  (temporalId)
+#if TARGET_DECLAYERID_SET
+    ,m_reservedZero6Bits(reservedZero6Bits)
+#endif
   {}
 
   /** default constructor - no initialization; must be perfomed by user */
@@ -70,6 +81,22 @@ struct NALUnit
   /** returns true if the NALunit is a slice NALunit */
   bool isSlice()
   {
+#if NAL_UNIT_TYPES_J1003_D7
+    return m_nalUnitType == NAL_UNIT_CODED_SLICE_TRAIL_R
+        || m_nalUnitType == NAL_UNIT_CODED_SLICE_TRAIL_N
+        || m_nalUnitType == NAL_UNIT_CODED_SLICE_TLA
+        || m_nalUnitType == NAL_UNIT_CODED_SLICE_TSA_N
+        || m_nalUnitType == NAL_UNIT_CODED_SLICE_STSA_R
+        || m_nalUnitType == NAL_UNIT_CODED_SLICE_STSA_N
+        || m_nalUnitType == NAL_UNIT_CODED_SLICE_BLA
+        || m_nalUnitType == NAL_UNIT_CODED_SLICE_BLANT
+        || m_nalUnitType == NAL_UNIT_CODED_SLICE_BLA_N_LP
+        || m_nalUnitType == NAL_UNIT_CODED_SLICE_IDR
+        || m_nalUnitType == NAL_UNIT_CODED_SLICE_IDR_N_LP
+        || m_nalUnitType == NAL_UNIT_CODED_SLICE_CRA
+        || m_nalUnitType == NAL_UNIT_CODED_SLICE_DLP
+        || m_nalUnitType == NAL_UNIT_CODED_SLICE_TFD;
+#else
     return m_nalUnitType == NAL_UNIT_CODED_SLICE_IDR
         || m_nalUnitType == NAL_UNIT_CODED_SLICE_BLANT
         || m_nalUnitType == NAL_UNIT_CODED_SLICE_BLA
@@ -78,6 +105,7 @@ struct NALUnit
         || m_nalUnitType == NAL_UNIT_CODED_SLICE_TLA
         || m_nalUnitType == NAL_UNIT_CODED_SLICE_TFD
         || m_nalUnitType == NAL_UNIT_CODED_SLICE;
+#endif
   }
 };
 

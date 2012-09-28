@@ -112,6 +112,10 @@
 		6782E0F111AD694400E8FFB8 /* TAppDecTop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6782E0EC11AD694400E8FFB8 /* TAppDecTop.cpp */; };
 		7104E1E312005B5600F42AA8 /* libTAppCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7104E1CD12005ABA00F42AA8 /* libTAppCommon.a */; };
 		710DD68B1335295200BE8EDE /* libTAppCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7104E1CD12005ABA00F42AA8 /* libTAppCommon.a */; };
+		71206CD616066EC700A354E7 /* SyntaxElementParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 71206CD416066EC700A354E7 /* SyntaxElementParser.cpp */; };
+		71206CD716066EC700A354E7 /* SyntaxElementParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 71206CD516066EC700A354E7 /* SyntaxElementParser.h */; };
+		71206CDB16066EDD00A354E7 /* SyntaxElementWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 71206CD916066EDD00A354E7 /* SyntaxElementWriter.cpp */; };
+		71206CDC16066EDD00A354E7 /* SyntaxElementWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 71206CDA16066EDD00A354E7 /* SyntaxElementWriter.h */; };
 		712FAEAA1379BA2F00DB5314 /* AccessUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 712FAEA81379BA2F00DB5314 /* AccessUnit.h */; };
 		712FAEAB1379BA2F00DB5314 /* NAL.h in Headers */ = {isa = PBXBuildFile; fileRef = 712FAEA91379BA2F00DB5314 /* NAL.h */; };
 		712FAEAF1379BA4900DB5314 /* AnnexBwrite.h in Headers */ = {isa = PBXBuildFile; fileRef = 712FAEAC1379BA4900DB5314 /* AnnexBwrite.h */; };
@@ -319,6 +323,10 @@
 		6782E0EC11AD694400E8FFB8 /* TAppDecTop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TAppDecTop.cpp; path = source/App/TAppDecoder/TAppDecTop.cpp; sourceTree = "<group>"; };
 		6782E0ED11AD694400E8FFB8 /* TAppDecTop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TAppDecTop.h; path = source/App/TAppDecoder/TAppDecTop.h; sourceTree = "<group>"; };
 		7104E1CD12005ABA00F42AA8 /* libTAppCommon.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTAppCommon.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		71206CD416066EC700A354E7 /* SyntaxElementParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SyntaxElementParser.cpp; path = source/Lib/TLibDecoder/SyntaxElementParser.cpp; sourceTree = "<group>"; };
+		71206CD516066EC700A354E7 /* SyntaxElementParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SyntaxElementParser.h; path = source/Lib/TLibDecoder/SyntaxElementParser.h; sourceTree = "<group>"; };
+		71206CD916066EDD00A354E7 /* SyntaxElementWriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SyntaxElementWriter.cpp; path = source/Lib/TLibEncoder/SyntaxElementWriter.cpp; sourceTree = "<group>"; };
+		71206CDA16066EDD00A354E7 /* SyntaxElementWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SyntaxElementWriter.h; path = source/Lib/TLibEncoder/SyntaxElementWriter.h; sourceTree = "<group>"; };
 		712FAEA81379BA2F00DB5314 /* AccessUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AccessUnit.h; path = source/Lib/TLibCommon/AccessUnit.h; sourceTree = "<group>"; };
 		712FAEA91379BA2F00DB5314 /* NAL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NAL.h; path = source/Lib/TLibCommon/NAL.h; sourceTree = "<group>"; };
 		712FAEAC1379BA4900DB5314 /* AnnexBwrite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AnnexBwrite.h; path = source/Lib/TLibEncoder/AnnexBwrite.h; sourceTree = "<group>"; };
@@ -520,6 +528,8 @@
 		676795EF11AD620B00421804 /* TLibDecoder */ = {
 			isa = PBXGroup;
 			children = (
+				71206CD416066EC700A354E7 /* SyntaxElementParser.cpp */,
+				71206CD516066EC700A354E7 /* SyntaxElementParser.h */,
 				712FAEB21379BA6600DB5314 /* AnnexBread.cpp */,
 				712FAEB31379BA6600DB5314 /* AnnexBread.h */,
 				712FAEB41379BA6600DB5314 /* NALread.cpp */,
@@ -550,6 +560,8 @@
 		6767961411AD624B00421804 /* TLibEncoder */ = {
 			isa = PBXGroup;
 			children = (
+				71206CD916066EDD00A354E7 /* SyntaxElementWriter.cpp */,
+				71206CDA16066EDD00A354E7 /* SyntaxElementWriter.h */,
 				712FAEAC1379BA4900DB5314 /* AnnexBwrite.h */,
 				712FAEAD1379BA4900DB5314 /* NALwrite.cpp */,
 				712FAEAE1379BA4900DB5314 /* NALwrite.h */,
@@ -703,6 +715,7 @@
 				65EA1B8E135744EA00988950 /* SEIread.h in Headers */,
 				712FAEB71379BA6600DB5314 /* AnnexBread.h in Headers */,
 				712FAEB91379BA6600DB5314 /* NALread.h in Headers */,
+				71206CD716066EC700A354E7 /* SyntaxElementParser.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -730,6 +743,7 @@
 				DBC9C9521447855200A77A93 /* WeightPredAnalysis.h in Headers */,
 				DBA796C91499ADE5003F7D5D /* TEncBinCoderCABACCounter.h in Headers */,
 				DBB04CFD1555342500CD9529 /* TEncRateCtrl.h in Headers */,
+				71206CDC16066EDD00A354E7 /* SyntaxElementWriter.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -959,6 +973,7 @@
 				65EA1B8F135744EA00988950 /* SEIread.cpp in Sources */,
 				712FAEB61379BA6600DB5314 /* AnnexBread.cpp in Sources */,
 				712FAEB81379BA6600DB5314 /* NALread.cpp in Sources */,
+				71206CD616066EC700A354E7 /* SyntaxElementParser.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -983,6 +998,7 @@
 				DBC9C9511447855200A77A93 /* WeightPredAnalysis.cpp in Sources */,
 				DBA796C81499ADE5003F7D5D /* TEncBinCoderCABACCounter.cpp in Sources */,
 				DBB04CFC1555342500CD9529 /* TEncRateCtrl.cpp in Sources */,
+				71206CDB16066EDD00A354E7 /* SyntaxElementWriter.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

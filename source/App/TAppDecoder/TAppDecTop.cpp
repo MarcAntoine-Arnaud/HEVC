@@ -138,11 +138,11 @@ Void TAppDecTop::decode()
     else
     {
       read(nalu, nalUnit);
-      if(nalu.m_nalUnitType == NAL_UNIT_SPS)
-      {
-        assert(nalu.m_temporalId == 0);
-      }
+#if TARGET_DECLAYERID_SET
+      if( (m_iMaxTemporalLayer >= 0 && nalu.m_temporalId > m_iMaxTemporalLayer) || !isNaluWithinTargetDecLayerIdSet(&nalu)  )
+#else
       if(m_iMaxTemporalLayer >= 0 && nalu.m_temporalId > m_iMaxTemporalLayer)
+#endif
       {
         if(bPreviousPictureDecoded)
         {
@@ -189,6 +189,10 @@ Void TAppDecTop::decode()
       }
       if ( bNewPicture && 
            (   nalu.m_nalUnitType == NAL_UNIT_CODED_SLICE_IDR
+#if SUPPORT_FOR_RAP_N_LP
+            || nalu.m_nalUnitType == NAL_UNIT_CODED_SLICE_IDR_N_LP
+            || nalu.m_nalUnitType == NAL_UNIT_CODED_SLICE_BLA_N_LP
+#endif
             || nalu.m_nalUnitType == NAL_UNIT_CODED_SLICE_BLANT
             || nalu.m_nalUnitType == NAL_UNIT_CODED_SLICE_BLA ) )
       {
@@ -235,7 +239,7 @@ Void TAppDecTop::xInitDecLib()
 {
   // initialize decoder class
   m_cTDecTop.init();
-  m_cTDecTop.setPictureDigestEnabled(m_pictureDigestEnabled);
+  m_cTDecTop.setDecodedPictureHashSEIEnabled(m_decodedPictureHashSEIEnabled);
 }
 
 /** \param pcListPic list of pictures to be written to file
@@ -357,5 +361,25 @@ Void TAppDecTop::xFlushOutput( TComList<TComPic*>* pcListPic )
   pcListPic->clear();
   m_iPOCLastDisplay = -MAX_INT;
 }
+
+#if TARGET_DECLAYERID_SET
+/** \param nalu Input nalu to check whether its LayerId is within targetDecLayerIdSet
+ */
+Bool TAppDecTop::isNaluWithinTargetDecLayerIdSet( InputNALUnit* nalu )
+{
+  if ( m_targetDecLayerIdSet.size() == 0 ) // By default, the set is empty, meaning all LayerIds are allowed
+  {
+    return true;
+  }
+  for (std::vector<Int>::iterator it = m_targetDecLayerIdSet.begin(); it != m_targetDecLayerIdSet.end(); it++)
+  {
+    if ( nalu->m_reservedZero6Bits == (*it) )
+    {
+      return true;
+    }
+  }
+  return false;
+}
+#endif
 
 //! \}

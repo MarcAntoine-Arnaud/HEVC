@@ -80,8 +80,8 @@ protected:
   Int       m_numReorderPics[MAX_TLAYER];                     ///< total number of reorder pictures
   Int       m_maxDecPicBuffering[MAX_TLAYER];                 ///< total number of reference pictures needed for decoding
   Bool      m_bUseLComb;                                      ///< flag for using combined reference list for uni-prediction in B-slices (JCTVC-D421)
-  Bool      m_useTansformSkip;                                ///< flag for enabling intra transform skipping
-  Bool      m_useTansformSkipFast;                            ///< flag for enabling fast intra transform skipping
+  Bool      m_useTransformSkip;                               ///< flag for enabling intra transform skipping
+  Bool      m_useTransformSkipFast;                           ///< flag for enabling fast intra transform skipping
 #if !REMOVE_NSQT
   Bool      m_enableNSQT;                                     ///< flag for enabling NSQT
 #endif
@@ -175,7 +175,11 @@ protected:
   Int       m_iDependentSliceMode;    ///< 0: Disable all dependent slice limits, 1 : Maximum number of largest coding units per slice, 2: Constraint based dependent slice
   Int       m_iDependentSliceArgument;///< If m_iDependentSliceMode==1, m_iEDependentSliceArgument=max. # of largest coding units. If m_iDependnetSliceMode==2, m_iDependnetSliceArgument=max. # of bins.
 #if DEPENDENT_SLICES
+#if TILES_WPP_ENTROPYSLICES_FLAGS
+  Bool      m_entropySliceEnabledFlag;
+#else
   Bool       m_bCabacIndependentFlag;  // 0: CABAC dependence between slices, 1:CABAC independence between slices
+#endif
 #endif
 
 #if !REMOVE_FGS
@@ -193,13 +197,20 @@ protected:
 
   Bool      m_bUseConstrainedIntraPred;                       ///< flag for using constrained intra prediction
   
-  Int       m_pictureDigestEnabled;                          ///< Checksum(3)/CRC(2)/MD5(1)/disable(0) acting on SEI picture_digest message
-
+  Int       m_decodePictureHashSEIEnabled;                    ///< Checksum(3)/CRC(2)/MD5(1)/disable(0) acting on decoded picture hash SEI message
+#if RECOVERY_POINT_SEI
+  Int       m_recoveryPointSEIEnabled;
+#endif
+#if BUFFERING_PERIOD_AND_TIMING_SEI
+  Int       m_bufferingPeriodSEIEnabled;
+  Int       m_pictureTimingSEIEnabled;
+#endif
   // weighted prediction
   Bool      m_bUseWeightPred;                                 ///< Use of explicit Weighting Prediction for P_SLICE
   Bool      m_useWeightedBiPred;                                    ///< Use of Bi-Directional Weighting Prediction (B_SLICE)
   
-  UInt      m_log2ParallelMergeLevel;                 ///< Parallel merge estimation region
+  UInt      m_log2ParallelMergeLevel;                         ///< Parallel merge estimation region
+  UInt      m_maxNumMergeCand;                                ///< Max number of merge candidates
 
   Int       m_TMVPModeId;
   Int       m_signHideFlag;
@@ -214,6 +225,37 @@ protected:
 
 #if RECALCULATE_QP_ACCORDING_LAMBDA
   Bool      m_recalculateQPAccordingToLambda;                 ///< recalculate QP value according to the lambda value
+#endif
+#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE
+  Int       m_activeParameterSetsSEIEnabled;
+#endif 
+
+#if SUPPORT_FOR_VUI
+  Bool      m_vuiParametersPresentFlag;                       ///< enable generation of VUI parameters
+  Bool      m_aspectRatioInfoPresentFlag;                     ///< Signals whether aspect_ratio_idc is present
+  Int       m_aspectRatioIdc;                                 ///< aspect_ratio_idc
+  Int       m_sarWidth;                                       ///< horizontal size of the sample aspect ratio
+  Int       m_sarHeight;                                      ///< vertical size of the sample aspect ratio
+  Bool      m_overscanInfoPresentFlag;                        ///< Signals whether overscan_appropriate_flag is present
+  Bool      m_overscanAppropriateFlag;                        ///< Indicates whether cropped decoded pictures are suitable for display using overscan
+  Bool      m_videoSignalTypePresentFlag;                     ///< Signals whether video_format, video_full_range_flag, and colour_description_present_flag are present
+  Int       m_videoFormat;                                    ///< Indicates representation of pictures
+  Bool      m_videoFullRangeFlag;                             ///< Indicates the black level and range of luma and chroma signals
+  Bool      m_colourDescriptionPresentFlag;                   ///< Signals whether colour_primaries, transfer_characteristics and matrix_coefficients are present
+  Int       m_colourPrimaries;                                ///< Indicates chromaticity coordinates of the source primaries
+  Int       m_transferCharacteristics;                        ///< Indicates the opto-electronic transfer characteristics of the source
+  Int       m_matrixCoefficients;                             ///< Describes the matrix coefficients used in deriving luma and chroma from RGB primaries
+  Bool      m_chromaLocInfoPresentFlag;                       ///< Signals whether chroma_sample_loc_type_top_field and chroma_sample_loc_type_bottom_field are present
+  Int       m_chromaSampleLocTypeTopField;                    ///< Specifies the location of chroma samples for top field
+  Int       m_chromaSampleLocTypeBottomField;                 ///< Specifies the location of chroma samples for bottom field
+  Bool      m_neutralChromaIndicationFlag;                    ///< Indicates that the value of all decoded chroma samples is equal to 1<<(BitDepthCr-1)
+  Bool      m_bitstreamRestrictionFlag;                       ///< Signals whether bitstream restriction parameters are present
+  Bool      m_tilesFixedStructureFlag;                        ///< Indicates that each active picture parameter set has the same values of the syntax elements related to tiles
+  Bool      m_motionVectorsOverPicBoundariesFlag;             ///< Indicates that no samples outside the picture boundaries are used for inter prediction
+  Int       m_maxBytesPerPicDenom;                            ///< Indicates a number of bytes not exceeded by the sum of the sizes of the VCL NAL units associated with any coded picture
+  Int       m_maxBitsPerMinCuDenom;                           ///< Indicates an upper bound for the number of bits of coding_unit() data
+  Int       m_log2MaxMvLengthHorizontal;                      ///< Indicate the maximum absolute value of a decoded horizontal MV component in quarter-pel luma units
+  Int       m_log2MaxMvLengthVertical;                        ///< Indicate the maximum absolute value of a decoded vertical MV component in quarter-pel luma units
 #endif
 
   // internal member functions

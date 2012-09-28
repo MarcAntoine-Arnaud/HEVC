@@ -58,9 +58,18 @@ struct OutputNALUnit : public NALUnit
 #if !REMOVE_NAL_REF_FLAG
     Bool nalRefFlag,
 #endif
+#if TARGET_DECLAYERID_SET
+    unsigned temporalID = 0,
+    unsigned reserved_zero_6bits = 0)
+#else
     unsigned temporalID = 0)
+#endif
 #if REMOVE_NAL_REF_FLAG
+#if TARGET_DECLAYERID_SET
+  : NALUnit(nalUnitType, temporalID, reserved_zero_6bits)
+#else
   : NALUnit(nalUnitType, temporalID)
+#endif
 #else
   : NALUnit(nalUnitType, nalRefFlag, temporalID)
 #endif

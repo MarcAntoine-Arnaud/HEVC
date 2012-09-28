@@ -130,7 +130,11 @@ Void TDecGop::decompressSlice(TComInputBitstream* pcBitstream, TComPic*& rpcPic)
   m_pcSbacDecoder->init( (TDecBinIf*)m_pcBinCABAC );
   m_pcEntropyDecoder->setEntropyDecoder (m_pcSbacDecoder);
 
-  UInt uiNumSubstreams = pcSlice->getPPS()->getNumSubstreams();
+#if TILES_WPP_ENTROPYSLICES_FLAGS
+  UInt uiNumSubstreams = pcSlice->getPPS()->getEntropyCodingSyncEnabledFlag() ? pcSlice->getNumEntryPointOffsets()+1 : pcSlice->getPPS()->getNumSubstreams();
+#else
+  UInt uiNumSubstreams = pcSlice->getPPS()->getTilesOrEntropyCodingSyncIdc() == 2 ? pcSlice->getNumEntryPointOffsets()+1 : pcSlice->getPPS()->getNumSubstreams();
+#endif
 
   // init each couple {EntropyDecoder, Substream}
   UInt *puiSubstreamSizes = pcSlice->getSubstreamSizes();
@@ -167,21 +171,6 @@ Void TDecGop::decompressSlice(TComInputBitstream* pcBitstream, TComPic*& rpcPic)
     }
 #endif
   }
-#if DEPENDENT_SLICES
-  if( pcSlice->getPPS()->getDependentSlicesEnabledFlag() && (!pcSlice->getPPS()->getCabacIndependentFlag()) )
-  {
-    pcSlice->initCTXMem_dec( 2 );
-    for ( UInt st = 0; st < 2; st++ )
-    {
-      TDecSbac* ctx = NULL;
-      ctx = new TDecSbac;
-      ctx->init( (TDecBinIf*)m_pcBinCABAC );
-      ctx->load( m_pcSbacDecoder );
-      pcSlice->setCTXMem_dec( ctx, st );
-    }
-  }
-#endif
-
   m_pcSbacDecoders[0].load(m_pcSbacDecoder);
   m_pcSliceDecoder->decompressSlice( pcBitstream, ppcSubstreams, rpcPic, m_pcSbacDecoder, m_pcSbacDecoders);
   m_pcEntropyDecoder->setBitstream(  ppcSubstreams[uiNumSubstreams-1] );
@@ -206,20 +195,8 @@ Void TDecGop::filterPicture(TComPic*& rpcPic)
   long iBeforeTime = clock();
 
   // deblocking filter
-  Bool bLFCrossTileBoundary = pcSlice->getPPS()->getLFCrossTileBoundaryFlag();
-  if (pcSlice->getPPS()->getDeblockingFilterControlPresent())
-  {
-    if(pcSlice->getPPS()->getLoopFilterOffsetInPPS())
-    {
-      pcSlice->setLoopFilterDisable(pcSlice->getPPS()->getLoopFilterDisable());
-      if (!pcSlice->getLoopFilterDisable())
-      {
-        pcSlice->setLoopFilterBetaOffset(pcSlice->getPPS()->getLoopFilterBetaOffset());
-        pcSlice->setLoopFilterTcOffset(pcSlice->getPPS()->getLoopFilterTcOffset());
-      }
-    }
-  }
-  m_pcLoopFilter->setCfg(pcSlice->getPPS()->getDeblockingFilterControlPresent(), pcSlice->getLoopFilterDisable(), pcSlice->getLoopFilterBetaOffset(), pcSlice->getLoopFilterTcOffset(), bLFCrossTileBoundary);
+  Bool bLFCrossTileBoundary = pcSlice->getPPS()->getLoopFilterAcrossTilesEnabledFlag();
+  m_pcLoopFilter->setCfg(pcSlice->getPPS()->getDeblockingFilterControlPresentFlag(), pcSlice->getDeblockingFilterDisable(), pcSlice->getDeblockingFilterBetaOffsetDiv2(), pcSlice->getDeblockingFilterTcOffsetDiv2(), bLFCrossTileBoundary);
   m_pcLoopFilter->loopFilterPic( rpcPic );
 
   pcSlice = rpcPic->getSlice(0);
@@ -265,6 +242,8 @@ Void TDecGop::filterPicture(TComPic*& rpcPic)
       m_pcSAO->SAOProcess(rpcPic, saoParam);
 #if !REMOVE_ALF
       m_pcAdaptiveLoopFilter->PCMLFDisableProcess(rpcPic);
+#else
+      m_pcSAO->PCMLFDisableProcess(rpcPic);
 #endif
       m_pcSAO->destroyPicSaoInfo();
     }
@@ -313,7 +292,7 @@ Void TDecGop::filterPicture(TComPic*& rpcPic)
     }
     printf ("] ");
   }
-  if (m_pictureDigestEnabled)
+  if (m_decodedPictureHashSEIEnabled)
   {
     calcAndPrintHashStatus(*rpcPic->getPicYuvRec(), rpcPic->getSEIs());
   }
@@ -350,29 +329,38 @@ static void calcAndPrintHashStatus(TComPicYuv& pic, const SEImessages* seis)
   /* calculate MD5sum for entire reconstructed picture */
   unsigned char recon_digest[3][16];
   int numChar=0;
-  const char* hashType;
+  const char* hashType = "\0";
 
-  if(seis && seis->picture_digest->method == SEIpictureDigest::MD5)
+  if (seis && seis->picture_digest)
   {
-    hashType = "MD5";
-    calcMD5(pic, recon_digest);
-    numChar = 16;    
-  }
-  else if(seis && seis->picture_digest->method == SEIpictureDigest::CRC)
-  {
-    hashType = "CRC";
-    calcCRC(pic, recon_digest);
-    numChar = 2;
-  }
-  else if(seis && seis->picture_digest->method == SEIpictureDigest::CHECKSUM)
-  {
-    hashType = "Checksum";
-    calcChecksum(pic, recon_digest);
-    numChar = 4;
-  }
-  else
-  {
-    hashType = "\0";
+    switch (seis->picture_digest->method)
+    {
+    case SEIDecodedPictureHash::MD5:
+      {
+        hashType = "MD5";
+        calcMD5(pic, recon_digest);
+        numChar = 16;
+        break;
+      }
+    case SEIDecodedPictureHash::CRC:
+      {
+        hashType = "CRC";
+        calcCRC(pic, recon_digest);
+        numChar = 2;
+        break;
+      }
+    case SEIDecodedPictureHash::CHECKSUM:
+      {
+        hashType = "Checksum";
+        calcChecksum(pic, recon_digest);
+        numChar = 4;
+        break;
+      }
+    default:
+      {
+        assert (!"unknown hash type");
+      }
+    }
   }
 
   /* compare digest against received version */
