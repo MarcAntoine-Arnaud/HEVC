@@ -426,7 +426,7 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
 
     if (pcSlice->getSliceType() == B_SLICE)
     {
-      pcSlice->setColDir(uiColDir);
+      pcSlice->setColFromL0Flag(1-uiColDir);
       Bool bLowDelay = true;
       Int  iCurrPOC  = pcSlice->getPOC();
       Int iRefIdx = 0;
@@ -486,7 +486,7 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
       }
       else
       {
-        // Note: pcSlice->getColDir() is assumed to be always 1 and getcolRefIdx() is always 0.
+        // Note: pcSlice->getColFromL0Flag() is assumed to be always 0 and getcolRefIdx() is always 0.
         pcSlice->setEnableTMVPFlag(1);
       }
       pcSlice->getSPS()->setTMVPFlagsPresent(1);

@@ -1212,7 +1212,7 @@ private:
 #if !REMOVE_APS
   TComAPS*    m_pcAPS;  //!< pointer to APS parameter object
 #endif
-  UInt        m_uiColDir;  // direction to get colocated CUs
+  UInt        m_colFromL0Flag;  // collocated picture from List0 flag
   
   UInt        m_colRefIdx;
 
@@ -1354,7 +1354,7 @@ public:
   TComPic*  getRefPic           ( RefPicList e, Int iRefIdx)    { return  m_apcRefPicList[e][iRefIdx];  }
   Int       getRefPOC           ( RefPicList e, Int iRefIdx)    { return  m_aiRefPOCList[e][iRefIdx];   }
   Int       getDepth            ()                              { return  m_iDepth;                     }
-  UInt      getColDir           ()                              { return  m_uiColDir;                   }
+  UInt      getColFromL0Flag    ()                              { return  m_colFromL0Flag;              }
   Bool      getColRefIdx        ()                              { return  m_colRefIdx;                  }
   Void      checkColRefIdx      (UInt curSliceIdx, TComPic* pic);
   Bool      getCheckLDC     ()                                  { return m_bCheckLDC; }
@@ -1417,7 +1417,7 @@ public:
   
   Void      setRefPicList       ( TComList<TComPic*>& rcListPic );
   Void      setRefPOCList       ();
-  Void      setColDir           ( UInt uiDir ) { m_uiColDir = uiDir; }
+  Void      setColFromL0Flag    ( UInt colFromL0 ) { m_colFromL0Flag = colFromL0; }
   Void      setColRefIdx        ( UInt refIdx) { m_colRefIdx = refIdx; }
   Void      setCheckLDC         ( Bool b )                      { m_bCheckLDC = b; }
   Void      setMvdL1ZeroFlag     ( Bool b)                       { m_bLMvdL1Zero = b; }

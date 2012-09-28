@@ -1009,12 +1009,12 @@ Void TEncCavlc::codeSliceHeader         ( TComSlice* pcSlice )
     {
       if ( pcSlice->getSliceType() == B_SLICE )
       {
-        WRITE_FLAG( pcSlice->getColDir(), "collocated_from_l0_flag" );
+        WRITE_FLAG( pcSlice->getColFromL0Flag(), "collocated_from_l0_flag" );
       }
 
       if ( pcSlice->getSliceType() != I_SLICE &&
-        ((pcSlice->getColDir()==0 && pcSlice->getNumRefIdx(REF_PIC_LIST_0)>1)||
-        (pcSlice->getColDir()==1  && pcSlice->getNumRefIdx(REF_PIC_LIST_1)>1)))
+        ((pcSlice->getColFromL0Flag()==1 && pcSlice->getNumRefIdx(REF_PIC_LIST_0)>1)||
+        (pcSlice->getColFromL0Flag()==0  && pcSlice->getNumRefIdx(REF_PIC_LIST_1)>1)))
       {
         WRITE_UVLC( pcSlice->getColRefIdx(), "collocated_ref_idx" );
       }
@@ -1059,12 +1059,12 @@ Void TEncCavlc::codeSliceHeader         ( TComSlice* pcSlice )
     {
       if ( pcSlice->getSliceType() == B_SLICE )
       {
-        WRITE_FLAG( pcSlice->getColDir(), "collocated_from_l0_flag" );
+        WRITE_FLAG( pcSlice->getColFromL0Flag(), "collocated_from_l0_flag" );
       }
 
       if ( pcSlice->getSliceType() != I_SLICE &&
-         ((pcSlice->getColDir()==0 && pcSlice->getNumRefIdx(REF_PIC_LIST_0)>1)||
-         (pcSlice->getColDir()==1  && pcSlice->getNumRefIdx(REF_PIC_LIST_1)>1)))
+         ((pcSlice->getColFromL0Flag()==1 && pcSlice->getNumRefIdx(REF_PIC_LIST_0)>1)||
+         (pcSlice->getColFromL0Flag()==0  && pcSlice->getNumRefIdx(REF_PIC_LIST_1)>1)))
       {
         WRITE_UVLC( pcSlice->getColRefIdx(), "collocated_ref_idx" );
       }
