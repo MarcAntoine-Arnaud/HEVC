@@ -644,10 +644,6 @@ Void TDecTop::xDecodePPS()
   m_cEntropyDecoder.decodePPS( pps, &m_parameterSetManagerDecoder );
   m_parameterSetManagerDecoder.storePrefetchedPPS( pps );
 
-  //!!!KS: Activate parameter sets for parsing APS (unless dependency is resolved)
-  m_apcSlicePilot->setPPSId(pps->getPPSId());
-  xActivateParameterSets();
-  m_apcSlicePilot->initTiles();
 #if DEPENDENT_SLICES
 #if TILES_WPP_ENTROPYSLICES_FLAGS
   if( pps->getDependentSliceEnabledFlag() && (!pps->getEntropySliceEnabledFlag()) )
