@@ -175,7 +175,7 @@ Void TComSlice::initSlice()
 
   m_aiNumRefIdx[REF_PIC_LIST_C]      = 0;
 
-  m_maxNumMergeCand = 5;
+  m_maxNumMergeCand = MRG_MAX_NUM_CANDS;
 
   m_bFinalized=false;
 
