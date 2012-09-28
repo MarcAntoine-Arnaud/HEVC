@@ -1356,7 +1356,7 @@ public:
   Int       getRefPOC           ( RefPicList e, Int iRefIdx)    { return  m_aiRefPOCList[e][iRefIdx];   }
   Int       getDepth            ()                              { return  m_iDepth;                     }
   UInt      getColFromL0Flag    ()                              { return  m_colFromL0Flag;              }
-  Bool      getColRefIdx        ()                              { return  m_colRefIdx;                  }
+  UInt      getColRefIdx        ()                              { return  m_colRefIdx;                  }
   Void      checkColRefIdx      (UInt curSliceIdx, TComPic* pic);
   Bool      getCheckLDC     ()                                  { return m_bCheckLDC; }
   Bool      getMvdL1ZeroFlag ()                                  { return m_bLMvdL1Zero;    }
