@@ -40,6 +40,7 @@
 
 #include <cstring>
 #include <map>
+#include <vector>
 #include "CommonDef.h"
 #include "TComRom.h"
 #include "TComList.h"
@@ -1250,8 +1251,7 @@ private:
   wpACDCParam    m_weightACDCParam[3];                 // [0:Y, 1:U, 2:V]
   wpScalingParam  m_weightPredTableLC[2*MAX_NUM_REF][3]; // [refIdxLC][0:Y, 1:U, 2:V]
 
-  UInt        *m_uiTileByteLocation;
-  UInt        m_uiTileCount;
+  std::vector<UInt> m_tileByteLocation;
   UInt        m_uiTileOffstForMultES;
 
   UInt*       m_puiSubstreamSizes;
@@ -1273,7 +1273,6 @@ public:
   TComSlice();
   virtual ~TComSlice(); 
   Void      initSlice       ();
-  Void      initTiles();
 
   Void      setVPS          ( TComVPS* pcVPS ) { m_pcVPS = pcVPS; }
   TComVPS*  getVPS          () { return m_pcVPS; }
@@ -1511,10 +1510,14 @@ public:
   Void  setWpAcDcParam  ( wpACDCParam wp[3] ) { memcpy(m_weightACDCParam, wp, sizeof(wpACDCParam)*3); }
   Void  getWpAcDcParam  ( wpACDCParam *&wp );
   Void  initWpAcDcParam ();
-  Void setTileLocationCount             ( UInt uiCount )      { m_uiTileCount = uiCount;                  }
-  UInt getTileLocationCount             ()                    { return m_uiTileCount;                     }
-  Void setTileLocation                  ( Int i, UInt uiLOC ) { m_uiTileByteLocation[i] = uiLOC;          }
-  UInt getTileLocation                  ( Int i )             { return m_uiTileByteLocation[i];           }
+  
+  Void setTileLocationCount             ( UInt cnt )               { return m_tileByteLocation.resize(cnt);    }
+  UInt getTileLocationCount             ()                         { return (UInt) m_tileByteLocation.size();  }
+  Void setTileLocation                  ( Int idx, UInt location ) { assert (idx<m_tileByteLocation.size());
+                                                                     m_tileByteLocation[idx] = location;       }
+  Void addTileLocation                  ( UInt location )          { m_tileByteLocation.push_back(location);   }
+  UInt getTileLocation                  ( Int idx )                { return m_tileByteLocation[idx];           }
+
   Void setTileOffstForMultES            (UInt uiOffset )      { m_uiTileOffstForMultES = uiOffset;        }
   UInt getTileOffstForMultES            ()                    { return m_uiTileOffstForMultES;            }
   Void allocSubstreamSizes              ( UInt uiNumSubstreams );

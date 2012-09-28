@@ -221,15 +221,11 @@ Void TDecTop::xCreateLostPicture(Int iLostPoc)
   cFillSlice.setSPS( m_parameterSetManagerDecoder.getFirstSPS() );
   cFillSlice.setPPS( m_parameterSetManagerDecoder.getFirstPPS() );
   cFillSlice.initSlice();
-  cFillSlice.initTiles();
   TComPic *cFillPic;
   xGetNewPicBuffer(&cFillSlice,cFillPic);
   cFillPic->getSlice(0)->setSPS( m_parameterSetManagerDecoder.getFirstSPS() );
   cFillPic->getSlice(0)->setPPS( m_parameterSetManagerDecoder.getFirstPPS() );
   cFillPic->getSlice(0)->initSlice();
-  cFillPic->getSlice(0)->initTiles();
-
-  
   
   TComList<TComPic*>::iterator iterPic = m_cListPic.begin();
   Int closestPoc = 1000000;
@@ -318,12 +314,6 @@ Bool TDecTop::xDecodeSlice(InputNALUnit &nalu, Int &iSkipFrame, Int iPOCLastDisp
   TComPic*&   pcPic         = m_pcPic;
   m_apcSlicePilot->initSlice();
 
-  //!!!KS: DIRTY HACK
-  m_apcSlicePilot->setPPSId(0);
-  m_apcSlicePilot->setPPS(m_parameterSetManagerDecoder.getPrefetchedPPS(0));
-  m_apcSlicePilot->setSPS(m_parameterSetManagerDecoder.getPrefetchedSPS(0));
-  m_apcSlicePilot->initTiles();
-
   if (m_bFirstSliceInPicture)
   {
     m_uiSliceIdx     = 0;
@@ -375,7 +365,6 @@ Bool TDecTop::xDecodeSlice(InputNALUnit &nalu, Int &iSkipFrame, Int iPOCLastDisp
   }
   // actual decoding starts here
   xActivateParameterSets();
-  m_apcSlicePilot->initTiles();
 
   if (m_apcSlicePilot->isNextSlice()) 
   {

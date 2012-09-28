@@ -99,8 +99,6 @@ TComSlice::TComSlice()
 , m_uiSliceBits                   ( 0 )
 , m_uiDependentSliceCounter         ( 0 )
 , m_bFinalized                    ( false )
-, m_uiTileByteLocation            ( NULL )
-, m_uiTileCount                   ( 0 )
 , m_uiTileOffstForMultES          ( 0 )
 , m_puiSubstreamSizes             ( NULL )
 , m_cabacInitFlag                 ( false )
@@ -145,11 +143,6 @@ TComSlice::TComSlice()
 
 TComSlice::~TComSlice()
 {
-  if (m_uiTileByteLocation) 
-  {
-    delete [] m_uiTileByteLocation;
-    m_uiTileByteLocation = NULL;
-  }
   delete[] m_puiSubstreamSizes;
   m_puiSubstreamSizes = NULL;
 }
@@ -179,24 +172,10 @@ Void TComSlice::initSlice()
 
   m_bFinalized=false;
 
-  m_uiTileCount          = 0;
+  m_tileByteLocation.clear();
   m_cabacInitFlag        = false;
   m_numEntryPointOffsets = 0;
   m_enableTMVPFlag = true;
-}
-
-Void TComSlice::initTiles()
-{
-  Int iWidth             = m_pcSPS->getPicWidthInLumaSamples();
-  Int iHeight            = m_pcSPS->getPicHeightInLumaSamples();
-  UInt uiWidthInCU       = ( iWidth %g_uiMaxCUWidth  ) ? iWidth /g_uiMaxCUWidth  + 1 : iWidth /g_uiMaxCUWidth;
-  UInt uiHeightInCU      = ( iHeight%g_uiMaxCUHeight ) ? iHeight/g_uiMaxCUHeight + 1 : iHeight/g_uiMaxCUHeight;
-  UInt uiNumCUsInFrame   = uiWidthInCU * uiHeightInCU;
-
-  if (m_uiTileByteLocation==NULL)
-  {
-    m_uiTileByteLocation   = new UInt[uiNumCUsInFrame];
-  }
 }
 
 Bool TComSlice::getRapPicFlag()
