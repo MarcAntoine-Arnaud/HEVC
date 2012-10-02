@@ -713,7 +713,6 @@ Void TEncCavlc::codeSliceHeader         ( TComSlice* pcSlice )
     WRITE_CODE( address, reqBitsOuter+reqBitsInner, "slice_address" );
   }
 
-#if SLICEHEADER_SYNTAX_FIX
   pcSlice->setDependentSliceFlag(!pcSlice->isNextSlice());
   if ( pcSlice->getPPS()->getDependentSliceEnabledFlag() && (address!=0) )
   {
@@ -721,22 +720,9 @@ Void TEncCavlc::codeSliceHeader         ( TComSlice* pcSlice )
   }
   if ( !pcSlice->getDependentSliceFlag() )
   {
-#endif
 
     WRITE_UVLC( pcSlice->getSliceType(),       "slice_type" );
 
-#if !SLICEHEADER_SYNTAX_FIX
-  Bool bDependentSlice = (!pcSlice->isNextSlice());
-  WRITE_FLAG( bDependentSlice ? 1 : 0, "dependent_slice_flag" );
-  
-#if DEPENDENT_SLICES
-  if( pcSlice->getPPS()->getDependentSliceEnabledFlag() && bDependentSlice )
-    return;
-#endif
-
-  if (!bDependentSlice)
-  {
-#endif
     if( pcSlice->getPPS()->getOutputFlagPresentFlag() )
     {
       WRITE_FLAG( pcSlice->getPicOutputFlag() ? 1 : 0, "pic_output_flag" );
@@ -979,9 +965,6 @@ Void TEncCavlc::codeSliceHeader         ( TComSlice* pcSlice )
         }
       }
     }
-#if !SLICEHEADER_SYNTAX_FIX
-  }
-#endif
     
     if (pcSlice->isInterB())
     {
@@ -1000,11 +983,6 @@ Void TEncCavlc::codeSliceHeader         ( TComSlice* pcSlice )
       }
     }
 
-#if !SLICEHEADER_SYNTAX_FIX
-  // if( !lightweight_slice_flag ) {
-  if (!bDependentSlice)
-  {
-#else
     if ( pcSlice->getEnableTMVPFlag() )
     {
       if ( pcSlice->getSliceType() == B_SLICE )
@@ -1025,7 +1003,6 @@ Void TEncCavlc::codeSliceHeader         ( TComSlice* pcSlice )
     }
     assert(pcSlice->getMaxNumMergeCand()<=MRG_MAX_NUM_CANDS);
     WRITE_UVLC(MRG_MAX_NUM_CANDS - pcSlice->getMaxNumMergeCand(), "five_minus_max_num_merge_cand");
-#endif
     Int iCode = pcSlice->getSliceQp() - ( pcSlice->getPPS()->getPicInitQPMinus26() + 26 );
     WRITE_SVLC( iCode, "slice_qp_delta" ); 
 #if CHROMA_QP_EXTENSION
@@ -1053,29 +1030,6 @@ Void TEncCavlc::codeSliceHeader         ( TComSlice* pcSlice )
         }
       }
     }
-#if !SLICEHEADER_SYNTAX_FIX
-    if ( pcSlice->getEnableTMVPFlag() )
-    {
-      if ( pcSlice->getSliceType() == B_SLICE )
-      {
-        WRITE_FLAG( pcSlice->getColFromL0Flag(), "collocated_from_l0_flag" );
-      }
-
-      if ( pcSlice->getSliceType() != I_SLICE &&
-         ((pcSlice->getColFromL0Flag()==1 && pcSlice->getNumRefIdx(REF_PIC_LIST_0)>1)||
-         (pcSlice->getColFromL0Flag()==0  && pcSlice->getNumRefIdx(REF_PIC_LIST_1)>1)))
-      {
-        WRITE_UVLC( pcSlice->getColRefIdx(), "collocated_ref_idx" );
-      }
-    }
-    if ( (pcSlice->getPPS()->getUseWP() && pcSlice->getSliceType()==P_SLICE) || (pcSlice->getPPS()->getWPBiPred() && pcSlice->getSliceType()==B_SLICE) )
-    {
-      xCodePredWeightTable( pcSlice );
-    }
-  }
-    assert(pcSlice->getMaxNumMergeCand()<=MRG_MAX_NUM_CANDS);
-    WRITE_UVLC(MRG_MAX_NUM_CANDS - pcSlice->getMaxNumMergeCand(), "five_minus_max_num_merge_cand");
-#endif
 
 #if !REMOVE_ALF
   if (!bDependentSlice)
@@ -1090,10 +1044,6 @@ Void TEncCavlc::codeSliceHeader         ( TComSlice* pcSlice )
       }
     }
   }
-#endif
-#if !SLICEHEADER_SYNTAX_FIX
-  if(!bDependentSlice)
-  {
 #endif
 #if !REMOVE_ALF
     Bool isAlfEnabled = (!pcSlice->getSPS()->getUseALF())?(false):(pcSlice->getAlfEnabledFlag(0)||pcSlice->getAlfEnabledFlag(1)||pcSlice->getAlfEnabledFlag(2));

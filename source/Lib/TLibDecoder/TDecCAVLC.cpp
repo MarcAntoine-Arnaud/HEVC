@@ -974,7 +974,6 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
   rpcSlice->setDependentSliceCurStartCUAddr( sliceAddress );
   rpcSlice->setDependentSliceCurEndCUAddr(numCUs*maxParts);
 
-#if SLICEHEADER_SYNTAX_FIX
   if( pps->getDependentSliceEnabledFlag() && (sliceAddress !=0 ))
   {
     READ_FLAG( uiCode, "dependent_slice_flag" );       rpcSlice->setDependentSliceFlag(uiCode ? true : false);
@@ -1000,45 +999,7 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
   
   if(!rpcSlice->getDependentSliceFlag())
   {
-#endif
     READ_UVLC (    uiCode, "slice_type" );            rpcSlice->setSliceType((SliceType)uiCode);
-#if !SLICEHEADER_SYNTAX_FIX
-    // lightweight_slice_flag
-    READ_FLAG( uiCode, "dependent_slice_flag" );
-    Bool bDependentSlice = uiCode ? true : false;
-#if DEPENDENT_SLICES
-    if( rpcSlice->getPPS()->getDependentSliceEnabledFlag())
-    {
-      if(bDependentSlice)
-      {
-        rpcSlice->setNextSlice        ( false );
-        rpcSlice->setNextDependentSlice( true  );
-#if BYTE_ALIGNMENT
-        m_pcBitstream->readByteAlignment();
-#else
-        m_pcBitstream->readOutTrailingBits();
-#endif
-        return;
-      }
-    }
-#endif
-  if (bDependentSlice)
-  {
-    rpcSlice->setNextSlice        ( false );
-    rpcSlice->setNextDependentSlice ( true  );
-  }
-  else
-  {
-    rpcSlice->setNextSlice        ( true  );
-    rpcSlice->setNextDependentSlice ( false );
-
-    rpcSlice->setSliceCurStartCUAddr(sliceAddress);
-    rpcSlice->setSliceCurEndCUAddr(numCUs*maxParts);
-  }
-
-  if (!bDependentSlice)
-  {
-#endif // !SLICEHEADER_SYNTAX_FIX
     if( pps->getOutputFlagPresentFlag() )
     {
       READ_FLAG( uiCode, "pic_output_flag" );    rpcSlice->setPicOutputFlag( uiCode ? true : false );
@@ -1403,15 +1364,6 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
     {
       refPicListModification->setRefPicListModificationFlagL1(0);
     }
-#if !SLICEHEADER_SYNTAX_FIX
-  }
-  else
-  {
-    // initialize from previous slice
-    pps = rpcSlice->getPPS();
-    sps = rpcSlice->getSPS();
-  }
-#endif
     if (rpcSlice->isInterB())
     {
       READ_FLAG( uiCode, "mvd_l1_zero_flag" );       rpcSlice->setMvdL1ZeroFlag( (uiCode ? true : false) );
@@ -1424,10 +1376,6 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
       rpcSlice->setCabacInitFlag( uiCode ? true : false );
     }
 
-#if !SLICEHEADER_SYNTAX_FIX
-  if(!bDependentSlice)
-  {
-#else
     if ( rpcSlice->getEnableTMVPFlag() )
     {
       if ( rpcSlice->getSliceType() == B_SLICE )
@@ -1460,7 +1408,6 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
     READ_UVLC( uiCode, "five_minus_max_num_merge_cand");
     rpcSlice->setMaxNumMergeCand(MRG_MAX_NUM_CANDS - uiCode);
 
-#endif
     READ_SVLC( iCode, "slice_qp_delta" ); 
     rpcSlice->setSliceQp (26 + pps->getPicInitQPMinus26() + iCode);
 
@@ -1512,40 +1459,6 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
         rpcSlice->setDeblockingFilterTcOffsetDiv2  ( rpcSlice->getPPS()->getDeblockingFilterTcOffsetDiv2() );
       }
     }
-#if !SLICEHEADER_SYNTAX_FIX
-    if ( rpcSlice->getEnableTMVPFlag() )
-    {
-      if ( rpcSlice->getSliceType() == B_SLICE )
-      {
-        READ_FLAG( uiCode, "collocated_from_l0_flag" );
-        rpcSlice->setColFromL0Flag(uiCode);
-      }
-
-      if ( rpcSlice->getSliceType() != I_SLICE &&
-        ((rpcSlice->getColFromL0Flag()==1 && rpcSlice->getNumRefIdx(REF_PIC_LIST_0)>1)||
-        (rpcSlice->getColFromL0Flag() ==0 && rpcSlice->getNumRefIdx(REF_PIC_LIST_1)>1)))
-      {
-        READ_UVLC( uiCode, "collocated_ref_idx" );
-        rpcSlice->setColRefIdx(uiCode);
-      }
-      else
-      {
-        rpcSlice->setColRefIdx(0);
-      }
-    }
-    if ( (pps->getUseWP() && rpcSlice->getSliceType()==P_SLICE) || (pps->getWPBiPred() && rpcSlice->getSliceType()==B_SLICE) )
-    {
-      xParsePredWeightTable(rpcSlice);
-      rpcSlice->initWpScaling();
-    }
-  }
-
-    READ_UVLC( uiCode, "five_minus_max_num_merge_cand");
-    rpcSlice->setMaxNumMergeCand(MRG_MAX_NUM_CANDS - uiCode);
-
-  if (!bDependentSlice)
-  {
-#endif
 #if !REMOVE_ALF
     if(sps->getUseALF())
     {
@@ -1588,25 +1501,12 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
     }
     rpcSlice->setLFCrossSliceBoundaryFlag( (uiCode==1)?true:false);
 
-#if !SLICEHEADER_SYNTAX_FIX
-  }
-#else
   }
     if( pps->getTilesEnabledFlag() || pps->getEntropyCodingSyncEnabledFlag() )
-#endif
     {
-#if !SLICEHEADER_SYNTAX_FIX
-      Int tilesOrEntropyCodingSyncIdc = pps->getTilesOrEntropyCodingSyncIdc();
-#endif
       UInt *entryPointOffset          = NULL;
       UInt numEntryPointOffsets, offsetLenMinus1;
 
-#if !SLICEHEADER_SYNTAX_FIX
-      rpcSlice->setNumEntryPointOffsets ( 0 ); // default
-
-      if (tilesOrEntropyCodingSyncIdc>0)
-      {
-#endif
       READ_UVLC(numEntryPointOffsets, "num_entry_point_offsets"); rpcSlice->setNumEntryPointOffsets ( numEntryPointOffsets );
       if (numEntryPointOffsets>0)
       {
@@ -1618,15 +1518,8 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
         READ_CODE(offsetLenMinus1+1, uiCode, "entry_point_offset");
         entryPointOffset[ idx ] = uiCode;
       }
-#if !SLICEHEADER_SYNTAX_FIX
-      }
-#endif
 
-#if !SLICEHEADER_SYNTAX_FIX
-      if ( tilesOrEntropyCodingSyncIdc == 1 ) // tiles
-#else
       if ( pps->getTilesEnabledFlag() )
-#endif
       {
         rpcSlice->setTileLocationCount( numEntryPointOffsets );
 
@@ -1637,11 +1530,7 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
           prevPos += entryPointOffset[ idx ];
         }
       }
-#if !SLICEHEADER_SYNTAX_FIX
-      else if ( tilesOrEntropyCodingSyncIdc == 2 ) // wavefront
-#else
       else if ( pps->getEntropyCodingSyncEnabledFlag() )
-#endif
       {
       Int numSubstreams = rpcSlice->getNumEntryPointOffsets()+1;
         rpcSlice->allocSubstreamSizes(numSubstreams);
@@ -1664,12 +1553,10 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
         delete [] entryPointOffset;
       }
     }
-#if SLICEHEADER_SYNTAX_FIX
     else
     {
       rpcSlice->setNumEntryPointOffsets ( 0 );
     }
-#endif
 
 #if SLICE_HEADER_EXTENSION
   if(pps->getSliceHeaderExtensionPresentFlag())
