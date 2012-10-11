@@ -514,19 +514,6 @@ Void TEncTop::xInitSPS()
 #endif
   
   Int i;
-#if !SPS_AMVP_CLEANUP
-#if HHI_AMVP_OFF
-  for ( i = 0; i < g_uiMaxCUDepth; i++ )
-  {
-    m_cSPS.setAMVPMode( i, AM_NONE );
-  }
-#else
-  for ( i = 0; i < g_uiMaxCUDepth; i++ )
-  {
-    m_cSPS.setAMVPMode( i, AM_EXPL );
-  }
-#endif
-#endif
   
   for (i = 0; i < g_uiMaxCUDepth-g_uiAddCUDepth; i++ )
   {

@@ -3216,13 +3216,6 @@ Void TComDataCU::getPartPosition( UInt partIdx, Int& xP, Int& yP, Int& nPSW, Int
   }
 }
 
-#if !SPS_AMVP_CLEANUP
-AMVP_MODE TComDataCU::getAMVPMode(UInt uiIdx)
-{
-  return m_pcSlice->getSPS()->getAMVPMode(m_puhDepth[uiIdx]);
-}
-#endif
-
 /** Constructs a list of candidates for AMVP
  * \param uiPartIdx
  * \param uiPartAddr 
@@ -3306,15 +3299,6 @@ Void TComDataCU::fillMvpCand ( UInt uiPartIdx, UInt uiPartAddr, RefPicList eRefP
     }
   }
   
-#if !SPS_AMVP_CLEANUP
-  if (getAMVPMode(uiPartAddr) == AM_NONE)  //Should be optimized later for special cases
-  {
-    assert(pInfo->iN > 0);
-    pInfo->iN = 1;
-    return;
-  }
-#endif
-
   if ( pInfo->iN == 2 )
   {
     if ( pInfo->m_acMvCand[ 0 ] == pInfo->m_acMvCand[ 1 ] )

@@ -302,11 +302,7 @@ Void TDecEntropy::decodeMVPIdxPU( TComDataCU* pcSubCU, UInt uiPartAddr, UInt uiD
   iRefIdx = pcSubCUMvField->getRefIdx(uiPartAddr);
   cMv = cZeroMv;
 
-#if !SPS_AMVP_CLEANUP
-  if ( (pcSubCU->getInterDir(uiPartAddr) & ( 1 << eRefList )) && (pcSubCU->getAMVPMode(uiPartAddr) == AM_EXPL) )
-#else
   if ( (pcSubCU->getInterDir(uiPartAddr) & ( 1 << eRefList )) )
-#endif
   {
     m_pcEntropyDecoderIf->parseMVPIdx( iMVPIdx );
   }
