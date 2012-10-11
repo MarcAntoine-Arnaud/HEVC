@@ -52,7 +52,6 @@
 #define CU_DQP_TU_CMAX 5                   ///< max number bins for truncated unary
 #define CU_DQP_EG_k 0                      ///< expgolomb order
 
-#define REMOVE_FGS 1 ///< Disable fine-granularity slices code
 #define REMOVE_ALF 1 ///< Disable ALF-related code
 #define REMOVE_APS 1 ///< Disable APS-related code
 

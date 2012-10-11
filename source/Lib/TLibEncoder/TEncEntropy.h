@@ -115,13 +115,6 @@ public:
 #if !REMOVE_ALF
   virtual Void codeAlfParam      (ALFParam* alfParam) = 0;
 #endif
-#if !REMOVE_FGS
-  /// set slice granularity
-  virtual Void setSliceGranularity(Int iSliceGranularity) = 0;
-
-  /// get slice granularity
-  virtual Int  getSliceGranularity()                      = 0;
-#endif
   virtual Void codeSAOSign          ( UInt code   ) = 0;
   virtual Void codeSaoMaxUvlc       ( UInt code, UInt maxSymbol ) = 0;
   virtual Void codeSaoMerge    ( UInt   uiCode  ) = 0;
@@ -188,10 +181,6 @@ public:
   Void encodeMVPIdxPU     ( TComDataCU* pcSubCU, UInt uiAbsPartIdx, RefPicList eRefList );
   Void encodeMergeFlag    ( TComDataCU* pcCU, UInt uiAbsPartIdx, UInt uiPUIdx );
   Void encodeMergeIndex   ( TComDataCU* pcCU, UInt uiAbsPartIdx, UInt uiPUIdx, Bool bRD = false );
-#if !REMOVE_FGS
-  /// set slice granularity
-  Void setSliceGranularity (Int iSliceGranularity) {m_pcEntropyCoderIf->setSliceGranularity(iSliceGranularity);}
-#endif
 #if !REMOVE_ALF
   /// encode ALF LCU control flag
   Void encodeAlfCtrlFlag( Int compIdx, UInt code ) {m_pcEntropyCoderIf->codeAlfCtrlFlag(compIdx, code);}

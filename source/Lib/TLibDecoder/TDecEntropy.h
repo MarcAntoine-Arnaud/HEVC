@@ -107,13 +107,6 @@ public:
 
   virtual Void parseCoeffNxN( TComDataCU* pcCU, TCoeff* pcCoef, UInt uiAbsPartIdx, UInt uiWidth, UInt uiHeight, UInt uiDepth, TextType eTType ) = 0;
   virtual Void parseTransformSkipFlags ( TComDataCU* pcCU, UInt uiAbsPartIdx, UInt width, UInt height, UInt uiDepth, TextType eTType) = 0;
-#if !REMOVE_FGS
-  /// set slice granularity
-  virtual Void setSliceGranularity(Int iSliceGranularity) = 0;
-
-  /// get slice granularity
-  virtual Int  getSliceGranularity()                      = 0;
-#endif
   virtual Void updateContextTables( SliceType eSliceType, Int iQp ) = 0;
   
   virtual ~TDecEntropyIf() {}
@@ -178,11 +171,6 @@ private:
 
 public:
   Void decodeCoeff             ( TComDataCU* pcCU                 , UInt uiAbsPartIdx, UInt uiDepth, UInt uiWidth, UInt uiHeight, Bool& bCodeDQP );
-  
-#if !REMOVE_FGS
-  /// set slice granularity
-  Void setSliceGranularity (Int iSliceGranularity) {m_pcEntropyDecoderIf->setSliceGranularity(iSliceGranularity);}
-#endif
   
   Void decodeFlush() { m_pcEntropyDecoderIf->decodeFlush(); }
 

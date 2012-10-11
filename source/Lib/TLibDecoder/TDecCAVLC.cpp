@@ -74,9 +74,6 @@ Void  xTraceSliceHeader (TComSlice *pSlice)
 
 TDecCavlc::TDecCavlc()
 {
-#if !REMOVE_FGS
-  m_iSliceGranularity = 0;
-#endif
 }
 
 TDecCavlc::~TDecCavlc()
@@ -347,20 +344,12 @@ Void TDecCavlc::parsePPS(TComPPS* pcPPS)
   READ_FLAG( uiCode, "transform_skip_enabled_flag" );               
   pcPPS->setUseTransformSkip ( uiCode ? true : false ); 
 
-#if !REMOVE_FGS
-  READ_CODE( 2, uiCode, "slice_granularity" );                     pcPPS->setSliceGranularity(uiCode);
-#endif
-  
   // alf_param() ?
   READ_FLAG( uiCode, "cu_qp_delta_enabled_flag" );            pcPPS->setUseDQP( uiCode ? true : false );
   if( pcPPS->getUseDQP() )
   {
     READ_UVLC( uiCode, "diff_cu_qp_delta_depth" );
-#if REMOVE_FGS
     pcPPS->setMaxCuDQPDepth( uiCode );
-#else
-    pcPPS->setMaxCuDQPDepth( uiCode + pcPPS->getSliceGranularity() );
-#endif
   }
   else
   {
@@ -808,11 +797,7 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
 
   Int numCUs = ((sps->getPicWidthInLumaSamples()+sps->getMaxCUWidth()-1)/sps->getMaxCUWidth())*((sps->getPicHeightInLumaSamples()+sps->getMaxCUHeight()-1)/sps->getMaxCUHeight());
   Int maxParts = (1<<(sps->getMaxCUDepth()<<1));
-#if REMOVE_FGS
   Int numParts = 0;
-#else
-  Int numParts = (1<<(pps->getSliceGranularity()<<1));
-#endif
   UInt lCUAddress = 0;
   Int reqBitsOuter = 0;
   while(numCUs>(1<<reqBitsOuter))
@@ -835,11 +820,7 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
     innerAddress = address - (lCUAddress<<reqBitsInner);
   }
   //set uiCode to equal slice start address (or dependent slice start address)
-#if REMOVE_FGS
   sliceAddress=(maxParts*lCUAddress)+(innerAddress);
-#else
-  sliceAddress=(maxParts*lCUAddress)+(innerAddress*(maxParts>>(pps->getSliceGranularity()<<1)));
-#endif
   rpcSlice->setDependentSliceCurStartCUAddr( sliceAddress );
   rpcSlice->setDependentSliceCurEndCUAddr(numCUs*maxParts);
 

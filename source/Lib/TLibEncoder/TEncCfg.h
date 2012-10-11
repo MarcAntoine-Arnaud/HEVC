@@ -200,9 +200,6 @@ protected:
 #if DEPENDENT_SLICES
   Bool      m_entropySliceEnabledFlag;
 #endif
-#if !REMOVE_FGS
-  Int       m_iSliceGranularity;
-#endif
   Bool      m_bLFCrossSliceBoundaryFlag;
 
   Bool      m_bPCMInputBitDepthFlag;
@@ -457,10 +454,6 @@ public:
 #if DEPENDENT_SLICES
   Void  setEntropySliceEnabledFlag       ( Bool  b )     { m_entropySliceEnabledFlag = b;    }
   Bool  getEntropySliceEnabledFlag       ()              { return m_entropySliceEnabledFlag; }
-#endif
-#if !REMOVE_FGS
-  Void  setSliceGranularity            ( Int  i )      { m_iSliceGranularity = i;       }
-  Int   getSliceGranularity            ()              { return m_iSliceGranularity;    }
 #endif
   Void      setLFCrossSliceBoundaryFlag     ( Bool   bValue  )    { m_bLFCrossSliceBoundaryFlag = bValue; }
   Bool      getLFCrossSliceBoundaryFlag     ()                    { return m_bLFCrossSliceBoundaryFlag;   }
