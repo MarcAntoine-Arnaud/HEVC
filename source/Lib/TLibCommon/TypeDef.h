@@ -52,7 +52,6 @@
 #define CU_DQP_TU_CMAX 5                   ///< max number bins for truncated unary
 #define CU_DQP_EG_k 0                      ///< expgolomb order
 
-#define REMOVAL_8x2_2x8_CG               1  ///< J0256: removal of 8x2 / 2x8 coefficient groups
 #define REF_IDX_BYPASS                   1  ///< J0098: bypass coding starting from the second bin for reference index
 
 #define RECALCULATE_QP_ACCORDING_LAMBDA  1  ///< J0242: recalculate QP value according to lambda value

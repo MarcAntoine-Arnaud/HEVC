@@ -162,9 +162,7 @@ public:
 
   static Int      getSigCtxInc     (
                                      Int                             patternSigCtx,
-#if REMOVAL_8x2_2x8_CG
                                      UInt                            scanIdx,
-#endif
                                      Int                             posX,
                                      Int                             posY,
                                      Int                             blockType,

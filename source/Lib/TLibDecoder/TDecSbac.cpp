@@ -1248,13 +1248,6 @@ Void TDecSbac::parseCoeffNxN( TComDataCU* pcCU, TCoeff* pcCoef, UInt uiAbsPartId
     Int iCGBlkPos = scanCG[ iSubSet ];
     Int iCGPosY   = iCGBlkPos / uiNumBlkSide;
     Int iCGPosX   = iCGBlkPos - (iCGPosY * uiNumBlkSide);
-#if !REMOVAL_8x2_2x8_CG
-    if( uiWidth == 8 && uiHeight == 8 && (uiScanIdx == SCAN_HOR || uiScanIdx == SCAN_VER) )
-    {
-      iCGPosY = (uiScanIdx == SCAN_HOR ? iCGBlkPos : 0);
-      iCGPosX = (uiScanIdx == SCAN_VER ? iCGBlkPos : 0);
-    }
-#endif
     if( iSubSet == iLastScanSet || iSubSet == 0)
     {
       uiSigCoeffGroupFlag[ iCGBlkPos ] = 1;
@@ -1281,11 +1274,7 @@ Void TDecSbac::parseCoeffNxN( TComDataCU* pcCU, TCoeff* pcCoef, UInt uiAbsPartId
       {
         if( iScanPosSig > iSubPos || iSubSet == 0  || numNonZero )
         {
-#if REMOVAL_8x2_2x8_CG
           uiCtxSig  = TComTrQuant::getSigCtxInc( patternSigCtx, uiScanIdx, uiPosX, uiPosY, blockType, uiWidth, uiHeight, eTType );
-#else
-          uiCtxSig  = TComTrQuant::getSigCtxInc( patternSigCtx, uiPosX, uiPosY, blockType, uiWidth, uiHeight, eTType );
-#endif
           m_pcTDecBinIf->decodeBin( uiSig, baseCtx[ uiCtxSig ] );
         }
         else

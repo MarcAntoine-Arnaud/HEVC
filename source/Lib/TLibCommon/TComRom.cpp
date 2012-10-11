@@ -479,11 +479,7 @@ const UInt g_sigLastScan8x8[ 4 ][ 4 ] =
 {
   {0, 1, 2, 3},
   {0, 1, 2, 3},
-#if REMOVAL_8x2_2x8_CG
   {0, 2, 1, 3},
-#else
-  {0, 1, 2, 3},
-#endif
   {0, 2, 1, 3}
 };
 UInt g_sigLastScanCG32x32[ 64 ];
@@ -624,7 +620,6 @@ Void initSigLastScan(UInt* pBuffZ, UInt* pBuffH, UInt* pBuffV, UInt* pBuffD, Int
 #endif
 
   UInt uiCnt = 0;
-#if REMOVAL_8x2_2x8_CG
   if( iWidth > 2 )
   {
     UInt numBlkSide = iWidth >> 2;
@@ -663,7 +658,6 @@ Void initSigLastScan(UInt* pBuffZ, UInt* pBuffH, UInt* pBuffV, UInt* pBuffD, Int
   }
   else
   {
-#endif
   for(Int iY=0; iY < iHeight; iY++)
   {
     for(Int iX=0; iX < iWidth; iX++)
@@ -682,9 +676,7 @@ Void initSigLastScan(UInt* pBuffZ, UInt* pBuffH, UInt* pBuffV, UInt* pBuffD, Int
       uiCnt ++;
     }
   }    
-#if REMOVAL_8x2_2x8_CG
   }
-#endif
 }
 
 Void initNonSquareSigLastScan(UInt* pBuffZ, UInt uiWidth, UInt uiHeight)
