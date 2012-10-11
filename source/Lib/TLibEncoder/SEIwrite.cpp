@@ -91,11 +91,9 @@ void SEIWriter::xWriteSEIpayloadData(const SEI& sei)
     xWriteSEIPictureTiming(*static_cast<const SEIPictureTiming*>(&sei));
     break;
 #endif
-#if RECOVERY_POINT_SEI
   case SEI::RECOVERY_POINT:
     xWriteSEIRecoveryPoint(*static_cast<const SEIRecoveryPoint*>(&sei));
     break;
-#endif
   default:
     assert(!"Unhandled SEI message");
   }
@@ -286,7 +284,6 @@ Void SEIWriter::xWriteSEIPictureTiming(const SEIPictureTiming& sei)
   xWriteByteAlign();
 }
 #endif
-#if RECOVERY_POINT_SEI
 Void SEIWriter::xWriteSEIRecoveryPoint(const SEIRecoveryPoint& sei)
 {
   WRITE_SVLC( sei.m_recoveryPocCnt,    "recovery_poc_cnt"    );
@@ -294,9 +291,7 @@ Void SEIWriter::xWriteSEIRecoveryPoint(const SEIRecoveryPoint& sei)
   WRITE_FLAG( sei.m_brokenLinkFlag,    "broken_link_flag"    );
   xWriteByteAlign();
 }
-#endif
 
-#if RECOVERY_POINT_SEI || BUFFERING_PERIOD_AND_TIMING_SEI
 Void SEIWriter::xWriteByteAlign()
 {
   if( m_pcBitIf->getNumberOfWrittenBits() % 8 != 0)
@@ -308,6 +303,5 @@ Void SEIWriter::xWriteByteAlign()
     }
   }
 };
-#endif
 
 //! \}

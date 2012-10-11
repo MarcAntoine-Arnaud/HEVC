@@ -243,9 +243,7 @@ protected:
   Int       m_bufferingPeriodSEIEnabled;
   Int       m_pictureTimingSEIEnabled;
 #endif
-#if RECOVERY_POINT_SEI
   Int       m_recoveryPointSEIEnabled;
-#endif
   //====== Weighted Prediction ========
   Bool      m_bUseWeightPred;       //< Use of Weighting Prediction (P_SLICE)
   Bool      m_useWeightedBiPred;    //< Use of Bi-directional Weighting Prediction (B_SLICE)
@@ -604,10 +602,8 @@ public:
   Void  setPictureTimingSEIEnabled(Int b)                { m_pictureTimingSEIEnabled = b; }
   Int   getPictureTimingSEIEnabled()                     { return m_pictureTimingSEIEnabled; }
 #endif
-#if RECOVERY_POINT_SEI
   Void  setRecoveryPointSEIEnabled(Int b)                { m_recoveryPointSEIEnabled = b; }
   Int   getRecoveryPointSEIEnabled()                     { return m_recoveryPointSEIEnabled; }
-#endif
   Void      setUseWP               ( Bool  b )   { m_bUseWeightPred    = b;    }
   Void      setWPBiPred            ( Bool b )    { m_useWeightedBiPred = b;    }
   Bool      getUseWP               ()            { return m_bUseWeightPred;    }

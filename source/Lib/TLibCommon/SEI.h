@@ -52,9 +52,7 @@ public:
     PICTURE_TIMING         = 1,
 #endif
     USER_DATA_UNREGISTERED = 5,
-#if RECOVERY_POINT_SEI
     RECOVERY_POINT         = 6,
-#endif
 #if ACTIVE_PARAMETER_SETS_SEI_MESSAGE 
     ACTIVE_PARAMETER_SETS = 131, 
 #endif 
@@ -175,7 +173,6 @@ public:
   TComSPS* m_sps;
 };
 #endif
-#if RECOVERY_POINT_SEI
 class SEIRecoveryPoint : public SEI
 {
 public:
@@ -188,7 +185,6 @@ public:
   Bool m_exactMatchingFlag;
   Bool m_brokenLinkFlag;
 };
-#endif
 /**
  * A structure to collate all SEI messages.  This ought to be replaced
  * with a list of std::list<SEI*>.  However, since there is only one
@@ -206,9 +202,7 @@ public:
     , buffering_period(0)
     , picture_timing(0)
 #endif
-#if RECOVERY_POINT_SEI
     , recovery_point(0)
-#endif
     {}
 
   ~SEImessages()
@@ -222,9 +216,7 @@ public:
     delete buffering_period;
     delete picture_timing;
 #endif
-#if RECOVERY_POINT_SEI
     delete recovery_point;
-#endif
   }
 
   SEIuserDataUnregistered* user_data_unregistered;
@@ -237,9 +229,7 @@ public:
   SEIPictureTiming* picture_timing;
   TComSPS* m_pSPS;
 #endif
-#if RECOVERY_POINT_SEI
   SEIRecoveryPoint* recovery_point;
-#endif
 };
 
 //! \}

@@ -243,9 +243,7 @@ Void TAppEncTop::xInitLibCfg()
   m_cTEncTop.setPCMFilterDisableFlag  ( m_bPCMFilterDisableFlag); 
 
   m_cTEncTop.setDecodedPictureHashSEIEnabled(m_decodePictureHashSEIEnabled);
-#if RECOVERY_POINT_SEI
   m_cTEncTop.setRecoveryPointSEIEnabled( m_recoveryPointSEIEnabled );
-#endif
 #if BUFFERING_PERIOD_AND_TIMING_SEI
   m_cTEncTop.setBufferingPeriodSEIEnabled( m_bufferingPeriodSEIEnabled );
   m_cTEncTop.setPictureTimingSEIEnabled( m_pictureTimingSEIEnabled );

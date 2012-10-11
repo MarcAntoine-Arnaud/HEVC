@@ -63,12 +63,8 @@ protected:
   Void xParseSEIBufferingPeriod       (SEIBufferingPeriod& sei, UInt payloadSize);
   Void xParseSEIPictureTiming         (SEIPictureTiming& sei, UInt payloadSize);
 #endif
-#if RECOVERY_POINT_SEI
   Void xParseSEIRecoveryPoint         (SEIRecoveryPoint& sei, UInt payloadSize);
-#endif
-#if RECOVERY_POINT_SEI || BUFFERING_PERIOD_AND_TIMING_SEI
   Void xParseByteAlign();
-#endif
 };
 
 

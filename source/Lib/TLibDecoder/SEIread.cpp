@@ -140,12 +140,10 @@ Void SEIReader::xReadSEImessage(SEImessages& seis)
     xParseSEIPictureTiming(*seis.picture_timing, payloadSize);
     break;
 #endif
-#if RECOVERY_POINT_SEI
   case SEI::RECOVERY_POINT:
     seis.recovery_point = new SEIRecoveryPoint;
     xParseSEIRecoveryPoint(*seis.recovery_point, payloadSize);
     break;
-#endif
   default:
     assert(!"Unhandled SEI message");
   }
@@ -334,7 +332,6 @@ Void SEIReader::xParseSEIPictureTiming(SEIPictureTiming& sei, UInt payloadSize)
   xParseByteAlign();
 }
 #endif
-#if RECOVERY_POINT_SEI
 Void SEIReader::xParseSEIRecoveryPoint(SEIRecoveryPoint& sei, UInt payloadSize)
 {
   Int  iCode;
@@ -344,9 +341,7 @@ Void SEIReader::xParseSEIRecoveryPoint(SEIRecoveryPoint& sei, UInt payloadSize)
   READ_FLAG( uiCode, "broken_link_flag" );      sei.m_brokenLinkFlag     = uiCode;
   xParseByteAlign();
 }
-#endif
 
-#if RECOVERY_POINT_SEI || BUFFERING_PERIOD_AND_TIMING_SEI
 Void SEIReader::xParseByteAlign()
 {
   UInt code;
@@ -359,5 +354,4 @@ Void SEIReader::xParseByteAlign()
     READ_FLAG( code, "bit_equal_to_zero" );         assert( code == 0 );
   }
 }
-#endif
 //! \}

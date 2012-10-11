@@ -42,7 +42,6 @@
 
 //! \ingroup TLibCommon
 //! \{
-#define RECOVERY_POINT_SEI               1  ///< I0044/J0107, Recovery point SEI
 #define SPS_AMVP_CLEANUP                 1  ///< remove old AMVP related code for alignment with draft text
 #define SUPPORT_FOR_VUI                  1  ///< new: add support for VUI and hrd_parameters
 #if SUPPORT_FOR_VUI
