@@ -199,11 +199,7 @@ Void TComTrQuant::setQPforQuant( Int qpy, TextType eTxtType, Int qpBdOffset, Int
   }
   else
   {
-#if CHROMA_QP_EXTENSION
     qpScaled = Clip3( -qpBdOffset, 57, qpy + chromaQPOffset );
-#else
-    qpScaled = Clip3( -qpBdOffset, 51, qpy + chromaQPOffset );
-#endif
 
     if(qpScaled < 0)
     {
@@ -211,11 +207,7 @@ Void TComTrQuant::setQPforQuant( Int qpy, TextType eTxtType, Int qpBdOffset, Int
     }
     else
     {
-#if CHROMA_QP_EXTENSION
       qpScaled = g_aucChromaScale[ qpScaled ] + qpBdOffset;
-#else
-      qpScaled = g_aucChromaScale[ Clip3(0, 51, qpScaled) ] + qpBdOffset;
-#endif
     }
   }
   m_cQP.setQpParam( qpScaled );
@@ -1171,11 +1163,7 @@ Void TComTrQuant::xQuant( TComDataCU* pcCU,
     }
     else
     {
-#if CHROMA_QP_EXTENSION
       qpScaled = Clip3( -qpBDOffset, 57, iQpBase);
-#else
-      qpScaled = Clip3( -qpBDOffset, 51, iQpBase);
-#endif
 
       if(qpScaled < 0)
       {
@@ -1183,11 +1171,7 @@ Void TComTrQuant::xQuant( TComDataCU* pcCU,
       }
       else
       {
-#if CHROMA_QP_EXTENSION
         qpScaled = g_aucChromaScale[ qpScaled ] + qpBDOffset;
-#else
-        qpScaled = g_aucChromaScale[ Clip3(0, 51, qpScaled) ] + qpBDOffset;
-#endif
       }
     }
     cQpBase.setQpParam(qpScaled);
