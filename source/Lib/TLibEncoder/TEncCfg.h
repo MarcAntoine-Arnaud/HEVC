@@ -182,9 +182,6 @@ protected:
   Bool      m_useFastDecisionForMerge;
   Bool      m_bUseCbfFastMode;
   Bool      m_useEarlySkipDetection;
-#if !REMOVE_LMCHROMA
-  Bool      m_bUseLMChroma;
-#endif
   Bool      m_useTransformSkip;
   Bool      m_useTransformSkipFast;
   Int*      m_aidQP;
@@ -440,10 +437,6 @@ public:
   UInt      getPCMLog2MaxSize               ()      { return m_pcmLog2MaxSize;  }
   UInt      getPCMLog2MinSize               ()      { return  m_uiPCMLog2MinSize;  }
 
-#if !REMOVE_LMCHROMA
-  Bool getUseLMChroma                       ()      { return m_bUseLMChroma;        }
-  Void setUseLMChroma                       ( Bool b ) { m_bUseLMChroma  = b;       }
-#endif
   Bool getUseTransformSkip                             ()      { return m_useTransformSkip;        }
   Void setUseTransformSkip                             ( Bool b ) { m_useTransformSkip  = b;       }
   Bool getUseTransformSkipFast                         ()      { return m_useTransformSkipFast;    }

@@ -52,7 +52,6 @@
 #define CU_DQP_TU_CMAX 5                   ///< max number bins for truncated unary
 #define CU_DQP_EG_k 0                      ///< expgolomb order
 
-#define REMOVE_LMCHROMA 1 ///< Disable LM_Chroma-related code
 #define REMOVE_FGS 1 ///< Disable fine-granularity slices code
 #define REMOVE_ALF 1 ///< Disable ALF-related code
 #define REMOVE_APS 1 ///< Disable APS-related code
@@ -146,11 +145,7 @@
 #define VER_IDX                26                    // index for intra VERTICAL   mode
 #define HOR_IDX                10                    // index for intra HORIZONTAL mode
 #define DC_IDX                 1                     // index for intra DC mode
-#if REMOVE_LMCHROMA
 #define NUM_CHROMA_MODE        5                     // total number of chroma modes
-#else
-#define NUM_CHROMA_MODE        6                     // total number of chroma modes
-#endif
 #define DM_CHROMA_IDX          36                    // chroma mode index for derived from luma intra mode
 
 

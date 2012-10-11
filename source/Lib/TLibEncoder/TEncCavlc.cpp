@@ -463,9 +463,6 @@ Void TEncCavlc::codeSPS( TComSPS* pcSPS )
       codeScalingList( m_pcSlice->getScalingList() );
     }
   }
-#if !REMOVE_LMCHROMA
-  WRITE_FLAG( pcSPS->getUseLMChroma () ? 1 : 0,                                      "chroma_pred_from_luma_enabled_flag" );
-#endif
   WRITE_FLAG( pcSPS->getUseAMP(),                                                    "asymmetric_motion_partitions_enabled_flag" );
   WRITE_FLAG( pcSPS->getUseSAO() ? 1 : 0,                                            "sample_adaptive_offset_enabled_flag");
 #if !REMOVE_ALF

@@ -576,20 +576,6 @@ TDecCu::xIntraRecChromaBlk( TComDataCU* pcCU,
   Bool  bLeftAvail  = false;
   pcCU->getPattern()->initPattern         ( pcCU, uiTrDepth, uiAbsPartIdx );
 
-#if !REMOVE_LMCHROMA
-  if( uiChromaPredMode == LM_CHROMA_IDX && uiChromaId == 0 )
-  {
-    pcCU->getPattern()->initAdiPattern( pcCU, uiAbsPartIdx, uiTrDepth, 
-                                     m_pcPrediction->getPredicBuf       (),
-                                     m_pcPrediction->getPredicBufWidth  (),
-                                     m_pcPrediction->getPredicBufHeight (),
-                                     bAboveAvail, bLeftAvail, 
-                                     true );
-
-    m_pcPrediction->getLumaRecPixels( pcCU->getPattern(), uiWidth, uiHeight );
-  }
-#endif
-  
   pcCU->getPattern()->initAdiPatternChroma( pcCU, uiAbsPartIdx, uiTrDepth,
                                            m_pcPrediction->getPredicBuf       (),
                                            m_pcPrediction->getPredicBufWidth  (),
@@ -598,13 +584,6 @@ TDecCu::xIntraRecChromaBlk( TComDataCU* pcCU,
   Int* pPatChroma   = ( uiChromaId > 0 ? pcCU->getPattern()->getAdiCrBuf( uiWidth, uiHeight, m_pcPrediction->getPredicBuf() ) : pcCU->getPattern()->getAdiCbBuf( uiWidth, uiHeight, m_pcPrediction->getPredicBuf() ) );
   
   //===== get prediction signal =====
-#if !REMOVE_LMCHROMA
-  if( uiChromaPredMode == LM_CHROMA_IDX )
-  {
-    m_pcPrediction->predLMIntraChroma( pcCU->getPattern(), pPatChroma, piPred, uiStride, uiWidth, uiHeight, uiChromaId );
-  }
-  else
-#endif
   {
     if( uiChromaPredMode == DM_CHROMA_IDX )
     {

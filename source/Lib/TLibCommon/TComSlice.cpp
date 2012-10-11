@@ -1260,9 +1260,6 @@ TComSPS::TComSPS()
 #if !REMOVE_ALF
 , m_bUseALF                   (false)
 #endif
-#if !REMOVE_LMCHROMA
-, m_bUseLMChroma              (false)
-#endif
 , m_bUseLComb                 (false)
 , m_restrictedRefPicListsFlag   (  1)
 , m_listsModificationPresentFlag(  0)

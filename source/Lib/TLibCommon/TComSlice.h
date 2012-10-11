@@ -548,9 +548,6 @@ private:
 #if !REMOVE_ALF
   Bool        m_bUseALF;
 #endif
-#if !REMOVE_LMCHROMA
-  Bool        m_bUseLMChroma; // JL:
-#endif
 
   Bool        m_bUseLComb;
   
@@ -680,10 +677,6 @@ public:
 #endif
   Void setUseLComb    (Bool b)   { m_bUseLComb = b;         }
   Bool getUseLComb    ()         { return m_bUseLComb;      }
-#if !REMOVE_LMCHROMA
-  Bool getUseLMChroma ()         { return m_bUseLMChroma;        }
-  Void setUseLMChroma ( Bool b ) { m_bUseLMChroma  = b;          }
-#endif
 
   Bool getUseLossless ()         { return m_useLossless; }
   Void setUseLossless ( Bool b ) { m_useLossless  = b; }
