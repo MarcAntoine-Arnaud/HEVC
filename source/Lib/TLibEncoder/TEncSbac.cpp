@@ -1066,7 +1066,6 @@ Void TEncSbac::codeQtRootCbf( TComDataCU* pcCU, UInt uiAbsPartIdx )
   DTRACE_CABAC_T( "\n" )
 }
 
-#if TU_ZERO_CBF_RDO
 Void TEncSbac::codeQtCbfZero( TComDataCU* pcCU, UInt uiAbsPartIdx, TextType eType, UInt uiTrDepth )
 {
   // this function is only used to estimate the bits when cbf is 0
@@ -1084,7 +1083,6 @@ Void TEncSbac::codeQtRootCbfZero( TComDataCU* pcCU, UInt uiAbsPartIdx )
   UInt uiCtx = 0;
   m_pcBinIf->encodeBin( uiCbf , m_cCUQtRootCbfSCModel.get( 0, 0, uiCtx ) );
 }
-#endif
 
 /** Encode (X,Y) position of the last significant coefficient
  * \param uiPosX X component of last coefficient

@@ -4535,14 +4535,10 @@ Void TEncSearch::encodeResAndCalcRdInterCU( TComDataCU* pcCU, TComYuv* pcYuvOrg,
     xEstimateResidualQT( pcCU, 0, 0, 0, rpcYuvResi,  pcCU->getDepth(0), dCost, uiBits, uiDistortion, &uiZeroDistortion );
 #endif
     
-#if TU_ZERO_CBF_RDO
     m_pcEntropyCoder->resetBits();
     m_pcEntropyCoder->encodeQtRootCbfZero( pcCU, 0 );
     UInt zeroResiBits = m_pcEntropyCoder->getNumberOfWrittenBits();
     double dZeroCost = m_pcRdCost->calcRdCost( zeroResiBits, uiZeroDistortion );
-#else
-    double dZeroCost = m_pcRdCost->calcRdCost( 0, uiZeroDistortion );
-#endif
     if(pcCU->isLosslessCoded( 0 ))
     {  
       dZeroCost = dCost + 1;
@@ -4888,14 +4884,10 @@ Void TEncSearch::xEstimateResidualQT( TComDataCU* pcCU, UInt uiQuadrant, UInt ui
       else
       {
         const Double singleCostY = m_pcRdCost->calcRdCost( uiSingleBitsY, uiNonzeroDistY );
-#if TU_ZERO_CBF_RDO
         m_pcEntropyCoder->resetBits();
         m_pcEntropyCoder->encodeQtCbfZero( pcCU, uiAbsPartIdx, TEXT_LUMA,     uiTrMode );
         const UInt uiNullBitsY   = m_pcEntropyCoder->getNumberOfWrittenBits();
         const Double nullCostY   = m_pcRdCost->calcRdCost( uiNullBitsY, uiDistY );
-#else
-        const Double nullCostY   = m_pcRdCost->calcRdCost( 0, uiDistY );
-#endif
         if( nullCostY < singleCostY )  
         {    
           uiAbsSumY = 0;
@@ -4917,14 +4909,10 @@ Void TEncSearch::xEstimateResidualQT( TComDataCU* pcCU, UInt uiQuadrant, UInt ui
     }
     else if( checkTransformSkipY )
     {
-#if TU_ZERO_CBF_RDO
       m_pcEntropyCoder->resetBits();
       m_pcEntropyCoder->encodeQtCbfZero( pcCU, uiAbsPartIdx, TEXT_LUMA, uiTrMode );
       const UInt uiNullBitsY = m_pcEntropyCoder->getNumberOfWrittenBits();
       minCostY = m_pcRdCost->calcRdCost( uiNullBitsY, uiDistY );
-#else
-      minCostY = m_pcRdCost->calcRdCost( 0, uiDistY );
-#endif
     }
 
     if( !uiAbsSumY )
@@ -4984,14 +4972,10 @@ Void TEncSearch::xEstimateResidualQT( TComDataCU* pcCU, UInt uiQuadrant, UInt ui
         else
         {
           const Double dSingleCostU = m_pcRdCost->calcRdCost( uiSingleBitsU, uiNonzeroDistU );
-#if TU_ZERO_CBF_RDO
           m_pcEntropyCoder->resetBits();
           m_pcEntropyCoder->encodeQtCbfZero( pcCU, uiAbsPartIdx, TEXT_CHROMA_U,     uiTrMode );
           const UInt uiNullBitsU    = m_pcEntropyCoder->getNumberOfWrittenBits();
           const Double dNullCostU   = m_pcRdCost->calcRdCost( uiNullBitsU, uiDistU );
-#else
-          const Double dNullCostU   = m_pcRdCost->calcRdCost( 0, uiDistU );
-#endif
           if( dNullCostU < dSingleCostU )
           {
             uiAbsSumU = 0;
@@ -5013,14 +4997,10 @@ Void TEncSearch::xEstimateResidualQT( TComDataCU* pcCU, UInt uiQuadrant, UInt ui
       }
       else if( checkTransformSkipUV )
       {
-#if TU_ZERO_CBF_RDO
         m_pcEntropyCoder->resetBits();
         m_pcEntropyCoder->encodeQtCbfZero( pcCU, uiAbsPartIdx, TEXT_CHROMA_U, uiTrModeC );
         const UInt uiNullBitsU = m_pcEntropyCoder->getNumberOfWrittenBits();
         minCostU = m_pcRdCost->calcRdCost( uiNullBitsU, uiDistU );
-#else
-        minCostU = m_pcRdCost->calcRdCost( 0, uiDistU );
-#endif
       }
       if( !uiAbsSumU )
       {
@@ -5075,14 +5055,10 @@ Void TEncSearch::xEstimateResidualQT( TComDataCU* pcCU, UInt uiQuadrant, UInt ui
         else
         {
           const Double dSingleCostV = m_pcRdCost->calcRdCost( uiSingleBitsV, uiNonzeroDistV );
-#if TU_ZERO_CBF_RDO
           m_pcEntropyCoder->resetBits();
           m_pcEntropyCoder->encodeQtCbfZero( pcCU, uiAbsPartIdx, TEXT_CHROMA_V,     uiTrMode );
           const UInt uiNullBitsV    = m_pcEntropyCoder->getNumberOfWrittenBits();
           const Double dNullCostV   = m_pcRdCost->calcRdCost( uiNullBitsV, uiDistV );
-#else
-          const Double dNullCostV   = m_pcRdCost->calcRdCost( 0, uiDistV );
-#endif
           if( dNullCostV < dSingleCostV )
           {
             uiAbsSumV = 0;
@@ -5104,14 +5080,10 @@ Void TEncSearch::xEstimateResidualQT( TComDataCU* pcCU, UInt uiQuadrant, UInt ui
       }
       else if( checkTransformSkipUV )
       {
-#if TU_ZERO_CBF_RDO
         m_pcEntropyCoder->resetBits();
         m_pcEntropyCoder->encodeQtCbfZero( pcCU, uiAbsPartIdx, TEXT_CHROMA_V, uiTrModeC );
         const UInt uiNullBitsV = m_pcEntropyCoder->getNumberOfWrittenBits();
         minCostV = m_pcRdCost->calcRdCost( uiNullBitsV, uiDistV );
-#else
-        minCostV = m_pcRdCost->calcRdCost( 0, uiDistV );
-#endif
       }
       if( !uiAbsSumV )
       {
