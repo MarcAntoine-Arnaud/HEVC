@@ -970,10 +970,8 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
 
 #if !SPLICING_FRIENDLY_PARAMS
     if(   rpcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_IDR
-#if SUPPORT_FOR_RAP_N_LP
       || rpcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_IDR_N_LP
       || rpcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA_N_LP
-#endif
       || rpcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_BLANT
       || rpcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA
       || rpcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_CRA )
@@ -982,11 +980,7 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
       READ_FLAG( uiCode, "no_output_of_prior_pics_flag" );  //ignored
     }
 #endif
-#if SUPPORT_FOR_RAP_N_LP
     if( rpcSlice->getIdrPicFlag() )
-#else
-    if( rpcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_IDR )
-#endif
     {
       rpcSlice->setPOC(0);
       TComReferencePictureSet* rps = rpcSlice->getLocalRPS();
@@ -1017,14 +1011,9 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
       {
         iPOCmsb = iPrevPOCmsb;
       }
-#if SUPPORT_FOR_RAP_N_LP
       if ( rpcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA
         || rpcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_BLANT
         || rpcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA_N_LP )
-#else
-      if(   rpcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA
-        || rpcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_BLANT )
-#endif
       {
         // For BLA picture types, POCmsb is set to 0.
         iPOCmsb = 0;
@@ -1138,14 +1127,9 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
         offset += rps->getNumberOfLongtermPictures();
         rps->setNumberOfPictures(offset);        
       }  
-#if SUPPORT_FOR_RAP_N_LP
       if ( rpcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA
         || rpcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_BLANT
         || rpcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA_N_LP )
-#else
-      if(   rpcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA
-        || rpcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_BLANT )
-#endif
       {
         // In the case of BLA picture types, rps data is read from slice header but ignored
         rps = rpcSlice->getLocalRPS();

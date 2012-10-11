@@ -179,10 +179,8 @@ Void TComSlice::initSlice()
 Bool TComSlice::getRapPicFlag()
 {
   return getNalUnitType() == NAL_UNIT_CODED_SLICE_IDR
-#if SUPPORT_FOR_RAP_N_LP
       || getNalUnitType() == NAL_UNIT_CODED_SLICE_IDR_N_LP
       || getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA_N_LP
-#endif
       || getNalUnitType() == NAL_UNIT_CODED_SLICE_BLANT
       || getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA
       || getNalUnitType() == NAL_UNIT_CODED_SLICE_CRA;
@@ -565,11 +563,7 @@ Void TComSlice::checkCRA(TComReferencePictureSet *pReferencePictureSet, Int& poc
       assert(pReferencePictureSet->getPOC(i) >= pocCRA);
     }
   }
-#if SUPPORT_FOR_RAP_N_LP
   if ( getNalUnitType() == NAL_UNIT_CODED_SLICE_IDR || getNalUnitType() == NAL_UNIT_CODED_SLICE_IDR_N_LP ) // IDR picture found
-#else
-  if ( getNalUnitType() == NAL_UNIT_CODED_SLICE_IDR ) // IDR picture found
-#endif
   {
     prevRAPisBLA = false;
   }
@@ -578,13 +572,9 @@ Void TComSlice::checkCRA(TComReferencePictureSet *pReferencePictureSet, Int& poc
     pocCRA = getPOC();
     prevRAPisBLA = false;
   }
-#if SUPPORT_FOR_RAP_N_LP
   else if ( getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA
          || getNalUnitType() == NAL_UNIT_CODED_SLICE_BLANT
          || getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA_N_LP ) // BLA picture found
-#else
-  else if ( getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA || getNalUnitType() == NAL_UNIT_CODED_SLICE_BLANT ) // BLA/BLANT picture found
-#endif
   {
     pocCRA = getPOC();
     prevRAPisBLA = true;
@@ -614,15 +604,11 @@ Void TComSlice::decodingRefreshMarking(Int& pocCRA, Bool& bRefreshPending, TComL
   TComPic*                 rpcPic;
   UInt uiPOCCurr = getPOC(); 
 
-#if SUPPORT_FOR_RAP_N_LP
   if ( getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA
     || getNalUnitType() == NAL_UNIT_CODED_SLICE_BLANT
     || getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA_N_LP
     || getNalUnitType() == NAL_UNIT_CODED_SLICE_IDR
     || getNalUnitType() == NAL_UNIT_CODED_SLICE_IDR_N_LP )  // IDR or BLA picture
-#else
-  if (getNalUnitType() == NAL_UNIT_CODED_SLICE_IDR || getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA || getNalUnitType() == NAL_UNIT_CODED_SLICE_BLANT)  // IDR/BLA/BLANT
-#endif
   {
     // mark all pictures as not used for reference
     TComList<TComPic*>::iterator        iterPic       = rcListPic.begin();
@@ -633,13 +619,9 @@ Void TComSlice::decodingRefreshMarking(Int& pocCRA, Bool& bRefreshPending, TComL
       if (rpcPic->getPOC() != uiPOCCurr) rpcPic->getSlice(0)->setReferenced(false);
       iterPic++;
     }
-#if SUPPORT_FOR_RAP_N_LP
     if ( getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA
       || getNalUnitType() == NAL_UNIT_CODED_SLICE_BLANT
       || getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA_N_LP )
-#else
-    if (getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA || getNalUnitType() == NAL_UNIT_CODED_SLICE_BLANT)
-#endif
     {
       pocCRA = uiPOCCurr;
     }

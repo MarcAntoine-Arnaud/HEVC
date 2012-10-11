@@ -45,7 +45,6 @@
 #define MAX_CPB_CNT                     32  ///< Upper bound of (cpb_cnt_minus1 + 1)
 #define MAX_NUM_LAYER_IDS                64
 
-#define SUPPORT_FOR_RAP_N_LP             1  ///< J0344: Add support for IDR_N_LP and BLA_N_LP NAL unit types
 #define STSA                             1        ///STSA (GTLA) pictures labeling
 #define TEMPORAL_LAYER_NON_REFERENCE     1  ///< J0549: Nal unit types for indicating non-reference pictures in the same temporal sub-layer
 

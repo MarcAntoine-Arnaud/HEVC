@@ -224,11 +224,7 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
       continue;
     }
 
-#if SUPPORT_FOR_RAP_N_LP
     if( getNalUnitType(uiPOCCurr) == NAL_UNIT_CODED_SLICE_IDR || getNalUnitType(uiPOCCurr) == NAL_UNIT_CODED_SLICE_IDR_N_LP )
-#else
-    if(getNalUnitType(uiPOCCurr) == NAL_UNIT_CODED_SLICE_IDR)
-#endif
     {
       m_iLastIDR = uiPOCCurr;
     }        
