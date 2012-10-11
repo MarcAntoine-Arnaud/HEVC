@@ -842,12 +842,10 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
 
   UInt firstSliceInPic;
   READ_FLAG( firstSliceInPic, "first_slice_in_pic_flag" );
-#if SPLICING_FRIENDLY_PARAMS
   if( rpcSlice->getRapPicFlag())
   { 
     READ_FLAG( uiCode, "no_output_of_prior_pics_flag" );  //ignored
   }
-#endif
   READ_UVLC (    uiCode, "pic_parameter_set_id" );  rpcSlice->setPPSId(uiCode);
   pps = parameterSetManager->getPrefetchedPPS(uiCode);
   //!KS: need to add error handling code here, if PPS is not available
@@ -934,18 +932,6 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
     // if( separate_colour_plane_flag  ==  1 )
     //   colour_plane_id                                      u(2)
 
-#if !SPLICING_FRIENDLY_PARAMS
-    if(   rpcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_IDR
-      || rpcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_IDR_N_LP
-      || rpcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA_N_LP
-      || rpcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_BLANT
-      || rpcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA
-      || rpcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_CRA )
-    { 
-      READ_UVLC( uiCode, "rap_pic_id" );  //ignored
-      READ_FLAG( uiCode, "no_output_of_prior_pics_flag" );  //ignored
-    }
-#endif
     if( rpcSlice->getIdrPicFlag() )
     {
       rpcSlice->setPOC(0);

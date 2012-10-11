@@ -52,8 +52,6 @@
 #define CU_DQP_TU_CMAX 5                   ///< max number bins for truncated unary
 #define CU_DQP_EG_k 0                      ///< expgolomb order
 
-#define SPLICING_FRIENDLY_PARAMS         1  ///< J0108: Remove rap_pic_id and move no_output_prior_pic_flag
-
 #define  SKIP_FLAG                       1  ///< J0336: store skip flag
 
 #define PPS_TS_FLAG                      1  ///< J0184: move transform_skip_enabled_flag from SPS to PPS
