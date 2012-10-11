@@ -1002,10 +1002,8 @@ Void TComSampleAdaptiveOffset::SAOProcess(TComPic* pcPic, SAOParam* pcSaoParam)
 {
 #if SAO_LUM_CHROMA_ONOFF_FLAGS && SAO_TYPE_SHARING
   if (pcSaoParam->bSaoFlag[0] || pcSaoParam->bSaoFlag[1])
-#elif SAO_LUM_CHROMA_ONOFF_FLAGS
-  if (pcSaoParam->bSaoFlag[0] || pcSaoParam->bSaoFlag[1] || pcSaoParam->bSaoFlag[2])
 #else
-  if (pcSaoParam->bSaoFlag[0])
+  if (pcSaoParam->bSaoFlag[0] || pcSaoParam->bSaoFlag[1] || pcSaoParam->bSaoFlag[2])
 #endif
   {
 #if FULL_NBIT
@@ -1025,9 +1023,7 @@ Void TComSampleAdaptiveOffset::SAOProcess(TComPic* pcPic, SAOParam* pcSaoParam)
       pcSaoParam->oneUnitFlag[2] = 0;  
     }
     Int iY  = 0;
-#if SAO_LUM_CHROMA_ONOFF_FLAGS
     if (pcSaoParam->bSaoFlag[0])
-#endif
     {
       processSaoUnitAll( pcSaoParam->saoLcuParam[iY], pcSaoParam->oneUnitFlag[iY], iY);
     }
