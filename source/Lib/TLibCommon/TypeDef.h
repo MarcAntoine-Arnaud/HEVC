@@ -52,7 +52,6 @@
 #define CU_DQP_TU_CMAX 5                   ///< max number bins for truncated unary
 #define CU_DQP_EG_k 0                      ///< expgolomb order
 
-#define ACTIVE_PARAMETER_SETS_SEI_MESSAGE    1  ///< J0261: Signaling of VPS Activation
 #define SLICE_HEADER_EXTENSION           1  ///< II0235: Slice header extension mechanism
 
 #define REMOVE_NSQT 1 ///< Disable NSQT-related code

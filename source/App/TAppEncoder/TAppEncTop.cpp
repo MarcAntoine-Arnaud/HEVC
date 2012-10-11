@@ -270,9 +270,7 @@ Void TAppEncTop::xInitLibCfg()
   m_cTEncTop.setTransquantBypassEnableFlag(m_TransquantBypassEnableFlag);
   m_cTEncTop.setCUTransquantBypassFlagValue(m_CUTransquantBypassFlagValue);
   m_cTEncTop.setUseRecalculateQPAccordingToLambda( m_recalculateQPAccordingToLambda );
-#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE
   m_cTEncTop.setActiveParameterSetsSEIEnabled ( m_activeParameterSetsSEIEnabled ); 
-#endif 
   m_cTEncTop.setVuiParametersPresentFlag( m_vuiParametersPresentFlag );
   m_cTEncTop.setAspectRatioIdc( m_aspectRatioIdc );
   m_cTEncTop.setSarWidth( m_sarWidth );

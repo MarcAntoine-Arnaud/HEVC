@@ -214,9 +214,7 @@ protected:
   Bool      m_CUTransquantBypassFlagValue;                    ///< if transquant_bypass_enable_flag, the fixed value to use for the per-CU cu_transquant_bypass_flag.
 
   Bool      m_recalculateQPAccordingToLambda;                 ///< recalculate QP value according to the lambda value
-#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE
   Int       m_activeParameterSetsSEIEnabled;
-#endif 
 
   Bool      m_vuiParametersPresentFlag;                       ///< enable generation of VUI parameters
   Bool      m_aspectRatioInfoPresentFlag;                     ///< Signals whether aspect_ratio_idc is present

@@ -783,7 +783,6 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
       writeRBSPTrailingBits(nalu.m_Bitstream);
       accessUnit.push_back(new NALUnitEBSP(nalu));
 
-#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE  
       if(m_pcCfg->getActiveParameterSetsSEIEnabled())
       {
         SEIActiveParameterSets sei_active_parameter_sets; 
@@ -801,7 +800,6 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
         writeRBSPTrailingBits(nalu.m_Bitstream);
         accessUnit.push_back(new NALUnitEBSP(nalu));
       }
-#endif 
 
       m_bSeqFirst = false;
     }

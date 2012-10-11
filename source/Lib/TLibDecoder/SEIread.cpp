@@ -54,11 +54,9 @@ Void  xTraceSEIMessageType(SEI::PayloadType payloadType)
   case SEI::DECODED_PICTURE_HASH:
     fprintf( g_hTrace, "=========== Decoded picture hash SEI message ===========\n");
     break;
-#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE 
   case SEI::ACTIVE_PARAMETER_SETS:
     fprintf( g_hTrace, "=========== Active Parameter Sets SEI message ===========\n");
     break;
-#endif
   case SEI::USER_DATA_UNREGISTERED:
     fprintf( g_hTrace, "=========== User Data Unregistered SEI message ===========\n");
     break;
@@ -118,12 +116,10 @@ Void SEIReader::xReadSEImessage(SEImessages& seis)
     seis.user_data_unregistered = new SEIuserDataUnregistered;
     xParseSEIuserDataUnregistered(*seis.user_data_unregistered, payloadSize);
     break;
-#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE    
   case SEI::ACTIVE_PARAMETER_SETS:
     seis.active_parameter_sets = new SEIActiveParameterSets; 
     xParseSEIActiveParameterSets(*seis.active_parameter_sets, payloadSize); 
     break; 
-#endif 
   case SEI::DECODED_PICTURE_HASH:
     seis.picture_digest = new SEIDecodedPictureHash;
     xParseSEIDecodedPictureHash(*seis.picture_digest, payloadSize);
@@ -212,7 +208,6 @@ Void SEIReader::xParseSEIDecodedPictureHash(SEIDecodedPictureHash& sei, UInt pay
     }
   }
 }
-#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE 
 Void SEIReader::xParseSEIActiveParameterSets(SEIActiveParameterSets& sei, unsigned payloadSize)
 {
   UInt val; 
@@ -238,7 +233,6 @@ Void SEIReader::xParseSEIActiveParameterSets(SEIActiveParameterSets& sei, unsign
     READ_FLAG(val, "alignment_bit");
   }
 }
-#endif
 
 Void SEIReader::xParseSEIBufferingPeriod(SEIBufferingPeriod& sei, UInt payloadSize)
 {

@@ -56,11 +56,9 @@ Void  xTraceSEIMessageType(SEI::PayloadType payloadType)
   case SEI::USER_DATA_UNREGISTERED:
     fprintf( g_hTrace, "=========== User Data Unregistered SEI message ===========\n");
     break;
-#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE
   case SEI::ACTIVE_PARAMETER_SETS:
     fprintf( g_hTrace, "=========== Active Parameter sets SEI message ===========\n");
     break;
-#endif 
   default:
     fprintf( g_hTrace, "=========== Unknown SEI message ===========\n");
     break;
@@ -75,11 +73,9 @@ void SEIWriter::xWriteSEIpayloadData(const SEI& sei)
   case SEI::USER_DATA_UNREGISTERED:
     xWriteSEIuserDataUnregistered(*static_cast<const SEIuserDataUnregistered*>(&sei));
     break;
-#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE  
   case SEI::ACTIVE_PARAMETER_SETS:
     xWriteSEIActiveParameterSets(*static_cast<const SEIActiveParameterSets*>(& sei)); 
     break; 
-#endif 
   case SEI::DECODED_PICTURE_HASH:
     xWriteSEIDecodedPictureHash(*static_cast<const SEIDecodedPictureHash*>(&sei));
     break;
@@ -196,7 +192,6 @@ Void SEIWriter::xWriteSEIDecodedPictureHash(const SEIDecodedPictureHash& sei)
   }
 }
 
-#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE  
 Void SEIWriter::xWriteSEIActiveParameterSets(const SEIActiveParameterSets& sei)
 {
   WRITE_CODE(sei.activeVPSId, 4, "active_vps_id");
@@ -221,7 +216,6 @@ Void SEIWriter::xWriteSEIActiveParameterSets(const SEIActiveParameterSets& sei)
     }
   }
 }
-#endif 
 
 Void SEIWriter::xWriteSEIBufferingPeriod(const SEIBufferingPeriod& sei)
 {

@@ -55,9 +55,7 @@ public:
 protected:
   Void xReadSEImessage                (SEImessages& seis);
   Void xParseSEIuserDataUnregistered  (SEIuserDataUnregistered &sei, UInt payloadSize);
-#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE 
   Void xParseSEIActiveParameterSets    (SEIActiveParameterSets& sei, UInt payloadSize);
-#endif
   Void xParseSEIDecodedPictureHash    (SEIDecodedPictureHash& sei, UInt payloadSize);
   Void xParseSEIBufferingPeriod       (SEIBufferingPeriod& sei, UInt payloadSize);
   Void xParseSEIPictureTiming         (SEIPictureTiming& sei, UInt payloadSize);

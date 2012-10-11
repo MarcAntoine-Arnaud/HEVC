@@ -51,9 +51,7 @@ public:
 protected:
   Void xWriteSEIpayloadData(const SEI& sei);
   Void xWriteSEIuserDataUnregistered(const SEIuserDataUnregistered &sei);
-#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE 
   Void xWriteSEIActiveParameterSets(const SEIActiveParameterSets& sei);
-#endif
   Void xWriteSEIDecodedPictureHash(const SEIDecodedPictureHash& sei);
   Void xWriteSEIBufferingPeriod(const SEIBufferingPeriod& sei);
   Void xWriteSEIPictureTiming(const SEIPictureTiming& sei);
