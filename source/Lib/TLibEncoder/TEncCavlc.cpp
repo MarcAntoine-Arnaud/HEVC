@@ -989,7 +989,6 @@ Void TEncCavlc::codeSliceHeader         ( TComSlice* pcSlice )
 #endif
 }
 
-#if PROFILE_TIER_LEVEL_SYNTAX
 Void TEncCavlc::codePTL( TComPTL* pcPTL, Bool profilePresentFlag, Int maxNumSubLayersMinus1)
 {
   if(profilePresentFlag)
@@ -1023,7 +1022,6 @@ Void TEncCavlc::codeProfileTier( ProfileTierLevel* ptl )
   }
   WRITE_CODE(0 , 16, "XXX_reserved_zero_16bits[]");  
 }
-#endif
 
 /**
  - write wavefront substreams sizes for the slice header.

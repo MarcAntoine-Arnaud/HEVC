@@ -1994,7 +1994,6 @@ ParameterSetManager::~ParameterSetManager()
 {
 }
 
-#if PROFILE_TIER_LEVEL_SYNTAX
 ProfileTierLevel::ProfileTierLevel()
   : m_profileSpace    (0)
   , m_tierFlag        (false)
@@ -2008,5 +2007,4 @@ TComPTL::TComPTL()
   ::memset(m_subLayerProfilePresentFlag, 0, sizeof(m_subLayerProfilePresentFlag));
   ::memset(m_subLayerLevelPresentFlag,   0, sizeof(m_subLayerLevelPresentFlag  ));
 }
-#endif
 //! \}

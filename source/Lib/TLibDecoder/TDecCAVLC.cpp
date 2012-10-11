@@ -1497,7 +1497,6 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
   return;
 }
   
-#if PROFILE_TIER_LEVEL_SYNTAX
 Void TDecCavlc::parsePTL( TComPTL *rpcPTL, Bool profilePresentFlag, Int maxNumSubLayersMinus1 )
 {
   UInt uiCode;
@@ -1533,7 +1532,6 @@ Void TDecCavlc::parseProfileTier(ProfileTierLevel *ptl)
   }
   READ_CODE(16, uiCode, "XXX_reserved_zero_16bits[]");  assert( uiCode == 0 );  
 }
-#endif
 Void TDecCavlc::parseTerminatingBit( UInt& ruiBit )
 {
   ruiBit = false;

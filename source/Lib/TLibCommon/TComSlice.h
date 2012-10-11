@@ -186,7 +186,6 @@ private:
 #endif
 };
 
-#if PROFILE_TIER_LEVEL_SYNTAX
 class ProfileTierLevel{
   Int     m_profileSpace;
   Bool    m_tierFlag;
@@ -231,7 +230,6 @@ public:
   ProfileTierLevel* getGeneralPTL()  { return &m_generalPTL; }
   ProfileTierLevel* getSubLayerPTL(Int i)  { return &m_subLayerPTL[i]; }
 };
-#endif
 /// VPS class
 
 class TComVPS
