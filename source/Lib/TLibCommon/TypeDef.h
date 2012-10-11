@@ -49,11 +49,8 @@
                                            ///< COEF_REMAIN_BIN_REDUCTION is also used to indicate the level at which the VLC 
                                            ///< transitions from Golomb-Rice to TU+EG(k)
 
-#define CU_DQP_TU_EG                     1 ///< J0089: Bin reduction for delta QP coding
-#if (CU_DQP_TU_EG)
-#define CU_DQP_TU_CMAX 5 //max number bins for truncated unary
-#define CU_DQP_EG_k 0 //expgolomb order
-#endif
+#define CU_DQP_TU_CMAX 5                   ///< max number bins for truncated unary
+#define CU_DQP_EG_k 0                      ///< expgolomb order
 
 #define NAL_UNIT_HEADER                  1  ///< J0550: Define nal_unit_header() method
 #define TEMPORAL_ID_PLUS1                1  ///< J0550: Signal temporal_id_plus1 instead of temporal_id in NAL unit, and change reserved_one_5bits

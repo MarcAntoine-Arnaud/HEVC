@@ -938,7 +938,6 @@ Void TDecSbac::parseDeltaQP( TComDataCU* pcCU, UInt uiAbsPartIdx, UInt uiDepth )
   UInt uiDQp;
   Int  iDQp;
   
-#if CU_DQP_TU_EG
   UInt uiSymbol;
 
   xReadUnaryMaxSymbol (uiDQp,  &m_cCUDeltaQpSCModel.get( 0, 0, 0 ), 1, CU_DQP_TU_CMAX);
@@ -966,33 +965,6 @@ Void TDecSbac::parseDeltaQP( TComDataCU* pcCU, UInt uiAbsPartIdx, UInt uiDepth )
     iDQp=0;
     qp = pcCU->getRefQP(uiAbsPartIdx);
   }
-#else
-  m_pcTDecBinIf->decodeBin( uiDQp, m_cCUDeltaQpSCModel.get( 0, 0, 0 ) );
-  
-  if ( uiDQp == 0 )
-  {
-    qp = pcCU->getRefQP(uiAbsPartIdx);
-  }
-  else
-  {
-    UInt uiSign;
-    Int qpBdOffsetY = pcCU->getSlice()->getSPS()->getQpBDOffsetY();
-    m_pcTDecBinIf->decodeBinEP(uiSign);
-
-    UInt uiMaxAbsDQpMinus1 = 24 + (qpBdOffsetY/2) + (uiSign);
-    UInt uiAbsDQpMinus1;
-    xReadUnaryMaxSymbol (uiAbsDQpMinus1,  &m_cCUDeltaQpSCModel.get( 0, 0, 1 ), 1, uiMaxAbsDQpMinus1);
-
-    iDQp = uiAbsDQpMinus1 + 1;
-
-    if(uiSign)
-    {
-      iDQp = -iDQp;
-    }
-
-    qp = (((Int) pcCU->getRefQP( uiAbsPartIdx ) + iDQp + 52 + 2*qpBdOffsetY )%(52+qpBdOffsetY)) - qpBdOffsetY;
-  }
-#endif
   pcCU->setQPSubParts(qp, uiAbsPartIdx, uiDepth);  
   pcCU->setCodedQP(qp);
 }
