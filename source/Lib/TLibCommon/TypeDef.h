@@ -52,7 +52,6 @@
 #define CU_DQP_TU_CMAX 5                   ///< max number bins for truncated unary
 #define CU_DQP_EG_k 0                      ///< expgolomb order
 
-#define WP_PARAM_RANGE_LIMIT             1  ///< J0221: Range limit of delta_weight and delta_offset for chroma.
 #define J0260 1 ///< Fix in rate control equations
 
 #define NO_MV_PRED_IF_DIFFERENT_TERM     1  ///< J0071/J0121: No MVP is used when cur:short-term and pred:long-term or vice-versa
