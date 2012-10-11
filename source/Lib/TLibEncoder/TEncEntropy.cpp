@@ -60,12 +60,7 @@ Void TEncEntropy::encodeSliceHeader ( TComSlice* pcSlice )
 #endif
     pcSlice->setSaoEnabledFlag     (saoParam->bSaoFlag[0]);
     {
-#if SAO_TYPE_SHARING
       pcSlice->setSaoEnabledFlagChroma   (saoParam->bSaoFlag[1]);
-#else
-      pcSlice->setSaoEnabledFlagCb   (saoParam->bSaoFlag[1]);
-      pcSlice->setSaoEnabledFlagCr   (saoParam->bSaoFlag[2]);
-#endif
     }
   }
 
@@ -743,32 +738,20 @@ Void TEncEntropy::estimateBit (estBitsSbacStruct* pcEstBitsSbac, Int width, Int 
 /** Encode SAO Offset
  * \param  saoLcuParam SAO LCU paramters
  */
-#if SAO_TYPE_SHARING 
 Void TEncEntropy::encodeSaoOffset(SaoLcuParam* saoLcuParam, UInt compIdx)
-#else
-Void TEncEntropy::encodeSaoOffset(SaoLcuParam* saoLcuParam)
-#endif
 {
   UInt uiSymbol;
   Int i;
 
   uiSymbol = saoLcuParam->typeIdx + 1;
-#if SAO_TYPE_SHARING
   if (compIdx!=2)
   {
     m_pcEntropyCoderIf->codeSaoTypeIdx(uiSymbol);
   }
-#else
-  m_pcEntropyCoderIf->codeSaoTypeIdx(uiSymbol);
-#endif
   if (uiSymbol)
   {
 #if SAO_TYPE_CODING
-#if SAO_TYPE_SHARING
     if (saoLcuParam->typeIdx < 4 && compIdx != 2)
-#else
-    if (saoLcuParam->typeIdx < 4)
-#endif
     {
       saoLcuParam->subTypeIdx = saoLcuParam->typeIdx;
     }
@@ -810,16 +793,11 @@ Void TEncEntropy::encodeSaoOffset(SaoLcuParam* saoLcuParam)
       m_pcEntropyCoderIf->codeSaoMaxUvlc(-saoLcuParam->offset[2], offsetTh-1);
       m_pcEntropyCoderIf->codeSaoMaxUvlc(-saoLcuParam->offset[3], offsetTh-1);
 #if SAO_TYPE_CODING
-#if SAO_TYPE_SHARING
       if (compIdx!=2)
       {
         uiSymbol = (UInt) (saoLcuParam->subTypeIdx);
         m_pcEntropyCoderIf->codeSaoUflc(2, uiSymbol);
       }
-#else
-     uiSymbol = (UInt) (saoLcuParam->subTypeIdx);
-     m_pcEntropyCoderIf->codeSaoUflc(2, uiSymbol);
-#endif
 #endif
     }
   }
@@ -866,11 +844,7 @@ Void TEncEntropy::encodeSaoUnitInterleaving(Int compIdx, Bool saoFlag, Int rx, I
       }
       if (!saoLcuParam->mergeUpFlag)
       {
-#if SAO_TYPE_SHARING 
         encodeSaoOffset(saoLcuParam, compIdx);
-#else
-        encodeSaoOffset(saoLcuParam);
-#endif
       }
     }
   }

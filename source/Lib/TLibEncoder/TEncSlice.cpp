@@ -1294,11 +1294,7 @@ Void TEncSlice::encodeSlice   ( TComPic*& rpcPic, TComOutputBitstream* pcBitstre
       Int addr = pcCU->getAddr();
       allowMergeLeft = allowMergeLeft && (rx>0) && (iCUAddrInSlice!=0);
       allowMergeUp = allowMergeUp && (ry>0) && (iCUAddrUpInSlice>=0);
-#if SAO_TYPE_SHARING
       if( saoParam->bSaoFlag[0] || saoParam->bSaoFlag[1] )
-#else
-      if( saoParam->bSaoFlag[0] || saoParam->bSaoFlag[1] || saoParam->bSaoFlag[2])
-#endif
       {
         Int mergeLeft = saoParam->saoLcuParam[0][addr].mergeLeftFlag;
         Int mergeUp = saoParam->saoLcuParam[0][addr].mergeUpFlag;
@@ -1332,17 +1328,9 @@ Void TEncSlice::encodeSlice   ( TComPic*& rpcPic, TComOutputBitstream* pcBitstre
           {
             for (Int compIdx=0;compIdx<3;compIdx++)
             {
-#if SAO_TYPE_SHARING
             if( (compIdx == 0 && saoParam->bSaoFlag[0]) || (compIdx > 0 && saoParam->bSaoFlag[1]))
-#else
-            if( saoParam->bSaoFlag[compIdx])
-#endif
               {
-#if SAO_TYPE_SHARING
                 m_pcEntropyCoder->encodeSaoOffset(&saoParam->saoLcuParam[compIdx][addr], compIdx);
-#else
-                m_pcEntropyCoder->encodeSaoOffset(&saoParam->saoLcuParam[compIdx][addr]);
-#endif
               }
             }
           }

@@ -344,12 +344,7 @@ Void TDecSlice::decompressSlice(TComInputBitstream* pcBitstream, TComInputBitstr
       saoParam->bSaoFlag[0] = pcSlice->getSaoEnabledFlag();
       if (iCUAddr == iStartCUAddr)
       {
-#if SAO_TYPE_SHARING
         saoParam->bSaoFlag[1] = pcSlice->getSaoEnabledFlagChroma();
-#else
-        saoParam->bSaoFlag[1] = pcSlice->getSaoEnabledFlagCb();
-        saoParam->bSaoFlag[2] = pcSlice->getSaoEnabledFlagCr();
-#endif
       }
       Int numCuInWidth     = saoParam->numCuInWidth;
       Int cuAddrInSlice = iCUAddr - rpcPic->getPicSym()->getCUOrderMap(pcSlice->getSliceCurStartCUAddr()/rpcPic->getNumPartInCU());
