@@ -3581,10 +3581,8 @@ Bool TComDataCU::xAddMVPCandOrder( AMVPInfo* pInfo, RefPicList eRefPicList, Int 
     TComMv rcMv;
 
     bIsNeibRefLongTerm = pcTmpCU->getSlice()->getRefPic( eRefPicList, pcTmpCU->getCUMvField(eRefPicList)->getRefIdx(uiIdx) )->getIsLongTerm();
-#if NO_MV_PRED_IF_DIFFERENT_TERM
     if ( bIsCurrRefLongTerm == bIsNeibRefLongTerm ) 
     {
-#endif
     if ( bIsCurrRefLongTerm || bIsNeibRefLongTerm )
     {
       rcMv = cMvPred;
@@ -3603,9 +3601,7 @@ Bool TComDataCU::xAddMVPCandOrder( AMVPInfo* pInfo, RefPicList eRefPicList, Int 
     }
     pInfo->m_acMvCand[ pInfo->iN++] = rcMv;
     return true;
-#if NO_MV_PRED_IF_DIFFERENT_TERM
     }
-#endif
   }
   //---------------------- V2(END) --------------------//
   if( pcTmpCU->getCUMvField(eRefPicList2nd)->getRefIdx(uiIdx) >= 0)
@@ -3615,10 +3611,8 @@ Bool TComDataCU::xAddMVPCandOrder( AMVPInfo* pInfo, RefPicList eRefPicList, Int 
     TComMv rcMv;
 
     bIsNeibRefLongTerm = pcTmpCU->getSlice()->getRefPic( eRefPicList2nd, pcTmpCU->getCUMvField(eRefPicList2nd)->getRefIdx(uiIdx) )->getIsLongTerm();
-#if NO_MV_PRED_IF_DIFFERENT_TERM
     if ( bIsCurrRefLongTerm == bIsNeibRefLongTerm ) 
     {
-#endif
     if ( bIsCurrRefLongTerm || bIsNeibRefLongTerm )
     {
       rcMv = cMvPred;
@@ -3637,9 +3631,7 @@ Bool TComDataCU::xAddMVPCandOrder( AMVPInfo* pInfo, RefPicList eRefPicList, Int 
     }
     pInfo->m_acMvCand[ pInfo->iN++] = rcMv;
     return true;
-#if NO_MV_PRED_IF_DIFFERENT_TERM
     }
-#endif
   }
   //---------------------- V3(END) --------------------//
   return false;
@@ -3698,12 +3690,10 @@ Bool TComDataCU::xGetColMVP( RefPicList eRefPicList, Int uiCUAddr, Int uiPartUni
   Bool bIsCurrRefLongTerm = m_pcSlice->getRefPic(eRefPicList, riRefIdx)->getIsLongTerm();
   Bool bIsColRefLongTerm = pColCU->getSlice()->getRefPic(eColRefPicList, iColRefIdx)->getIsUsedAsLongTerm();
 
-#if NO_MV_PRED_IF_DIFFERENT_TERM
   if ( bIsCurrRefLongTerm != bIsColRefLongTerm ) 
   {
     return false;
   }
-#endif
 
   if ( bIsCurrRefLongTerm || bIsColRefLongTerm )
   {
@@ -3854,12 +3844,10 @@ Bool TComDataCU::xGetCenterCol( UInt uiPartIdx, RefPicList eRefPicList, int iRef
   Bool bIsCurrRefLongTerm = m_pcSlice->getRefPic(eRefPicList, iRefIdx)->getIsLongTerm();
   Bool bIsColRefLongTerm = pColCU->getSlice()->getRefPic(eColRefPicList, pColCU->getCUMvField(eColRefPicList)->getRefIdx(uiPartIdxCenter))->getIsUsedAsLongTerm();
 
-#if NO_MV_PRED_IF_DIFFERENT_TERM
   if ( bIsCurrRefLongTerm != bIsColRefLongTerm ) 
   {
     return false;
   }
-#endif
 
   if ( bIsCurrRefLongTerm || bIsColRefLongTerm )
   {

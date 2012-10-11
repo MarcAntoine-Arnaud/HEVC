@@ -52,8 +52,6 @@
 #define CU_DQP_TU_CMAX 5                   ///< max number bins for truncated unary
 #define CU_DQP_EG_k 0                      ///< expgolomb order
 
-#define NO_MV_PRED_IF_DIFFERENT_TERM     1  ///< J0071/J0121: No MVP is used when cur:short-term and pred:long-term or vice-versa
-
 #define ACTIVE_PARAMETER_SETS_SEI_MESSAGE    1  ///< J0261: Signaling of VPS Activation
 #define SLICE_HEADER_EXTENSION           1  ///< II0235: Slice header extension mechanism
 
