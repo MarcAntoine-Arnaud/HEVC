@@ -294,7 +294,6 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
     }
     // Set the nal unit type
     pcSlice->setNalUnitType(getNalUnitType(uiPOCCurr));
-#if TEMPORAL_LAYER_NON_REFERENCE
     if(pcSlice->getNalUnitType()==NAL_UNIT_CODED_SLICE_TRAIL_R)
     {
       if(pcSlice->getTemporalLayerNonReferenceFlag())
@@ -302,7 +301,6 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
         pcSlice->setNalUnitType(NAL_UNIT_CODED_SLICE_TRAIL_N);
       }
     }
-#endif
 
     // Do decoding refresh marking if any 
     pcSlice->decodingRefreshMarking(m_pocCRA, m_bRefreshPending, rcListPic);
@@ -319,7 +317,6 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
     {
       if(pcSlice->isTemporalLayerSwitchingPoint(rcListPic, pcSlice->getRPS()) || pcSlice->getSPS()->getTemporalIdNestingFlag())
       {
-#if TEMPORAL_LAYER_NON_REFERENCE
         if(pcSlice->getTemporalLayerNonReferenceFlag())
         {
           pcSlice->setNalUnitType(NAL_UNIT_CODED_SLICE_TSA_N);
@@ -328,9 +325,6 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
         {
           pcSlice->setNalUnitType(NAL_UNIT_CODED_SLICE_TLA);
         }
-#else
-        pcSlice->setNalUnitType(NAL_UNIT_CODED_SLICE_TLA);
-#endif
       }
       else if(pcSlice->isStepwiseTemporalLayerSwitchingPointCandidate(rcListPic, pcSlice->getRPS()))
       {
@@ -364,7 +358,6 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
           }
           if(isSTSA==true)
           {    
-#if TEMPORAL_LAYER_NON_REFERENCE
             if(pcSlice->getTemporalLayerNonReferenceFlag())
             {
               pcSlice->setNalUnitType(NAL_UNIT_CODED_SLICE_STSA_N);
@@ -373,9 +366,6 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
             {
               pcSlice->setNalUnitType(NAL_UNIT_CODED_SLICE_STSA_R);
             }
-#else
-            pcSlice->setNalUnitType(NAL_UNIT_CODED_SLICE_STSA_R);
-#endif
           }
       }
 

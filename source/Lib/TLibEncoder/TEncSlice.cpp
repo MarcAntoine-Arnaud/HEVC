@@ -234,7 +234,6 @@ Void TEncSlice::initEncSlice( TComPic* pcPic, Int iPOCLast, UInt uiPOCCurr, Int 
   // Non-referenced frame marking
   // ------------------------------------------------------------------------------------------------------------------
   
-#if TEMPORAL_LAYER_NON_REFERENCE
   if(iPOCLast == 0)
   {
     rpcSlice->setTemporalLayerNonReferenceFlag(false);
@@ -244,17 +243,8 @@ Void TEncSlice::initEncSlice( TComPic* pcPic, Int iPOCLast, UInt uiPOCCurr, Int 
     rpcSlice->setTemporalLayerNonReferenceFlag(!m_pcCfg->getGOPEntry(iGOPid).m_refPic);
   }
   rpcSlice->setReferenced(true);
-#else
-  rpcSlice->setReferenced(m_pcCfg->getGOPEntry(iGOPid).m_refPic);
-#endif
 #if !REMOVE_NAL_REF_FLAG
   rpcSlice->setNalRefFlag(m_pcCfg->getGOPEntry(iGOPid).m_refPic);
-#endif
-#if !TEMPORAL_LAYER_NON_REFERENCE
-  if(eSliceType==I_SLICE)
-  {
-    rpcSlice->setReferenced(true);
-  }
 #endif
   
   // ------------------------------------------------------------------------------------------------------------------

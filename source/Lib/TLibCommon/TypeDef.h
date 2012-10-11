@@ -45,8 +45,6 @@
 #define MAX_CPB_CNT                     32  ///< Upper bound of (cpb_cnt_minus1 + 1)
 #define MAX_NUM_LAYER_IDS                64
 
-#define TEMPORAL_LAYER_NON_REFERENCE     1  ///< J0549: Nal unit types for indicating non-reference pictures in the same temporal sub-layer
-
 #define SPS_SYNTAX_CHANGES               1  ///< J0550: changes to SPS syntax
 #define VPS_SYNTAX_CHANGES               1  ///< J0550/J0562: changes to VPS syntax
 #define PROFILE_TIER_LEVEL_SYNTAX        1  ///< J0562: Include profile_tier_level() syntax structure; not used for now
