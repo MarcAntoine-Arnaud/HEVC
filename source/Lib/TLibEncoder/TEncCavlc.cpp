@@ -228,14 +228,8 @@ Void TEncCavlc::codePPS( TComPPS* pcPPS )
   WRITE_FLAG( pcPPS->getUseWP() ? 1 : 0,  "weighted_pred_flag" );   // Use of Weighting Prediction (P_SLICE)
   WRITE_FLAG( pcPPS->getWPBiPred() ? 1 : 0, "weighted_bipred_flag" );  // Use of Weighting Bi-Prediction (B_SLICE)
   WRITE_FLAG( pcPPS->getOutputFlagPresentFlag() ? 1 : 0,  "output_flag_present_flag" );
-#if !TILES_WPP_ENTROPYSLICES_FLAGS
-#if DEPENDENT_SLICES
-  WRITE_FLAG( pcPPS->getDependentSliceEnabledFlag() ? 1 : 0, "dependent_slices_enabled_flag" );
-#endif
-#endif
   WRITE_FLAG( pcPPS->getTransquantBypassEnableFlag() ? 1 : 0, "transquant_bypass_enable_flag" );
 
-#if TILES_WPP_ENTROPYSLICES_FLAGS
 #if DEPENDENT_SLICES
   WRITE_FLAG( pcPPS->getDependentSliceEnabledFlag()    ? 1 : 0, "dependent_slice_enabled_flag" );
 #endif
@@ -243,34 +237,6 @@ Void TEncCavlc::codePPS( TComPPS* pcPPS )
   WRITE_FLAG( pcPPS->getEntropyCodingSyncEnabledFlag() ? 1 : 0, "entropy_coding_sync_enabled_flag" );
   WRITE_FLAG( pcPPS->getEntropySliceEnabledFlag()      ? 1 : 0, "entropy_slice_enabled_flag" );
   if( pcPPS->getTilesEnabledFlag() )
-#else
-  Int tilesOrEntropyCodingSyncIdc = 0;
-  if ( pcPPS->getNumColumnsMinus1() > 0 || pcPPS->getNumRowsMinus1() > 0)
-  {
-    tilesOrEntropyCodingSyncIdc = 1;
-  }
-  else if ( pcPPS->getNumSubstreams() > 1 )
-  {
-    tilesOrEntropyCodingSyncIdc = 2;
-  }
-#if DEPENDENT_SLICES
-  else if( pcPPS->getDependentSliceEnabledFlag() )
-  {
-    if(pcPPS->getTilesOrEntropyCodingSyncIdc() != 2)
-    {
-      tilesOrEntropyCodingSyncIdc = 3;
-    }
-    else
-    {
-      tilesOrEntropyCodingSyncIdc = 2;
-    }
-  }
-#endif
-  pcPPS->setTilesOrEntropyCodingSyncIdc( tilesOrEntropyCodingSyncIdc );
-  WRITE_CODE(tilesOrEntropyCodingSyncIdc, 2, "tiles_or_entropy_coding_sync_idc");
-
-  if(pcPPS->getTilesOrEntropyCodingSyncIdc()==1)
-#endif
   {
     WRITE_UVLC( pcPPS->getNumColumnsMinus1(),                                    "num_tile_columns_minus1" );
     WRITE_UVLC( pcPPS->getNumRowsMinus1(),                                       "num_tile_rows_minus1" );
@@ -291,14 +257,6 @@ Void TEncCavlc::codePPS( TComPPS* pcPPS )
       WRITE_FLAG( pcPPS->getLoopFilterAcrossTilesEnabledFlag()?1 : 0,          "loop_filter_across_tiles_enabled_flag");
     }
   }
-#if !TILES_WPP_ENTROPYSLICES_FLAGS
-#if DEPENDENT_SLICES
-  else if( pcPPS->getTilesOrEntropyCodingSyncIdc()==3 )
-  {
-    WRITE_FLAG( pcPPS->getCabacIndependentFlag()? 1 : 0,            "cabac_independent_flag" );
-  }
-#endif
-#endif
 #if MOVE_LOOP_FILTER_SLICES_FLAG
   WRITE_FLAG( pcPPS->getLoopFilterAcrossSlicesEnabledFlag()?1 : 0,        "loop_filter_across_slices_enabled_flag");
 #endif
@@ -1104,23 +1062,14 @@ Void TEncCavlc::codeProfileTier( ProfileTierLevel* ptl )
  */
 Void  TEncCavlc::codeTilesWPPEntryPoint( TComSlice* pSlice )
 {
-#if TILES_WPP_ENTROPYSLICES_FLAGS
   if (!pSlice->getPPS()->getTilesEnabledFlag() && !pSlice->getPPS()->getEntropyCodingSyncEnabledFlag())
-#else
-  Int tilesOrEntropyCodingSyncIdc = pSlice->getPPS()->getTilesOrEntropyCodingSyncIdc();
-  if ( tilesOrEntropyCodingSyncIdc == 0 )
-#endif
   {
     return;
   }
   UInt numEntryPointOffsets = 0, offsetLenMinus1 = 0, maxOffset = 0;
   Int  numZeroSubstreamsAtStartOfSlice  = 0;
   UInt *entryPointOffset = NULL;
-#if TILES_WPP_ENTROPYSLICES_FLAGS
   if ( pSlice->getPPS()->getTilesEnabledFlag() )
-#else
-  if (tilesOrEntropyCodingSyncIdc == 1) // tiles
-#endif
   {
     numEntryPointOffsets = pSlice->getTileLocationCount();
     entryPointOffset     = new UInt[numEntryPointOffsets];
@@ -1141,11 +1090,7 @@ Void  TEncCavlc::codeTilesWPPEntryPoint( TComSlice* pSlice )
       }
     }
   }
-#if TILES_WPP_ENTROPYSLICES_FLAGS
   else if ( pSlice->getPPS()->getEntropyCodingSyncEnabledFlag() )
-#else
-  else if (tilesOrEntropyCodingSyncIdc == 2) // wavefront
-#endif
   {
     UInt* pSubstreamSizes               = pSlice->getSubstreamSizes();
     Int maxNumParts                       = pSlice->getPic()->getNumPartInCU();

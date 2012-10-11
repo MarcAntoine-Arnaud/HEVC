@@ -1492,12 +1492,10 @@ TComPPS::TComPPS()
 #if PPS_TS_FLAG
 , m_useTransformSkip             (false)
 #endif
-#if TILES_WPP_ENTROPYSLICES_FLAGS
 , m_dependentSliceEnabledFlag    (false)
 , m_tilesEnabledFlag               (false)
 , m_entropyCodingSyncEnabledFlag   (false)
 , m_entropySliceEnabledFlag        (false)
-#endif
 , m_loopFilterAcrossTilesEnabledFlag  (true)
 , m_uniformSpacingFlag           (0)
 , m_iNumColumnsMinus1            (0)
@@ -1516,12 +1514,6 @@ TComPPS::TComPPS()
 #endif
 {
   m_scalingList = new TComScalingList;
-#if !TILES_WPP_ENTROPYSLICES_FLAGS
-#if DEPENDENT_SLICES
-  m_bDependentSliceEnabledFlag = false;
-  m_bCabacIndependentFlag = false;
-#endif
-#endif
 }
 
 TComPPS::~TComPPS()

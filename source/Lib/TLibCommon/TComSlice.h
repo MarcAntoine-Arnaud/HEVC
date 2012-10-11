@@ -865,18 +865,10 @@ private:
 #if PPS_TS_FLAG
   Bool        m_useTransformSkip;
 #endif
-#if !TILES_WPP_ENTROPYSLICES_FLAGS
-#if DEPENDENT_SLICES
-  Bool        m_bDependentSliceEnabledFlag;   // Indicates the presence of dependent_slices_flag in slice header
-  Bool        m_bCabacIndependentFlag;   // Indicates the presence of dependent_slices_flag in slice header
-#endif
-  UInt        m_tilesOrEntropyCodingSyncIdc;
-#else
   Bool        m_dependentSliceEnabledFlag;     //!< Indicates the presence of dependent slices
   Bool        m_tilesEnabledFlag;              //!< Indicates the presence of tiles
   Bool        m_entropyCodingSyncEnabledFlag;  //!< Indicates the presence of wavefronts
   Bool        m_entropySliceEnabledFlag;       //!< Indicates the presence of entropy slices
-#endif
 
   Bool     m_loopFilterAcrossTilesEnabledFlag;
   Int      m_uniformSpacingFlag;
@@ -953,14 +945,6 @@ public:
   Void setWPBiPred                  ( Bool b )  { m_useWeightedBiPred = b;  }
   Void      setOutputFlagPresentFlag( Bool b )  { m_OutputFlagPresentFlag = b;    }
   Bool      getOutputFlagPresentFlag()          { return m_OutputFlagPresentFlag; }
-#if !TILES_WPP_ENTROPYSLICES_FLAGS
-#if DEPENDENT_SLICES
-  Void      setDependentSliceEnabledFlag( Bool b )  { m_bDependentSliceEnabledFlag = b;    }
-  Bool      getDependentSliceEnabledFlag()          { return m_bDependentSliceEnabledFlag; }
-  Void      setCabacIndependentFlag( Bool b )  { m_bCabacIndependentFlag = b;    }
-  Bool      getCabacIndependentFlag()          { return m_bCabacIndependentFlag; }
-#endif
-#endif
   Void      setTransquantBypassEnableFlag( Bool b ) { m_TransquantBypassEnableFlag = b; }
   Bool      getTransquantBypassEnableFlag()         { return m_TransquantBypassEnableFlag; }
 
@@ -971,7 +955,6 @@ public:
 
   Void    setLoopFilterAcrossTilesEnabledFlag  (Bool b)    { m_loopFilterAcrossTilesEnabledFlag = b; }
   Bool    getLoopFilterAcrossTilesEnabledFlag  ()          { return m_loopFilterAcrossTilesEnabledFlag;   }
-#if TILES_WPP_ENTROPYSLICES_FLAGS
   Bool    getDependentSliceEnabledFlag() const             { return m_dependentSliceEnabledFlag; }
   Void    setDependentSliceEnabledFlag(Bool val)           { m_dependentSliceEnabledFlag = val; }
   Bool    getTilesEnabledFlag() const                      { return m_tilesEnabledFlag; }
@@ -980,10 +963,6 @@ public:
   Void    setEntropyCodingSyncEnabledFlag(Bool val)        { m_entropyCodingSyncEnabledFlag = val; }
   Bool    getEntropySliceEnabledFlag() const               { return m_entropySliceEnabledFlag; }
   Void    setEntropySliceEnabledFlag(Bool val)             { m_entropySliceEnabledFlag = val; }
-#else
-  UInt     getTilesOrEntropyCodingSyncIdc   ()                  { return m_tilesOrEntropyCodingSyncIdc;   }
-  Void     setTilesOrEntropyCodingSyncIdc   ( UInt val )        { m_tilesOrEntropyCodingSyncIdc = val;    }
-#endif
   Void     setUniformSpacingFlag            ( Bool b )          { m_uniformSpacingFlag = b; }
   Bool     getUniformSpacingFlag            ()                  { return m_uniformSpacingFlag; }
   Void     setNumColumnsMinus1              ( Int i )           { m_iNumColumnsMinus1 = i; }

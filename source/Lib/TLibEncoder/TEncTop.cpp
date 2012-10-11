@@ -632,12 +632,8 @@ Void TEncTop::xInitPPS()
   m_cPPS.setChromaCrQpOffset( m_chromaCrQpOffset );
 
   m_cPPS.setNumSubstreams(m_iWaveFrontSubstreams);
-#if TILES_WPP_ENTROPYSLICES_FLAGS
   m_cPPS.setEntropyCodingSyncEnabledFlag( m_iWaveFrontSynchro > 0 );
   m_cPPS.setTilesEnabledFlag( (m_iNumColumnsMinus1 > 0 || m_iNumRowsMinus1 > 0) );
-#else
-  m_cPPS.setTilesOrEntropyCodingSyncIdc( m_iWaveFrontSynchro ? 2 : ((m_iNumColumnsMinus1 > 0 || m_iNumRowsMinus1 > 0) ? 1 : 0));
-#endif
   m_cPPS.setUseWP( m_bUseWeightPred );
   m_cPPS.setWPBiPred( m_useWeightedBiPred );
   m_cPPS.setOutputFlagPresentFlag( false );
@@ -676,30 +672,15 @@ Void TEncTop::xInitPPS()
 #if PPS_TS_FLAG
   m_cPPS.setUseTransformSkip( m_useTransformSkip );
 #endif
-#if TILES_WPP_ENTROPYSLICES_FLAGS
   if (m_iDependentSliceMode)
   {
     m_cPPS.setDependentSliceEnabledFlag( true );
     m_cPPS.setEntropySliceEnabledFlag( m_entropySliceEnabledFlag );
   }
-#else
 #if DEPENDENT_SLICES
-  m_cPPS.setDependentSliceEnabledFlag( m_iDependentSliceMode );
-  m_cPPS.setCabacIndependentFlag( m_bCabacIndependentFlag ? 1 : 0 );
-#endif
-#endif
-#if DEPENDENT_SLICES
-#if TILES_WPP_ENTROPYSLICES_FLAGS
   if( m_cPPS.getDependentSliceEnabledFlag()&&(!m_cPPS.getEntropySliceEnabledFlag()) )
-#else
-  if( m_cPPS.getDependentSliceEnabledFlag()&&(!m_cPPS.getCabacIndependentFlag()) )
-#endif
   {
-#if TILES_WPP_ENTROPYSLICES_FLAGS
     int NumCtx = m_cPPS.getEntropyCodingSyncEnabledFlag()?2:1;
-#else
-    int NumCtx = (m_cPPS.getTilesOrEntropyCodingSyncIdc() == 2)?2:1;
-#endif
     m_cSliceEncoder.initCtxMem( NumCtx );
     for ( UInt st = 0; st < NumCtx; st++ )
     {

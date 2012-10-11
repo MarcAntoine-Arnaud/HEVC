@@ -45,8 +45,6 @@
 #define MAX_CPB_CNT                     32  ///< Upper bound of (cpb_cnt_minus1 + 1)
 #define MAX_NUM_LAYER_IDS                64
 
-#define TILES_WPP_ENTROPYSLICES_FLAGS    1  ///< J0123: Introduce tiles_enabled_flag, entropy_coding_sync_enabled_flag, entropy_slice_enabled_flag
-                                            ///<        and remove tiles_or_entropy_coding_sync_idc
 #define NAL_UNIT_TYPES_J1003_D7          1  ///< J1003: Implements the new mapping for NAL unit types as defined in Table 7-1 of J1003-d7
 #if NAL_UNIT_TYPES_J1003_D7
 // Place macro definitions that deal with new NAL unit types introduced in J1003-d7 (as opposed to I1003-d7) here

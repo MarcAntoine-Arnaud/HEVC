@@ -277,11 +277,7 @@ Void TDecTop::xActivateParameterSets()
   m_apcSlicePilot->setPPS(pps);
   m_apcSlicePilot->setSPS(sps);
   pps->setSPS(sps);
-#if TILES_WPP_ENTROPYSLICES_FLAGS
   pps->setNumSubstreams(pps->getEntropyCodingSyncEnabledFlag() ? ((sps->getPicHeightInLumaSamples() + sps->getMaxCUHeight() - 1) / sps->getMaxCUHeight()) * (pps->getNumColumnsMinus1() + 1) : 1);
-#else
-  pps->setNumSubstreams(pps->getTilesOrEntropyCodingSyncIdc() == 2 ? ((sps->getPicHeightInLumaSamples() + sps->getMaxCUHeight() - 1) / sps->getMaxCUHeight()) * (pps->getNumColumnsMinus1() + 1) : 1);
-#endif
 #if !REMOVE_APS
 #if REMOVE_ALF
   if(sps->getUseSAO())
@@ -634,17 +630,9 @@ Void TDecTop::xDecodePPS()
   m_parameterSetManagerDecoder.storePrefetchedPPS( pps );
 
 #if DEPENDENT_SLICES
-#if TILES_WPP_ENTROPYSLICES_FLAGS
   if( pps->getDependentSliceEnabledFlag() && (!pps->getEntropySliceEnabledFlag()) )
-#else
-  if( pps->getDependentSliceEnabledFlag() && (!pps->getCabacIndependentFlag()) )
-#endif
   {
-#if TILES_WPP_ENTROPYSLICES_FLAGS
     int NumCtx = pps->getEntropyCodingSyncEnabledFlag()?2:1;
-#else
-    int NumCtx = (pps->getTilesOrEntropyCodingSyncIdc() == 2)?2:1;
-#endif
     m_cSliceDecoder.initCtxMem(NumCtx);
     for ( UInt st = 0; st < NumCtx; st++ )
     {

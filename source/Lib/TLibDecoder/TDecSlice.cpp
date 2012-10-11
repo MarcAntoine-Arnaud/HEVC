@@ -192,11 +192,7 @@ Void TDecSlice::decompressSlice(TComInputBitstream* pcBitstream, TComInputBitstr
   Int iNumSubstreamsPerTile = 1; // if independent.
 #if DEPENDENT_SLICES
   Bool bAllowDependence = false;
-#if TILES_WPP_ENTROPYSLICES_FLAGS
   if( rpcPic->getSlice(rpcPic->getCurrSliceIdx())->getPPS()->getDependentSliceEnabledFlag()&& (!rpcPic->getSlice(rpcPic->getCurrSliceIdx())->getPPS()->getEntropySliceEnabledFlag()) )
-#else
-  if( rpcPic->getSlice(rpcPic->getCurrSliceIdx())->getPPS()->getDependentSliceEnabledFlag()&& (!rpcPic->getSlice(rpcPic->getCurrSliceIdx())->getPPS()->getCabacIndependentFlag()) )
-#endif
   {
     bAllowDependence = true;
   }
@@ -205,11 +201,7 @@ Void TDecSlice::decompressSlice(TComInputBitstream* pcBitstream, TComInputBitstr
     if( !rpcPic->getSlice(rpcPic->getCurrSliceIdx())->isNextSlice() )
     {
       uiTileCol = 0;
-#if TILES_WPP_ENTROPYSLICES_FLAGS
       if(pcSlice->getPPS()->getEntropyCodingSyncEnabledFlag())
-#else
-      if(pcSlice->getPPS()->getTilesOrEntropyCodingSyncIdc()==2)
-#endif
       {
         m_pcBufferSbacDecoders[uiTileCol].loadContexts( CTXMem[1]  );//2.LCU
       }
@@ -218,11 +210,7 @@ Void TDecSlice::decompressSlice(TComInputBitstream* pcBitstream, TComInputBitstr
     }
     else
     {
-#if TILES_WPP_ENTROPYSLICES_FLAGS
       if(pcSlice->getPPS()->getEntropyCodingSyncEnabledFlag())
-#else
-      if(pcSlice->getPPS()->getTilesOrEntropyCodingSyncIdc()==2)
-#endif
       {
         CTXMem[1]->loadContexts(pcSbacDecoder);
       }
@@ -245,11 +233,7 @@ Void TDecSlice::decompressSlice(TComInputBitstream* pcBitstream, TComInputBitstr
     uiLin     = (iCUAddr/uiWidthInLCUs)-(iStartCUAddr/uiWidthInLCUs);
     // inherit from TR if necessary, select substream to use.
 #if DEPENDENT_SLICES
-#if TILES_WPP_ENTROPYSLICES_FLAGS
     if( (pcSlice->getPPS()->getNumSubstreams() > 1) || ( bAllowDependence  && (uiCol == uiTileLCUX)&&(pcSlice->getPPS()->getEntropyCodingSyncEnabledFlag()) ))
-#else
-    if( (pcSlice->getPPS()->getNumSubstreams() > 1) || ( bAllowDependence  && (uiCol == uiTileLCUX)&&(pcSlice->getPPS()->getTilesOrEntropyCodingSyncIdc()==2) ))
-#endif
 #else
     if( pcSlice->getPPS()->getNumSubstreams() > 1 )
 #endif
@@ -261,11 +245,7 @@ Void TDecSlice::decompressSlice(TComInputBitstream* pcBitstream, TComInputBitstr
       m_pcEntropyDecoder->setBitstream( ppcSubstreams[uiSubStrm] );
       // Synchronize cabac probabilities with upper-right LCU if it's available and we're at the start of a line.
 #if DEPENDENT_SLICES
-#if TILES_WPP_ENTROPYSLICES_FLAGS
       if (((pcSlice->getPPS()->getNumSubstreams() > 1) || bAllowDependence ) && (uiCol == uiTileLCUX)&&(pcSlice->getPPS()->getEntropyCodingSyncEnabledFlag()))
-#else
-      if (((pcSlice->getPPS()->getNumSubstreams() > 1) || bAllowDependence ) && (uiCol == uiTileLCUX)&&(pcSlice->getPPS()->getTilesOrEntropyCodingSyncIdc()==2))
-#endif
 #else
       if (pcSlice->getPPS()->getNumSubstreams() > 1 && uiCol == uiTileLCUX)
 #endif
@@ -431,11 +411,7 @@ Void TDecSlice::decompressSlice(TComInputBitstream* pcBitstream, TComInputBitstr
 
     //Store probabilities of second LCU in line into buffer
 #if DEPENDENT_SLICES
-#if TILES_WPP_ENTROPYSLICES_FLAGS
     if ( (uiCol == uiTileLCUX+1)&& (bAllowDependence || (pcSlice->getPPS()->getNumSubstreams() > 1)) && (pcSlice->getPPS()->getEntropyCodingSyncEnabledFlag()) )
-#else
-    if ( (uiCol == uiTileLCUX+1)&& (bAllowDependence || (pcSlice->getPPS()->getNumSubstreams() > 1)) && (pcSlice->getPPS()->getTilesOrEntropyCodingSyncIdc() == 2))
-#endif
 #else
     if (pcSlice->getPPS()->getNumSubstreams() > 1 && (uiCol == uiTileLCUX+1))
 #endif
@@ -445,11 +421,7 @@ Void TDecSlice::decompressSlice(TComInputBitstream* pcBitstream, TComInputBitstr
 #if DEPENDENT_SLICES
     if( uiIsLast && bAllowDependence )
     {
-#if TILES_WPP_ENTROPYSLICES_FLAGS
       if (pcSlice->getPPS()->getEntropyCodingSyncEnabledFlag())
-#else
-      if (pcSlice->getPPS()->getTilesOrEntropyCodingSyncIdc()==2)
-#endif
        {
          CTXMem[1]->loadContexts( &m_pcBufferSbacDecoders[uiTileCol] );//ctx 2.LCU
        }

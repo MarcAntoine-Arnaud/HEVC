@@ -433,17 +433,9 @@ Void TDecCavlc::parsePPS(TComPPS* pcPPS)
   READ_FLAG( uiCode, "output_flag_present_flag" );
   pcPPS->setOutputFlagPresentFlag( uiCode==1 );
 
-#if !TILES_WPP_ENTROPYSLICES_FLAGS
-#if DEPENDENT_SLICES
-  READ_FLAG( uiCode, "dependent_slices_enabled_flag" );
-  pcPPS->setDependentSliceEnabledFlag( uiCode==1 );
-#endif
-#endif
-
   READ_FLAG( uiCode, "transquant_bypass_enable_flag");
   pcPPS->setTransquantBypassEnableFlag(uiCode ? true : false);
 
-#if TILES_WPP_ENTROPYSLICES_FLAGS
 #if DEPENDENT_SLICES
   READ_FLAG( uiCode, "dependent_slices_enabled_flag"    );    pcPPS->setDependentSliceEnabledFlag   ( uiCode == 1 );
 #endif
@@ -452,10 +444,6 @@ Void TDecCavlc::parsePPS(TComPPS* pcPPS)
   READ_FLAG( uiCode, "entropy_slice_enabled_flag"       );    pcPPS->setEntropySliceEnabledFlag     ( uiCode == 1 );   
 
   if( pcPPS->getTilesEnabledFlag() )
-#else
-  READ_CODE(2, uiCode, "tiles_or_entropy_coding_sync_idc");         pcPPS->setTilesOrEntropyCodingSyncIdc(uiCode);
-  if(pcPPS->getTilesOrEntropyCodingSyncIdc() == 1)
-#endif
   {
     READ_UVLC ( uiCode, "num_tile_columns_minus1" );                pcPPS->setNumColumnsMinus1( uiCode );  
     READ_UVLC ( uiCode, "num_tile_rows_minus1" );                   pcPPS->setNumRowsMinus1( uiCode );  
@@ -487,15 +475,6 @@ Void TDecCavlc::parsePPS(TComPPS* pcPPS)
       READ_FLAG ( uiCode, "loop_filter_across_tiles_enabled_flag" );   pcPPS->setLoopFilterAcrossTilesEnabledFlag( uiCode ? true : false );
     }
   }
-#if !TILES_WPP_ENTROPYSLICES_FLAGS
-#if DEPENDENT_SLICES
-  else if( pcPPS->getTilesOrEntropyCodingSyncIdc()==3 )
-  {
-    READ_FLAG ( uiCode, "cabac_independent_flag" );
-    pcPPS->setCabacIndependentFlag( (uiCode == 1)? true : false );
-  }
-#endif
-#endif
 #if MOVE_LOOP_FILTER_SLICES_FLAG
   READ_FLAG( uiCode, "loop_filter_across_slices_enabled_flag" );       pcPPS->setLoopFilterAcrossSlicesEnabledFlag( uiCode ? true : false );
 #endif

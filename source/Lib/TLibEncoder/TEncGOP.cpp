@@ -1187,11 +1187,7 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
 #endif
           Int offs = 0;
           Int nss = pcSlice->getPPS()->getNumSubstreams();
-#if TILES_WPP_ENTROPYSLICES_FLAGS
           if (pcSlice->getPPS()->getEntropyCodingSyncEnabledFlag())
-#else
-          if (pcSlice->getPPS()->getTilesOrEntropyCodingSyncIdc() == 2)
-#endif
           {
             // 1st line present for WPP.
 #if DEPENDENT_SLICES
