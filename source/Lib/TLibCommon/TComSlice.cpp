@@ -185,9 +185,6 @@ Bool TComSlice::getRapPicFlag()
 #endif
       || getNalUnitType() == NAL_UNIT_CODED_SLICE_BLANT
       || getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA
-#if !NAL_UNIT_TYPES_J1003_D7
-      || getNalUnitType() == NAL_UNIT_CODED_SLICE_CRANT
-#endif
       || getNalUnitType() == NAL_UNIT_CODED_SLICE_CRA;
 }
 
@@ -576,11 +573,7 @@ Void TComSlice::checkCRA(TComReferencePictureSet *pReferencePictureSet, Int& poc
   {
     prevRAPisBLA = false;
   }
-#if NAL_UNIT_TYPES_J1003_D7
   else if ( getNalUnitType() == NAL_UNIT_CODED_SLICE_CRA ) // CRA picture found
-#else
-  else if ( getNalUnitType() == NAL_UNIT_CODED_SLICE_CRA || getNalUnitType() == NAL_UNIT_CODED_SLICE_CRANT ) // CRA/CRANT picture found
-#endif
   {
     pocCRA = getPOC();
     prevRAPisBLA = false;
@@ -664,11 +657,7 @@ Void TComSlice::decodingRefreshMarking(Int& pocCRA, Bool& bRefreshPending, TComL
       }
       bRefreshPending = false; 
     }
-#if NAL_UNIT_TYPES_J1003_D7
     if ( getNalUnitType() == NAL_UNIT_CODED_SLICE_CRA ) // CRA picture found
-#else
-    if (getNalUnitType() == NAL_UNIT_CODED_SLICE_CRA || getNalUnitType() == NAL_UNIT_CODED_SLICE_CRANT) // CRA/CRANT picture found
-#endif
     {
       bRefreshPending = true; 
       pocCRA = uiPOCCurr;
@@ -926,11 +915,7 @@ Void TComSlice::applyReferencePictureSet( TComList<TComPic*>& rcListPic, TComRef
     //check that pictures of higher temporal layers are not used
     assert(rpcPic->getSlice( 0 )->isReferenced()==0||rpcPic->getUsedByCurr()==0||rpcPic->getTLayer()<=this->getTLayer());
     //check that pictures of higher or equal temporal layer are not in the RPS if the current picture is a TSA picture
-#if NAL_UNIT_TYPES_J1003_D7
     if(this->getNalUnitType() == NAL_UNIT_CODED_SLICE_TLA || this->getNalUnitType() == NAL_UNIT_CODED_SLICE_TSA_N)
-#else
-    if(this->getNalUnitType() == NAL_UNIT_CODED_SLICE_TLA)
-#endif
     {
       assert(rpcPic->getSlice( 0 )->isReferenced()==0||rpcPic->getTLayer()<this->getTLayer());
     }

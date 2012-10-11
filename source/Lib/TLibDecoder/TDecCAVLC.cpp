@@ -976,9 +976,6 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
 #endif
       || rpcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_BLANT
       || rpcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA
-#if !NAL_UNIT_TYPES_J1003_D7
-      || rpcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_CRANT
-#endif
       || rpcSlice->getNalUnitType() == NAL_UNIT_CODED_SLICE_CRA )
     { 
       READ_UVLC( uiCode, "rap_pic_id" );  //ignored
