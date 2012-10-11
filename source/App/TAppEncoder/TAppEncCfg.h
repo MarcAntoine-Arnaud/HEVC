@@ -215,9 +215,7 @@ protected:
   Bool      m_TransquantBypassEnableFlag;                     ///< transquant_bypass_enable_flag setting in PPS.
   Bool      m_CUTransquantBypassFlagValue;                    ///< if transquant_bypass_enable_flag, the fixed value to use for the per-CU cu_transquant_bypass_flag.
 
-#if RECALCULATE_QP_ACCORDING_LAMBDA
   Bool      m_recalculateQPAccordingToLambda;                 ///< recalculate QP value according to the lambda value
-#endif
 #if ACTIVE_PARAMETER_SETS_SEI_MESSAGE
   Int       m_activeParameterSetsSEIEnabled;
 #endif 

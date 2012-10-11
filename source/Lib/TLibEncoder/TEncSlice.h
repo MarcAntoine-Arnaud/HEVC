@@ -134,10 +134,8 @@ public:
   Void      setCtxMem( TEncSbac* sb, int b )   { CTXMem[b] = sb; }
 #endif
 
-#if RECALCULATE_QP_ACCORDING_LAMBDA
 private:
   Double  xGetQPValueAccordingToLambda ( Double lambda );
-#endif
 };
 
 //! \}

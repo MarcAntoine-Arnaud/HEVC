@@ -271,9 +271,7 @@ Void TAppEncTop::xInitLibCfg()
   m_cTEncTop.setNumLCUInUnit    ( m_numLCUInUnit);
   m_cTEncTop.setTransquantBypassEnableFlag(m_TransquantBypassEnableFlag);
   m_cTEncTop.setCUTransquantBypassFlagValue(m_CUTransquantBypassFlagValue);
-#if RECALCULATE_QP_ACCORDING_LAMBDA
   m_cTEncTop.setUseRecalculateQPAccordingToLambda( m_recalculateQPAccordingToLambda );
-#endif
 #if ACTIVE_PARAMETER_SETS_SEI_MESSAGE
   m_cTEncTop.setActiveParameterSetsSEIEnabled ( m_activeParameterSetsSEIEnabled ); 
 #endif 
