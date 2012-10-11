@@ -192,7 +192,6 @@ Void TEncCavlc::codePPS( TComPPS* pcPPS )
 #if !REMOVE_FGS
   WRITE_CODE( pcPPS->getSliceGranularity(), 2,               "slice_granularity");
 #endif
-#if CU_DQP_ENABLE_FLAG
   WRITE_FLAG( pcPPS->getUseDQP() ? 1 : 0, "cu_qp_delta_enabled_flag" );
   if ( pcPPS->getUseDQP() )
   {
@@ -202,13 +201,6 @@ Void TEncCavlc::codePPS( TComPPS* pcPPS )
     WRITE_UVLC( pcPPS->getMaxCuDQPDepth() - pcPPS->getSliceGranularity(), "diff_cu_qp_delta_depth" );
 #endif
   }
-#else
-#if REMOVE_FGS
-  WRITE_UVLC( pcPPS->getMaxCuDQPDepth() + pcPPS->getUseDQP(),                   "diff_cu_qp_delta_depth" );
-#else
-  WRITE_UVLC( pcPPS->getMaxCuDQPDepth() - pcPPS->getSliceGranularity() + pcPPS->getUseDQP(),                   "diff_cu_qp_delta_depth" );
-#endif
-#endif
   WRITE_SVLC( pcPPS->getChromaCbQpOffset(),                   "cb_qp_offset" );
   WRITE_SVLC( pcPPS->getChromaCrQpOffset(),                   "cr_qp_offset" );
   WRITE_FLAG( pcPPS->getSliceChromaQpFlag() ? 1 : 0,          "slicelevel_chroma_qp_flag" );
