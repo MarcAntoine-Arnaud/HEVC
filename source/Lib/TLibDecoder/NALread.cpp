@@ -70,13 +70,8 @@ Void readNalUnitHeader(InputNALUnit& nalu)
   bool forbidden_zero_bit = bs.read(1);           // forbidden_zero_bit
   assert(forbidden_zero_bit == 0);
   nalu.m_nalUnitType = (NalUnitType) bs.read(6);  // nal_unit_type
-#if TARGET_DECLAYERID_SET
   nalu.m_reservedZero6Bits = bs.read(6);       // nuh_reserved_zero_6bits
   assert(nalu.m_reservedZero6Bits == 0);
-#else
-  unsigned reserved_one_6bits = bs.read(6);       // nuh_reserved_zero_6bits
-  assert(reserved_one_6bits == 0);
-#endif
   nalu.m_temporalId = bs.read(3) - 1;             // nuh_temporal_id_plus1
 
   if ( nalu.m_temporalId )

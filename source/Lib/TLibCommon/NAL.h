@@ -49,9 +49,7 @@ struct NALUnit
   Bool        m_nalRefFlag;  ///< nal_ref_flag
 #endif
   UInt        m_temporalId;  ///< temporal_id
-#if TARGET_DECLAYERID_SET
   UInt        m_reservedZero6Bits; ///< reserved_zero_6bits
-#endif
 
   /** construct an NALunit structure with given header values. */
   NALUnit(
@@ -59,20 +57,14 @@ struct NALUnit
 #if !REMOVE_NAL_REF_FLAG
     Bool        nalRefFlag,
 #endif
-#if TARGET_DECLAYERID_SET
     Int         temporalId = 0,
     Int         reservedZero6Bits = 0)
-#else
-    Int         temporalId = 0)
-#endif
     :m_nalUnitType (nalUnitType)
 #if !REMOVE_NAL_REF_FLAG
     ,m_nalRefFlag  (nalRefFlag)
 #endif
     ,m_temporalId  (temporalId)
-#if TARGET_DECLAYERID_SET
     ,m_reservedZero6Bits(reservedZero6Bits)
-#endif
   {}
 
   /** default constructor - no initialization; must be perfomed by user */

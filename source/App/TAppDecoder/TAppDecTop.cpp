@@ -138,11 +138,7 @@ Void TAppDecTop::decode()
     else
     {
       read(nalu, nalUnit);
-#if TARGET_DECLAYERID_SET
       if( (m_iMaxTemporalLayer >= 0 && nalu.m_temporalId > m_iMaxTemporalLayer) || !isNaluWithinTargetDecLayerIdSet(&nalu)  )
-#else
-      if(m_iMaxTemporalLayer >= 0 && nalu.m_temporalId > m_iMaxTemporalLayer)
-#endif
       {
         if(bPreviousPictureDecoded)
         {
@@ -362,7 +358,6 @@ Void TAppDecTop::xFlushOutput( TComList<TComPic*>* pcListPic )
   m_iPOCLastDisplay = -MAX_INT;
 }
 
-#if TARGET_DECLAYERID_SET
 /** \param nalu Input nalu to check whether its LayerId is within targetDecLayerIdSet
  */
 Bool TAppDecTop::isNaluWithinTargetDecLayerIdSet( InputNALUnit* nalu )
@@ -380,6 +375,5 @@ Bool TAppDecTop::isNaluWithinTargetDecLayerIdSet( InputNALUnit* nalu )
   }
   return false;
 }
-#endif
 
 //! \}
