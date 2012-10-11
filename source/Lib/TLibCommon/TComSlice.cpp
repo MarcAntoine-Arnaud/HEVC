@@ -1290,9 +1290,6 @@ TComSPS::TComSPS()
 , m_uiBitsForPOC              (  8)
 , m_numLongTermRefPicSPS    (  0)  
 , m_uiMaxTrSize               ( 32)
-#if !MOVE_LOOP_FILTER_SLICES_FLAG
-, m_bLFCrossSliceBoundaryFlag (false)
-#endif
 , m_bUseSAO                   (false) 
 , m_bTemporalIdNestingFlag    (false)
 , m_scalingListEnabledFlag    (false)
@@ -1448,9 +1445,7 @@ TComPPS::TComPPS()
 #if SLICE_HEADER_EXTENSION
 , m_sliceHeaderExtensionPresentFlag    (false)
 #endif
-#if MOVE_LOOP_FILTER_SLICES_FLAG
 , m_loopFilterAcrossSlicesEnabledFlag (false)
-#endif
 {
   m_scalingList = new TComScalingList;
 }

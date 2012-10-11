@@ -255,9 +255,7 @@ Void TEncCavlc::codePPS( TComPPS* pcPPS )
       WRITE_FLAG( pcPPS->getLoopFilterAcrossTilesEnabledFlag()?1 : 0,          "loop_filter_across_tiles_enabled_flag");
     }
   }
-#if MOVE_LOOP_FILTER_SLICES_FLAG
   WRITE_FLAG( pcPPS->getLoopFilterAcrossSlicesEnabledFlag()?1 : 0,        "loop_filter_across_slices_enabled_flag");
-#endif
   WRITE_FLAG( pcPPS->getDeblockingFilterControlPresentFlag()?1 : 0,       "deblocking_filter_control_present_flag");
   if(pcPPS->getDeblockingFilterControlPresentFlag())
   {
@@ -490,9 +488,6 @@ Void TEncCavlc::codeSPS( TComSPS* pcSPS )
 #endif
 #if !PPS_TS_FLAG
   WRITE_FLAG( pcSPS->getUseTransformSkip () ? 1 : 0,                                 "transform_skip_enabled_flag" );
-#endif
-#if !MOVE_LOOP_FILTER_SLICES_FLAG
-  WRITE_FLAG( pcSPS->getLFCrossSliceBoundaryFlag()?1 : 0,                            "seq_loop_filter_across_slices_enabled_flag");
 #endif
   WRITE_FLAG( pcSPS->getUseAMP(),                                                    "asymmetric_motion_partitions_enabled_flag" );
 #if !REMOVE_NSQT
@@ -940,11 +935,7 @@ Void TEncCavlc::codeSliceHeader         ( TComSlice* pcSlice )
     Bool isDBFEnabled = (!pcSlice->getDeblockingFilterDisable());
 
 #if REMOVE_ALF
-#if MOVE_LOOP_FILTER_SLICES_FLAG
     if(pcSlice->getPPS()->getLoopFilterAcrossSlicesEnabledFlag() && ( isSAOEnabled || isDBFEnabled ))
-#else
-    if(pcSlice->getSPS()->getLFCrossSliceBoundaryFlag() && ( isSAOEnabled || isDBFEnabled ))
-#endif
 #else
     if(pcSlice->getSPS()->getLFCrossSliceBoundaryFlag() && ( isAlfEnabled || isSAOEnabled || isDBFEnabled ))
 #endif
