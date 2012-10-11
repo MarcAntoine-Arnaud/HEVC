@@ -52,7 +52,6 @@
 #define CU_DQP_TU_CMAX 5                   ///< max number bins for truncated unary
 #define CU_DQP_EG_k 0                      ///< expgolomb order
 
-#define SAO_TYPE_CODING                  1  ///< J0268: SAO type signalling using 1 ctx on/off flag + 1 bp BO/EO flag + 2 bp bins for EO class
 #define SAO_MERGE_ONE_CTX                1  ///< J0041: SAO merge left/up flags share the same ctx
 #define SAO_ABS_BY_PASS                  1  ///< J0043: by pass coding for SAO magnitudes 
 #define SAO_LCU_BOUNDARY                 1  ///< J0139: SAO parameter estimation using non-deblocked pixels for LCU bottom and right boundary areas
@@ -293,11 +292,7 @@ typedef struct _SaoQTPart
 {
   Int         iBestType;
   Int         iLength;
-#if SAO_TYPE_CODING
   Int         subTypeIdx ;                 ///< indicates EO class or BO band position
-#else
-  Int         bandPosition ;
-#endif
   Int         iOffset[4];
   Int         StartCUX;
   Int         StartCUY;
@@ -327,11 +322,7 @@ typedef struct _SaoLcuParam
   Bool       mergeUpFlag;
   Bool       mergeLeftFlag;
   Int        typeIdx;
-#if SAO_TYPE_CODING
   Int        subTypeIdx;                  ///< indicates EO class or BO band position
-#else
-  Int        bandPosition;
-#endif
   Int        offset[4];
   Int        partIdx;
   Int        partIdxTmp;

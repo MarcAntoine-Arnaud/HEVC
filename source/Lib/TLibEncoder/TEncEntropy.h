@@ -131,11 +131,7 @@ public:
   virtual Void codeSaoMergeUp      ( UInt   uiCode) = 0;
 #endif
   virtual Void codeSaoTypeIdx      ( UInt   uiCode) = 0;
-#if SAO_TYPE_CODING
   virtual Void codeSaoUflc         ( UInt uiLength, UInt   uiCode ) = 0;
-#else
-  virtual Void codeSaoUflc         ( UInt   uiCode) = 0;
-#endif
   virtual Void estBit               (estBitsSbacStruct* pcEstBitsSbac, Int width, Int height, TextType eTType) = 0;
   
   virtual Void updateContextTables ( SliceType eSliceType, Int iQp, Bool bExecuteFinish )   = 0;

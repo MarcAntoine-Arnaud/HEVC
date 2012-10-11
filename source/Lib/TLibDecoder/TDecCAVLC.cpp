@@ -212,18 +212,7 @@ inline Void copySaoOneLcuParam(SaoLcuParam* dst,  SaoLcuParam* src)
   dst->typeIdx = src->typeIdx;
   if (dst->typeIdx != -1)
   {
-#if SAO_TYPE_CODING
     dst->subTypeIdx = src->subTypeIdx ;
-#else
-    if (dst->typeIdx == SAO_BO)
-    {
-      dst->bandPosition = src->bandPosition ;
-    }
-    else
-    {
-      dst->bandPosition = 0;
-    }
-#endif
     dst->length  = src->length;
     for (i=0;i<dst->length;i++)
     {

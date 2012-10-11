@@ -1513,7 +1513,6 @@ Void TEncSbac::codeSaoMaxUvlc    ( UInt code, UInt maxSymbol )
 }
 
 
-#if SAO_TYPE_CODING
 /** Code SAO EO class or BO band position 
  * \param uiLength
  * \param uiCode
@@ -1522,15 +1521,6 @@ Void TEncSbac::codeSaoUflc       ( UInt uiLength, UInt uiCode )
 {
    m_pcBinIf->encodeBinsEP ( uiCode, uiLength );
 }
-#else
-/** Code SAO band position 
- * \param uiCode
- */
-Void TEncSbac::codeSaoUflc       ( UInt uiCode )
-{
-    m_pcBinIf->encodeBinsEP ( uiCode, 5 );
-}
-#endif
 #if SAO_MERGE_ONE_CTX
 /** Code SAO merge flags
  * \param uiCode
@@ -1583,7 +1573,6 @@ Void TEncSbac::codeSaoMergeUp       ( UInt uiCode)
  */
 Void TEncSbac::codeSaoTypeIdx       ( UInt uiCode)
 {
-#if SAO_TYPE_CODING
   if (uiCode == 0)
   {
     m_pcBinIf->encodeBin( 0, m_cSaoTypeIdxSCModel.get( 0, 0, 0 ) );
@@ -1593,22 +1582,6 @@ Void TEncSbac::codeSaoTypeIdx       ( UInt uiCode)
     m_pcBinIf->encodeBin( 1, m_cSaoTypeIdxSCModel.get( 0, 0, 0 ) );
     m_pcBinIf->encodeBinEP( uiCode <= 4 ? 1 : 0 );
   }
-#else
-  Int i;
-  if ( uiCode == 0 )
-  {
-    m_pcBinIf->encodeBin( 0, m_cSaoTypeIdxSCModel.get( 0, 0, 0 ) );
-  }
-  else
-  {
-    m_pcBinIf->encodeBin( 1, m_cSaoTypeIdxSCModel.get( 0, 0, 0 ) );
-    for ( i=0; i<uiCode-1; i++ )
-    {
-      m_pcBinIf->encodeBin( 1, m_cSaoTypeIdxSCModel.get( 0, 0, 1 ) );
-    }
-    m_pcBinIf->encodeBin( 0, m_cSaoTypeIdxSCModel.get( 0, 0, 1 ) );
-  }
-#endif
 }
 /*!
  ****************************************************************************

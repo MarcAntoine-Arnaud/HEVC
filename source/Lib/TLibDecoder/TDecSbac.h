@@ -95,11 +95,7 @@ public:
   Void  parseSaoMergeUp           ( UInt&  ruiVal  );
 #endif
   Void  parseSaoTypeIdx           ( UInt&  ruiVal  );
-#if SAO_TYPE_CODING
   Void  parseSaoUflc              ( UInt uiLength, UInt& ruiVal     );
-#else
-  Void  parseSaoUflc              ( UInt& ruiVal           );
-#endif
   Void  parseSaoOneLcuInterleaving(Int rx, Int ry, SAOParam* pSaoParam, TComDataCU* pcCU, Int iCUAddrInSlice, Int iCUAddrUpInSlice, Int allowMergeLeft, Int allowMergeUp);
   Void  parseSaoOffset            (SaoLcuParam* psSaoLcuParam, UInt compIdx);
 private:
