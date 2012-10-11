@@ -553,9 +553,6 @@ private:
 #endif
 
   Bool        m_bUseLComb;
-#if !REMOVE_NSQT
-  Bool        m_useNSQT;
-#endif
   
   Bool        m_restrictedRefPicListsFlag;
   Bool        m_listsModificationPresentFlag;
@@ -690,10 +687,6 @@ public:
 
   Bool getUseLossless ()         { return m_useLossless; }
   Void setUseLossless ( Bool b ) { m_useLossless  = b; }
-#if !REMOVE_NSQT
-  Bool getUseNSQT() { return m_useNSQT; }
-  Void setUseNSQT( Bool b ) { m_useNSQT = b; }
-#endif
   
   Bool getRestrictedRefPicListsFlag    ()          { return m_restrictedRefPicListsFlag;   }
   Void setRestrictedRefPicListsFlag    ( Bool b )  { m_restrictedRefPicListsFlag = b;      }

@@ -1124,19 +1124,7 @@ Void TDecSbac::parseCoeffNxN( TComDataCU* pcCU, TCoeff* pcCoef, UInt uiAbsPartId
     // Map zigzag to diagonal scan
     uiScanIdx = SCAN_DIAG;
   }
-#if REMOVE_NSQT
   const UInt *scan = g_auiSigLastScan[ uiScanIdx ][ uiLog2BlockSize-1 ];
-#else
-  const UInt * scan;
-  if (uiWidth == uiHeight)
-  {
-    scan = g_auiSigLastScan[ uiScanIdx ][ uiLog2BlockSize-1 ];
-  }
-  else
-  {
-    scan = g_sigScanNSQT[ uiLog2BlockSize - 2 ];
-  }
-#endif
   for( uiScanPosLast = 0; uiScanPosLast < uiMaxNumCoeffM1; uiScanPosLast++ )
   {
     UInt uiBlkPos = scan[ uiScanPosLast ];
@@ -1168,9 +1156,6 @@ Void TDecSbac::parseCoeffNxN( TComDataCU* pcCU, TCoeff* pcCoef, UInt uiAbsPartId
   ::memset( uiSigCoeffGroupFlag, 0, sizeof(UInt) * MLS_GRP_NUM );
   const UInt uiNumBlkSide = uiWidth >> (MLS_CG_SIZE >> 1);
   const UInt * scanCG;
-#if !REMOVE_NSQT
-  if (uiWidth == uiHeight)
-#endif
   {
     scanCG = g_auiSigLastScan[ uiScanIdx ][ uiLog2BlockSize > 3 ? uiLog2BlockSize-2-1 : 0  ];    
     if( uiLog2BlockSize == 3 )
@@ -1182,12 +1167,6 @@ Void TDecSbac::parseCoeffNxN( TComDataCU* pcCU, TCoeff* pcCoef, UInt uiAbsPartId
       scanCG = g_sigLastScanCG32x32;
     }
   }
-#if !REMOVE_NSQT
-  else
-  {
-    scanCG = g_sigCGScanNSQT[ uiLog2BlockSize - 2 ];
-  }
-#endif
   Int  iScanPosSig             = (Int) uiScanPosLast;
   for( Int iSubSet = iLastScanSet; iSubSet >= 0; iSubSet-- )
   {

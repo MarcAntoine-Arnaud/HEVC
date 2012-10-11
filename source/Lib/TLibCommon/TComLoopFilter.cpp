@@ -296,17 +296,9 @@ Void TComLoopFilter::xSetEdgefilterTU( TComDataCU* pcCU, UInt absTUPartIdx, UInt
   {
     const UInt uiCurNumParts = pcCU->getPic()->getNumPartInCU() >> (uiDepth<<1);
     const UInt uiQNumParts   = uiCurNumParts>>2;
-#if !REMOVE_NSQT
-    const UInt uiLog2TrSize = g_aucConvertToBit[ pcCU->getSlice()->getSPS()->getMaxCUWidth() >> uiDepth ] + 2;
-#endif
     for ( UInt uiPartIdx = 0; uiPartIdx < 4; uiPartIdx++, uiAbsZorderIdx+=uiQNumParts )
     {
-#if REMOVE_NSQT
       UInt nsAddr = uiAbsZorderIdx;
-#else
-      UInt nsAddr = 0;
-      nsAddr = pcCU->getNSAbsPartIdx( uiLog2TrSize - 1, uiAbsZorderIdx, absTUPartIdx, uiPartIdx, uiDepth + 1 - pcCU->getDepth( uiAbsZorderIdx ) );
-#endif
       xSetEdgefilterTU( pcCU,nsAddr, uiAbsZorderIdx, uiDepth + 1 );
     }
     return;
@@ -314,9 +306,6 @@ Void TComLoopFilter::xSetEdgefilterTU( TComDataCU* pcCU, UInt absTUPartIdx, UInt
 
   Int trWidth  = pcCU->getWidth( uiAbsZorderIdx ) >> pcCU->getTransformIdx( uiAbsZorderIdx );
   Int trHeight = pcCU->getHeight( uiAbsZorderIdx ) >> pcCU->getTransformIdx( uiAbsZorderIdx );
-#if !REMOVE_NSQT
-  pcCU->getNSQTSize( uiDepth - pcCU->getDepth( uiAbsZorderIdx ), uiAbsZorderIdx, trWidth, trHeight );
-#endif
   
   UInt uiWidthInBaseUnits  = trWidth / (g_uiMaxCUWidth >> g_uiMaxCUDepth);
   UInt uiHeightInBaseUnits = trHeight / (g_uiMaxCUWidth >> g_uiMaxCUDepth);
@@ -473,16 +462,6 @@ Void TComLoopFilter::xGetBoundaryStrengthSingle ( TComDataCU* pcCU, UInt uiAbsZo
   {
     UInt nsPartQ = uiPartQ;
     UInt nsPartP = uiPartP;
-#if !REMOVE_NSQT
-    if(pcCUQ->getPredictionMode(uiPartQ) == MODE_INTER && pcCUQ->useNonSquarePU(uiPartQ))
-    {
-      nsPartQ = pcCUQ->getNSQTPartIdx( uiAbsPartIdx );
-    }
-    if(pcCUP->getPredictionMode(uiPartP) == MODE_INTER && pcCUP->useNonSquarePU(uiPartP))
-    {
-      nsPartP = pcCUP->getNSQTPartIdx( uiPartP );
-    }
-#endif
     
     if ( m_aapucBS[iDir][uiAbsPartIdx] && (pcCUQ->getCbf( nsPartQ, TEXT_LUMA, pcCUQ->getTransformIdx(nsPartQ)) != 0 || pcCUP->getCbf( nsPartP, TEXT_LUMA, pcCUP->getTransformIdx(nsPartP) ) != 0) )
     {

@@ -244,9 +244,6 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
   ("DeblockingFilterControlPresent", m_DeblockingFilterControlPresent, false )
 
   // Coding tools
-#if !REMOVE_NSQT
-  ("NSQT",                    m_enableNSQT,              true, "Enable non-square transforms")
-#endif
   ("AMP",                     m_enableAMP,               true, "Enable asymmetric motion partitions")
 #if !REMOVE_LMCHROMA
   ("LMChroma",                m_bUseLMChroma,            true, "Intra chroma prediction based on reconstructed luma")

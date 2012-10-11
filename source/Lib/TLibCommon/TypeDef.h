@@ -52,7 +52,6 @@
 #define CU_DQP_TU_CMAX 5                   ///< max number bins for truncated unary
 #define CU_DQP_EG_k 0                      ///< expgolomb order
 
-#define REMOVE_NSQT 1 ///< Disable NSQT-related code
 #define REMOVE_LMCHROMA 1 ///< Disable LM_Chroma-related code
 #define REMOVE_FGS 1 ///< Disable fine-granularity slices code
 #define REMOVE_ALF 1 ///< Disable ALF-related code
@@ -103,11 +102,7 @@
 #define LEVEL_RANGE                         30     ///< G382: max coefficient level in statistics collection
 #endif
 
-#if REMOVE_NSQT
 #define NS_HAD                               0
-#else
-#define NS_HAD                               1
-#endif
 
 #define APS_BITS_FOR_SAO_BYTE_LENGTH 12           
 #define APS_BITS_FOR_ALF_BYTE_LENGTH 8
