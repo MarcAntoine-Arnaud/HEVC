@@ -118,11 +118,7 @@ Void TEncCavlc::codeDFSvlc(Int iCode, const Char *pSymbolName)
   WRITE_SVLC(iCode, pSymbolName);
 }
 
-#if J0234_INTER_RPS_SIMPL
 Void TEncCavlc::codeShortTermRefPicSet( TComSPS* pcSPS, TComReferencePictureSet* rps, Bool calledFromSliceHeader)
-#else
-Void TEncCavlc::codeShortTermRefPicSet( TComSPS* pcSPS, TComReferencePictureSet* rps )
-#endif
 {
 #if PRINT_RPS_INFO
   int lastBits = getNumberOfWrittenBits();
@@ -131,14 +127,10 @@ Void TEncCavlc::codeShortTermRefPicSet( TComSPS* pcSPS, TComReferencePictureSet*
   if (rps->getInterRPSPrediction()) 
   {
     Int deltaRPS = rps->getDeltaRPS();
-#if J0234_INTER_RPS_SIMPL
     if(calledFromSliceHeader)
     {
       WRITE_UVLC( rps->getDeltaRIdxMinus1(), "delta_idx_minus1" ); // delta index of the Reference Picture Set used for prediction minus 1
     }
-#else
-    WRITE_UVLC( rps->getDeltaRIdxMinus1(), "delta_idx_minus1" ); // delta index of the Reference Picture Set used for prediction minus 1
-#endif
 
     WRITE_CODE( (deltaRPS >=0 ? 0: 1), 1, "delta_rps_sign" ); //delta_rps_sign
     WRITE_UVLC( abs(deltaRPS) - 1, "abs_delta_rps_minus1"); // absolute delta RPS minus 1
@@ -508,11 +500,7 @@ Void TEncCavlc::codeSPS( TComSPS* pcSPS )
   for(Int i=0; i < rpsList->getNumberOfReferencePictureSets(); i++)
   {
     rps = rpsList->getReferencePictureSet(i);
-#if J0234_INTER_RPS_SIMPL
     codeShortTermRefPicSet(pcSPS,rps,false);
-#else
-    codeShortTermRefPicSet(pcSPS,rps);
-#endif
   }    
   WRITE_FLAG( pcSPS->getLongTermRefsPresent() ? 1 : 0,         "long_term_ref_pics_present_flag" );
   if (pcSPS->getLongTermRefsPresent()) 
@@ -647,11 +635,7 @@ Void TEncCavlc::codeSliceHeader         ( TComSlice* pcSlice )
       if(pcSlice->getRPSidx() < 0)
       {
         WRITE_FLAG( 0, "short_term_ref_pic_set_sps_flag");
-#if J0234_INTER_RPS_SIMPL
         codeShortTermRefPicSet(pcSlice->getSPS(), rps, true);
-#else
-        codeShortTermRefPicSet(pcSlice->getSPS(), rps);
-#endif
       }
       else
       {

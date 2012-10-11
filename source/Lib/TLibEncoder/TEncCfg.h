@@ -63,9 +63,6 @@ struct GOPEntry
 #else
   Bool m_interRPSPrediction;
 #endif
-#if !J0234_INTER_RPS_SIMPL
-  Int m_deltaRIdxMinus1;
-#endif
   Int m_deltaRPS;
   Int m_numRefIdc;
   Int m_refIdc[MAX_NUM_REF_PICS+1];
@@ -79,9 +76,6 @@ struct GOPEntry
   , m_sliceType('P')
   , m_numRefPics(0)
   , m_interRPSPrediction(false)
-#if !J0234_INTER_RPS_SIMPL
-  , m_deltaRIdxMinus1(0)
-#endif
   , m_deltaRPS(0)
   , m_numRefIdc(0)
   {
