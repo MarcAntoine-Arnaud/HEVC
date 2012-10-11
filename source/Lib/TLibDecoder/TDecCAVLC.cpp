@@ -1358,16 +1358,7 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
       READ_CODE(8,ignore,"slice_header_extension_data_byte");
     }
   }
-#if BYTE_ALIGNMENT
   m_pcBitstream->readByteAlignment();
-#else
-  if (!bDependentSlice)
-  {
-    // Reading location information
-    // read out trailing bits
-    m_pcBitstream->readOutTrailingBits();
-  }
-#endif
   return;
 }
   

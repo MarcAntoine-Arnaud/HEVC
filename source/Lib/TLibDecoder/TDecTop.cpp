@@ -331,18 +331,6 @@ Bool TDecTop::xDecodeSlice(InputNALUnit &nalu, Int &iSkipFrame, Int iPOCLastDisp
   m_apcSlicePilot->setTLayerInfo(nalu.m_temporalId);
 
   m_cEntropyDecoder.decodeSliceHeader (m_apcSlicePilot, &m_parameterSetManagerDecoder);
-#if !BYTE_ALIGNMENT
-  // byte align
-  {
-    Int numBitsForByteAlignment = nalu.m_Bitstream->getNumBitsUntilByteAligned();
-    if ( numBitsForByteAlignment > 0 )
-    {
-      UInt bitsForByteAlignment;
-      nalu.m_Bitstream->read( numBitsForByteAlignment, bitsForByteAlignment );
-      assert( bitsForByteAlignment == ( ( 1 << numBitsForByteAlignment ) - 1 ) );
-    }
-  }
-#endif
   // exit when a new picture is found
   if (m_apcSlicePilot->isNextSlice() && m_apcSlicePilot->getPOC()!=m_prevPOC && !m_bFirstSliceInSequence)
   {

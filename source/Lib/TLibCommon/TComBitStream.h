@@ -152,9 +152,7 @@ public:
   std::vector<uint8_t>& getFIFO() const { return *m_fifo; }
 
   Void          addSubstream    ( TComOutputBitstream* pcSubstream );
-#if BYTE_ALIGNMENT
   Void writeByteAlignment();
-#endif
 };
 
 /**
@@ -206,9 +204,7 @@ public:
   TComInputBitstream *extractSubstream( UInt uiNumBits ); // Read the nominated number of bits, and return as a bitstream.
   Void                deleteFifo(); // Delete internal fifo of bitstream.
   UInt  getNumBitsRead() { return m_numBitsRead; }
-#if BYTE_ALIGNMENT
   Void readByteAlignment();
-#endif
 };
 
 //! \}
