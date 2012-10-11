@@ -807,11 +807,7 @@ Void TEncEntropy::encodeSaoUnitInterleaving(Int compIdx, Bool saoFlag, Int rx, I
   {
     if (rx>0 && cuAddrInSlice!=0 && allowMergeLeft)
     {
-#if SAO_MERGE_ONE_CTX
       m_pcEntropyCoderIf->codeSaoMerge(saoLcuParam->mergeLeftFlag);
-#else
-      m_pcEntropyCoderIf->codeSaoMergeLeft(saoLcuParam->mergeLeftFlag,compIdx);
-#endif
     }
     else
     {
@@ -821,11 +817,7 @@ Void TEncEntropy::encodeSaoUnitInterleaving(Int compIdx, Bool saoFlag, Int rx, I
     {
       if ( (ry > 0) && (cuAddrUpInSlice>=0) && allowMergeUp )
       {
-#if SAO_MERGE_ONE_CTX
         m_pcEntropyCoderIf->codeSaoMerge(saoLcuParam->mergeUpFlag);
-#else
-        m_pcEntropyCoderIf->codeSaoMergeUp(saoLcuParam->mergeUpFlag);
-#endif
       }
       else
       {

@@ -85,12 +85,7 @@ TEncSbac::TEncSbac()
 #if !SAO_ABS_BY_PASS
 , m_cSaoUvlcSCModel           ( 1,             1,               NUM_SAO_UVLC_CTX              , m_contextModels + m_numContextModels, m_numContextModels)
 #endif
-#if SAO_MERGE_ONE_CTX
 , m_cSaoMergeSCModel          ( 1,             1,               NUM_SAO_MERGE_FLAG_CTX   , m_contextModels + m_numContextModels, m_numContextModels)
-#else
-, m_cSaoMergeLeftSCModel      ( 1,             1,               NUM_SAO_MERGE_LEFT_FLAG_CTX   , m_contextModels + m_numContextModels, m_numContextModels)
-, m_cSaoMergeUpSCModel        ( 1,             1,               NUM_SAO_MERGE_UP_FLAG_CTX     , m_contextModels + m_numContextModels, m_numContextModels)
-#endif
 , m_cSaoTypeIdxSCModel        ( 1,             1,               NUM_SAO_TYPE_IDX_CTX          , m_contextModels + m_numContextModels, m_numContextModels)
 , m_cTransformSkipSCModel     ( 1,             2,               NUM_TRANSFORMSKIP_FLAG_CTX    , m_contextModels + m_numContextModels, m_numContextModels)
 , m_CUTransquantBypassFlagSCModel( 1,          1,               NUM_CU_TRANSQUANT_BYPASS_FLAG_CTX, m_contextModels + m_numContextModels, m_numContextModels)
@@ -151,12 +146,7 @@ Void TEncSbac::resetEntropy           ()
 #if !SAO_ABS_BY_PASS
   m_cSaoUvlcSCModel.initBuffer           ( eSliceType, iQp, (UChar*)INIT_SAO_UVLC );
 #endif
-#if SAO_MERGE_ONE_CTX
   m_cSaoMergeSCModel.initBuffer      ( eSliceType, iQp, (UChar*)INIT_SAO_MERGE_FLAG );
-#else
-  m_cSaoMergeLeftSCModel.initBuffer      ( eSliceType, iQp, (UChar*)INIT_SAO_MERGE_LEFT_FLAG );
-  m_cSaoMergeUpSCModel.initBuffer        ( eSliceType, iQp, (UChar*)INIT_SAO_MERGE_UP_FLAG );
-#endif
   m_cSaoTypeIdxSCModel.initBuffer        ( eSliceType, iQp, (UChar*)INIT_SAO_TYPE_IDX );
   m_cTransformSkipSCModel.initBuffer     ( eSliceType, iQp, (UChar*)INIT_TRANSFORMSKIP_FLAG );
   m_CUTransquantBypassFlagSCModel.initBuffer( eSliceType, iQp, (UChar*)INIT_CU_TRANSQUANT_BYPASS_FLAG );
@@ -217,12 +207,7 @@ Void TEncSbac::determineCabacInitIdx()
 #if !SAO_ABS_BY_PASS
       curCost += m_cSaoUvlcSCModel.calcCost           ( curSliceType, qp, (UChar*)INIT_SAO_UVLC );
 #endif
-#if SAO_MERGE_ONE_CTX
       curCost += m_cSaoMergeSCModel.calcCost      ( curSliceType, qp, (UChar*)INIT_SAO_MERGE_FLAG );
-#else
-      curCost += m_cSaoMergeLeftSCModel.calcCost      ( curSliceType, qp, (UChar*)INIT_SAO_MERGE_LEFT_FLAG );
-      curCost += m_cSaoMergeUpSCModel.calcCost        ( curSliceType, qp, (UChar*)INIT_SAO_MERGE_UP_FLAG );
-#endif
       curCost += m_cSaoTypeIdxSCModel.calcCost        ( curSliceType, qp, (UChar*)INIT_SAO_TYPE_IDX );
       curCost += m_cTransformSkipSCModel.calcCost     ( curSliceType, qp, (UChar*)INIT_TRANSFORMSKIP_FLAG );
       curCost += m_CUTransquantBypassFlagSCModel.calcCost( curSliceType, qp, (UChar*)INIT_CU_TRANSQUANT_BYPASS_FLAG );
@@ -278,12 +263,7 @@ Void TEncSbac::updateContextTables( SliceType eSliceType, Int iQp, Bool bExecute
 #if !SAO_ABS_BY_PASS
   m_cSaoUvlcSCModel.initBuffer           ( eSliceType, iQp, (UChar*)INIT_SAO_UVLC );
 #endif
-#if SAO_MERGE_ONE_CTX
   m_cSaoMergeSCModel.initBuffer      ( eSliceType, iQp, (UChar*)INIT_SAO_MERGE_FLAG );
-#else
-  m_cSaoMergeLeftSCModel.initBuffer      ( eSliceType, iQp, (UChar*)INIT_SAO_MERGE_LEFT_FLAG );
-  m_cSaoMergeUpSCModel.initBuffer        ( eSliceType, iQp, (UChar*)INIT_SAO_MERGE_UP_FLAG );
-#endif
   m_cSaoTypeIdxSCModel.initBuffer        ( eSliceType, iQp, (UChar*)INIT_SAO_TYPE_IDX );
   m_cTransformSkipSCModel.initBuffer     ( eSliceType, iQp, (UChar*)INIT_TRANSFORMSKIP_FLAG );
   m_CUTransquantBypassFlagSCModel.initBuffer( eSliceType, iQp, (UChar*)INIT_CU_TRANSQUANT_BYPASS_FLAG );
@@ -1521,53 +1501,21 @@ Void TEncSbac::codeSaoUflc       ( UInt uiLength, UInt uiCode )
 {
    m_pcBinIf->encodeBinsEP ( uiCode, uiLength );
 }
-#if SAO_MERGE_ONE_CTX
 /** Code SAO merge flags
  * \param uiCode
  * \param uiCompIdx
  */
 Void TEncSbac::codeSaoMerge       ( UInt uiCode )
-#else
-/** Code SAO merge left flag 
- * \param uiCode
- * \param uiCompIdx
- */
-Void TEncSbac::codeSaoMergeLeft       ( UInt uiCode, UInt uiCompIdx )
-#endif
 {
   if (uiCode == 0)
   {
-#if SAO_MERGE_ONE_CTX
     m_pcBinIf->encodeBin(0,  m_cSaoMergeSCModel.get( 0, 0, 0 ));
-#else
-    m_pcBinIf->encodeBin(0,  m_cSaoMergeLeftSCModel.get( 0, 0, 0 ));
-#endif
   }
   else
   {
-#if SAO_MERGE_ONE_CTX
     m_pcBinIf->encodeBin(1,  m_cSaoMergeSCModel.get( 0, 0, 0 ));
-#else
-    m_pcBinIf->encodeBin(1,  m_cSaoMergeLeftSCModel.get( 0, 0, 0 ));
-#endif
   }
 }
-#if !SAO_MERGE_ONE_CTX
-/** Code SAO merge up flag 
- * \param uiCode
- */
-Void TEncSbac::codeSaoMergeUp       ( UInt uiCode)
-{
-  if (uiCode == 0)
-  {
-    m_pcBinIf->encodeBin(0,  m_cSaoMergeUpSCModel.get( 0, 0, 0 ));
-  }
-  else
-  {
-    m_pcBinIf->encodeBin(1,  m_cSaoMergeUpSCModel.get( 0, 0, 0 ));
-  }
-}
-#endif
 /** Code SAO type index 
  * \param uiCode
  */

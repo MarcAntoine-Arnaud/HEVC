@@ -98,12 +98,7 @@
 #if !SAO_ABS_BY_PASS
 #define NUM_SAO_UVLC_CTX              2       ///< number of context models for SAO UVLC
 #endif
-#if SAO_MERGE_ONE_CTX
 #define NUM_SAO_MERGE_FLAG_CTX        1       ///< number of context models for SAO merge flags
-#else
-#define NUM_SAO_MERGE_LEFT_FLAG_CTX   1       ///< number of context models for SAO Merge-Left flag
-#define NUM_SAO_MERGE_UP_FLAG_CTX     1       ///< number of context models for AO SVLC (filter coeff.)
-#endif
 #define NUM_SAO_TYPE_IDX_CTX          1       ///< number of context models for SAO type index
 
 #define NUM_TRANSFORMSKIP_FLAG_CTX    1       ///< number of context models for transform skipping 
@@ -344,7 +339,6 @@ INIT_SAO_UVLC[3][NUM_SAO_UVLC_CTX] =
   { 143,  140, }, 
 };
 #endif
-#if SAO_MERGE_ONE_CTX
 static const UChar 
 INIT_SAO_MERGE_FLAG[3][NUM_SAO_MERGE_FLAG_CTX] = 
 {
@@ -352,23 +346,6 @@ INIT_SAO_MERGE_FLAG[3][NUM_SAO_MERGE_FLAG_CTX] =
   { 153,  }, 
   { 153,  }, 
 };
-#else
-static const UChar 
-INIT_SAO_MERGE_LEFT_FLAG[3][NUM_SAO_MERGE_LEFT_FLAG_CTX] = 
-{
-  { 153, }, 
-  { 153, }, 
-  { 153, }, 
-};
-
-static const UChar 
-INIT_SAO_MERGE_UP_FLAG[3][NUM_SAO_MERGE_UP_FLAG_CTX] = 
-{
-  { 153, }, 
-  { 153, }, 
-  { 175, }, 
-};
-#endif
 
 static const UChar 
 INIT_SAO_TYPE_IDX[3][NUM_SAO_TYPE_IDX_CTX] = 

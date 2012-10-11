@@ -79,12 +79,7 @@ TDecSbac::TDecSbac()
 #if !SAO_ABS_BY_PASS
 , m_cSaoUvlcSCModel           ( 1,             1,               NUM_SAO_UVLC_CTX              , m_contextModels + m_numContextModels, m_numContextModels)
 #endif
-#if SAO_MERGE_ONE_CTX
 , m_cSaoMergeSCModel      ( 1,             1,               NUM_SAO_MERGE_FLAG_CTX   , m_contextModels + m_numContextModels, m_numContextModels)
-#else
-, m_cSaoMergeLeftSCModel      ( 1,             1,               NUM_SAO_MERGE_LEFT_FLAG_CTX   , m_contextModels + m_numContextModels, m_numContextModels)
-, m_cSaoMergeUpSCModel        ( 1,             1,               NUM_SAO_MERGE_UP_FLAG_CTX     , m_contextModels + m_numContextModels, m_numContextModels)
-#endif
 , m_cSaoTypeIdxSCModel        ( 1,             1,               NUM_SAO_TYPE_IDX_CTX          , m_contextModels + m_numContextModels, m_numContextModels)
 , m_cTransformSkipSCModel     ( 1,             2,               NUM_TRANSFORMSKIP_FLAG_CTX    , m_contextModels + m_numContextModels, m_numContextModels)
 , m_CUTransquantBypassFlagSCModel( 1,          1,               NUM_CU_TRANSQUANT_BYPASS_FLAG_CTX, m_contextModels + m_numContextModels, m_numContextModels)
@@ -152,12 +147,7 @@ Void TDecSbac::resetEntropy(TComSlice* pSlice)
 #if !SAO_ABS_BY_PASS
   m_cSaoUvlcSCModel.initBuffer           ( sliceType, qp, (UChar*)INIT_SAO_UVLC );
 #endif
-#if SAO_MERGE_ONE_CTX
   m_cSaoMergeSCModel.initBuffer      ( sliceType, qp, (UChar*)INIT_SAO_MERGE_FLAG );
-#else
-  m_cSaoMergeLeftSCModel.initBuffer      ( sliceType, qp, (UChar*)INIT_SAO_MERGE_LEFT_FLAG );
-  m_cSaoMergeUpSCModel.initBuffer        ( sliceType, qp, (UChar*)INIT_SAO_MERGE_UP_FLAG );
-#endif
   m_cSaoTypeIdxSCModel.initBuffer        ( sliceType, qp, (UChar*)INIT_SAO_TYPE_IDX );
 
   m_cCUTransSubdivFlagSCModel.initBuffer ( sliceType, qp, (UChar*)INIT_TRANS_SUBDIV_FLAG );
@@ -209,12 +199,7 @@ Void TDecSbac::updateContextTables( SliceType eSliceType, Int iQp )
 #if !SAO_ABS_BY_PASS
   m_cSaoUvlcSCModel.initBuffer           ( eSliceType, iQp, (UChar*)INIT_SAO_UVLC );
 #endif
-#if SAO_MERGE_ONE_CTX
   m_cSaoMergeSCModel.initBuffer      ( eSliceType, iQp, (UChar*)INIT_SAO_MERGE_FLAG );
-#else
-  m_cSaoMergeLeftSCModel.initBuffer      ( eSliceType, iQp, (UChar*)INIT_SAO_MERGE_LEFT_FLAG );
-  m_cSaoMergeUpSCModel.initBuffer        ( eSliceType, iQp, (UChar*)INIT_SAO_MERGE_UP_FLAG );
-#endif
   m_cSaoTypeIdxSCModel.initBuffer        ( eSliceType, iQp, (UChar*)INIT_SAO_TYPE_IDX );
   m_cCUTransSubdivFlagSCModel.initBuffer ( eSliceType, iQp, (UChar*)INIT_TRANS_SUBDIV_FLAG );
   m_cTransformSkipSCModel.initBuffer     ( eSliceType, iQp, (UChar*)INIT_TRANSFORMSKIP_FLAG );
@@ -1440,28 +1425,12 @@ Void TDecSbac::parseSaoUflc (UInt uiLength, UInt&  riVal)
 {
   m_pcTDecBinIf->decodeBinsEP ( riVal, uiLength );
 }
-#if SAO_MERGE_ONE_CTX
 Void TDecSbac::parseSaoMerge (UInt&  ruiVal)
-#else
-Void TDecSbac::parseSaoMergeLeft (UInt&  ruiVal, UInt uiCompIdx)
-#endif
 {
   UInt uiCode;
-#if SAO_MERGE_ONE_CTX
   m_pcTDecBinIf->decodeBin( uiCode, m_cSaoMergeSCModel.get( 0, 0, 0 ) );
-#else
-  m_pcTDecBinIf->decodeBin( uiCode, m_cSaoMergeLeftSCModel.get( 0, 0, 0 ) );
-#endif
   ruiVal = (Int)uiCode;
 }
-#if !SAO_MERGE_ONE_CTX
-Void TDecSbac::parseSaoMergeUp (UInt&  ruiVal)
-{
-  UInt uiCode;
-  m_pcTDecBinIf->decodeBin( uiCode, m_cSaoMergeUpSCModel.get( 0, 0, 0 ) );
-  ruiVal = (Int)uiCode;
-}
-#endif
 Void TDecSbac::parseSaoTypeIdx (UInt&  ruiVal)
 {
   UInt uiCode;
@@ -1599,25 +1568,15 @@ Void TDecSbac::parseSaoOneLcuInterleaving(Int rx, Int ry, SAOParam* pSaoParam, T
   {
     if (rx>0 && iCUAddrInSlice!=0 && allowMergeLeft)
     {
-#if SAO_MERGE_ONE_CTX
       parseSaoMerge(uiSymbol); 
       pSaoParam->saoLcuParam[0][iAddr].mergeLeftFlag = (Bool)uiSymbol;  
-#else
-      parseSaoMergeLeft(uiSymbol, 0); 
-      pSaoParam->saoLcuParam[0][iAddr].mergeLeftFlag = (Bool)uiSymbol;   
-#endif
     }
     if (pSaoParam->saoLcuParam[0][iAddr].mergeLeftFlag==0)
     {
       if ((ry > 0) && (iCUAddrUpInSlice>=0) && allowMergeUp)
       {
-#if SAO_MERGE_ONE_CTX
         parseSaoMerge(uiSymbol);
         pSaoParam->saoLcuParam[0][iAddr].mergeUpFlag = (Bool)uiSymbol;
-#else
-        parseSaoMergeUp(uiSymbol);
-        pSaoParam->saoLcuParam[0][iAddr].mergeUpFlag = (Bool)uiSymbol;
-#endif
       }
     }
   }
