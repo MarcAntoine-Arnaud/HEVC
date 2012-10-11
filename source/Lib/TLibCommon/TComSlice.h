@@ -582,11 +582,9 @@ private:
   Bool        m_bPCMFilterDisableFlag;
 
   UInt        m_uiBitsForPOC;
-#if LTRP_IN_SPS
   UInt        m_numLongTermRefPicSPS;
   UInt        m_ltRefPicPocLsbSps[33];
   Bool        m_usedByCurrPicLtSPSFlag[33];
-#endif
   // Max physical transform size
   UInt        m_uiMaxTrSize;
   
@@ -642,7 +640,6 @@ public:
   Void setPicCropTopOffset(Int val)        { m_picCropTopOffset = val; }
   Int  getPicCropBottomOffset() const      { return m_picCropBottomOffset; }
   Void setPicCropBottomOffset(Int val)     { m_picCropBottomOffset = val; }
-#if LTRP_IN_SPS
   UInt  getNumLongTermRefPicSPS()             { return m_numLongTermRefPicSPS; }
   Void  setNumLongTermRefPicSPS(UInt val)     { m_numLongTermRefPicSPS = val; }
 
@@ -651,7 +648,6 @@ public:
 
   Bool getUsedByCurrPicLtSPSFlag(Int i)        {return m_usedByCurrPicLtSPSFlag[i];}
   Void setUsedByCurrPicLtSPSFlag(Int i, Bool x)      { m_usedByCurrPicLtSPSFlag[i] = x;}
-#endif
   Void setMaxCUWidth  ( UInt u ) { m_uiMaxCUWidth = u;      }
   UInt getMaxCUWidth  ()         { return  m_uiMaxCUWidth;  }
   Void setMaxCUHeight ( UInt u ) { m_uiMaxCUHeight = u;     }

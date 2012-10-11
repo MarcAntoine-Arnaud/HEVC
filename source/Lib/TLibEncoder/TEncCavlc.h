@@ -81,9 +81,7 @@ protected:
 #else
   Void codeShortTermRefPicSet              ( TComSPS* pcSPS, TComReferencePictureSet* pcRPS );
 #endif
-#if LTRP_IN_SPS
   Bool findMatchingLTRP ( TComSlice* pcSlice, UInt *ltrpsIndex, Int ltrpPOC, Bool usedFlag );
-#endif  
   
 public:
   

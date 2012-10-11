@@ -88,11 +88,9 @@ TEncGOP::TEncGOP()
   
   m_bRefreshPending     = 0;
   m_pocCRA            = 0;
-#if LTRP_IN_SPS
   m_numLongTermRefPicSPS = 0;
   ::memset(m_ltRefPicPocLsbSps, 0, sizeof(m_ltRefPicPocLsbSps));
   ::memset(m_ltRefPicUsedByCurrPicFlag, 0, sizeof(m_ltRefPicUsedByCurrPicFlag));
-#endif
   m_cpbRemovalDelay   = 0;
   m_lastBPSEI         = 0;
   return;
@@ -767,7 +765,6 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
       nalu = NALUnit(NAL_UNIT_SPS, true);
 #endif
       m_pcEntropyCoder->setBitstream(&nalu.m_Bitstream);
-#if LTRP_IN_SPS
       if (m_bSeqFirst)
       {
         pcSlice->getSPS()->setNumLongTermRefPicSPS(m_numLongTermRefPicSPS);
@@ -777,7 +774,6 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
           pcSlice->getSPS()->setUsedByCurrPicLtSPSFlag(k, m_ltRefPicUsedByCurrPicFlag[k]);
         }
       }
-#endif
       if( m_pcCfg->getPictureTimingSEIEnabled() )
       {
         UInt maxCU = m_pcCfg->getSliceArgument() >> ( pcSlice->getSPS()->getMaxCUDepth() << 1);
