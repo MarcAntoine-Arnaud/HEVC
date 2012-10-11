@@ -141,9 +141,6 @@ void writeRBSPTrailingBits(TComOutputBitstream& bs)
 void copyNaluData(OutputNALUnit& naluDest, const OutputNALUnit& naluSrc)
 {
   naluDest.m_nalUnitType = naluSrc.m_nalUnitType;
-#if !REMOVE_NAL_REF_FLAG
-  naluDest.m_nalRefFlag  = naluSrc.m_nalRefFlag;
-#endif
   naluDest.m_reservedZero6Bits  = naluSrc.m_reservedZero6Bits;
   naluDest.m_temporalId  = naluSrc.m_temporalId;
   naluDest.m_Bitstream   = naluSrc.m_Bitstream;

@@ -1174,9 +1174,6 @@ private:
   Bool       m_bLMvdL1Zero;
   Int         m_numEntryPointOffsets;
   Bool       m_temporalLayerNonReferenceFlag;
-#if !REMOVE_NAL_REF_FLAG
-  Bool        m_nalRefFlag;
-#endif
   Bool       m_LFCrossSliceBoundaryFlag;
 
   Bool       m_enableTMVPFlag;
@@ -1433,10 +1430,6 @@ public:
   Int       getNumEntryPointOffsets()         { return m_numEntryPointOffsets;    }
   Bool      getTemporalLayerNonReferenceFlag()       { return m_temporalLayerNonReferenceFlag;}
   Void      setTemporalLayerNonReferenceFlag(Bool x) { m_temporalLayerNonReferenceFlag = x;}
-#if !REMOVE_NAL_REF_FLAG
-  Bool      getNalRefFlag()       { return m_nalRefFlag;}
-  Void      setNalRefFlag(Bool x) { m_nalRefFlag = x;}
-#endif
   Void      setLFCrossSliceBoundaryFlag     ( Bool   val )    { m_LFCrossSliceBoundaryFlag = val; }
   Bool      getLFCrossSliceBoundaryFlag     ()                { return m_LFCrossSliceBoundaryFlag;} 
 

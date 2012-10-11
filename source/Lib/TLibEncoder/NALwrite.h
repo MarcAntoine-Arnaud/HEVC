@@ -55,16 +55,9 @@ struct OutputNALUnit : public NALUnit
    */
   OutputNALUnit(
     NalUnitType nalUnitType,
-#if !REMOVE_NAL_REF_FLAG
-    Bool nalRefFlag,
-#endif
     unsigned temporalID = 0,
     unsigned reserved_zero_6bits = 0)
-#if REMOVE_NAL_REF_FLAG
   : NALUnit(nalUnitType, temporalID, reserved_zero_6bits)
-#else
-  : NALUnit(nalUnitType, nalRefFlag, temporalID)
-#endif
   , m_Bitstream()
   {}
 

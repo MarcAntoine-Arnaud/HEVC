@@ -243,9 +243,6 @@ Void TEncSlice::initEncSlice( TComPic* pcPic, Int iPOCLast, UInt uiPOCCurr, Int 
     rpcSlice->setTemporalLayerNonReferenceFlag(!m_pcCfg->getGOPEntry(iGOPid).m_refPic);
   }
   rpcSlice->setReferenced(true);
-#if !REMOVE_NAL_REF_FLAG
-  rpcSlice->setNalRefFlag(m_pcCfg->getGOPEntry(iGOPid).m_refPic);
-#endif
   
   // ------------------------------------------------------------------------------------------------------------------
   // QP setting

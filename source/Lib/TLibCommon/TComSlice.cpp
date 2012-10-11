@@ -101,9 +101,6 @@ TComSlice::TComSlice()
 , m_bLMvdL1Zero                   ( false )
 , m_numEntryPointOffsets          ( 0 )
 , m_temporalLayerNonReferenceFlag ( false )
-#if !REMOVE_NAL_REF_FLAG
-, m_nalRefFlag                    ( 0 )
-#endif
 , m_enableTMVPFlag                ( true )
 {
   m_aiNumRefIdx[0] = m_aiNumRefIdx[1] = m_aiNumRefIdx[2] = 0;

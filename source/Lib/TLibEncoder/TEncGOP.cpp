@@ -749,21 +749,13 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
     /* write various header sets. */
     if ( m_bSeqFirst )
     {
-#if REMOVE_NAL_REF_FLAG
       OutputNALUnit nalu(NAL_UNIT_VPS);
-#else
-      OutputNALUnit nalu(NAL_UNIT_VPS, true);
-#endif
       m_pcEntropyCoder->setBitstream(&nalu.m_Bitstream);
       m_pcEntropyCoder->encodeVPS(m_pcEncTop->getVPS());
       writeRBSPTrailingBits(nalu.m_Bitstream);
       accessUnit.push_back(new NALUnitEBSP(nalu));
 
-#if REMOVE_NAL_REF_FLAG
       nalu = NALUnit(NAL_UNIT_SPS);
-#else
-      nalu = NALUnit(NAL_UNIT_SPS, true);
-#endif
       m_pcEntropyCoder->setBitstream(&nalu.m_Bitstream);
       if (m_bSeqFirst)
       {
@@ -793,11 +785,7 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
       writeRBSPTrailingBits(nalu.m_Bitstream);
       accessUnit.push_back(new NALUnitEBSP(nalu));
 
-#if REMOVE_NAL_REF_FLAG
       nalu = NALUnit(NAL_UNIT_PPS);
-#else
-      nalu = NALUnit(NAL_UNIT_PPS, true);
-#endif
       m_pcEntropyCoder->setBitstream(&nalu.m_Bitstream);
       m_pcEntropyCoder->encodePPS(pcSlice->getPPS());
       writeRBSPTrailingBits(nalu.m_Bitstream);
@@ -1023,11 +1011,7 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
           m_pcEntropyCoder->setEntropyCoder   ( m_pcCavlcCoder, pcSlice );
           m_pcEntropyCoder->resetEntropy      ();
           /* start slice NALunit */
-#if REMOVE_NAL_REF_FLAG
           OutputNALUnit nalu( pcSlice->getNalUnitType(), pcSlice->getTLayer() );
-#else
-          OutputNALUnit nalu( pcSlice->getNalUnitType(), pcSlice->isReferenced(), pcSlice->getTLayer() );
-#endif
           Bool bDependentSlice = (!pcSlice->isNextSlice());
           if (!bDependentSlice)
           {
@@ -1395,11 +1379,7 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
           calcChecksum(*pcPic->getPicYuvRec(), sei_recon_picture_digest.digest);
           digestStr = digestToString(sei_recon_picture_digest.digest, 4);
         }
-#if REMOVE_NAL_REF_FLAG
         OutputNALUnit nalu(NAL_UNIT_SEI, pcSlice->getTLayer());
-#else
-        OutputNALUnit nalu(NAL_UNIT_SEI, false, pcSlice->getTLayer());
-#endif
 
         /* write the SEI messages */
         m_pcEntropyCoder->setEntropyCoder(m_pcCavlcCoder, pcSlice);
