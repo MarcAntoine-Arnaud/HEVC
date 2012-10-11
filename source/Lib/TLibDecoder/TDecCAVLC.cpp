@@ -533,7 +533,6 @@ Void TDecCavlc::parsePPS(TComPPS* pcPPS)
   }
 }
 
-#if SUPPORT_FOR_VUI
 #if !BUFFERING_PERIOD_AND_TIMING_SEI
 Void  TDecCavlc::parseVUI(TComVUI* pcVUI)
 #else
@@ -654,7 +653,6 @@ Void  TDecCavlc::parseVUI(TComVUI* pcVUI, TComSPS *pcSPS)
     READ_UVLC(   uiCode, "log2_max_mv_length_vertical" );             pcVUI->setLog2MaxMvLengthVertical(uiCode);
   }
 }
-#endif
 
 Void TDecCavlc::parseSPS(TComSPS* pcSPS)
 {
@@ -843,7 +841,6 @@ Void TDecCavlc::parseSPS(TComSPS* pcSPS)
   }
 #endif
   READ_FLAG( uiCode, "sps_temporal_mvp_enable_flag" );            pcSPS->setTMVPFlagsPresent(uiCode);
-#if SUPPORT_FOR_VUI
   READ_FLAG( uiCode, "vui_parameters_present_flag" );             pcSPS->setVuiParametersPresentFlag(uiCode);
 
   if (pcSPS->getVuiParametersPresentFlag())
@@ -854,7 +851,6 @@ Void TDecCavlc::parseSPS(TComSPS* pcSPS)
     parseVUI(pcSPS->getVuiParameters(), pcSPS);
 #endif
   }
-#endif
 
   READ_FLAG( uiCode, "sps_extension_flag");
   if (uiCode)

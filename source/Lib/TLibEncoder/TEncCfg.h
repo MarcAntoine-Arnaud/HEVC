@@ -265,7 +265,6 @@ protected:
 #if ACTIVE_PARAMETER_SETS_SEI_MESSAGE  
   Int       m_activeParameterSetsSEIEnabled;                  ///< enable active parameter set SEI message 
 #endif 
-#if SUPPORT_FOR_VUI
   Bool      m_vuiParametersPresentFlag;                       ///< enable generation of VUI parameters
   Bool      m_aspectRatioInfoPresentFlag;                     ///< Signals whether aspect_ratio_idc is present
   Int       m_aspectRatioIdc;                                 ///< aspect_ratio_idc
@@ -291,7 +290,6 @@ protected:
   Int       m_maxBitsPerMinCuDenom;                           ///< Indicates an upper bound for the number of bits of coding_unit() data
   Int       m_log2MaxMvLengthHorizontal;                      ///< Indicate the maximum absolute value of a decoded horizontal MV component in quarter-pel luma units
   Int       m_log2MaxMvLengthVertical;                        ///< Indicate the maximum absolute value of a decoded vertical MV component in quarter-pel luma units
-#endif
 public:
   TEncCfg()
   : m_puiColumnWidth()
@@ -640,7 +638,6 @@ public:
   Void      setActiveParameterSetsSEIEnabled ( Int b )  { m_activeParameterSetsSEIEnabled = b; }  
   Int       getActiveParameterSetsSEIEnabled ()         { return m_activeParameterSetsSEIEnabled; }
 #endif 
-#if SUPPORT_FOR_VUI
   Bool      getVuiParametersPresentFlag()                 { return m_vuiParametersPresentFlag; }
   Void      setVuiParametersPresentFlag(Bool i)           { m_vuiParametersPresentFlag = i; }
   Bool      getAspectRatioInfoPresentFlag()               { return m_aspectRatioInfoPresentFlag; }
@@ -691,7 +688,6 @@ public:
   Void      setLog2MaxMvLengthHorizontal(Int i)           { m_log2MaxMvLengthHorizontal = i; }
   Int       getLog2MaxMvLengthVertical()                  { return m_log2MaxMvLengthVertical; }
   Void      setLog2MaxMvLengthVertical(Int i)             { m_log2MaxMvLengthVertical = i; }
-#endif
 };
 
 //! \}

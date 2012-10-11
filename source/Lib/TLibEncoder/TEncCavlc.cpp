@@ -328,7 +328,6 @@ Void TEncCavlc::codePPS( TComPPS* pcPPS )
   WRITE_FLAG( 0, "pps_extension_flag" );
 }
 
-#if SUPPORT_FOR_VUI
 Void TEncCavlc::codeVUI( TComVUI *pcVUI, TComSPS* pcSPS )
 {
 #if ENC_DEC_TRACE
@@ -440,7 +439,6 @@ Void TEncCavlc::codeVUI( TComVUI *pcVUI, TComSPS* pcSPS )
   }
 
 }
-#endif
 
 Void TEncCavlc::codeSPS( TComSPS* pcSPS )
 {
@@ -599,13 +597,11 @@ Void TEncCavlc::codeSPS( TComSPS* pcSPS )
   }
 #endif
   WRITE_FLAG( pcSPS->getTMVPFlagsPresent()  ? 1 : 0,           "sps_temporal_mvp_enable_flag" );
-#if SUPPORT_FOR_VUI
   WRITE_FLAG( pcSPS->getVuiParametersPresentFlag(),             "vui_parameters_present_flag" );
   if (pcSPS->getVuiParametersPresentFlag())
   {
       codeVUI(pcSPS->getVuiParameters(), pcSPS);
   }
-#endif
 
   WRITE_FLAG( 0, "sps_extension_flag" );
 }

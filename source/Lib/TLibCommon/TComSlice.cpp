@@ -1353,10 +1353,8 @@ TComSPS::TComSPS()
 , m_bUseSAO                   (false) 
 , m_bTemporalIdNestingFlag    (false)
 , m_scalingListEnabledFlag    (false)
-#if SUPPORT_FOR_VUI
 , m_vuiParametersPresentFlag  (false)
 , m_vuiParameters             ()
-#endif
 {
   for ( Int i = 0; i < MAX_TLAYER; i++ )
   {

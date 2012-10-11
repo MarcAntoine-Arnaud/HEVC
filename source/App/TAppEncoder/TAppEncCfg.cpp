@@ -343,7 +343,6 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
                                                               "\t1: enable active parameter sets SEI message without active_sps_id\n"
                                                               "\t0: disable")
 #endif 
-#if SUPPORT_FOR_VUI
   ("VuiParametersPresent,-vui",      m_vuiParametersPresentFlag,           false, "Enable generation of vui_parameters()")
   ("AspectRatioInfoPresent",         m_aspectRatioInfoPresentFlag,         false, "Signals whether aspect_ratio_idc is present")
   ("AspectRatioIdc",                 m_aspectRatioIdc,                         0, "aspect_ratio_idc")
@@ -369,7 +368,6 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
   ("MaxBitsPerMinCuDenom",           m_maxBitsPerMinCuDenom,                   1, "Indicates an upper bound for the number of bits of coding_unit() data")
   ("Log2MaxMvLengthHorizontal",      m_log2MaxMvLengthHorizontal,             15, "Indicate the maximum absolute value of a decoded horizontal MV component in quarter-pel luma units")
   ("Log2MaxMvLengthVertical",        m_log2MaxMvLengthVertical,               15, "Indicate the maximum absolute value of a decoded vertical MV component in quarter-pel luma units")
-#endif
   ("SEIRecoveryPoint",               m_recoveryPointSEIEnabled,                0, "Control generation of recovery point SEI messages")
 #if BUFFERING_PERIOD_AND_TIMING_SEI
   ("SEIBufferingPeriod",             m_bufferingPeriodSEIEnabled,              0, "Control generation of buffering period SEI messages")

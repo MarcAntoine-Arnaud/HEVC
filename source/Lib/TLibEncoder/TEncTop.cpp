@@ -551,7 +551,6 @@ Void TEncTop::xInitSPS()
 
   m_cSPS.setScalingListFlag ( (m_useScalingListId == 0) ? 0 : 1 );
 
-#if SUPPORT_FOR_VUI
   m_cSPS.setVuiParametersPresentFlag(getVuiParametersPresentFlag());
   if (m_cSPS.getVuiParametersPresentFlag())
   {
@@ -582,7 +581,6 @@ Void TEncTop::xInitSPS()
       pcVUI->setLog2MaxMvLengthHorizontal(getLog2MaxMvLengthHorizontal());
       pcVUI->setLog2MaxMvLengthVertical(getLog2MaxMvLengthVertical());
   }
-#endif
 }
 
 Void TEncTop::xInitPPS()

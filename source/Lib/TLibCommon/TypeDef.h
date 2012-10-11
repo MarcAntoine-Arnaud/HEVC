@@ -42,12 +42,9 @@
 
 //! \ingroup TLibCommon
 //! \{
-#define SUPPORT_FOR_VUI                  1  ///< new: add support for VUI and hrd_parameters
-#if SUPPORT_FOR_VUI
 #define BUFFERING_PERIOD_AND_TIMING_SEI  1  ///< Buffering period SEI and Picture timing SEI
 #if BUFFERING_PERIOD_AND_TIMING_SEI
 #define MAX_CPB_CNT                     32  ///< Upper bound of (cpb_cnt_minus1 + 1)
-#endif
 #endif
 #define TARGET_DECLAYERID_SET            1  ///< J0074:  targetDecLayerIdSet for sub-bitstream extraction process
 #if TARGET_DECLAYERID_SET

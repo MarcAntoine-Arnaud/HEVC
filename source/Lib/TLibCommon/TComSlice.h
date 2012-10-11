@@ -289,7 +289,6 @@ struct HrdSubLayerInfo
   UInt cbrFlag           [MAX_CPB_CNT][2];
 };
 #endif
-#if SUPPORT_FOR_VUI
 class TComVUI
 {
 private:
@@ -526,7 +525,6 @@ public:
   UInt getNumDU                              ( )            { return m_numDU;          }
 #endif
 };
-#endif
 
 /// SPS class
 class TComSPS
@@ -629,10 +627,8 @@ private:
 
   Bool        m_useDF;
 
-#if SUPPORT_FOR_VUI
   Bool        m_vuiParametersPresentFlag;
   TComVUI     m_vuiParameters;
-#endif
 
   static const Int   m_cropUnitX[MAX_CHROMA_FORMAT_IDC+1];
   static const Int   m_cropUnitY[MAX_CHROMA_FORMAT_IDC+1];
@@ -805,13 +801,11 @@ public:
   UInt getMaxLatencyIncrease  (UInt tlayer)            { return m_uiMaxLatencyIncrease[tlayer];   }
   Void setMaxLatencyIncrease  ( UInt ui , UInt tlayer) { m_uiMaxLatencyIncrease[tlayer] = ui;      }
 
-#if SUPPORT_FOR_VUI
   Bool getVuiParametersPresentFlag() { return m_vuiParametersPresentFlag; }
   Void setVuiParametersPresentFlag(Bool b) { m_vuiParametersPresentFlag = b; }
   TComVUI* getVuiParameters() { return &m_vuiParameters; }
 #if BUFFERING_PERIOD_AND_TIMING_SEI
   Void setHrdParameters( UInt frameRate, UInt numDU, UInt bitRate, Bool randomAccess );
-#endif
 #endif
 
 #if SPS_SYNTAX_CHANGES
