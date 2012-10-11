@@ -784,7 +784,6 @@ Int g_quantInterDefault4x4[16] =
   17,21,24,36,
   21,24,36,57
 };
-#if TS_FLAT_QUANTIZATION_MATRIX
 Int g_quantTSDefault4x4[16] =
 {
   16,16,16,16,
@@ -792,7 +791,6 @@ Int g_quantTSDefault4x4[16] =
   16,16,16,16,
   16,16,16,16
 };
-#endif
 
 Int g_quantIntraDefault8x8[64] =
 {

@@ -1732,9 +1732,7 @@ Void TComAPS::destroyAlfParam()
 
 TComScalingList::TComScalingList()
 {
-#if TS_FLAT_QUANTIZATION_MATRIX
   m_useTransformSkip = false;
-#endif
   init();
 }
 TComScalingList::~TComScalingList()
@@ -1898,7 +1896,6 @@ Int* TComScalingList::getScalingListDefaultAddress(UInt sizeId, UInt listId)
   switch(sizeId)
   {
     case SCALING_LIST_4x4:
-#if TS_FLAT_QUANTIZATION_MATRIX
       if( m_useTransformSkip )
       {
         src = g_quantTSDefault4x4;
@@ -1907,9 +1904,6 @@ Int* TComScalingList::getScalingListDefaultAddress(UInt sizeId, UInt listId)
       {
         src = (listId<3) ? g_quantIntraDefault4x4 : g_quantInterDefault4x4;
       }
-#else
-      src = (listId<3) ? g_quantIntraDefault4x4 : g_quantInterDefault4x4;
-#endif
       break;
     case SCALING_LIST_8x8:
       src = (listId<3) ? g_quantIntraDefault8x8 : g_quantInterDefault8x8;
