@@ -1344,9 +1344,7 @@ Void TEncCavlc::xCodePredWeightTable( TComSlice* pcSlice )
   Int             iNbRef       = (pcSlice->getSliceType() == B_SLICE ) ? (2) : (1);
   Bool            bDenomCoded  = false;
   UInt            uiMode = 0;
-#if NUM_WP_LIMIT
   UInt            uiTotalSignalledWeightFlags = 0;
-#endif
   if ( (pcSlice->getSliceType()==P_SLICE && pcSlice->getPPS()->getUseWP()) || (pcSlice->getSliceType()==B_SLICE && pcSlice->getPPS()->getWPBiPred()) )
   {
     uiMode = 1; // explicit
@@ -1374,7 +1372,6 @@ Void TEncCavlc::xCodePredWeightTable( TComSlice* pcSlice )
           bDenomCoded = true;
         }
         WRITE_FLAG( wp[0].bPresentFlag, "luma_weight_lX_flag" );               // u(1): luma_weight_lX_flag
-#if NUM_WP_LIMIT
         uiTotalSignalledWeightFlags += wp[0].bPresentFlag;
       }
       if (bChroma) 
@@ -1390,7 +1387,6 @@ Void TEncCavlc::xCodePredWeightTable( TComSlice* pcSlice )
       for ( Int iRefIdx=0 ; iRefIdx<pcSlice->getNumRefIdx(eRefPicList) ; iRefIdx++ ) 
       {
         pcSlice->getWpScaling(eRefPicList, iRefIdx, wp);
-#endif
         if ( wp[0].bPresentFlag ) 
         {
           Int iDeltaWeight = (wp[0].iWeight - (1<<wp[0].uiLog2WeightDenom));
@@ -1400,9 +1396,6 @@ Void TEncCavlc::xCodePredWeightTable( TComSlice* pcSlice )
 
         if ( bChroma ) 
         {
-#if !NUM_WP_LIMIT
-          WRITE_FLAG( wp[1].bPresentFlag, "chroma_weight_lX_flag" );           // u(1): chroma_weight_lX_flag
-#endif
           if ( wp[1].bPresentFlag )
           {
             for ( Int j=1 ; j<3 ; j++ ) 
@@ -1419,9 +1412,7 @@ Void TEncCavlc::xCodePredWeightTable( TComSlice* pcSlice )
         }
       }
     }
-#if NUM_WP_LIMIT
     assert(uiTotalSignalledWeightFlags<=24);
-#endif
   }
 }
 
