@@ -95,9 +95,6 @@
 #define NUM_ALF_FLAG_CTX              1       ///< number of context models for ALF flag
 #define NUM_ALF_UVLC_CTX              2       ///< number of context models for ALF UVLC (filter length)
 #define NUM_ALF_SVLC_CTX              3       ///< number of context models for ALF SVLC (filter coeff.)
-#if !SAO_ABS_BY_PASS
-#define NUM_SAO_UVLC_CTX              2       ///< number of context models for SAO UVLC
-#endif
 #define NUM_SAO_MERGE_FLAG_CTX        1       ///< number of context models for SAO merge flags
 #define NUM_SAO_TYPE_IDX_CTX          1       ///< number of context models for SAO type index
 
@@ -330,15 +327,6 @@ INIT_ALF_SVLC[3][NUM_ALF_SVLC_CTX] =
   { 141,  154,  189, }, 
   { 187,  154,  159, }, 
 };
-#if !SAO_ABS_BY_PASS
-static const UChar 
-INIT_SAO_UVLC[3][NUM_SAO_UVLC_CTX] =  
-{
-  { 200,  140, }, 
-  { 185,  140, }, 
-  { 143,  140, }, 
-};
-#endif
 static const UChar 
 INIT_SAO_MERGE_FLAG[3][NUM_SAO_MERGE_FLAG_CTX] = 
 {
