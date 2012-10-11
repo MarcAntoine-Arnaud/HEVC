@@ -61,9 +61,6 @@
 
 Void         initROM();
 Void         destroyROM();
-#if !REMOVE_ZIGZAG_SCAN
-Void         initFrameScanXY( UInt* pBuff, UInt* pBuffX, UInt* pBuffY, Int iWidth, Int iHeight );
-#endif
 Void         initSigLastScan(UInt* pBuffZ, UInt* pBuffH, UInt* pBuffV, UInt* pBuffD, Int iWidth, Int iHeight, Int iDepth);
 Void         initNonSquareSigLastScan(UInt* pBuffZ, UInt uiWidth, UInt uiHeight);
 // ====================================================================================================================
@@ -122,11 +119,6 @@ extern const UChar  g_aucChromaScale      [58];
 // Scanning order & context mapping table
 // ====================================================================================================================
 
-#if !REMOVE_ZIGZAG_SCAN
-extern       UInt*  g_auiFrameScanXY[ MAX_CU_DEPTH  ];    // raster index     from scanning index
-extern       UInt*  g_auiFrameScanX [ MAX_CU_DEPTH  ];    // raster index (x) from scanning index
-extern       UInt*  g_auiFrameScanY [ MAX_CU_DEPTH  ];    // raster index (y) from scanning index
-#endif
 extern       UInt*  g_auiSigLastScan[4][ MAX_CU_DEPTH ];  // raster index from scanning index (zigzag, hor, ver, diag)
 #if !REMOVE_NSQT
 extern UInt *g_sigScanNSQT[ 4 ]; // scan for non-square partitions
