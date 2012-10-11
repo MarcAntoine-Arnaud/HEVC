@@ -65,11 +65,7 @@
 #define NUM_INTER_DIR_CTX             5       ///< number of context models for inter prediction direction
 #define NUM_MV_RES_CTX                2       ///< number of context models for motion vector difference
 
-#if REF_IDX_BYPASS
 #define NUM_REF_NO_CTX                2       ///< number of context models for reference index
-#else
-#define NUM_REF_NO_CTX                4       ///< number of context models for reference index
-#endif
 #if TRANS_SPLIT_FLAG_CTX_REDUCTION
 #define NUM_TRANS_SUBDIV_FLAG_CTX     3       ///< number of context models for transform subdivision flags
 #else
@@ -232,7 +228,6 @@ INIT_MVD[3][NUM_MV_RES_CTX] =
   { CNU,  CNU, }, 
 };
 
-#if REF_IDX_BYPASS
 static const UChar 
 INIT_REF_PIC[3][NUM_REF_NO_CTX] =  
 {
@@ -240,15 +235,6 @@ INIT_REF_PIC[3][NUM_REF_NO_CTX] =
   { 153,  153 }, 
   { CNU,  CNU }, 
 };
-#else
-static const UChar 
-INIT_REF_PIC[3][NUM_REF_NO_CTX] =  
-{
-  { 153,  153,  168,  CNU, }, 
-  { 153,  153,  139,  CNU, }, 
-  { CNU,  CNU,  CNU,  CNU, }, 
-};
-#endif
 
 static const UChar 
 INIT_DQP[3][NUM_DELTA_QP_CTX] = 

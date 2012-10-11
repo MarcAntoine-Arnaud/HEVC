@@ -804,7 +804,6 @@ Void TDecSbac::parseRefFrmIdx( TComDataCU* pcCU, Int& riRefFrmIdx, UInt uiAbsPar
 
     if( uiSymbol )
     {
-#if REF_IDX_BYPASS
       UInt uiRefNum = pcCU->getSlice()->getNumRefIdx( eRefList ) - 2;
       pCtx++;
       UInt ui;
@@ -824,10 +823,6 @@ Void TDecSbac::parseRefFrmIdx( TComDataCU* pcCU, Int& riRefFrmIdx, UInt uiAbsPar
         }
       }
       uiSymbol = ui + 1;
-#else
-      xReadUnaryMaxSymbol( uiSymbol, pCtx + 1, 1, pcCU->getSlice()->getNumRefIdx( eRefList )-2 );
-      uiSymbol++;
-#endif
     }
     riRefFrmIdx = uiSymbol;
   }

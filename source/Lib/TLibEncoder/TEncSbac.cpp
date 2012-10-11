@@ -814,7 +814,6 @@ Void TEncSbac::codeRefFrmIdx( TComDataCU* pcCU, UInt uiAbsPartIdx, RefPicList eR
     
     if( iRefFrame > 0 )
     {
-#if REF_IDX_BYPASS
       UInt uiRefNum = pcCU->getSlice()->getNumRefIdx( eRefList ) - 2;
       pCtx++;
       iRefFrame--;
@@ -834,9 +833,6 @@ Void TEncSbac::codeRefFrmIdx( TComDataCU* pcCU, UInt uiAbsPartIdx, RefPicList eR
           break;
         }
       }
-#else
-      xWriteUnaryMaxSymbol( iRefFrame - 1, pCtx + 1, 1, pcCU->getSlice()->getNumRefIdx( eRefList )-2 );
-#endif
     }
   }
   return;
