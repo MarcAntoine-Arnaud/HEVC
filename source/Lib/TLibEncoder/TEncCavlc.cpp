@@ -399,7 +399,6 @@ Void TEncCavlc::codeSPS( TComSPS* pcSPS )
 #if ENC_DEC_TRACE  
   xTraceSPSHeader (pcSPS);
 #endif
-#if SPS_SYNTAX_CHANGES
   WRITE_CODE( pcSPS->getVPSId (),          4,       "video_parameter_set_id" );
   WRITE_CODE( pcSPS->getMaxTLayers() - 1,  3,       "sps_max_sub_layers_minus1" );
   WRITE_FLAG( 0,                                    "sps_reserved_zero_bit");
@@ -413,17 +412,6 @@ Void TEncCavlc::codeSPS( TComSPS* pcSPS )
     WRITE_FLAG( 0,                                  "separate_colour_plane_flag");
   }
 
-#else
-  WRITE_CODE( pcSPS->getProfileSpace (),   3,       "profile_space" );
-  WRITE_CODE( pcSPS->getProfileIdc (),     5,       "profile_idc" );
-  WRITE_CODE( pcSPS->getRsvdIndFlags(),   16,       "reserved_indicator_flags" );
-  WRITE_CODE( pcSPS->getLevelIdc (),       8,       "level_idc" );
-  WRITE_CODE( pcSPS->getProfileCompat (), 32,       "profile_compatibility" );
-  WRITE_UVLC( pcSPS->getSPSId (),                   "seq_parameter_set_id" );
-  WRITE_UVLC( pcSPS->getVPSId (),                   "video_parameter_set_id" );
-  WRITE_UVLC( pcSPS->getChromaFormatIdc (),         "chroma_format_idc" );
-  WRITE_CODE( pcSPS->getMaxTLayers() - 1,  3,       "max_temporal_layers_minus1" );
-#endif
   WRITE_UVLC( pcSPS->getPicWidthInLumaSamples (),   "pic_width_in_luma_samples" );
   WRITE_UVLC( pcSPS->getPicHeightInLumaSamples(),   "pic_height_in_luma_samples" );
   WRITE_FLAG( pcSPS->getPicCroppingFlag(),          "pic_cropping_flag" );

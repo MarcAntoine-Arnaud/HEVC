@@ -45,7 +45,6 @@
 #define MAX_CPB_CNT                     32  ///< Upper bound of (cpb_cnt_minus1 + 1)
 #define MAX_NUM_LAYER_IDS                64
 
-#define SPS_SYNTAX_CHANGES               1  ///< J0550: changes to SPS syntax
 #define VPS_SYNTAX_CHANGES               1  ///< J0550/J0562: changes to VPS syntax
 #define PROFILE_TIER_LEVEL_SYNTAX        1  ///< J0562: Include profile_tier_level() syntax structure; not used for now
 #define SAO_LUM_CHROMA_ONOFF_FLAGS       1  ///< J0087: slice-level independent luma/chroma SAO on/off flag 
