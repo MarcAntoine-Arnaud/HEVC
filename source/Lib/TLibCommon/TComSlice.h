@@ -277,7 +277,6 @@ public:
 #endif  
 };
 
-#if BUFFERING_PERIOD_AND_TIMING_SEI
 struct HrdSubLayerInfo
 {
   Bool fixedPicRateFlag;
@@ -288,7 +287,6 @@ struct HrdSubLayerInfo
   UInt cpbSizeValue      [MAX_CPB_CNT][2];
   UInt cbrFlag           [MAX_CPB_CNT][2];
 };
-#endif
 class TComVUI
 {
 private:
@@ -318,7 +316,6 @@ private:
   Int  m_maxBitsPerMinCuDenom;
   Int  m_log2MaxMvLengthHorizontal;
   Int  m_log2MaxMvLengthVertical;
-#if BUFFERING_PERIOD_AND_TIMING_SEI
   Bool m_timingInfoPresentFlag;
   UInt m_numUnitsInTick;
   UInt m_timeScale;
@@ -334,7 +331,6 @@ private:
   UInt m_dpbOutputDelayLengthMinus1;
   UInt m_numDU;
   HrdSubLayerInfo m_HRD[MAX_TLAYER];
-#endif
 public:
   TComVUI()
     :m_aspectRatioInfoPresentFlag(false)
@@ -363,7 +359,6 @@ public:
     ,m_maxBitsPerMinCuDenom(1)
     ,m_log2MaxMvLengthHorizontal(15)
     ,m_log2MaxMvLengthVertical(15)
-#if BUFFERING_PERIOD_AND_TIMING_SEI
     ,m_timingInfoPresentFlag(false)
     ,m_numUnitsInTick(1001)
     ,m_timeScale(60000)
@@ -377,7 +372,6 @@ public:
     ,m_initialCpbRemovalDelayLengthMinus1(0)
     ,m_cpbRemovalDelayLengthMinus1(0)
     ,m_dpbOutputDelayLengthMinus1(0)
-#endif
   {}
 
   virtual ~TComVUI() {}
@@ -460,7 +454,6 @@ public:
   Int getLog2MaxMvLengthVertical() { return m_log2MaxMvLengthVertical; }
   Void setLog2MaxMvLengthVertical(Int i) { m_log2MaxMvLengthVertical = i; }
 
-#if BUFFERING_PERIOD_AND_TIMING_SEI
   Void setTimingInfoPresentFlag             ( Bool flag )  { m_timingInfoPresentFlag = flag;               }
   Bool getTimingInfoPresentFlag             ( )            { return m_timingInfoPresentFlag;               }
 
@@ -523,7 +516,6 @@ public:
 
   Void setNumDU                              ( UInt value ) { m_numDU = value;                            }
   UInt getNumDU                              ( )            { return m_numDU;          }
-#endif
 };
 
 /// SPS class
@@ -804,9 +796,7 @@ public:
   Bool getVuiParametersPresentFlag() { return m_vuiParametersPresentFlag; }
   Void setVuiParametersPresentFlag(Bool b) { m_vuiParametersPresentFlag = b; }
   TComVUI* getVuiParameters() { return &m_vuiParameters; }
-#if BUFFERING_PERIOD_AND_TIMING_SEI
   Void setHrdParameters( UInt frameRate, UInt numDU, UInt bitRate, Bool randomAccess );
-#endif
 
 #if SPS_SYNTAX_CHANGES
   TComPTL* getPTL()     { return &m_pcPTL; }

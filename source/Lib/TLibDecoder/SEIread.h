@@ -59,10 +59,8 @@ protected:
   Void xParseSEIActiveParameterSets    (SEIActiveParameterSets& sei, UInt payloadSize);
 #endif
   Void xParseSEIDecodedPictureHash    (SEIDecodedPictureHash& sei, UInt payloadSize);
-#if BUFFERING_PERIOD_AND_TIMING_SEI
   Void xParseSEIBufferingPeriod       (SEIBufferingPeriod& sei, UInt payloadSize);
   Void xParseSEIPictureTiming         (SEIPictureTiming& sei, UInt payloadSize);
-#endif
   Void xParseSEIRecoveryPoint         (SEIRecoveryPoint& sei, UInt payloadSize);
   Void xParseByteAlign();
 };

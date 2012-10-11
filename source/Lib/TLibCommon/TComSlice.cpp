@@ -1380,7 +1380,6 @@ Void  TComSPS::createRPSList( Int numRPS )
   m_RPSList.destroy();
   m_RPSList.create(numRPS);
 }
-#if BUFFERING_PERIOD_AND_TIMING_SEI
 Void TComSPS::setHrdParameters( UInt frameRate, UInt numDU, UInt bitRate, Bool randomAccess )
 {
   if( !getVuiParametersPresentFlag() )
@@ -1467,7 +1466,6 @@ Void TComSPS::setHrdParameters( UInt frameRate, UInt numDU, UInt bitRate, Bool r
     }
   }
 }
-#endif
 const Int TComSPS::m_cropUnitX[]={1,2,2,1};
 const Int TComSPS::m_cropUnitY[]={1,2,1,1};
 

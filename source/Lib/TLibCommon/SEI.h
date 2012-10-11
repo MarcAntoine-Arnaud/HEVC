@@ -35,9 +35,7 @@
 
 //! \ingroup TLibCommon
 //! \{
-#if BUFFERING_PERIOD_AND_TIMING_SEI
 class TComSPS;
-#endif
 
 /**
  * Abstract class representing an SEI message with lightweight RTTI.
@@ -47,10 +45,8 @@ class SEI
 public:
   enum PayloadType
   {
-#if BUFFERING_PERIOD_AND_TIMING_SEI
     BUFFERING_PERIOD       = 0,
     PICTURE_TIMING         = 1,
-#endif
     USER_DATA_UNREGISTERED = 5,
     RECOVERY_POINT         = 6,
 #if ACTIVE_PARAMETER_SETS_SEI_MESSAGE 
@@ -122,7 +118,6 @@ public:
 };
 #endif 
 
-#if BUFFERING_PERIOD_AND_TIMING_SEI
 class SEIBufferingPeriod : public SEI
 {
 public:
@@ -172,7 +167,6 @@ public:
   UInt* m_duCpbRemovalDelayMinus1;
   TComSPS* m_sps;
 };
-#endif
 class SEIRecoveryPoint : public SEI
 {
 public:
@@ -198,10 +192,8 @@ public:
     , active_parameter_sets(0)
 #endif 
     , picture_digest(0)
-#if BUFFERING_PERIOD_AND_TIMING_SEI
     , buffering_period(0)
     , picture_timing(0)
-#endif
     , recovery_point(0)
     {}
 
@@ -212,10 +204,8 @@ public:
     delete active_parameter_sets; 
 #endif 
     delete picture_digest;
-#if BUFFERING_PERIOD_AND_TIMING_SEI
     delete buffering_period;
     delete picture_timing;
-#endif
     delete recovery_point;
   }
 
@@ -224,11 +214,9 @@ public:
   SEIActiveParameterSets* active_parameter_sets; 
 #endif 
   SEIDecodedPictureHash* picture_digest;
-#if BUFFERING_PERIOD_AND_TIMING_SEI
   SEIBufferingPeriod* buffering_period;
   SEIPictureTiming* picture_timing;
   TComSPS* m_pSPS;
-#endif
   SEIRecoveryPoint* recovery_point;
 };
 

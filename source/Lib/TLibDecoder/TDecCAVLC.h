@@ -94,11 +94,7 @@ public:
   Void  parseVPS            ( TComVPS* pcVPS );
   Void  parseSPS            ( TComSPS* pcSPS );
   Void  parsePPS            ( TComPPS* pcPPS);
-#if !BUFFERING_PERIOD_AND_TIMING_SEI
-  Void  parseVUI            ( TComVUI* pcVUI );
-#else
   Void  parseVUI            ( TComVUI* pcVUI, TComSPS* pcSPS );
-#endif
   Void  parseSEI(SEImessages&);
 #if !REMOVE_APS
   Void  parseAPS            ( TComAPS* pAPS );

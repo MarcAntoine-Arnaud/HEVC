@@ -373,9 +373,6 @@ Void TEncCavlc::codeVUI( TComVUI *pcVUI, TComSPS* pcSPS )
   WRITE_FLAG(pcVUI->getFieldSeqFlag(),                          "field_seq_flag");
   assert(pcVUI->getFieldSeqFlag() == 0);                        // not currently supported
   WRITE_FLAG(pcVUI->getHrdParametersPresentFlag(),              "hrd_parameters_present_flag");
-#if !BUFFERING_PERIOD_AND_TIMING_SEI
-  assert(pcVUI->getHrdParametersPresentFlag() == 0);            // not currently supported
-#else
   if( pcVUI->getHrdParametersPresentFlag() )
   {
     WRITE_FLAG(pcVUI->getTimingInfoPresentFlag(),               "timing_info_present_flag");
@@ -426,7 +423,6 @@ Void TEncCavlc::codeVUI( TComVUI *pcVUI, TComSPS* pcSPS )
       }
     }
   }
-#endif
   WRITE_FLAG(pcVUI->getBitstreamRestrictionFlag(),              "bitstream_restriction_flag");
   if (pcVUI->getBitstreamRestrictionFlag())
   {

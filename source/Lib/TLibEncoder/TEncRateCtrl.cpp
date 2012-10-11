@@ -233,13 +233,8 @@ Void  TEncRateCtrl::create(Int sizeIntraPeriod, Int sizeGOP, Int frameRate, Int 
   m_sourceWidthInLCU         = (sourceWidth  / maxCUWidth  ) + (( sourceWidth  %  maxCUWidth ) ? 1 : 0);
   m_sourceHeightInLCU        = (sourceHeight / maxCUHeight) + (( sourceHeight %  maxCUHeight) ? 1 : 0);  
   m_isLowdelay               = (sizeIntraPeriod == -1) ? true : false;
-#if !BUFFERING_PERIOD_AND_TIMING_SEI
-  m_prevBitrate              = targetKbps*1000;
-  m_currBitrate              = targetKbps*1000;
-#else
   m_prevBitrate              = ( targetKbps << 10 );  // in units of 1,024 bps
   m_currBitrate              = ( targetKbps << 10 );
-#endif
   m_frameRate                = frameRate;
   m_refFrameNum              = m_isLowdelay ? (sizeGOP) : (sizeGOP>>1);
   m_nonRefFrameNum           = sizeGOP-m_refFrameNum;

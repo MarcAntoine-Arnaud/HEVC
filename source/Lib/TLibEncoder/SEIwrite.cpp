@@ -83,14 +83,12 @@ void SEIWriter::xWriteSEIpayloadData(const SEI& sei)
   case SEI::DECODED_PICTURE_HASH:
     xWriteSEIDecodedPictureHash(*static_cast<const SEIDecodedPictureHash*>(&sei));
     break;
-#if BUFFERING_PERIOD_AND_TIMING_SEI
   case SEI::BUFFERING_PERIOD:
     xWriteSEIBufferingPeriod(*static_cast<const SEIBufferingPeriod*>(&sei));
     break;
   case SEI::PICTURE_TIMING:
     xWriteSEIPictureTiming(*static_cast<const SEIPictureTiming*>(&sei));
     break;
-#endif
   case SEI::RECOVERY_POINT:
     xWriteSEIRecoveryPoint(*static_cast<const SEIRecoveryPoint*>(&sei));
     break;
@@ -225,7 +223,6 @@ Void SEIWriter::xWriteSEIActiveParameterSets(const SEIActiveParameterSets& sei)
 }
 #endif 
 
-#if BUFFERING_PERIOD_AND_TIMING_SEI
 Void SEIWriter::xWriteSEIBufferingPeriod(const SEIBufferingPeriod& sei)
 {
   Int i, nalOrVcl;
@@ -283,7 +280,6 @@ Void SEIWriter::xWriteSEIPictureTiming(const SEIPictureTiming& sei)
   }
   xWriteByteAlign();
 }
-#endif
 Void SEIWriter::xWriteSEIRecoveryPoint(const SEIRecoveryPoint& sei)
 {
   WRITE_SVLC( sei.m_recoveryPocCnt,    "recovery_poc_cnt"    );

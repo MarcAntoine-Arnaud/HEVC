@@ -128,7 +128,6 @@ Void SEIReader::xReadSEImessage(SEImessages& seis)
     seis.picture_digest = new SEIDecodedPictureHash;
     xParseSEIDecodedPictureHash(*seis.picture_digest, payloadSize);
     break;
-#if BUFFERING_PERIOD_AND_TIMING_SEI
   case SEI::BUFFERING_PERIOD:
     seis.buffering_period = new SEIBufferingPeriod;
     seis.buffering_period->m_sps = seis.m_pSPS;
@@ -139,7 +138,6 @@ Void SEIReader::xReadSEImessage(SEImessages& seis)
     seis.picture_timing->m_sps = seis.m_pSPS;
     xParseSEIPictureTiming(*seis.picture_timing, payloadSize);
     break;
-#endif
   case SEI::RECOVERY_POINT:
     seis.recovery_point = new SEIRecoveryPoint;
     xParseSEIRecoveryPoint(*seis.recovery_point, payloadSize);
@@ -242,7 +240,6 @@ Void SEIReader::xParseSEIActiveParameterSets(SEIActiveParameterSets& sei, unsign
 }
 #endif
 
-#if BUFFERING_PERIOD_AND_TIMING_SEI
 Void SEIReader::xParseSEIBufferingPeriod(SEIBufferingPeriod& sei, UInt payloadSize)
 {
   Int i, nalOrVcl;
@@ -331,7 +328,6 @@ Void SEIReader::xParseSEIPictureTiming(SEIPictureTiming& sei, UInt payloadSize)
   }
   xParseByteAlign();
 }
-#endif
 Void SEIReader::xParseSEIRecoveryPoint(SEIRecoveryPoint& sei, UInt payloadSize)
 {
   Int  iCode;

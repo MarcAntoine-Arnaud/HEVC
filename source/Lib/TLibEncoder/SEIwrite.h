@@ -55,11 +55,9 @@ protected:
   Void xWriteSEIActiveParameterSets(const SEIActiveParameterSets& sei);
 #endif
   Void xWriteSEIDecodedPictureHash(const SEIDecodedPictureHash& sei);
-#if BUFFERING_PERIOD_AND_TIMING_SEI
   Void xWriteSEIBufferingPeriod(const SEIBufferingPeriod& sei);
   Void xWriteSEIPictureTiming(const SEIPictureTiming& sei);
   TComSPS *m_pSPS;
-#endif
   Void xWriteSEIRecoveryPoint(const SEIRecoveryPoint& sei);
   Void xWriteByteAlign();
 };

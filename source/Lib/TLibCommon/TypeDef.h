@@ -42,10 +42,7 @@
 
 //! \ingroup TLibCommon
 //! \{
-#define BUFFERING_PERIOD_AND_TIMING_SEI  1  ///< Buffering period SEI and Picture timing SEI
-#if BUFFERING_PERIOD_AND_TIMING_SEI
 #define MAX_CPB_CNT                     32  ///< Upper bound of (cpb_cnt_minus1 + 1)
-#endif
 #define TARGET_DECLAYERID_SET            1  ///< J0074:  targetDecLayerIdSet for sub-bitstream extraction process
 #if TARGET_DECLAYERID_SET
 #define MAX_NUM_LAYER_IDS                64

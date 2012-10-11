@@ -93,10 +93,8 @@ TEncGOP::TEncGOP()
   ::memset(m_ltRefPicPocLsbSps, 0, sizeof(m_ltRefPicPocLsbSps));
   ::memset(m_ltRefPicUsedByCurrPicFlag, 0, sizeof(m_ltRefPicUsedByCurrPicFlag));
 #endif
-#if BUFFERING_PERIOD_AND_TIMING_SEI
   m_cpbRemovalDelay   = 0;
   m_lastBPSEI         = 0;
-#endif
   return;
 }
 
@@ -138,10 +136,8 @@ Void TEncGOP::init ( TEncTop* pcTEncTop )
   //--Adaptive Loop filter
   m_pcSAO                = pcTEncTop->getSAO();
   m_pcRateCtrl           = pcTEncTop->getRateCtrl();
-#if BUFFERING_PERIOD_AND_TIMING_SEI
   m_lastBPSEI          = 0;
   m_totalCoded         = 0;
-#endif
 
 }
 
@@ -163,11 +159,9 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
   xInitGOP( iPOCLast, iNumPicRcvd, rcListPic, rcListPicYuvRecOut );
 
   m_iNumPicCoded = 0;
-#if BUFFERING_PERIOD_AND_TIMING_SEI
   SEIPictureTiming pictureTimingSEI;
   UInt *accumBitsDU = NULL;
   UInt *accumNalsDU = NULL;
-#endif
   for ( Int iGOPid=0; iGOPid < m_iGopSize; iGOPid++ )
   {
     UInt uiColDir = 1;
@@ -800,7 +794,6 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
         }
       }
 #endif
-#if BUFFERING_PERIOD_AND_TIMING_SEI
       if( m_pcCfg->getPictureTimingSEIEnabled() )
       {
         UInt maxCU = m_pcCfg->getSliceArgument() >> ( pcSlice->getSPS()->getMaxCUDepth() << 1);
@@ -816,7 +809,6 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
       {
         pcSlice->getSPS()->getVuiParameters()->setHrdParametersPresentFlag( true );
       }
-#endif
       m_pcEntropyCoder->encodeSPS(pcSlice->getSPS());
       writeRBSPTrailingBits(nalu.m_Bitstream);
       accessUnit.push_back(new NALUnitEBSP(nalu));
@@ -854,7 +846,6 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
       m_bSeqFirst = false;
     }
 
-#if BUFFERING_PERIOD_AND_TIMING_SEI
     if( ( m_pcCfg->getPictureTimingSEIEnabled() ) &&
         ( pcSlice->getSPS()->getVuiParametersPresentFlag() ) && 
         ( ( pcSlice->getSPS()->getVuiParameters()->getNalHrdParametersPresentFlag() ) || ( pcSlice->getSPS()->getVuiParameters()->getVclHrdParametersPresentFlag() ) ) )
@@ -922,7 +913,6 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
       m_cpbRemovalDelay = 0;
     }
     m_cpbRemovalDelay ++;
-#endif
     if( ( m_pcEncTop->getRecoveryPointSEIEnabled() ) && ( pcSlice->getSliceType() == I_SLICE ) )
     {
       // Recovery point SEI
@@ -1238,7 +1228,6 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
             uiOneBitstreamPerSliceLength += nalu.m_Bitstream.getNumberOfWrittenBits() + 24; // length of bitstream after byte-alignment + 3 byte startcode 0x000001
           }
 
-#if BUFFERING_PERIOD_AND_TIMING_SEI
           if( ( m_pcCfg->getPictureTimingSEIEnabled() ) &&
               ( pcSlice->getSPS()->getVuiParametersPresentFlag() ) && 
               ( ( pcSlice->getSPS()->getVuiParameters()->getNalHrdParametersPresentFlag() ) || ( pcSlice->getSPS()->getVuiParameters()->getVclHrdParametersPresentFlag() ) ) &&
@@ -1256,7 +1245,6 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
             accumBitsDU[ pcSlice->getSliceIdx() ] = ( numRBSPBytes << 3 );
             accumNalsDU[ pcSlice->getSliceIdx() ] = (UInt)accessUnit.size();
           }
-#endif
           processingState = ENCODE_SLICE;
           }
           break;
@@ -1469,7 +1457,6 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
         unsigned  frameBits = m_vRVM_RP[m_vRVM_RP.size()-1];
         m_pcRateCtrl->updataRCFrameStatus((Int)frameBits, pcSlice->getSliceType());
       }
-#if BUFFERING_PERIOD_AND_TIMING_SEI
       if( ( m_pcCfg->getPictureTimingSEIEnabled() ) &&
           ( pcSlice->getSPS()->getVuiParametersPresentFlag() ) && 
           ( ( pcSlice->getSPS()->getVuiParameters()->getNalHrdParametersPresentFlag() ) || ( pcSlice->getSPS()->getVuiParameters()->getVclHrdParametersPresentFlag() ) ) )
@@ -1509,7 +1496,6 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
         AccessUnit::iterator it = find_if(accessUnit.begin(), accessUnit.end(), mem_fun(&NALUnit::isSlice));
         accessUnit.insert(it, new NALUnitEBSP(nalu));
       }
-#endif
 #if FIXED_ROUNDING_FRAME_MEMORY
       /* TODO: this should happen after copyToPic(pcPicYuvRecOut) */
       pcPic->getPicYuvRec()->xFixedRoundingPic();
@@ -1519,9 +1505,7 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
       pcPic->setReconMark   ( true );
       m_bFirst = false;
       m_iNumPicCoded++;
-#if BUFFERING_PERIOD_AND_TIMING_SEI
       m_totalCoded ++;
-#endif
       /* logging: insert a newline at end of picture period */
       printf("\n");
       fflush(stdout);
@@ -1534,10 +1518,8 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
   }
   delete pcBitstreamRedirect;
 
-#if BUFFERING_PERIOD_AND_TIMING_SEI
   if( accumBitsDU != NULL) delete accumBitsDU;
   if( accumNalsDU != NULL) delete accumNalsDU;
-#endif
 
   assert ( m_iNumPicCoded == iNumPicRcvd );
 }

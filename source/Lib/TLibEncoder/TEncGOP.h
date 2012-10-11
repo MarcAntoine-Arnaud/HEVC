@@ -117,11 +117,9 @@ private:
   std::vector<Int>        m_storedStartCUAddrForEncodingDependentSlice;
 
   std::vector<Int> m_vRVM_RP;
-#if BUFFERING_PERIOD_AND_TIMING_SEI
   UInt                    m_lastBPSEI;
   UInt                    m_totalCoded;
   UInt                    m_cpbRemovalDelay;
-#endif
 public:
   TEncGOP();
   virtual ~TEncGOP();

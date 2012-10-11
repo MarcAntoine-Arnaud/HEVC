@@ -533,11 +533,7 @@ Void TDecCavlc::parsePPS(TComPPS* pcPPS)
   }
 }
 
-#if !BUFFERING_PERIOD_AND_TIMING_SEI
-Void  TDecCavlc::parseVUI(TComVUI* pcVUI)
-#else
 Void  TDecCavlc::parseVUI(TComVUI* pcVUI, TComSPS *pcSPS)
-#endif
 {
 #if ENC_DEC_TRACE
   fprintf( g_hTrace, "----------- vui_parameters -----------\n");
@@ -588,9 +584,6 @@ Void  TDecCavlc::parseVUI(TComVUI* pcVUI, TComSPS *pcSPS)
   assert(pcVUI->getFieldSeqFlag() == false);        // not supported yet
 
   READ_FLAG(     uiCode, "hrd_parameters_present_flag");              pcVUI->setHrdParametersPresentFlag(uiCode);
-#if !BUFFERING_PERIOD_AND_TIMING_SEI
-  assert(pcVUI->getHrdParametersPresentFlag() == false);  // not supported yet
-#else
   if( pcVUI->getHrdParametersPresentFlag() )
   {
     READ_FLAG( uiCode, "timing_info_present_flag" );                  pcVUI->setTimingInfoPresentFlag( uiCode );
@@ -641,7 +634,6 @@ Void  TDecCavlc::parseVUI(TComVUI* pcVUI, TComSPS *pcSPS)
       }
     }
   }
-#endif
   READ_FLAG(     uiCode, "bitstream_restriction_flag");               pcVUI->setBitstreamRestrictionFlag(uiCode);
   if (pcVUI->getBitstreamRestrictionFlag())
   {
@@ -845,11 +837,7 @@ Void TDecCavlc::parseSPS(TComSPS* pcSPS)
 
   if (pcSPS->getVuiParametersPresentFlag())
   {
-#if !BUFFERING_PERIOD_AND_TIMING_SEI
-    parseVUI(pcSPS->getVuiParameters());
-#else
     parseVUI(pcSPS->getVuiParameters(), pcSPS);
-#endif
   }
 
   READ_FLAG( uiCode, "sps_extension_flag");
