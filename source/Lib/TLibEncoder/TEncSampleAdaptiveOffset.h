@@ -132,13 +132,9 @@ public:
 #else
   Void rdoSaoUnitAll(SAOParam *saoParam, Double lambda, Double lambdaChroma);
 #endif
-#if SAO_SINGLE_MERGE
   Void saoComponentParamDist(Int allowMergeLeft, Int allowMergeUp, SAOParam *saoParam, Int addr, Int addrUp, Int addrLeft, Int yCbCr, Double lambda, SaoLcuParam *compSaoParam, Double *distortion);
 #if SAO_TYPE_SHARING
   Void sao2ChromaParamDist(Int allowMergeLeft, Int allowMergeUp, SAOParam *saoParam, Int addr, Int addrUp, Int addrLeft, Double lambda, SaoLcuParam *crSaoParam, SaoLcuParam *cbSaoParam, Double *distortion);
-#endif
-#else
-  Void rdoSaoUnit(Int rx, Int ry, SAOParam *saoParam, Int addr, Int addrUp, Int addrLeft, Int yCbCr, Double lambda);
 #endif
   inline Int64 estSaoDist(Int64 count, Int64 offset, Int64 offsetOrg, Int shift);
   inline Int64 estIterOffset(Int typeIdx, Int classIdx, double lambda, Int64 offsetInput, Int64 count, Int64 offsetOrg, Int shift, Int bitIncrease, Int *currentDistortionTableBo, Double *currentRdCostTableBo );

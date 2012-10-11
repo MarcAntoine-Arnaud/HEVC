@@ -101,11 +101,7 @@
 #if SAO_MERGE_ONE_CTX
 #define NUM_SAO_MERGE_FLAG_CTX        1       ///< number of context models for SAO merge flags
 #else
-#if SAO_SINGLE_MERGE
 #define NUM_SAO_MERGE_LEFT_FLAG_CTX   1       ///< number of context models for SAO Merge-Left flag
-#else
-#define NUM_SAO_MERGE_LEFT_FLAG_CTX   3       ///< number of context models for AO SVLC (filter coeff.)
-#endif
 #define NUM_SAO_MERGE_UP_FLAG_CTX     1       ///< number of context models for AO SVLC (filter coeff.)
 #endif
 #if SAO_TYPE_CODING
@@ -364,15 +360,9 @@ INIT_SAO_MERGE_FLAG[3][NUM_SAO_MERGE_FLAG_CTX] =
 static const UChar 
 INIT_SAO_MERGE_LEFT_FLAG[3][NUM_SAO_MERGE_LEFT_FLAG_CTX] = 
 {
-#if SAO_SINGLE_MERGE
   { 153, }, 
   { 153, }, 
   { 153, }, 
-#else
-  { 153,  153,  153, }, 
-  { 153,  153,  153, }, 
-  { 153,  153,  153, }, 
-#endif
 };
 
 static const UChar 

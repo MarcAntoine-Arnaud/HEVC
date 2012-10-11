@@ -1457,11 +1457,7 @@ Void TDecSbac::parseSaoMergeLeft (UInt&  ruiVal, UInt uiCompIdx)
 #if SAO_MERGE_ONE_CTX
   m_pcTDecBinIf->decodeBin( uiCode, m_cSaoMergeSCModel.get( 0, 0, 0 ) );
 #else
-#if SAO_SINGLE_MERGE
   m_pcTDecBinIf->decodeBin( uiCode, m_cSaoMergeLeftSCModel.get( 0, 0, 0 ) );
-#else
-  m_pcTDecBinIf->decodeBin( uiCode, m_cSaoMergeLeftSCModel.get( 0, 0, uiCompIdx ) );
-#endif
 #endif
   ruiVal = (Int)uiCode;
 }
@@ -1649,7 +1645,6 @@ Void TDecSbac::parseSaoOneLcuInterleaving(Int rx, Int ry, SAOParam* pSaoParam, T
 {
   Int iAddr = pcCU->getAddr();
   UInt uiSymbol;
-#if SAO_SINGLE_MERGE
   for (Int iCompIdx=0; iCompIdx<3; iCompIdx++)
   {
     pSaoParam->saoLcuParam[iCompIdx][iAddr].mergeUpFlag    = 0;
@@ -1696,20 +1691,9 @@ Void TDecSbac::parseSaoOneLcuInterleaving(Int rx, Int ry, SAOParam* pSaoParam, T
       }
     }
   }
-#endif
 
   for (Int iCompIdx=0; iCompIdx<3; iCompIdx++)
   {
-#if !SAO_SINGLE_MERGE
-    pSaoParam->saoLcuParam[iCompIdx][iAddr].mergeUpFlag    = 0;
-    pSaoParam->saoLcuParam[iCompIdx][iAddr].mergeLeftFlag  = 0;
-    pSaoParam->saoLcuParam[iCompIdx][iAddr].bandPosition   = 0;
-    pSaoParam->saoLcuParam[iCompIdx][iAddr].typeIdx        = -1;
-    pSaoParam->saoLcuParam[iCompIdx][iAddr].offset[0]     = 0;
-    pSaoParam->saoLcuParam[iCompIdx][iAddr].offset[1]     = 0;
-    pSaoParam->saoLcuParam[iCompIdx][iAddr].offset[2]     = 0;
-    pSaoParam->saoLcuParam[iCompIdx][iAddr].offset[3]     = 0;
-#endif
 #if SAO_TYPE_SHARING
     if ((iCompIdx == 0  && pSaoParam->bSaoFlag[0]) || (iCompIdx > 0  && pSaoParam->bSaoFlag[1]) )
 #else
@@ -1718,11 +1702,7 @@ Void TDecSbac::parseSaoOneLcuInterleaving(Int rx, Int ry, SAOParam* pSaoParam, T
     {
       if (rx>0 && iCUAddrInSlice!=0 && allowMergeLeft)
       {
-#if SAO_SINGLE_MERGE
         pSaoParam->saoLcuParam[iCompIdx][iAddr].mergeLeftFlag = pSaoParam->saoLcuParam[0][iAddr].mergeLeftFlag;
-#else
-        parseSaoMergeLeft(uiSymbol,iCompIdx); pSaoParam->saoLcuParam[iCompIdx][iAddr].mergeLeftFlag = (Int)uiSymbol;
-#endif
       }
       else
       {
@@ -1733,11 +1713,7 @@ Void TDecSbac::parseSaoOneLcuInterleaving(Int rx, Int ry, SAOParam* pSaoParam, T
       {
         if ((ry > 0) && (iCUAddrUpInSlice>=0) && allowMergeUp)
         {
-#if SAO_SINGLE_MERGE
           pSaoParam->saoLcuParam[iCompIdx][iAddr].mergeUpFlag = pSaoParam->saoLcuParam[0][iAddr].mergeUpFlag;
-#else
-          parseSaoMergeUp(uiSymbol);  pSaoParam->saoLcuParam[iCompIdx][iAddr].mergeUpFlag = uiSymbol;
-#endif
         }
         else
         {

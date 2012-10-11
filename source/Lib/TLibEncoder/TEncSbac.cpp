@@ -1550,11 +1550,7 @@ Void TEncSbac::codeSaoMergeLeft       ( UInt uiCode, UInt uiCompIdx )
 #if SAO_MERGE_ONE_CTX
     m_pcBinIf->encodeBin(0,  m_cSaoMergeSCModel.get( 0, 0, 0 ));
 #else
-#if SAO_SINGLE_MERGE
     m_pcBinIf->encodeBin(0,  m_cSaoMergeLeftSCModel.get( 0, 0, 0 ));
-#else
-    m_pcBinIf->encodeBin(0,  m_cSaoMergeLeftSCModel.get( 0, 0, uiCompIdx ));
-#endif
 #endif
   }
   else
@@ -1562,11 +1558,7 @@ Void TEncSbac::codeSaoMergeLeft       ( UInt uiCode, UInt uiCompIdx )
 #if SAO_MERGE_ONE_CTX
     m_pcBinIf->encodeBin(1,  m_cSaoMergeSCModel.get( 0, 0, 0 ));
 #else
-#if SAO_SINGLE_MERGE
     m_pcBinIf->encodeBin(1,  m_cSaoMergeLeftSCModel.get( 0, 0, 0 ));
-#else
-    m_pcBinIf->encodeBin(1,  m_cSaoMergeLeftSCModel.get( 0, 0, uiCompIdx ));
-#endif
 #endif
   }
 }
