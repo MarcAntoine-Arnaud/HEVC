@@ -816,7 +816,6 @@ Bool TComSlice::isTemporalLayerSwitchingPoint( TComList<TComPic*>& rcListPic, TC
   return true;
 }
 
-#if STSA
 /** Function for checking if this is a STSA candidate 
  */
 Bool TComSlice::isStepwiseTemporalLayerSwitchingPointCandidate( TComList<TComPic*>& rcListPic, TComReferencePictureSet *pReferencePictureSet)
@@ -837,7 +836,6 @@ Bool TComSlice::isStepwiseTemporalLayerSwitchingPointCandidate( TComList<TComPic
     }
     return true;
 }
-#endif
 
 /** Function for applying picture marking based on the Reference Picture Set in pReferencePictureSet.
 */

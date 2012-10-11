@@ -332,7 +332,6 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
         pcSlice->setNalUnitType(NAL_UNIT_CODED_SLICE_TLA);
 #endif
       }
-#if STSA
       else if(pcSlice->isStepwiseTemporalLayerSwitchingPointCandidate(rcListPic, pcSlice->getRPS()))
       {
           Bool isSTSA=true;
@@ -379,7 +378,6 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
 #endif
           }
       }
-#endif
 
     }
     arrangeLongtermPicturesInRPS(pcSlice, rcListPic);
