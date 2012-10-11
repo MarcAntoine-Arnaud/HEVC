@@ -683,14 +683,12 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
 
     pcSlice = pcPic->getSlice(0);
 
-#if SAO_LCU_BOUNDARY
     // SAO parameter estimation using non-deblocked pixels for LCU bottom and right boundary areas
     if( m_pcCfg->getSaoLcuBasedOptimization() && m_pcCfg->getSaoLcuBoundary() )
     {
       m_pcSAO->resetStats();
       m_pcSAO->calcSaoStatsCu_BeforeDblk( pcPic );
     }
-#endif
 
     //-- Loop filter
     Bool bLFCrossTileBoundary = pcSlice->getPPS()->getLoopFilterAcrossTilesEnabledFlag();

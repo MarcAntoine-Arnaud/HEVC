@@ -102,9 +102,7 @@ protected:
   Pel* m_pTmpL2;
   Int* m_iLcuPartIdx;
   Int     m_maxNumOffsetsPerPic;
-#if SAO_LCU_BOUNDARY
   Bool    m_saoLcuBoundary;
-#endif
   Bool    m_saoLcuBasedOptimization;
 
 #if REMOVE_ALF
@@ -143,10 +141,8 @@ public:
   Void convertQT2SaoUnit(SAOParam* saoParam, UInt partIdx, Int yCbCr);
   Void convertOnePart2SaoUnit(SAOParam *saoParam, UInt partIdx, Int yCbCr);
   Void processSaoUnitAll(SaoLcuParam* saoLcuParam, Bool oneUnitFlag, Int yCbCr);
-#if SAO_LCU_BOUNDARY
   Void setSaoLcuBoundary (Bool bVal)  {m_saoLcuBoundary = bVal;}
   Bool getSaoLcuBoundary ()           {return m_saoLcuBoundary;}
-#endif
   Void setSaoLcuBasedOptimization (Bool bVal)  {m_saoLcuBasedOptimization = bVal;}
   Bool getSaoLcuBasedOptimization ()           {return m_saoLcuBasedOptimization;}
   Void resetSaoUnit(SaoLcuParam* saoUnit);

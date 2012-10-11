@@ -558,7 +558,6 @@ Void TEncSampleAdaptiveOffset::destroyEncBuffer()
   {
     delete [] m_iOffsetOrg ; m_iOffsetOrg = NULL;
   }
-#if SAO_LCU_BOUNDARY
   Int numLcu = m_iNumCuInWidth * m_iNumCuInHeight;
 
   for (Int i=0;i<numLcu;i++)
@@ -602,7 +601,6 @@ Void TEncSampleAdaptiveOffset::destroyEncBuffer()
   {
     delete [] m_offsetOrg_PreDblk ; m_offsetOrg_PreDblk = NULL;
   }
-#endif
 
   Int iMaxDepth = 4;
   Int iDepth;
@@ -659,7 +657,6 @@ Void TEncSampleAdaptiveOffset::createEncBuffer()
       m_iOffsetOrg[i][j]= new Int64 [MAX_NUM_SAO_CLASS]; 
     }
   }
-#if SAO_LCU_BOUNDARY
   Int numLcu = m_iNumCuInWidth * m_iNumCuInHeight;
   m_count_PreDblk  = new Int64 ***[numLcu];
   m_offsetOrg_PreDblk = new Int64 ***[numLcu];
@@ -680,7 +677,6 @@ Void TEncSampleAdaptiveOffset::createEncBuffer()
       }
     }
   }
-#endif
 
   Int iMaxDepth = 4;
   m_pppcRDSbacCoder = new TEncSbac** [iMaxDepth+1];
@@ -1100,13 +1096,11 @@ Void TEncSampleAdaptiveOffset::calcSaoStatsCuOrg(Int iAddr, Int iPartIdx, Int iY
 
 //if(iSaoType == BO_0 || iSaoType == BO_1)
   {
-#if SAO_LCU_BOUNDARY
     if( m_saoLcuBasedOptimization && m_saoLcuBoundary )
     {
       numSkipLine = iIsChroma? 1:3;
       numSkipLineRight = iIsChroma? 2:4;
     }
-#endif
     iStats = m_iOffsetOrg[iPartIdx][SAO_BO];
     iCount = m_iCount    [iPartIdx][SAO_BO];
 
@@ -1150,13 +1144,11 @@ Void TEncSampleAdaptiveOffset::calcSaoStatsCuOrg(Int iAddr, Int iPartIdx, Int iY
   {
   //if (iSaoType == EO_0)
     {
-#if SAO_LCU_BOUNDARY
       if( m_saoLcuBasedOptimization && m_saoLcuBoundary )
       {
         numSkipLine = iIsChroma? 1:3;
         numSkipLineRight = iIsChroma? 3:5;
       }
-#endif
       iStats = m_iOffsetOrg[iPartIdx][SAO_EO_0];
       iCount = m_iCount    [iPartIdx][SAO_EO_0];
 
@@ -1188,13 +1180,11 @@ Void TEncSampleAdaptiveOffset::calcSaoStatsCuOrg(Int iAddr, Int iPartIdx, Int iY
 
   //if (iSaoType == EO_1)
     {
-#if SAO_LCU_BOUNDARY
       if( m_saoLcuBasedOptimization && m_saoLcuBoundary )
       {
         numSkipLine = iIsChroma? 2:4;
         numSkipLineRight = iIsChroma? 2:4;
       }
-#endif
       iStats = m_iOffsetOrg[iPartIdx][SAO_EO_1];
       iCount = m_iCount    [iPartIdx][SAO_EO_1];
 
@@ -1237,13 +1227,11 @@ Void TEncSampleAdaptiveOffset::calcSaoStatsCuOrg(Int iAddr, Int iPartIdx, Int iY
     }
   //if (iSaoType == EO_2)
     {
-#if SAO_LCU_BOUNDARY
       if( m_saoLcuBasedOptimization && m_saoLcuBoundary )
       {
         numSkipLine = iIsChroma? 2:4;
         numSkipLineRight = iIsChroma? 3:5;
       }
-#endif
       iStats = m_iOffsetOrg[iPartIdx][SAO_EO_2];
       iCount = m_iCount    [iPartIdx][SAO_EO_2];
 
@@ -1291,13 +1279,11 @@ Void TEncSampleAdaptiveOffset::calcSaoStatsCuOrg(Int iAddr, Int iPartIdx, Int iY
     } 
   //if (iSaoType == EO_3  )
     {
-#if SAO_LCU_BOUNDARY
       if( m_saoLcuBasedOptimization && m_saoLcuBoundary )
       {
         numSkipLine = iIsChroma? 2:4;
         numSkipLineRight = iIsChroma? 3:5;
       }
-#endif
       iStats = m_iOffsetOrg[iPartIdx][SAO_EO_3];
       iCount = m_iCount    [iPartIdx][SAO_EO_3];
 
@@ -1344,7 +1330,6 @@ Void TEncSampleAdaptiveOffset::calcSaoStatsCuOrg(Int iAddr, Int iPartIdx, Int iY
 }
 
 
-#if SAO_LCU_BOUNDARY
 Void TEncSampleAdaptiveOffset::calcSaoStatsCu_BeforeDblk( TComPic* pcPic )
 {
   Int addr, yCbCr;
@@ -1646,7 +1631,6 @@ Void TEncSampleAdaptiveOffset::calcSaoStatsCu_BeforeDblk( TComPic* pcPic )
     }
   }
 }
-#endif
 
 
 /** get SAO statistics
@@ -1790,14 +1774,10 @@ Void TEncSampleAdaptiveOffset::SAOProcess(SAOParam *pcSaoParam, Double dLambda)
   m_iOffsetTh = 1 << ( min((Int)(g_uiBitDepth + g_uiBitIncrement-5),5) );
 #endif
   resetSAOParam(pcSaoParam);
-#if SAO_LCU_BOUNDARY
   if( !m_saoLcuBasedOptimization || !m_saoLcuBoundary )
   {
     resetStats();
   }
-#else
-  resetStats();
-#endif
   Double dCostFinal = 0;
   if ( m_saoLcuBasedOptimization)
   {
@@ -2064,7 +2044,6 @@ Void TEncSampleAdaptiveOffset::rdoSaoUnitAll(SAOParam *saoParam, Double lambda, 
         {
           for ( k=0;k< MAX_NUM_SAO_CLASS;k++)
           {
-#if SAO_LCU_BOUNDARY
             m_iOffset   [compIdx][j][k] = 0;
             if( m_saoLcuBasedOptimization && m_saoLcuBoundary ){
               m_iCount    [compIdx][j][k] = m_count_PreDblk    [addr][compIdx][j][k];
@@ -2075,11 +2054,6 @@ Void TEncSampleAdaptiveOffset::rdoSaoUnitAll(SAOParam *saoParam, Double lambda, 
               m_iCount    [compIdx][j][k] = 0;
               m_iOffsetOrg[compIdx][j][k] = 0;
             }
-#else
-            m_iCount    [compIdx][j][k] = 0;
-            m_iOffset   [compIdx][j][k] = 0;
-            m_iOffsetOrg[compIdx][j][k] = 0;
-#endif
           }  
         }
         saoParam->saoLcuParam[compIdx][addr].typeIdx       =  -1;

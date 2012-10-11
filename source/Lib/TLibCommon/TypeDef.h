@@ -52,7 +52,6 @@
 #define CU_DQP_TU_CMAX 5                   ///< max number bins for truncated unary
 #define CU_DQP_EG_k 0                      ///< expgolomb order
 
-#define SAO_LCU_BOUNDARY                 1  ///< J0139: SAO parameter estimation using non-deblocked pixels for LCU bottom and right boundary areas
 #define MODIFIED_CROSS_SLICE             1  ///< J0266: SAO slice boundary control for GDR
 #define CU_DQP_ENABLE_FLAG               1  ///< J0220: cu_qp_delta_enabled_flag in PPS
 #define REMOVE_ZIGZAG_SCAN               1  ///< J0150: removal of zigzag scan

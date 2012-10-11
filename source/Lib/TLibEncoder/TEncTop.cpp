@@ -97,9 +97,7 @@ Void TEncTop::create ()
   m_cCuEncoder.         create( g_uiMaxCUDepth, g_uiMaxCUWidth, g_uiMaxCUHeight );
   if (m_bUseSAO)
   {
-#if SAO_LCU_BOUNDARY
     m_cEncSAO.setSaoLcuBoundary(getSaoLcuBoundary());
-#endif
     m_cEncSAO.setSaoLcuBasedOptimization(getSaoLcuBasedOptimization());
     m_cEncSAO.setMaxNumOffsetsPerPic(getMaxNumOffsetsPerPic());
     m_cEncSAO.create( getSourceWidth(), getSourceHeight(), g_uiMaxCUWidth, g_uiMaxCUHeight, g_uiMaxCUDepth );
