@@ -72,7 +72,6 @@
 #define SAO_SKIP_RIGHT                   1  ///< H1101: disallow using unavailable pixel during RDO
 
 #define SAO_ENCODING_CHOICE              1  ///< I0184: picture early termination
-#define PICTURE_SAO_RDO_FIX              0  ///< J0097: picture-based SAO optimization fix
 #if SAO_ENCODING_CHOICE
 #define SAO_ENCODING_RATE                0.75
 #define SAO_ENCODING_CHOICE_CHROMA       1 ///< J0044: picture early termination Luma and Chroma are handled separatenly

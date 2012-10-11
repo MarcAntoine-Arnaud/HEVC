@@ -109,11 +109,7 @@ inline Double xRoundIbdi(Double x)
 /** process SAO for one partition
  * \param  *psQTPart, iPartIdx, dLambda
  */
-#if PICTURE_SAO_RDO_FIX
 Void TEncSampleAdaptiveOffset::rdoSaoOnePart(SAOQTPart *psQTPart, Int iPartIdx, Double dLambda, Int yCbCr)
-#else
-Void TEncSampleAdaptiveOffset::rdoSaoOnePart(SAOQTPart *psQTPart, Int iPartIdx, Double dLambda)
-#endif
 {
   Int iTypeIdx;
   Int iNumTotalType = MAX_NUM_SAO_TYPE;
@@ -131,13 +127,11 @@ Void TEncSampleAdaptiveOffset::rdoSaoOnePart(SAOQTPart *psQTPart, Int iPartIdx, 
   Int     currentDistortionTableBo[MAX_NUM_SAO_CLASS];
   Double  currentRdCostTableBo[MAX_NUM_SAO_CLASS];
 
-#if PICTURE_SAO_RDO_FIX
   Int addr;
   Int allowMergeLeft;
   Int allowMergeUp;
   Int frameWidthInCU = m_pcPic->getFrameWidthInCU();
   SaoLcuParam  saoLcuParamRdo;
-#endif
 
   for (iTypeIdx=-1; iTypeIdx<iNumTotalType; iTypeIdx++)
   {
@@ -154,7 +148,6 @@ Void TEncSampleAdaptiveOffset::rdoSaoOnePart(SAOQTPart *psQTPart, Int iPartIdx, 
 
     iEstDist = 0;
 
-#if PICTURE_SAO_RDO_FIX
     if (iTypeIdx == -1)
     {      
       for (Int ry = pOnePart->StartCUY; ry<= pOnePart->EndCUY; ry++)
@@ -204,9 +197,6 @@ Void TEncSampleAdaptiveOffset::rdoSaoOnePart(SAOQTPart *psQTPart, Int iPartIdx, 
         }
       }
     }
-#else
-    m_pcEntropyCoder->m_pcEntropyCoderIf->codeSaoTypeIdx(iTypeIdx+1);
-#endif
 
     if (iTypeIdx>=0)
     {
@@ -239,7 +229,6 @@ Void TEncSampleAdaptiveOffset::rdoSaoOnePart(SAOQTPart *psQTPart, Int iPartIdx, 
         }
       }
 
-#if PICTURE_SAO_RDO_FIX      
       for (Int ry = pOnePart->StartCUY; ry<= pOnePart->EndCUY; ry++)
       {
         for (Int rx = pOnePart->StartCUX; rx <= pOnePart->EndCUX; rx++)
@@ -295,21 +284,6 @@ Void TEncSampleAdaptiveOffset::rdoSaoOnePart(SAOQTPart *psQTPart, Int iPartIdx, 
 
         }
       }
-#else // #if PICTURE_SAO_RDO_FIX 
-
-      SaoLcuParam  saoLcuParamRdo;   
-      resetSaoUnit(&saoLcuParamRdo);
-      saoLcuParamRdo.typeIdx = iTypeIdx;
-      saoLcuParamRdo.subTypeIdx = (iTypeIdx==SAO_BO)?bestClassTableBo:0;
-      saoLcuParamRdo.length = m_iNumClass[iTypeIdx];
-      for (iClassIdx = 0; iClassIdx < saoLcuParamRdo.length; iClassIdx++)
-      {
-        saoLcuParamRdo.offset[iClassIdx] = (Int)m_iOffset[iPartIdx][iTypeIdx][iClassIdx+saoLcuParamRdo.subTypeIdx+1];
-      }
-      m_pcRDGoOnSbacCoder->load(m_pppcRDSbacCoder[uiDepth][CI_CURR_BEST]);
-      m_pcRDGoOnSbacCoder->resetBits();
-      m_pcEntropyCoder->encodeSaoOffset(&saoLcuParamRdo, iPartIdx);
-#endif // #if PICTURE_SAO_RDO_FIX 
 
       m_iDist[iPartIdx][iTypeIdx] = iEstDist;
       m_iRate[iPartIdx][iTypeIdx] = m_pcEntropyCoder->getNumberOfWrittenBits();
@@ -387,11 +361,7 @@ Void TEncSampleAdaptiveOffset::disablePartTree(SAOQTPart *psQTPart, Int iPartIdx
 /** Run quadtree decision function
  * \param  iPartIdx, pcPicOrg, pcPicDec, pcPicRest, &dCostFinal
  */
-#if PICTURE_SAO_RDO_FIX
 Void TEncSampleAdaptiveOffset::runQuadTreeDecision(SAOQTPart *psQTPart, Int iPartIdx, Double &dCostFinal, Int iMaxLevel, Double dLambda, Int yCbCr)
-#else
-Void TEncSampleAdaptiveOffset::runQuadTreeDecision(SAOQTPart *psQTPart, Int iPartIdx, Double &dCostFinal, Int iMaxLevel, Double dLambda)
-#endif
 {
   SAOQTPart*  pOnePart = &(psQTPart[iPartIdx]);
 
@@ -406,11 +376,7 @@ Void TEncSampleAdaptiveOffset::runQuadTreeDecision(SAOQTPart *psQTPart, Int iPar
   //SAO for this part
   if(!pOnePart->bProcessed)
   {
-#if PICTURE_SAO_RDO_FIX
     rdoSaoOnePart (psQTPart, iPartIdx, dLambda, yCbCr);
-#else
-    rdoSaoOnePart (psQTPart, iPartIdx, dLambda);
-#endif
   }
 
   //SAO for sub 4 parts
@@ -432,11 +398,7 @@ Void TEncSampleAdaptiveOffset::runQuadTreeDecision(SAOQTPart *psQTPart, Int iPar
           m_pppcRDSbacCoder[uhNextDepth][CI_CURR_BEST]->load(m_pppcRDSbacCoder[uhNextDepth][CI_NEXT_BEST]);
         }
       }  
-#if PICTURE_SAO_RDO_FIX
       runQuadTreeDecision(psQTPart, pOnePart->DownPartsIdx[i], dCostFinal, iMaxLevel, dLambda, yCbCr);
-#else
-      runQuadTreeDecision(psQTPart, pOnePart->DownPartsIdx[i], dCostFinal, iMaxLevel, dLambda);
-#endif
       dCostSplit += dCostFinal;
       if( m_bUseSBACRD )
       {
@@ -1795,11 +1757,7 @@ Void TEncSampleAdaptiveOffset::SAOProcess(SAOParam *pcSaoParam, Double dLambda)
     Double lambdaRdo =  dLambdaLuma;
     resetStats();
     getSaoStats(pcSaoParam->psSaoPart[0], 0);
-#if PICTURE_SAO_RDO_FIX
     runQuadTreeDecision(pcSaoParam->psSaoPart[0], 0, dCostFinal, m_uiMaxSplitLevel, lambdaRdo, 0);
-#else
-    runQuadTreeDecision(pcSaoParam->psSaoPart[0], 0, dCostFinal, m_uiMaxSplitLevel, lambdaRdo);
-#endif
     pcSaoParam->bSaoFlag[0] = dCostFinal < 0 ? 1:0;
     if(pcSaoParam->bSaoFlag[0])
     {

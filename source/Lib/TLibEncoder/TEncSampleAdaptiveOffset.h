@@ -105,13 +105,8 @@ public:
   Void SAOProcess(SAOParam *pcSaoParam, Double dLambda);
 #endif
 
-#if PICTURE_SAO_RDO_FIX  
   Void runQuadTreeDecision(SAOQTPart *psQTPart, Int iPartIdx, Double &dCostFinal, Int iMaxLevel, Double dLambda, Int yCbCr);
   Void rdoSaoOnePart(SAOQTPart *psQTPart, Int iPartIdx, Double dLambda, Int yCbCr);
-#else
-  Void runQuadTreeDecision(SAOQTPart *psQTPart, Int iPartIdx, Double &dCostFinal, Int iMaxLevel, Double dLambda);
-  Void rdoSaoOnePart(SAOQTPart *psQTPart, Int iPartIdx, Double dLambda);
-#endif
   
   Void disablePartTree(SAOQTPart *psQTPart, Int iPartIdx);
   Void getSaoStats(SAOQTPart *psQTPart, Int iYCbCr);
