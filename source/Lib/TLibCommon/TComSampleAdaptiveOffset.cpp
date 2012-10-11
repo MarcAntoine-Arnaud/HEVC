@@ -984,11 +984,7 @@ Void TComSampleAdaptiveOffset::processSaoCuOrg(Int iAddr, Int iSaoType, Int iYCb
  */
 Void TComSampleAdaptiveOffset::SAOProcess(TComPic* pcPic, SAOParam* pcSaoParam)
 {
-#if SAO_LUM_CHROMA_ONOFF_FLAGS && SAO_TYPE_SHARING
   if (pcSaoParam->bSaoFlag[0] || pcSaoParam->bSaoFlag[1])
-#else
-  if (pcSaoParam->bSaoFlag[0] || pcSaoParam->bSaoFlag[1] || pcSaoParam->bSaoFlag[2])
-#endif
   {
 #if FULL_NBIT
     m_uiSaoBitIncrease = g_uiBitDepth + (g_uiBitDepth-8) - min((Int)(g_uiBitDepth + (g_uiBitDepth-8)), 10);
