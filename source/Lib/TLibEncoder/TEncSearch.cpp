@@ -1411,11 +1411,7 @@ TEncSearch::xRecurIntraCodingQT( TComDataCU*  pcCU,
   UInt    uiSingleCbfY  = 0;
   UInt    uiSingleCbfU  = 0;
   UInt    uiSingleCbfV  = 0;
-#if PPS_TS_FLAG
   Bool    checkTransformSkip  = pcCU->getSlice()->getPPS()->getUseTransformSkip();
-#else
-  Bool    checkTransformSkip  = pcCU->getSlice()->getSPS()->getUseTransformSkip();
-#endif
   UInt    widthTransformSkip  = pcCU->getWidth ( 0 ) >> uiTrDepth;
   UInt    heightTransformSkip = pcCU->getHeight( 0 ) >> uiTrDepth;
   Int     bestModeId    = 0;
@@ -2156,11 +2152,7 @@ TEncSearch::xRecurIntraChromaCodingQT( TComDataCU*  pcCU,
   UInt uiTrMode    = pcCU->getTransformIdx( uiAbsPartIdx );
   if(  uiTrMode == uiTrDepth )
   {
-#if PPS_TS_FLAG
     Bool checkTransformSkip = pcCU->getSlice()->getPPS()->getUseTransformSkip();
-#else
-    Bool checkTransformSkip = pcCU->getSlice()->getSPS()->getUseTransformSkip();
-#endif
     UInt uiLog2TrSize = g_aucConvertToBit[ pcCU->getSlice()->getSPS()->getMaxCUWidth() >> uiFullDepth ] + 2;
 
     UInt actualTrDepth = uiTrDepth;
@@ -2828,18 +2820,10 @@ TEncSearch::estIntraPredChromaQT( TComDataCU* pcCU,
     UInt    uiDist = 0;
     pcCU->setChromIntraDirSubParts  ( uiModeList[uiMode], 0, uiDepth );
     xRecurIntraChromaCodingQT       ( pcCU,   0, 0, pcOrgYuv, pcPredYuv, pcResiYuv, uiDist );
-#if PPS_TS_FLAG
 #if INTRA_TRANSFORMSKIP_FAST
     if( m_bUseSBACRD && pcCU->getSlice()->getPPS()->getUseTransformSkip() )
 #else
     if( m_bUseSBACRD && pcCU->getSlice()->getPPS()->getUseTransformSkip() && !m_pcEncCfg->getUseTransformSkipFast())
-#endif
-#else
-#if INTRA_TRANSFORMSKIP_FAST
-    if( m_bUseSBACRD && pcCU->getSlice()->getSPS()->getUseTransformSkip() )
-#else
-    if( m_bUseSBACRD && pcCU->getSlice()->getSPS()->getUseTransformSkip() && !m_pcEncCfg->getUseTransformSkipFast())
-#endif
 #endif
     {
       m_pcRDGoOnSbacCoder->load( m_pppcRDSbacCoder[uiDepth][CI_CURR_BEST] );
@@ -4835,13 +4819,8 @@ Void TEncSearch::xEstimateResidualQT( TComDataCU* pcCU, UInt uiQuadrant, UInt ui
     Double minCostY = MAX_DOUBLE;
     Double minCostU = MAX_DOUBLE;
     Double minCostV = MAX_DOUBLE;
-#if PPS_TS_FLAG
     Bool checkTransformSkipY  = pcCU->getSlice()->getPPS()->getUseTransformSkip() && trWidth == 4 && trHeight == 4;
     Bool checkTransformSkipUV = pcCU->getSlice()->getPPS()->getUseTransformSkip() && trWidthC == 4 && trHeightC == 4;
-#else
-    Bool checkTransformSkipY  = pcCU->getSlice()->getSPS()->getUseTransformSkip() && trWidth == 4 && trHeight == 4;
-    Bool checkTransformSkipUV = pcCU->getSlice()->getSPS()->getUseTransformSkip() && trWidthC == 4 && trHeightC == 4;
-#endif
 
     checkTransformSkipY         &= (!pcCU->isLosslessCoded(0));
     checkTransformSkipUV        &= (!pcCU->isLosslessCoded(0));

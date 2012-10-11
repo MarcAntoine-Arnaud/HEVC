@@ -556,11 +556,6 @@ private:
   Bool        m_bUseLMChroma; // JL:
 #endif
 
-#if !PPS_TS_FLAG
-  Bool        m_useTransformSkip;
-  Bool        m_useTransformSkipFast;
-#endif
-
   Bool        m_bUseLComb;
 #if !REMOVE_NSQT
   Bool        m_useNSQT;
@@ -697,13 +692,6 @@ public:
   Void setUseLMChroma ( Bool b ) { m_bUseLMChroma  = b;          }
 #endif
 
-#if !PPS_TS_FLAG
-  Bool getUseTransformSkip       ()         { return m_useTransformSkip;     }
-  Void setUseTransformSkip       ( Bool b ) { m_useTransformSkip  = b;       }
-  Bool getUseTransformSkipFast   ()         { return m_useTransformSkipFast; }
-  Void setUseTransformSkipFast   ( Bool b ) { m_useTransformSkipFast  = b;   }
-#endif
-
   Bool getUseLossless ()         { return m_useLossless; }
   Void setUseLossless ( Bool b ) { m_useLossless  = b; }
 #if !REMOVE_NSQT
@@ -820,9 +808,7 @@ private:
   Bool        m_OutputFlagPresentFlag;   // Indicates the presence of output_flag in slice header
 
   Bool        m_TransquantBypassEnableFlag; // Indicates presence of cu_transquant_bypass_flag in CUs.
-#if PPS_TS_FLAG
   Bool        m_useTransformSkip;
-#endif
   Bool        m_dependentSliceEnabledFlag;     //!< Indicates the presence of dependent slices
   Bool        m_tilesEnabledFlag;              //!< Indicates the presence of tiles
   Bool        m_entropyCodingSyncEnabledFlag;  //!< Indicates the presence of wavefronts
@@ -902,10 +888,8 @@ public:
   Void      setTransquantBypassEnableFlag( Bool b ) { m_TransquantBypassEnableFlag = b; }
   Bool      getTransquantBypassEnableFlag()         { return m_TransquantBypassEnableFlag; }
 
-#if PPS_TS_FLAG
   Bool      getUseTransformSkip       ()         { return m_useTransformSkip;     }
   Void      setUseTransformSkip       ( Bool b ) { m_useTransformSkip  = b;       }
-#endif
 
   Void    setLoopFilterAcrossTilesEnabledFlag  (Bool b)    { m_loopFilterAcrossTilesEnabledFlag = b; }
   Bool    getLoopFilterAcrossTilesEnabledFlag  ()          { return m_loopFilterAcrossTilesEnabledFlag;   }

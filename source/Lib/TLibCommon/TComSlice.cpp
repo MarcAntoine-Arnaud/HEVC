@@ -1272,10 +1272,6 @@ TComSPS::TComSPS()
 #if !REMOVE_LMCHROMA
 , m_bUseLMChroma              (false)
 #endif
-#if !PPS_TS_FLAG
-, m_useTransformSkip           (false)
-, m_useTransformSkipFast       (false)
-#endif
 , m_bUseLComb                 (false)
 , m_restrictedRefPicListsFlag   (  1)
 , m_listsModificationPresentFlag(  0)
@@ -1425,9 +1421,7 @@ TComPPS::TComPPS()
 , m_iSliceGranularity           (0)
 #endif
 , m_TransquantBypassEnableFlag  (false)
-#if PPS_TS_FLAG
 , m_useTransformSkip             (false)
-#endif
 , m_dependentSliceEnabledFlag    (false)
 , m_tilesEnabledFlag               (false)
 , m_entropyCodingSyncEnabledFlag   (false)

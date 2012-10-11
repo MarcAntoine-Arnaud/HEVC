@@ -363,10 +363,8 @@ Void TDecCavlc::parsePPS(TComPPS* pcPPS)
 
   READ_SVLC(iCode, "pic_init_qp_minus26" );                        pcPPS->setPicInitQPMinus26(iCode);
   READ_FLAG( uiCode, "constrained_intra_pred_flag" );              pcPPS->setConstrainedIntraPred( uiCode ? true : false );
-#if PPS_TS_FLAG  
   READ_FLAG( uiCode, "transform_skip_enabled_flag" );               
   pcPPS->setUseTransformSkip ( uiCode ? true : false ); 
-#endif
 
 #if !REMOVE_FGS
   READ_CODE( 2, uiCode, "slice_granularity" );                     pcPPS->setSliceGranularity(uiCode);
@@ -743,9 +741,6 @@ Void TDecCavlc::parseSPS(TComSPS* pcSPS)
   }
 #if !REMOVE_LMCHROMA
   READ_FLAG( uiCode, "chroma_pred_from_luma_enabled_flag" );        pcSPS->setUseLMChroma ( uiCode ? true : false );
-#endif
-#if !PPS_TS_FLAG
-  READ_FLAG( uiCode, "transform_skip_enabled_flag" );               pcSPS->setUseTransformSkip ( uiCode ? true : false );
 #endif
   READ_FLAG( uiCode, "asymmetric_motion_partitions_enabled_flag" ); pcSPS->setUseAMP( uiCode );
 #if !REMOVE_NSQT

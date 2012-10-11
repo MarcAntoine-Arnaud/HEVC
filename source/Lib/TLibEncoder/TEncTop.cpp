@@ -502,9 +502,6 @@ Void TEncTop::xInitSPS()
 #if !REMOVE_LMCHROMA
   m_cSPS.setUseLMChroma   ( m_bUseLMChroma           );  
 #endif
-#if !PPS_TS_FLAG
-  m_cSPS.setUseTransformSkip ( m_useTransformSkip );
-#endif
 
   m_cSPS.setMaxTrSize   ( 1 << m_uiQuadtreeTULog2MaxSize );
   
@@ -664,9 +661,7 @@ Void TEncTop::xInitPPS()
   m_cPPS.setNumRefIdxL0DefaultActive(bestPos);
   m_cPPS.setNumRefIdxL1DefaultActive(bestPos);
   m_cPPS.setTransquantBypassEnableFlag(getTransquantBypassEnableFlag());
-#if PPS_TS_FLAG
   m_cPPS.setUseTransformSkip( m_useTransformSkip );
-#endif
   if (m_iDependentSliceMode)
   {
     m_cPPS.setDependentSliceEnabledFlag( true );
