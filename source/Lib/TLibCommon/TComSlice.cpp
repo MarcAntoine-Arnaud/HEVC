@@ -1431,9 +1431,7 @@ TComPPS::TComPPS()
 , m_signHideFlag(0)
 , m_cabacInitPresentFlag        (false)
 , m_encCABACTableIdx            (I_SLICE)
-#if SLICE_HEADER_EXTENSION
 , m_sliceHeaderExtensionPresentFlag    (false)
-#endif
 , m_loopFilterAcrossSlicesEnabledFlag (false)
 {
   m_scalingList = new TComScalingList;

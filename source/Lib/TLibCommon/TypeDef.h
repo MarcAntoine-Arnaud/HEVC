@@ -52,8 +52,6 @@
 #define CU_DQP_TU_CMAX 5                   ///< max number bins for truncated unary
 #define CU_DQP_EG_k 0                      ///< expgolomb order
 
-#define SLICE_HEADER_EXTENSION           1  ///< II0235: Slice header extension mechanism
-
 #define REMOVE_NSQT 1 ///< Disable NSQT-related code
 #define REMOVE_LMCHROMA 1 ///< Disable LM_Chroma-related code
 #define REMOVE_FGS 1 ///< Disable fine-granularity slices code
