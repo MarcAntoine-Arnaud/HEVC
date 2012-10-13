@@ -54,7 +54,6 @@
 #define NUM_MERGE_FLAG_EXT_CTX        1       ///< number of context models for merge flag of merge extended
 #define NUM_MERGE_IDX_EXT_CTX         1       ///< number of context models for merge index of merge extended
 
-#define NUM_ALF_CTRL_FLAG_CTX         1       ///< number of context models for ALF control flag
 #define NUM_PART_SIZE_CTX             4       ///< number of context models for partition size
 #define NUM_CU_AMP_CTX                1       ///< number of context models for partition size (AMP)
 #define NUM_PRED_MODE_CTX             1       ///< number of context models for prediction mode
@@ -88,9 +87,6 @@
 
 #define NUM_MVP_IDX_CTX               2       ///< number of context models for MVP index
 
-#define NUM_ALF_FLAG_CTX              1       ///< number of context models for ALF flag
-#define NUM_ALF_UVLC_CTX              2       ///< number of context models for ALF UVLC (filter length)
-#define NUM_ALF_SVLC_CTX              3       ///< number of context models for ALF SVLC (filter coeff.)
 #define NUM_SAO_MERGE_FLAG_CTX        1       ///< number of context models for SAO merge flags
 #define NUM_SAO_TYPE_IDX_CTX          1       ///< number of context models for SAO type index
 
@@ -128,15 +124,7 @@ INIT_SKIP_FLAG[3][NUM_SKIP_FLAG_CTX] =
   { CNU,  CNU,  CNU, }, 
 };
 
-static const UChar 
-INIT_ALF_CTRL_FLAG[3][NUM_ALF_CTRL_FLAG_CTX] = 
-{
-  { 102, }, 
-  { 102, }, 
-  { 118, }, 
-};
-
-static const UChar 
+static const UChar
 INIT_MERGE_FLAG_EXT[3][NUM_MERGE_FLAG_EXT_CTX] = 
 {
   { 154, }, 
@@ -300,29 +288,6 @@ INIT_MVP_IDX[3][NUM_MVP_IDX_CTX] =
   { CNU,  CNU, }, 
 };
 
-static const UChar 
-INIT_ALF_FLAG[3][NUM_ALF_FLAG_CTX] = 
-{
-  { 153, }, 
-  { 153, }, 
-  { 153, }, 
-};
-
-static const UChar 
-INIT_ALF_UVLC[3][NUM_ALF_UVLC_CTX] = 
-{
-  { 154,  154, }, 
-  { 154,  154, }, 
-  { 140,  154, }, 
-};
-
-static const UChar 
-INIT_ALF_SVLC[3][NUM_ALF_SVLC_CTX] =  
-{
-  { 141,  154,  159, }, 
-  { 141,  154,  189, }, 
-  { 187,  154,  159, }, 
-};
 static const UChar 
 INIT_SAO_MERGE_FLAG[3][NUM_SAO_MERGE_FLAG_CTX] = 
 {

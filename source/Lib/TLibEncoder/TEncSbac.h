@@ -98,7 +98,6 @@ public:
   Void  codeSliceFinish         ();
   Void  codeFlush               ();
   Void  encodeStart             ();
-  Void  codeApsExtensionFlag () { assert (0); return; };
   Void  codeSaoMaxUvlc    ( UInt code, UInt maxSymbol );
   Void  codeSaoMerge  ( UInt  uiCode );
   Void  codeSaoTypeIdx    ( UInt  uiCode);
@@ -183,7 +182,6 @@ private:
   ContextModel3DBuffer m_cCUMergeIdxExtSCModel;
   ContextModel3DBuffer m_cCUPartSizeSCModel;
   ContextModel3DBuffer m_cCUPredModeSCModel;
-  ContextModel3DBuffer m_cCUAlfCtrlFlagSCModel;
   ContextModel3DBuffer m_cCUIntraPredSCModel;
   ContextModel3DBuffer m_cCUChromaPredSCModel;
   ContextModel3DBuffer m_cCUDeltaQpSCModel;
@@ -203,9 +201,6 @@ private:
   
   ContextModel3DBuffer m_cMVPIdxSCModel;
   
-  ContextModel3DBuffer m_cALFFlagSCModel;
-  ContextModel3DBuffer m_cALFUvlcSCModel;
-  ContextModel3DBuffer m_cALFSvlcSCModel;
   ContextModel3DBuffer m_cCUAMPSCModel;
   ContextModel3DBuffer m_cSaoMergeSCModel;
   ContextModel3DBuffer m_cSaoTypeIdxSCModel;

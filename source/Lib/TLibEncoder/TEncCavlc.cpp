@@ -964,11 +964,6 @@ Void TEncCavlc::codeMergeIndex    ( TComDataCU* pcCU, UInt uiAbsPartIdx )
   assert(0);
 }
 
-Void TEncCavlc::codeApsExtensionFlag ()
-{
-  WRITE_FLAG(0, "aps_extension_flag");
-}
-
 Void TEncCavlc::codeInterModeFlag( TComDataCU* pcCU, UInt uiAbsPartIdx, UInt uiDepth, UInt uiEncMode )
 {
   assert(0);
@@ -1070,21 +1065,6 @@ Void TEncCavlc::codeDeltaQP( TComDataCU* pcCU, UInt uiAbsPartIdx )
 Void TEncCavlc::codeCoeffNxN    ( TComDataCU* pcCU, TCoeff* pcCoef, UInt uiAbsPartIdx, UInt uiWidth, UInt uiHeight, UInt uiDepth, TextType eTType )
 {
   assert(0);
-}
-
-Void TEncCavlc::xGolombEncode(Int coeff, Int k)
-{
-  xWriteEpExGolomb((UInt)abs(coeff), k);
-  if(coeff != 0)
-  {
-    Int sign = (coeff > 0)? 1: 0;
-    xWriteFlag(sign);
-  }
-#if ENC_DEC_TRACE
-  fprintf( g_hTrace, "%8lld  ", g_nSymbolCounter++ );
-  fprintf( g_hTrace, "%-40s se(v) : %d\n", "alf_filt_coeff", coeff ); 
-#endif
-
 }
 
 Void TEncCavlc::estBit( estBitsSbacStruct* pcEstBitsCabac, Int width, Int height, TextType eTType )

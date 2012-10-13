@@ -188,7 +188,7 @@ Void TDecTop::executeDeblockAndAlf(UInt& ruiPOC, TComList<TComPic*>*& rpcListPic
   
   TComPic*&   pcPic         = m_pcPic;
 
-  // Execute Deblock and ALF only + Cleanup
+  // Execute Deblock + Cleanup
 
   m_cGopDecoder.filterPicture(pcPic);
 

@@ -1176,10 +1176,8 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
 #if SAO_RDO
             m_pcEntropyCoder->setEntropyCoder ( m_pcCavlcCoder, pcSlice );
 #endif
-            // adaptive loop filter
-            processingState = ENCODE_APS;
+            processingState = ENCODE_SLICE;
 
-            //set APS link to the slices
             for(Int s=0; s< uiNumSlices; s++)
             {
               if (pcSlice->getSPS()->getUseSAO())
@@ -1187,19 +1185,6 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
                 pcPic->getSlice(s)->setSaoEnabledFlag((pcSlice->getPic()->getPicSym()->getSaoParam()->bSaoFlag[0]==1)?true:false);
               }
             }
-
-            /* The destructor of cAPS that is about to be called will free
-             * the resource held by cAPS, which will cause problems since it
-             * has been aliased elsewhere.
-             *   Hint: never ever write an assignment operator that copies
-             *         pointers without the use of smart pointers.
-             * The following will clear the saved state before the destructor.
-             */
-          }
-          break;
-        case ENCODE_APS:
-          {
-            processingState = ENCODE_SLICE;
           }
           break;
         default:

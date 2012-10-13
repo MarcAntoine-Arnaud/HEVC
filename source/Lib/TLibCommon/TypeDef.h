@@ -76,7 +76,6 @@
 
 #define MAX_NUM_SPS                32
 #define MAX_NUM_PPS                256
-#define MAX_NUM_APS                32         //< !!!KS: number not defined in WD yet
 
 
 #define WEIGHTED_CHROMA_DISTORTION  1   ///< F386: weighting of chroma for RDO
@@ -98,9 +97,6 @@
 #endif
 
 #define NS_HAD                               0
-
-#define APS_BITS_FOR_SAO_BYTE_LENGTH 12           
-#define APS_BITS_FOR_ALF_BYTE_LENGTH 8
 
 #define HHI_RQT_INTRA_SPEEDUP             1           ///< tests one best mode with full rqt
 #define HHI_RQT_INTRA_SPEEDUP_MOD         0           ///< tests two best modes with full rqt
