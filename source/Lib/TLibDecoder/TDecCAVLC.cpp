@@ -54,13 +54,6 @@ Void  xTracePPSHeader (TComPPS *pPPS)
   fprintf( g_hTrace, "=========== Picture Parameter Set ID: %d ===========\n", pPPS->getPPSId() );
 }
 
-#if !REMOVE_APS
-Void  xTraceAPSHeader (TComAPS *pAPS)
-{
-  fprintf( g_hTrace, "=========== Adaptation Parameter Set ===========\n");
-}
-#endif
-
 Void  xTraceSliceHeader (TComSlice *pSlice)
 {
   fprintf( g_hTrace, "=========== Slice ===========\n");
@@ -170,27 +163,6 @@ void TDecCavlc::parseShortTermRefPicSet( TComSPS* sps, TComReferencePictureSet* 
   rps->printDeltaPOC();
 #endif
 }
-
-#if !REMOVE_APS
-Void TDecCavlc::parseAPS(TComAPS* aps)
-{
-#if ENC_DEC_TRACE  
-  xTraceAPSHeader(aps);
-#endif
-
-  UInt uiCode;
-  READ_UVLC(uiCode, "aps_id");                             aps->setAPSID(uiCode);
-  READ_FLAG( uiCode, "aps_extension_flag");
-  if (uiCode)
-  {
-    while ( xMoreRbspData() )
-    {
-      READ_FLAG( uiCode, "aps_extension_data_flag");
-    }
-  }
-
-}
-#endif
 
 /** copy SAO parameter
 * \param dst  
@@ -909,9 +881,6 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
           READ_FLAG(uiCode, "slice_sao_chroma_flag");  rpcSlice->setSaoEnabledFlagChroma((Bool)uiCode);
         }
       }
-#if !REMOVE_APS
-      READ_UVLC (    uiCode, "aps_id" );  rpcSlice->setAPSId(uiCode);
-#endif
     }
     if (!rpcSlice->isIntra())
     {

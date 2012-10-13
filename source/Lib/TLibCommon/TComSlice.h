@@ -930,29 +930,6 @@ public:
   Void setSliceHeaderExtensionPresentFlag   (Bool val)            { m_sliceHeaderExtensionPresentFlag = val; }
 };
 
-#if !REMOVE_APS
-/// APS class
-class TComAPS
-{
-public:
-  TComAPS();
-  virtual ~TComAPS();
-
-  Void      setAPSID      (Int iID)   {m_apsID = iID;            }  //!< set APS ID 
-  Int       getAPSID      ()          {return m_apsID;           }  //!< get APS ID
-  SAOParam* getSaoParam   ()          {return m_pSaoParam;       }  //!< get SAO parameters in APS
-
-  Void      createSaoParam();   //!< create SAO parameter object
-  Void      destroySaoParam();  //!< destroy SAO parameter object
-
-private:
-  Int         m_apsID;        //!< APS ID
-  SAOParam*   m_pSaoParam;    //!< SAO parameter object pointer
-public:
-  TComAPS& operator= (const TComAPS& src);  //!< "=" operator for APS object
-};
-#endif
-
 typedef struct {
   // Explicit weighted prediction parameters parsed in slice header,
   // or Implicit weighted prediction parameters (8 bits depth values).
@@ -976,9 +953,6 @@ class TComSlice
   
 private:
   //  Bitstream writing
-#if !REMOVE_APS
-  Int         m_iAPSId; //!< APS ID in slice header
-#endif
   bool       m_saoEnabledFlag;
   bool       m_saoEnabledFlagChroma;      ///< SAO Cb&Cr enabled flag
   Int         m_iPPSId;               ///< picture parameter set ID
@@ -1035,9 +1009,6 @@ private:
 #if ADAPTIVE_QP_SELECTION
   TComTrQuant* m_pcTrQuant;
 #endif  
-#if !REMOVE_APS
-  TComAPS*    m_pcAPS;  //!< pointer to APS parameter object
-#endif
   UInt        m_colFromL0Flag;  // collocated picture from List0 flag
   
   UInt        m_colRefIdx;
@@ -1109,12 +1080,6 @@ public:
 
   Void      setPPSId        ( Int PPSId )         { m_iPPSId = PPSId; }
   Int       getPPSId        () { return m_iPPSId; }
-#if !REMOVE_APS
-  Void      setAPS          ( TComAPS* pcAPS ) { m_pcAPS = pcAPS; } //!< set APS pointer
-  TComAPS*  getAPS          ()                 { return m_pcAPS;  } //!< get APS pointer
-  Void      setAPSId        ( Int Id)          { m_iAPSId =Id;    } //!< set APS ID
-  Int       getAPSId        ()                 { return m_iAPSId; } //!< get APS ID
-#endif
   Void      setPicOutputFlag( Bool b )         { m_PicOutputFlag = b;    }
   Bool      getPicOutputFlag()                 { return m_PicOutputFlag; }
   Void      setSaoEnabledFlag(Bool s) {m_saoEnabledFlag =s; }
@@ -1401,20 +1366,11 @@ public:
   TComPPS* getPPS(Int ppsId)  { return m_ppsMap.getPS(ppsId); };
   TComPPS* getFirstPPS()      { return m_ppsMap.getFirstPS(); };
 
-#if !REMOVE_APS
-  //! store adaptation parameter set and take ownership of it
-  Void storeAPS(TComAPS *aps) { m_apsMap.storePS( aps->getAPSID(), aps); };
-  //! getPointer to existing adaptation parameter set  
-  TComAPS* getAPS(Int apsId)  { return m_apsMap.getPS(apsId); };
-#endif
 protected:
   
   ParameterSetMap<TComVPS> m_vpsMap;
   ParameterSetMap<TComSPS> m_spsMap; 
   ParameterSetMap<TComPPS> m_ppsMap;
-#if !REMOVE_APS
-  ParameterSetMap<TComAPS> m_apsMap;
-#endif
 };
 
 //! \}

@@ -336,11 +336,7 @@ Void TDecSlice::decompressSlice(TComInputBitstream* pcBitstream, TComInputBitstr
 #endif
     if ( pcSlice->getSPS()->getUseSAO() && (pcSlice->getSaoEnabledFlag()||pcSlice->getSaoEnabledFlagChroma()) )
     {
-#if REMOVE_APS
       SAOParam *saoParam = rpcPic->getPicSym()->getSaoParam();
-#else
-      SAOParam *saoParam = pcSlice->getAPS()->getSaoParam();
-#endif
       saoParam->bSaoFlag[0] = pcSlice->getSaoEnabledFlag();
       if (iCUAddr == iStartCUAddr)
       {
@@ -412,9 +408,6 @@ ParameterSetManagerDecoder::ParameterSetManagerDecoder()
 : m_vpsBuffer(MAX_NUM_VPS)
 ,m_spsBuffer(256)
 , m_ppsBuffer(16)
-#if !REMOVE_APS
-, m_apsBuffer(64)
-#endif
 {
 
 }
@@ -461,26 +454,9 @@ TComPPS* ParameterSetManagerDecoder::getPrefetchedPPS  (Int ppsId)
   }
 }
 
-#if !REMOVE_APS
-TComAPS* ParameterSetManagerDecoder::getPrefetchedAPS  (Int apsId)
-{
-  if (m_apsBuffer.getPS(apsId) != NULL )
-  {
-    return m_apsBuffer.getPS(apsId);
-  }
-  else
-  {
-    return getAPS(apsId);
-  }
-}
-#endif
-
 Void     ParameterSetManagerDecoder::applyPrefetchedPS()
 {
   m_vpsMap.mergePSList(m_vpsBuffer);
-#if !REMOVE_APS
-  m_apsMap.mergePSList(m_apsBuffer);
-#endif
   m_ppsMap.mergePSList(m_ppsBuffer);
   m_spsMap.mergePSList(m_spsBuffer);
 }

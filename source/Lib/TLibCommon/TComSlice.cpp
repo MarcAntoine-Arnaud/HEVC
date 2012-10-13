@@ -698,10 +698,6 @@ Void TComSlice::copySliceInfo(TComSlice *pSrc)
   m_iLastIDR             = pSrc->m_iLastIDR;
 
   m_pcPic                = pSrc->m_pcPic;
-#if !REMOVE_APS
-  m_pcAPS                = pSrc->m_pcAPS;
-  m_iAPSId               = pSrc->m_iAPSId;
-#endif
 
   m_colFromL0Flag        = pSrc->m_colFromL0Flag;
   m_colRefIdx            = pSrc->m_colRefIdx;
@@ -1629,41 +1625,6 @@ TComRefPicListModification::~TComRefPicListModification()
 {
 }
 
-#if !REMOVE_APS
-TComAPS::TComAPS()
-{
-  m_apsID = 0;
-  m_pSaoParam = NULL;
-}
-
-TComAPS::~TComAPS()
-{
-  delete m_pSaoParam;
-}
-
-TComAPS& TComAPS::operator= (const TComAPS& src)
-{
-  m_apsID       = src.m_apsID;
-  m_pSaoParam   = src.m_pSaoParam;
-  return *this;
-}
-
-Void TComAPS::createSaoParam()
-{
-  m_pSaoParam = new SAOParam;
-}
-
-Void TComAPS::destroySaoParam()
-{
-  if(m_pSaoParam != NULL)
-  {
-    delete m_pSaoParam;
-    m_pSaoParam = NULL;
-  }
-}
-
-#endif
-
 TComScalingList::TComScalingList()
 {
   m_useTransformSkip = false;
@@ -1885,9 +1846,6 @@ ParameterSetManager::ParameterSetManager()
 : m_vpsMap(MAX_NUM_VPS)
 , m_spsMap(MAX_NUM_SPS)
 , m_ppsMap(MAX_NUM_PPS)
-#if !REMOVE_APS
-, m_apsMap(MAX_NUM_APS)
-#endif
 {
 }
 

@@ -233,9 +233,6 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
     m_pcSliceEncoder->setSliceIdx(0);
     pcPic->setCurrSliceIdx(0);
 
-#if !REMOVE_APS
-    std::vector<TComAPS>& vAPS = m_pcEncTop->getAPS();
-#endif
     m_pcSliceEncoder->initEncSlice ( pcPic, iPOCLast, uiPOCCurr, iNumPicRcvd, iGOPid, pcSlice, m_pcEncTop->getSPS(), m_pcEncTop->getPPS() );
     pcSlice->setLastIDR(m_iLastIDR);
     pcSlice->setSliceIdx(0);
@@ -876,11 +873,6 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
     pcSlice = pcPic->getSlice(uiStartCUAddrSliceIdx);
 
     Int processingState = (pcSlice->getSPS()->getUseSAO())?(EXECUTE_INLOOPFILTER):(ENCODE_SLICE);
-#if !REMOVE_APS
-    static Int iCurrAPSIdx = 0;
-    Int iCodedAPSIdx = 0;
-    TComSlice* pcSliceForAPS = NULL;
-#endif
     bool skippedSlice=false;
     while (uiNextCUAddr < uiRealEndAddress) // Iterate over all slices
     {
@@ -1156,10 +1148,6 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
           break;
         case EXECUTE_INLOOPFILTER:
           {
-#if !REMOVE_APS
-            TComAPS cAPS;
-            allocAPS(&cAPS, pcSlice->getSPS());
-#endif
             // set entropy coder for RD
             m_pcEntropyCoder->setEntropyCoder ( m_pcSbacCoder, pcSlice );
             if ( pcSlice->getSPS()->getUseSAO() )
@@ -1167,11 +1155,7 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
               m_pcEntropyCoder->resetEntropy();
               m_pcEntropyCoder->setBitstream( m_pcBitCounter );
               m_pcSAO->startSaoEnc(pcPic, m_pcEntropyCoder, m_pcEncTop->getRDSbacCoder(), m_pcEncTop->getRDGoOnSbacCoder());
-#if REMOVE_APS
               SAOParam& cSaoParam = *pcSlice->getPic()->getPicSym()->getSaoParam();
-#else
-              SAOParam& cSaoParam = *(cAPS.getSaoParam());
-#endif
 
 #if SAO_CHROMA_LAMBDA
 #if SAO_ENCODING_CHOICE
@@ -1193,13 +1177,6 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
             m_pcEntropyCoder->setEntropyCoder ( m_pcCavlcCoder, pcSlice );
 #endif
             // adaptive loop filter
-#if !REMOVE_APS
-            iCodedAPSIdx = iCurrAPSIdx;
-            pcSliceForAPS = pcSlice;
-
-            assignNewAPS(cAPS, iCodedAPSIdx, vAPS, pcSliceForAPS);
-            iCurrAPSIdx = (iCurrAPSIdx +1)%MAX_NUM_SUPPORTED_APS;
-#endif
             processingState = ENCODE_APS;
 
             //set APS link to the slices
@@ -1207,16 +1184,8 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
             {
               if (pcSlice->getSPS()->getUseSAO())
               {
-#if REMOVE_APS
                 pcPic->getSlice(s)->setSaoEnabledFlag((pcSlice->getPic()->getPicSym()->getSaoParam()->bSaoFlag[0]==1)?true:false);
-#else
-                pcPic->getSlice(s)->setSaoEnabledFlag((cAPS.getSaoParam()->bSaoFlag[0]==1)?true:false);
-#endif
               }
-#if !REMOVE_APS
-              pcPic->getSlice(s)->setAPS(&(vAPS[iCodedAPSIdx]));
-              pcPic->getSlice(s)->setAPSId(iCodedAPSIdx);
-#endif
             }
 
             /* The destructor of cAPS that is about to be called will free
@@ -1226,18 +1195,10 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
              *         pointers without the use of smart pointers.
              * The following will clear the saved state before the destructor.
              */
-#if !REMOVE_APS
-            cAPS = TComAPS();
-#endif
           }
           break;
         case ENCODE_APS:
           {
-#if !REMOVE_APS
-            OutputNALUnit nalu(NAL_UNIT_APS, true);
-            encodeAPS(&(vAPS[iCodedAPSIdx]), nalu.m_Bitstream, pcSliceForAPS);
-            accessUnit.push_back(new NALUnitEBSP(nalu));
-#endif
             processingState = ENCODE_SLICE;
           }
           break;
@@ -1387,78 +1348,6 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
 
   assert ( m_iNumPicCoded == iNumPicRcvd );
 }
-
-#if !REMOVE_APS
-/** Memory allocation for APS
-  * \param [out] pAPS APS pointer
-  * \param [in] pSPS SPS pointer
-  */
-Void TEncGOP::allocAPS (TComAPS* pAPS, TComSPS* pSPS)
-{
-  if(pSPS->getUseSAO())
-  {
-    pAPS->createSaoParam();
-    m_pcSAO->allocSaoParam(pAPS->getSaoParam());
-  }
-}
-
-/** Memory deallocation for APS
-  * \param [out] pAPS APS pointer
-  * \param [in] pSPS SPS pointer
-  */
-Void TEncGOP::freeAPS (TComAPS* pAPS, TComSPS* pSPS)
-{
-  if(pSPS->getUseSAO())
-  {
-    if(pAPS->getSaoParam() != NULL)
-    {
-      m_pcSAO->freeSaoParam(pAPS->getSaoParam());
-      pAPS->destroySaoParam();
-
-    }
-  }
-}
-
-/** Assign APS object into APS container according to APS ID
-  * \param [in] cAPS APS object
-  * \param [in] apsID APS ID
-  * \param [in,out] vAPS APS container
-  * \param [in] pcSlice pointer to slice
-  */
-Void TEncGOP::assignNewAPS(TComAPS& cAPS, Int apsID, std::vector<TComAPS>& vAPS, TComSlice* pcSlice)
-{
-
-  cAPS.setAPSID(apsID);
-
-  //assign new APS into APS container
-  Int apsBufSize= (Int)vAPS.size();
-
-  if(apsID >= apsBufSize)
-  {
-    vAPS.resize(apsID +1);
-  }
-
-  freeAPS(&(vAPS[apsID]), pcSlice->getSPS());
-  vAPS[apsID] = cAPS;
-}
-
-/** encode APS syntax elements
-  * \param [in] pcAPS APS pointer
-  * \param [in, out] APSbs bitstream
-  * \param [in] pointer to slice (just used for entropy coder initialization)
-  */
-Void TEncGOP::encodeAPS(TComAPS* pcAPS, TComOutputBitstream& APSbs, TComSlice* pcSlice)
-{
-  m_pcEntropyCoder->setEntropyCoder   ( m_pcCavlcCoder, pcSlice);
-  m_pcEntropyCoder->resetEntropy      ();
-  m_pcEntropyCoder->setBitstream(&APSbs);
-
-  m_pcEntropyCoder->encodeAPSInitInfo(pcAPS);
-  m_pcEntropyCoder->encodeApsExtensionFlag();
-  //neither SAO and ALF is enabled
-  writeRBSPTrailingBits(APSbs);
-}
-#endif
 
 Void TEncGOP::printOutSummary(UInt uiNumAllPicCoded)
 {

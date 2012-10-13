@@ -86,9 +86,6 @@ public:
   Void  parsePPS            ( TComPPS* pcPPS);
   Void  parseVUI            ( TComVUI* pcVUI, TComSPS* pcSPS );
   Void  parseSEI(SEImessages&);
-#if !REMOVE_APS
-  Void  parseAPS            ( TComAPS* pAPS );
-#endif
   Void  parsePTL            ( TComPTL *rpcPTL, Bool profilePresentFlag, Int maxNumSubLayersMinus1 );
   Void  parseProfileTier    (ProfileTierLevel *ptl);
   Void  parseSliceHeader    ( TComSlice*& rpcSlice, ParameterSetManagerDecoder *parameterSetManager);

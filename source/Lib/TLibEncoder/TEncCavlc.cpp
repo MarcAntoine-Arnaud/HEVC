@@ -54,13 +54,6 @@ Void  xTracePPSHeader (TComPPS *pPPS)
   fprintf( g_hTrace, "=========== Picture Parameter Set ID: %d ===========\n", pPPS->getPPSId() );
 }
 
-#if !REMOVE_APS
-Void  xTraceAPSHeader (TComAPS *pAPS)
-{
-  fprintf( g_hTrace, "=========== Adaptation Parameter Set ===========\n");
-}
-#endif
-
 Void  xTraceSliceHeader (TComSlice *pSlice)
 {
   fprintf( g_hTrace, "=========== Slice ===========\n");
@@ -93,18 +86,6 @@ Void TEncCavlc::resetEntropy()
 {
 }
 
-
-#if !REMOVE_APS
-Void  TEncCavlc::codeAPSInitInfo(TComAPS* pcAPS)
-{
-
-#if ENC_DEC_TRACE  
-  xTraceAPSHeader(pcAPS);
-#endif
-  //APS ID
-  WRITE_UVLC( pcAPS->getAPSID(), "aps_id" );
-}
-#endif
 
 Void TEncCavlc::codeDFFlag(UInt uiCode, const Char *pSymbolName)
 {
@@ -679,17 +660,10 @@ Void TEncCavlc::codeSliceHeader         ( TComSlice* pcSlice )
       {
          WRITE_FLAG( pcSlice->getSaoEnabledFlag(), "slice_sao_luma_flag" );
          {
-#if REMOVE_APS
            SAOParam *saoParam = pcSlice->getPic()->getPicSym()->getSaoParam();
-#else
-           SAOParam *saoParam = pcSlice->getAPS()->getSaoParam();
-#endif
           WRITE_FLAG( saoParam->bSaoFlag[1], "slice_sao_chroma_flag" );
          }
       }
-#if !REMOVE_APS
-      WRITE_UVLC( pcSlice->getAPS()->getAPSID(), "aps_id");
-#endif
     }
 
     //check if numrefidxes match the defaults. If not, override

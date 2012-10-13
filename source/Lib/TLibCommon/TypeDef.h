@@ -52,8 +52,6 @@
 #define CU_DQP_TU_CMAX 5                   ///< max number bins for truncated unary
 #define CU_DQP_EG_k 0                      ///< expgolomb order
 
-#define REMOVE_APS 1 ///< Disable APS-related code
-
 #define SBH_THRESHOLD                    4  ///< I0156: value of the fixed SBH controlling threshold
   
 #define SEQUENCE_LEVEL_LOSSLESS           0  ///< H0530: used only for sequence or frame-level lossless coding

@@ -52,11 +52,7 @@ Void TEncEntropy::encodeSliceHeader ( TComSlice* pcSlice )
 {
   if (pcSlice->getSPS()->getUseSAO())
   {
-#if REMOVE_APS
     SAOParam *saoParam = pcSlice->getPic()->getPicSym()->getSaoParam();
-#else
-    SAOParam *saoParam = pcSlice->getAPS()->getSaoParam();
-#endif
     pcSlice->setSaoEnabledFlag     (saoParam->bSaoFlag[0]);
     {
       pcSlice->setSaoEnabledFlagChroma   (saoParam->bSaoFlag[1]);
