@@ -53,7 +53,6 @@
 #include "TEncCavlc.h"
 #include "TEncSbac.h"
 #include "TEncSearch.h"
-#include "TEncAdaptiveLoopFilter.h"
 #include "TEncSampleAdaptiveOffset.h"
 #include "TEncPreanalyzer.h"
 #include "TEncRateCtrl.h"

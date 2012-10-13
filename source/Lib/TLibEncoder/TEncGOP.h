@@ -47,7 +47,6 @@
 #include "TLibCommon/TComBitCounter.h"
 #include "TLibCommon/TComLoopFilter.h"
 #include "TLibCommon/AccessUnit.h"
-#include "TEncAdaptiveLoopFilter.h"
 #include "TEncSampleAdaptiveOffset.h"
 #include "TEncSlice.h"
 #include "TEncEntropy.h"

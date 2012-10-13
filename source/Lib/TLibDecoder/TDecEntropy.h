@@ -43,7 +43,6 @@
 #include "TLibCommon/TComSlice.h"
 #include "TLibCommon/TComPic.h"
 #include "TLibCommon/TComPrediction.h"
-#include "TLibCommon/TComAdaptiveLoopFilter.h"
 #include "TLibCommon/TComSampleAdaptiveOffset.h"
 
 class TDecSbac;

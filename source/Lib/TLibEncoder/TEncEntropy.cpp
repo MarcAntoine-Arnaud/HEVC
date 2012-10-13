@@ -37,7 +37,6 @@
 
 #include "TEncEntropy.h"
 #include "TLibCommon/TypeDef.h"
-#include "TLibCommon/TComAdaptiveLoopFilter.h"
 #include "TLibCommon/TComSampleAdaptiveOffset.h"
 
 //! \ingroup TLibEncoder

@@ -292,10 +292,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\source\Lib\TLibCommon\TComAdaptiveLoopFilter.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\source\Lib\TLibCommon\TComBitStream.cpp"
 				>
 			</File>
@@ -415,10 +411,6 @@
 			</File>
 			<File
 				RelativePath="..\..\source\Lib\TLibCommon\SEI.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\source\Lib\TLibCommon\TComAdaptiveLoopFilter.h"
 				>
 			</File>
 			<File
