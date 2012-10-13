@@ -1164,11 +1164,7 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
               m_pcSAO->SAOProcess(&cSaoParam, pcPic->getSlice(0)->getLambdaLuma(), pcPic->getSlice(0)->getLambdaChroma());
 #endif
 #else
-#if ALF_CHROMA_LAMBDA
-              m_pcSAO->SAOProcess(&cSaoParam, pcPic->getSlice(0)->getLambdaLuma());
-#else
               m_pcSAO->SAOProcess(&cSaoParam, pcPic->getSlice(0)->getLambda());
-#endif
 #endif
               m_pcSAO->endSaoEnc();
               m_pcSAO->PCMLFDisableProcess(pcPic);

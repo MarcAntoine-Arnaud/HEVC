@@ -72,7 +72,7 @@ TComSlice::TComSlice()
 , m_pcPic                         ( NULL )
 , m_colFromL0Flag                 ( 1 )
 , m_colRefIdx                     ( 0 )
-#if ALF_CHROMA_LAMBDA || SAO_CHROMA_LAMBDA
+#if SAO_CHROMA_LAMBDA
 , m_dLambdaLuma( 0.0 )
 , m_dLambdaChroma( 0.0 )
 #else
@@ -701,7 +701,7 @@ Void TComSlice::copySliceInfo(TComSlice *pSrc)
 
   m_colFromL0Flag        = pSrc->m_colFromL0Flag;
   m_colRefIdx            = pSrc->m_colRefIdx;
-#if ALF_CHROMA_LAMBDA || SAO_CHROMA_LAMBDA 
+#if SAO_CHROMA_LAMBDA 
   m_dLambdaLuma          = pSrc->m_dLambdaLuma;
   m_dLambdaChroma        = pSrc->m_dLambdaChroma;
 #else

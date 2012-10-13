@@ -353,8 +353,8 @@ Void TEncSlice::initEncSlice( TComPic* pcPic, Int iPOCLast, UInt uiPOCCurr, Int 
   m_pcTrQuant->setLambda( dLambda );
 #endif
 
-#if ALF_CHROMA_LAMBDA || SAO_CHROMA_LAMBDA
-// For ALF or SAO
+#if SAO_CHROMA_LAMBDA
+// For SAO
   rpcSlice   ->setLambda( dLambda, dLambda / weight );  
 #else
   rpcSlice   ->setLambda( dLambda );
@@ -510,8 +510,8 @@ Void TEncSlice::xLamdaRecalculation(Int changeQP, Int idGOP, Int depth, SliceTyp
   m_pcTrQuant->setLambda( lambda );
 #endif
 
-#if ALF_CHROMA_LAMBDA || SAO_CHROMA_LAMBDA
-  // For ALF or SAO
+#if SAO_CHROMA_LAMBDA
+  // For SAO
   pcSlice   ->setLambda( lambda, lambda / weight );  
 #else
   pcSlice   ->setLambda( lambda );
@@ -604,8 +604,8 @@ Void TEncSlice::precompressSlice( TComPic*& rpcPic )
 #else
     m_pcTrQuant   ->setLambda              ( m_pdRdPicLambda[uiQpIdx] );
 #endif
-#if ALF_CHROMA_LAMBDA || SAO_CHROMA_LAMBDA
-    // For ALF or SAO
+#if SAO_CHROMA_LAMBDA
+    // For SAO
     pcSlice       ->setLambda              ( m_pdRdPicLambda[uiQpIdx], m_pdRdPicLambda[uiQpIdx] / weight ); 
 #else
     pcSlice       ->setLambda              ( m_pdRdPicLambda[uiQpIdx] );
@@ -653,8 +653,8 @@ Void TEncSlice::precompressSlice( TComPic*& rpcPic )
 #else
   m_pcTrQuant   ->setLambda              ( m_pdRdPicLambda[uiQpIdxBest] );
 #endif
-#if ALF_CHROMA_LAMBDA || SAO_CHROMA_LAMBDA
-  // For ALF or SAO
+#if SAO_CHROMA_LAMBDA
+  // For SAO
   pcSlice       ->setLambda              ( m_pdRdPicLambda[uiQpIdxBest], m_pdRdPicLambda[uiQpIdxBest] / weight ); 
 #else
   pcSlice       ->setLambda              ( m_pdRdPicLambda[uiQpIdxBest] );

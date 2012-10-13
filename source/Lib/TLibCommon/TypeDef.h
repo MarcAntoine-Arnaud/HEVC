@@ -80,7 +80,6 @@
 
 #define WEIGHTED_CHROMA_DISTORTION  1   ///< F386: weighting of chroma for RDO
 #define RDOQ_CHROMA_LAMBDA          1   ///< F386: weighting of chroma for RDOQ
-#define ALF_CHROMA_LAMBDA           1   ///< F386: weighting of chroma for ALF
 #define SAO_CHROMA_LAMBDA           1   ///< F386: weighting of chroma for SAO
 
 #define MIN_SCAN_POS_CROSS          4

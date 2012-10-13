@@ -1015,7 +1015,7 @@ private:
   UInt        m_maxNumMergeCand;
 
 
-#if ALF_CHROMA_LAMBDA || SAO_CHROMA_LAMBDA
+#if SAO_CHROMA_LAMBDA
   Double      m_dLambdaLuma;
   Double      m_dLambdaChroma;
 #else
@@ -1175,7 +1175,7 @@ public:
   Bool      isInterB        ()                          { return  m_eSliceType == B_SLICE;  }
   Bool      isInterP        ()                          { return  m_eSliceType == P_SLICE;  }
   
-#if ALF_CHROMA_LAMBDA || SAO_CHROMA_LAMBDA  
+#if SAO_CHROMA_LAMBDA  
   Void      setLambda( Double d, Double e ) { m_dLambdaLuma = d; m_dLambdaChroma = e;}
   Double    getLambdaLuma() { return m_dLambdaLuma;        }
   Double    getLambdaChroma() { return m_dLambdaChroma;        }
