@@ -109,26 +109,10 @@ Void TEncTop::create ()
     m_cTrQuant.initSliceQpDelta();
   }
 #endif
-#if !REMOVE_ALF
-  m_cAdaptiveLoopFilter.create( getSourceWidth(), getSourceHeight(), g_uiMaxCUWidth, g_uiMaxCUHeight, g_uiMaxCUDepth );
-#endif
   m_cLoopFilter.        create( g_uiMaxCUDepth );
   
-#if !REMOVE_ALF
-  if(m_bUseALF)
-  {
-    m_cAdaptiveLoopFilter.setALFLowLatencyEncoding( m_alfLowLatencyEncoding );
-    m_cAdaptiveLoopFilter.setGOPSize( getGOPSize() );
-    m_cAdaptiveLoopFilter.createAlfGlobalBuffers();
-  }
-#endif
-  
 #if !REMOVE_APS
-#if REMOVE_ALF
   if(m_bUseSAO)
-#else
-  if(m_bUseSAO || m_bUseALF)
-#endif
   {
     m_vAPS.reserve(MAX_NUM_SUPPORTED_APS);
   }
@@ -219,12 +203,6 @@ Void TEncTop::createWPPCoders(Int iNumSubstreams)
 
 Void TEncTop::destroy ()
 {
-#if !REMOVE_ALF
-  if(m_bUseALF)
-  {
-    m_cAdaptiveLoopFilter.destroyAlfGlobalBuffers();
-  }
-#endif
 #if !REMOVE_APS
   for(Int i=0; i< m_vAPS.size(); i++)
   {
@@ -241,9 +219,6 @@ Void TEncTop::destroy ()
     m_cEncSAO.destroy();
     m_cEncSAO.destroyEncBuffer();
   }
-#if !REMOVE_ALF
-  m_cAdaptiveLoopFilter.destroy();
-#endif
   m_cLoopFilter.        destroy();
   m_cRateCtrl.          destroy();
   // SBAC RD
@@ -486,9 +461,6 @@ Void TEncTop::xInitSPS()
   m_cSPS.setUsePCM        ( m_usePCM           );
   m_cSPS.setPCMLog2MaxSize( m_pcmLog2MaxSize  );
 
-#if !REMOVE_ALF
-  m_cSPS.setUseALF        ( m_bUseALF           );
-#endif
   m_cSPS.setQuadtreeTULog2MaxSize( m_uiQuadtreeTULog2MaxSize );
   m_cSPS.setQuadtreeTULog2MinSize( m_uiQuadtreeTULog2MinSize );
   m_cSPS.setQuadtreeTUMaxDepthInter( m_uiQuadtreeTUMaxDepthInter    );

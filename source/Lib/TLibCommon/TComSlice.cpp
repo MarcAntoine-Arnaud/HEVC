@@ -127,9 +127,6 @@ TComSlice::TComSlice()
   resetWpScaling(m_weightPredTable);
   initWpAcDcParam();
   m_saoEnabledFlag = false;
-#if !REMOVE_ALF
-  m_alfEnabledFlag[0] = m_alfEnabledFlag[1] = m_alfEnabledFlag[2] = false;
-#endif
 }
 
 TComSlice::~TComSlice()
@@ -753,12 +750,6 @@ Void TComSlice::copySliceInfo(TComSlice *pSrc)
   m_numEntryPointOffsets  = pSrc->m_numEntryPointOffsets;
 
   m_bLMvdL1Zero = pSrc->m_bLMvdL1Zero;
-#if !REMOVE_ALF
-  for(Int compIdx=0; compIdx < 3; compIdx++)
-  {
-    m_alfEnabledFlag[compIdx] = pSrc->m_alfEnabledFlag[compIdx];
-  }
-#endif
   m_LFCrossSliceBoundaryFlag = pSrc->m_LFCrossSliceBoundaryFlag;
   m_enableTMVPFlag                = pSrc->m_enableTMVPFlag;
 }
@@ -1257,9 +1248,6 @@ TComSPS::TComSPS()
 , m_usePCM                   (false)
 , m_pcmLog2MaxSize            (  5)
 , m_uiPCMLog2MinSize          (  7)
-#if !REMOVE_ALF
-, m_bUseALF                   (false)
-#endif
 , m_bUseLComb                 (false)
 , m_restrictedRefPicListsFlag   (  1)
 , m_listsModificationPresentFlag(  0)
@@ -1646,33 +1634,17 @@ TComAPS::TComAPS()
 {
   m_apsID = 0;
   m_pSaoParam = NULL;
-#if !REMOVE_ALF
-  m_alfParam[0] = m_alfParam[1] = m_alfParam[2] = NULL;
-#endif
 }
 
 TComAPS::~TComAPS()
 {
   delete m_pSaoParam;
-#if !REMOVE_ALF
-  for(Int compIdx =0; compIdx < 3; compIdx++)
-  {
-    delete m_alfParam[compIdx];
-    m_alfParam[compIdx] = NULL;
-  }
-#endif
 }
 
 TComAPS& TComAPS::operator= (const TComAPS& src)
 {
   m_apsID       = src.m_apsID;
   m_pSaoParam   = src.m_pSaoParam;
-#if !REMOVE_ALF
-  for(Int compIdx =0; compIdx < 3; compIdx++)
-  {
-    m_alfParam[compIdx] = src.m_alfParam[compIdx];
-  }
-#endif
   return *this;
 }
 
@@ -1690,27 +1662,6 @@ Void TComAPS::destroySaoParam()
   }
 }
 
-#if !REMOVE_ALF
-Void TComAPS::createAlfParam()
-{
-  for(Int compIdx =0; compIdx < 3; compIdx++)
-  {
-    m_alfParam[compIdx] = new ALFParam(compIdx);
-    m_alfParam[compIdx]->alf_flag = 0;
-  }
-}
-Void TComAPS::destroyAlfParam()
-{
-  for(Int compIdx=0; compIdx < 3; compIdx++)
-  {
-    if(m_alfParam[compIdx] != NULL)
-    {
-      delete m_alfParam[compIdx];
-      m_alfParam[compIdx] = NULL;
-    }
-  }
-}
-#endif
 #endif
 
 TComScalingList::TComScalingList()

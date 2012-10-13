@@ -105,11 +105,9 @@ protected:
   Bool    m_saoLcuBoundary;
   Bool    m_saoLcuBasedOptimization;
 
-#if REMOVE_ALF
   Void xPCMRestoration        (TComPic* pcPic);
   Void xPCMCURestoration      (TComDataCU* pcCU, UInt uiAbsZorderIdx, UInt uiDepth);
   Void xPCMSampleRestoration  (TComDataCU* pcCU, UInt uiAbsZorderIdx, UInt uiDepth, TextType ttText);
-#endif
 public:
   TComSampleAdaptiveOffset         ();
   virtual ~TComSampleAdaptiveOffset();
@@ -147,9 +145,7 @@ public:
   Bool getSaoLcuBasedOptimization ()           {return m_saoLcuBasedOptimization;}
   Void resetSaoUnit(SaoLcuParam* saoUnit);
   Void copySaoUnit(SaoLcuParam* saoUnitDst, SaoLcuParam* saoUnitSrc );
-#if REMOVE_ALF
   Void PCMLFDisableProcess    ( TComPic* pcPic);                        ///< interface function for ALF process 
-#endif
 };
 
 //! \}

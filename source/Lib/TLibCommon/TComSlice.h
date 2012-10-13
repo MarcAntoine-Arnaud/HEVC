@@ -545,9 +545,6 @@ private:
   UInt        m_pcmLog2MaxSize;
   UInt        m_uiPCMLog2MinSize;
   Bool        m_useAMP;
-#if !REMOVE_ALF
-  Bool        m_bUseALF;
-#endif
 
   Bool        m_bUseLComb;
   
@@ -671,10 +668,6 @@ public:
   UInt getMaxTrSize   ()         { return  m_uiMaxTrSize;   }
   
   // Tool list
-#if !REMOVE_ALF
-  Bool getUseALF      ()         { return m_bUseALF;        }
-  Void setUseALF      ( Bool b ) { m_bUseALF  = b;          }
-#endif
   Void setUseLComb    (Bool b)   { m_bUseLComb = b;         }
   Bool getUseLComb    ()         { return m_bUseLComb;      }
 
@@ -947,26 +940,14 @@ public:
 
   Void      setAPSID      (Int iID)   {m_apsID = iID;            }  //!< set APS ID 
   Int       getAPSID      ()          {return m_apsID;           }  //!< get APS ID
-#if !REMOVE_ALF
-  ALFParam** getAlfParam  ()                       { return m_alfParam;}
-  Bool       getAlfEnabled(Int compIdx)            { return (m_alfParam[compIdx] == NULL)?(false):(m_alfParam[compIdx]->alf_flag ==1);}
-  Void       setAlfEnabled(Bool bVal, Int compIdx) { m_alfParam[compIdx]->alf_flag= (bVal?1:0); }  //!< set ALF enabled/disabled in APS
-#endif
   SAOParam* getSaoParam   ()          {return m_pSaoParam;       }  //!< get SAO parameters in APS
 
   Void      createSaoParam();   //!< create SAO parameter object
   Void      destroySaoParam();  //!< destroy SAO parameter object
 
-#if !REMOVE_ALF
-  Void      createAlfParam();   //!< create ALF parameter object
-  Void      destroyAlfParam();  //!< destroy ALF parameter object
-#endif
 private:
   Int         m_apsID;        //!< APS ID
   SAOParam*   m_pSaoParam;    //!< SAO parameter object pointer
-#if !REMOVE_ALF
-  ALFParam*   m_alfParam[3];
-#endif
 public:
   TComAPS& operator= (const TComAPS& src);  //!< "=" operator for APS object
 };
@@ -997,9 +978,6 @@ private:
   //  Bitstream writing
 #if !REMOVE_APS
   Int         m_iAPSId; //!< APS ID in slice header
-#endif
-#if !REMOVE_ALF
-  Bool       m_alfEnabledFlag[3];
 #endif
   bool       m_saoEnabledFlag;
   bool       m_saoEnabledFlagChroma;      ///< SAO Cb&Cr enabled flag
@@ -1139,10 +1117,6 @@ public:
 #endif
   Void      setPicOutputFlag( Bool b )         { m_PicOutputFlag = b;    }
   Bool      getPicOutputFlag()                 { return m_PicOutputFlag; }
-#if !REMOVE_ALF
-  Void      setAlfEnabledFlag(Bool b, Int compIdx) { m_alfEnabledFlag[compIdx] = b;    }
-  Bool      getAlfEnabledFlag(Int compIdx)         { return m_alfEnabledFlag[compIdx]; }
-#endif
   Void      setSaoEnabledFlag(Bool s) {m_saoEnabledFlag =s; }
   Bool      getSaoEnabledFlag() { return m_saoEnabledFlag; }
   Void      setSaoEnabledFlagChroma(Bool s) {m_saoEnabledFlagChroma =s; }       //!< set SAO Cb&Cr enabled flag

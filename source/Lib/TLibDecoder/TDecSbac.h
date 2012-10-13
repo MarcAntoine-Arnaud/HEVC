@@ -103,9 +103,6 @@ private:
   TDecBinIf*        m_pcTDecBinIf;
  
 public:
-#if !REMOVE_ALF
-  Void parseAlfCtrlFlag   (Int compIdx, UInt& code);
-#endif
   
   Void parseSkipFlag      ( TComDataCU* pcCU, UInt uiAbsPartIdx, UInt uiDepth );
   Void parseCUTransquantBypassFlag( TComDataCU* pcCU, UInt uiAbsPartIdx, UInt uiDepth );

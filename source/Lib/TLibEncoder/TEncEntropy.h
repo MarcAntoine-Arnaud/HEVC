@@ -82,9 +82,6 @@ public:
   virtual Void codeScalingList   ( TComScalingList* scalingList )      = 0;
   
 public:
-#if !REMOVE_ALF
-  virtual Void codeAlfCtrlFlag   ( Int compIdx, UInt code ) = 0;
-#endif
   virtual Void codeApsExtensionFlag () = 0;
   
   virtual Void codeCUTransquantBypassFlag( TComDataCU* pcCU, UInt uiAbsPartIdx ) = 0;
@@ -112,9 +109,6 @@ public:
   virtual Void codeDeltaQP       ( TComDataCU* pcCU, UInt uiAbsPartIdx ) = 0;
   virtual Void codeCoeffNxN      ( TComDataCU* pcCU, TCoeff* pcCoef, UInt uiAbsPartIdx, UInt uiWidth, UInt uiHeight, UInt uiDepth, TextType eTType ) = 0;
   virtual Void codeTransformSkipFlags ( TComDataCU* pcCU, UInt uiAbsPartIdx, UInt width, UInt height, UInt uiDepth, TextType eTType ) = 0;
-#if !REMOVE_ALF
-  virtual Void codeAlfParam      (ALFParam* alfParam) = 0;
-#endif
   virtual Void codeSAOSign          ( UInt code   ) = 0;
   virtual Void codeSaoMaxUvlc       ( UInt code, UInt maxSymbol ) = 0;
   virtual Void codeSaoMerge    ( UInt   uiCode  ) = 0;
@@ -161,9 +155,6 @@ public:
   Void    encodeSliceFinish         ();
   Void    encodeFlush               ();
   Void    encodeStart               ();
-#if !REMOVE_ALF
-  Void encodeAlfParam(ALFParam* alfParam) {m_pcEntropyCoderIf->codeAlfParam(alfParam);}
-#endif
   TEncEntropyIf*      m_pcEntropyCoderIf;
   
 public:
@@ -181,10 +172,6 @@ public:
   Void encodeMVPIdxPU     ( TComDataCU* pcSubCU, UInt uiAbsPartIdx, RefPicList eRefList );
   Void encodeMergeFlag    ( TComDataCU* pcCU, UInt uiAbsPartIdx, UInt uiPUIdx );
   Void encodeMergeIndex   ( TComDataCU* pcCU, UInt uiAbsPartIdx, UInt uiPUIdx, Bool bRD = false );
-#if !REMOVE_ALF
-  /// encode ALF LCU control flag
-  Void encodeAlfCtrlFlag( Int compIdx, UInt code ) {m_pcEntropyCoderIf->codeAlfCtrlFlag(compIdx, code);}
-#endif
   Void encodeApsExtensionFlag() {m_pcEntropyCoderIf->codeApsExtensionFlag();};
   Void encodePredMode          ( TComDataCU* pcCU, UInt uiAbsPartIdx, Bool bRD = false );
   Void encodePartSize          ( TComDataCU* pcCU, UInt uiAbsPartIdx, UInt uiDepth, Bool bRD = false );

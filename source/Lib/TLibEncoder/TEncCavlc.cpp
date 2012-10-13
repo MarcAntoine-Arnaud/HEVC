@@ -455,9 +455,6 @@ Void TEncCavlc::codeSPS( TComSPS* pcSPS )
   }
   WRITE_FLAG( pcSPS->getUseAMP(),                                                    "asymmetric_motion_partitions_enabled_flag" );
   WRITE_FLAG( pcSPS->getUseSAO() ? 1 : 0,                                            "sample_adaptive_offset_enabled_flag");
-#if !REMOVE_ALF
-  WRITE_FLAG( pcSPS->getUseALF () ? 1 : 0,                                           "adaptive_loop_filter_enabled_flag");
-#endif
   if( pcSPS->getUsePCM() )
   {
   WRITE_FLAG( pcSPS->getPCMFilterDisableFlag()?1 : 0,                                "pcm_loop_filter_disable_flag");
@@ -676,11 +673,7 @@ Void TEncCavlc::codeSliceHeader         ( TComSlice* pcSlice )
         }
       }
     }
-#if REMOVE_ALF
     if(pcSlice->getSPS()->getUseSAO())
-#else
-    if(pcSlice->getSPS()->getUseSAO() || pcSlice->getSPS()->getUseALF())
-#endif
     {
       if (pcSlice->getSPS()->getUseSAO())
       {
@@ -836,31 +829,10 @@ Void TEncCavlc::codeSliceHeader         ( TComSlice* pcSlice )
       }
     }
 
-#if !REMOVE_ALF
-  if (!bDependentSlice)
-  {
-    if (pcSlice->getSPS()->getUseALF())
-    {
-      char syntaxString[50];
-      for(Int compIdx=0; compIdx< 3; compIdx++)
-      {
-        sprintf(syntaxString, "alf_slice_filter_flag[%d]", compIdx);
-        WRITE_FLAG( pcSlice->getAlfEnabledFlag(compIdx)?1:0, syntaxString );
-      }
-    }
-  }
-#endif
-#if !REMOVE_ALF
-    Bool isAlfEnabled = (!pcSlice->getSPS()->getUseALF())?(false):(pcSlice->getAlfEnabledFlag(0)||pcSlice->getAlfEnabledFlag(1)||pcSlice->getAlfEnabledFlag(2));
-#endif
     Bool isSAOEnabled = (!pcSlice->getSPS()->getUseSAO())?(false):(pcSlice->getSaoEnabledFlag()||pcSlice->getSaoEnabledFlagChroma());
     Bool isDBFEnabled = (!pcSlice->getDeblockingFilterDisable());
 
-#if REMOVE_ALF
     if(pcSlice->getPPS()->getLoopFilterAcrossSlicesEnabledFlag() && ( isSAOEnabled || isDBFEnabled ))
-#else
-    if(pcSlice->getSPS()->getLFCrossSliceBoundaryFlag() && ( isAlfEnabled || isSAOEnabled || isDBFEnabled ))
-#endif
     {
       WRITE_FLAG(pcSlice->getLFCrossSliceBoundaryFlag()?1:0, "slice_loop_filter_across_slices_enabled_flag");
     }
@@ -1140,65 +1112,6 @@ Void TEncCavlc::xGolombEncode(Int coeff, Int k)
 #endif
 
 }
-
-#if !REMOVE_ALF
-Void TEncCavlc::codeAlfParam(ALFParam* alfParam)
-{
-  char syntaxString[50];
-  sprintf(syntaxString, "alf_aps_filter_flag[%d]", alfParam->componentID);
-  WRITE_FLAG(alfParam->alf_flag, syntaxString);
-  if(alfParam->alf_flag == 0)
-  {
-    return;
-  }
-
-  const Int numCoeff = (Int)ALF_MAX_NUM_COEF;
-  switch(alfParam->componentID)
-  {
-  case ALF_Cb:
-  case ALF_Cr:
-    {
-      for(Int pos=0; pos< numCoeff; pos++)
-      {
-        WRITE_SVLC(alfParam->coeffmulti[0][pos], "alf_filt_coeff");
-      }
-    }
-    break;
-  case ALF_Y:
-    {
-      Int noFilters = min(alfParam->filters_per_group-1, 2);
-      WRITE_UVLC(noFilters, "alf_no_filters_minus1");
-      if(noFilters == 1)
-      {
-        WRITE_UVLC(alfParam->startSecondFilter, "alf_start_second_filter");
-      }
-      else if (noFilters == 2)
-      {
-        Int numMergeFlags = 16;
-        for (Int i=1; i<numMergeFlags; i++) 
-        {
-          WRITE_FLAG(alfParam->filterPattern[i], "alf_filter_pattern");
-        }
-      }
-      for(Int f=0; f< alfParam->filters_per_group; f++)
-      {
-        for(Int pos=0; pos< numCoeff; pos++)
-        {
-          xGolombEncode(alfParam->coeffmulti[f][pos], kTableTabShapes[ALF_CROSS9x7_SQUARE3x3][pos]);
-        }
-      }
-    }
-    break;
-  default:
-    {
-      printf("Not a legal component ID\n");
-      assert(0);
-      exit(-1);
-    }
-  }
-
-}
-#endif
 
 Void TEncCavlc::estBit( estBitsSbacStruct* pcEstBitsCabac, Int width, Int height, TextType eTType )
 {

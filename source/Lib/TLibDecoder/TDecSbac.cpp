@@ -1570,23 +1570,6 @@ Void TDecSbac::parseSaoOneLcuInterleaving(Int rx, Int ry, SAOParam* pSaoParam, T
   }
 }
 
-#if !REMOVE_ALF
-Void TDecSbac::parseAlfCtrlFlag (Int compIdx, UInt& code)
-{
-  UInt decodedSymbol;
-  m_pcTDecBinIf->decodeBin( decodedSymbol, m_cCUAlfCtrlFlagSCModel.get( 0, 0, 0 ) );
-  code = decodedSymbol;
-
-  DTRACE_CABAC_VL( g_nSymbolCounter++ )
-  DTRACE_CABAC_T( "parseAlfCtrlFlag()" )
-  DTRACE_CABAC_T( "\tsymbol=" )
-  DTRACE_CABAC_V( decodedSymbol )
-  DTRACE_CABAC_T( "\tcompIdx=" )
-  DTRACE_CABAC_V( compIdx )
-  DTRACE_CABAC_T( "\n" )
-}
-#endif
-
 /**
  - Initialize our contexts from the nominated source.
  .

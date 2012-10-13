@@ -369,21 +369,6 @@ Void TDecSlice::decompressSlice(TComInputBitstream* pcBitstream, TComInputBitstr
       }
       pcSbacDecoder->parseSaoOneLcuInterleaving(rx, ry, saoParam,pcCU, cuAddrInSlice, cuAddrUpInSlice, allowMergeLeft, allowMergeUp);
     }
-#if !REMOVE_ALF
-    if(pcSlice->getSPS()->getUseALF())
-    {
-      UInt alfEnabledFlag;
-      for(Int compIdx=0; compIdx< 3; compIdx++)
-      {
-        alfEnabledFlag = 0;
-        if(pcSlice->getAlfEnabledFlag(compIdx))
-        {
-          pcSbacDecoder->parseAlfCtrlFlag(compIdx, alfEnabledFlag);
-        }
-        pcCU->setAlfLCUEnabled((alfEnabledFlag==1)?true:false, compIdx);
-      }
-    }
-#endif
     m_pcCuDecoder->decodeCU     ( pcCU, uiIsLast );
     m_pcCuDecoder->decompressCU ( pcCU );
     

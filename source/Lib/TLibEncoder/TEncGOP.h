@@ -97,10 +97,6 @@ private:
 
   SEIWriter               m_seiWriter;
   
-#if !REMOVE_ALF
-  // Adaptive Loop filter
-  TEncAdaptiveLoopFilter* m_pcAdaptiveLoopFilter;
-#endif
   //--Adaptive Loop filter
   TEncSampleAdaptiveOffset*  m_pcSAO;
   TComBitCounter*         m_pcBitCounter;

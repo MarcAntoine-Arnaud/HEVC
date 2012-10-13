@@ -1318,7 +1318,6 @@ Void TComSampleAdaptiveOffset::copySaoUnit(SaoLcuParam* saoUnitDst, SaoLcuParam*
   }
 }
 
-#if REMOVE_ALF
 /** PCM LF disable process. 
  * \param pcPic picture (TComPic) pointer
  * \returns Void
@@ -1456,6 +1455,5 @@ Void TComSampleAdaptiveOffset::xPCMSampleRestoration (TComDataCU* pcCU, UInt uiA
     piSrc += uiStride;
   }
 }
-#endif
 
 //! \}

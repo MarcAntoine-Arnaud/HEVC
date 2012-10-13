@@ -125,10 +125,6 @@ public:
   Void  parseScalingList               ( TComScalingList* scalingList );
   Void xDecodeScalingList    ( TComScalingList *scalingList, UInt sizeId, UInt listId);
 protected:
-#if !REMOVE_ALF
-  Void  xParseAlfParam       ( ALFParam* pAlfParam );
-  Int   xGolombDecode        ( Int k );
-#endif
   Bool  xMoreRbspData();
 };
 

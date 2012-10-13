@@ -180,12 +180,6 @@ Void TDecCavlc::parseAPS(TComAPS* aps)
 
   UInt uiCode;
   READ_UVLC(uiCode, "aps_id");                             aps->setAPSID(uiCode);
-#if !REMOVE_ALF
-  for(Int compIdx=0; compIdx< 3; compIdx++)
-  {
-    xParseAlfParam( (aps->getAlfParam())[compIdx]);
-  }
-#endif
   READ_FLAG( uiCode, "aps_extension_flag");
   if (uiCode)
   {
@@ -225,100 +219,6 @@ inline Void copySaoOneLcuParam(SaoLcuParam* dst,  SaoLcuParam* src)
     }
   }
 }
-
-#if !REMOVE_ALF
-Void TDecCavlc::xParseAlfParam(ALFParam* pAlfParam)
-{
-  UInt uiSymbol;
-  char syntaxString[50];
-  sprintf(syntaxString, "alf_aps_filter_flag[%d]", pAlfParam->componentID);
-  READ_FLAG(uiSymbol, syntaxString);
-  pAlfParam->alf_flag = uiSymbol;
-  if(pAlfParam->alf_flag ==0)
-  {
-    return;
-  }
-  Int iSymbol;
-  pAlfParam->num_coeff = (Int)ALF_MAX_NUM_COEF;
-  switch(pAlfParam->componentID)
-  {
-  case ALF_Cb:
-  case ALF_Cr:
-    {
-      pAlfParam->filter_shape = ALF_CROSS9x7_SQUARE3x3;
-      pAlfParam->filters_per_group = 1;
-      for(Int pos=0; pos< pAlfParam->num_coeff; pos++)
-      {
-        READ_SVLC(iSymbol, "alf_filt_coeff");
-        pAlfParam->coeffmulti[0][pos] = iSymbol;
-      }
-    }
-    break;
-  case ALF_Y:
-    {
-      pAlfParam->filters_per_group = 0;
-      memset (pAlfParam->filterPattern, 0 , sizeof(Int)*NO_VAR_BINS);
-      pAlfParam->filter_shape = 0;
-      // filters_per_fr
-      READ_UVLC (uiSymbol, "alf_no_filters_minus1");
-      pAlfParam->filters_per_group = uiSymbol + 1;
-
-      if(uiSymbol == 1) // filters_per_group == 2
-      {
-        READ_UVLC (uiSymbol, "alf_start_second_filter");
-        pAlfParam->startSecondFilter = uiSymbol;
-        pAlfParam->filterPattern [uiSymbol] = 1;
-      }
-      else if (uiSymbol > 1) // filters_per_group > 2
-      {
-        pAlfParam->filters_per_group = 1;
-        Int numMergeFlags = 16;
-        for (Int i=1; i<numMergeFlags; i++) 
-        {
-          READ_FLAG (uiSymbol,  "alf_filter_pattern");
-          pAlfParam->filterPattern[i] = uiSymbol;
-          pAlfParam->filters_per_group += uiSymbol;
-        }
-      }
-      for(Int idx = 0; idx < pAlfParam->filters_per_group; ++idx)
-      {
-        for(Int i = 0; i < pAlfParam->num_coeff; i++)
-        {
-          pAlfParam->coeffmulti[idx][i] = xGolombDecode(kTableTabShapes[ALF_CROSS9x7_SQUARE3x3][i]);
-        }
-      }
-    }
-    break;
-  default:
-    {
-      printf("Not a legal component ID for ALF\n");
-      assert(0);
-      exit(-1);
-    }
-  }
-}
-
-Int TDecCavlc::xGolombDecode(Int k)
-{
-  Int coeff;
-  UInt symbol;
-  xReadEpExGolomb( symbol, k );
-  coeff = symbol;
-  if(symbol != 0)
-  {
-    xReadFlag(symbol);
-    if(symbol == 0)
-    {
-      coeff = -coeff;
-    }
-  }
-#if ENC_DEC_TRACE
-  fprintf( g_hTrace, "%8lld  ", g_nSymbolCounter++ );
-  fprintf( g_hTrace, "%-40s se(v) : %d\n", "alf_filt_coeff", coeff ); 
-#endif
-  return coeff;
-}
-#endif
 
 Void TDecCavlc::parsePPS(TComPPS* pcPPS)
 {
@@ -691,9 +591,6 @@ Void TDecCavlc::parseSPS(TComSPS* pcSPS)
   }
   READ_FLAG( uiCode, "asymmetric_motion_partitions_enabled_flag" ); pcSPS->setUseAMP( uiCode );
   READ_FLAG( uiCode, "sample_adaptive_offset_enabled_flag" );       pcSPS->setUseSAO ( uiCode ? true : false );
-#if !REMOVE_ALF
-  READ_FLAG( uiCode, "adaptive_loop_filter_enabled_flag" );         pcSPS->setUseALF ( uiCode ? true : false );
-#endif
   if( pcSPS->getUsePCM() )
   {
     READ_FLAG( uiCode, "pcm_loop_filter_disable_flag" );           pcSPS->setPCMFilterDisableFlag ( uiCode ? true : false );
@@ -1003,11 +900,7 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
         rpcSlice->setRPS(rps);
       }
     }
-#if REMOVE_ALF
     if(sps->getUseSAO())
-#else
-    if(sps->getUseSAO() || sps->getUseALF())
-#endif
     {
       if (sps->getUseSAO())
       {
@@ -1237,27 +1130,10 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
         rpcSlice->setDeblockingFilterTcOffsetDiv2  ( rpcSlice->getPPS()->getDeblockingFilterTcOffsetDiv2() );
       }
     }
-#if !REMOVE_ALF
-    if(sps->getUseALF())
-    {
-      char syntaxString[50];
-      for(Int compIdx=0; compIdx< 3; compIdx++)
-      {
-        sprintf(syntaxString, "alf_slice_filter_flag[%d]", compIdx);
-        READ_FLAG(uiCode, syntaxString);
-        rpcSlice->setAlfEnabledFlag( (uiCode ==1), compIdx);
-      }
-    }
-    Bool isAlfEnabled = (!rpcSlice->getSPS()->getUseALF())?(false):(rpcSlice->getAlfEnabledFlag(0)||rpcSlice->getAlfEnabledFlag(1)||rpcSlice->getAlfEnabledFlag(2));
-#endif
     Bool isSAOEnabled = (!rpcSlice->getSPS()->getUseSAO())?(false):(rpcSlice->getSaoEnabledFlag()||rpcSlice->getSaoEnabledFlagChroma());
     Bool isDBFEnabled = (!rpcSlice->getDeblockingFilterDisable());
 
-#if REMOVE_ALF
     if(rpcSlice->getPPS()->getLoopFilterAcrossSlicesEnabledFlag() && ( isSAOEnabled || isDBFEnabled ))
-#else
-    if(rpcSlice->getSPS()->getLFCrossSliceBoundaryFlag() && ( isAlfEnabled || isSAOEnabled || isDBFEnabled ))
-#endif
     {
       READ_FLAG( uiCode, "slice_loop_filter_across_slices_enabled_flag");
     }

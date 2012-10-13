@@ -52,7 +52,6 @@
 #define CU_DQP_TU_CMAX 5                   ///< max number bins for truncated unary
 #define CU_DQP_EG_k 0                      ///< expgolomb order
 
-#define REMOVE_ALF 1 ///< Disable ALF-related code
 #define REMOVE_APS 1 ///< Disable APS-related code
 
 #define SBH_THRESHOLD                    4  ///< I0156: value of the fixed SBH controlling threshold
@@ -308,30 +307,6 @@ struct SAOParam
   Int          numCuInWidth;
   ~SAOParam();
 };
-
-#if !REMOVE_ALF
-struct ALFParam
-{
-  Int alf_flag;                           ///< indicates use of ALF
-  Int num_coeff;                          ///< number of filter coefficients
-  Int filter_shape;
-  Int *filterPattern;
-  Int startSecondFilter;
-  Int filters_per_group;
-  Int **coeffmulti;
-  Int componentID;
-  //constructor, operator
-  ALFParam():componentID(-1){}
-  ALFParam(Int cID){create(cID);}
-  ALFParam(const ALFParam& src) {*this = src;}
-  ~ALFParam(){destroy();}
-  const ALFParam& operator= (const ALFParam& src);
-private:
-  Void create(Int cID);
-  Void destroy();
-  Void copy(const ALFParam& src);
-};
-#endif
 
 /// parameters for deblocking filter
 typedef struct _LFCUParam

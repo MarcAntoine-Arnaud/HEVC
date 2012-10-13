@@ -102,9 +102,6 @@ public:
   
   Void codeMVPIdx ( TComDataCU* pcCU, UInt uiAbsPartIdx, RefPicList eRefList );
   Void xGolombEncode(Int coeff, Int k);
-#if !REMOVE_ALF
-  Void codeAlfParam(ALFParam* alfParam);
-#endif
   Void codeSAOSign       ( UInt code   ) { printf("Not supported\n"); assert (0); }
   Void codeSaoMaxUvlc    ( UInt   code, UInt maxSymbol ){printf("Not supported\n"); assert (0);}
   Void codeSaoMerge  ( UInt uiCode ){printf("Not supported\n"); assert (0);}

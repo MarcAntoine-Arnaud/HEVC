@@ -80,10 +80,6 @@ private:
   TDecSlice*            m_pcSliceDecoder;
   TComLoopFilter*       m_pcLoopFilter;
   
-#if !REMOVE_ALF
-  // Adaptive Loop filter
-  TComAdaptiveLoopFilter*       m_pcAdaptiveLoopFilter;
-#endif
   TComSampleAdaptiveOffset*     m_pcSAO;
   Double                m_dDecTime;
   Int                   m_decodedPictureHashSEIEnabled;  ///< Checksum(3)/CRC(2)/MD5(1)/disable(0) acting on decoded picture hash SEI message
@@ -91,9 +87,6 @@ private:
   //! list that contains the CU address of each slice plus the end address 
   std::vector<Int> m_sliceStartCUAddress;
   std::vector<Bool> m_LFCrossSliceBoundaryFlag;
-#if !REMOVE_ALF
-  std::vector<Bool> m_sliceAlfEnabled[3];
-#endif
 
 public:
   TDecGop();
@@ -105,9 +98,6 @@ public:
                  TDecCavlc*              pcCavlcDecoder, 
                  TDecSlice*              pcSliceDecoder, 
                  TComLoopFilter*         pcLoopFilter,
-#if !REMOVE_ALF
-                 TComAdaptiveLoopFilter* pcAdaptiveLoopFilter,
-#endif
                  TComSampleAdaptiveOffset* pcSAO
                  );
   Void  create  ();

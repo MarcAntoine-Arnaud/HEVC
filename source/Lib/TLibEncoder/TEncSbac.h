@@ -98,10 +98,6 @@ public:
   Void  codeSliceFinish         ();
   Void  codeFlush               ();
   Void  encodeStart             ();
-#if !REMOVE_ALF
-  Void codeAlfParam(ALFParam* alfParam){printf("Not supported\n"); assert(0); exit(1);}
-  Void codeAlfCtrlFlag( Int compIdx, UInt code );
-#endif
   Void  codeApsExtensionFlag () { assert (0); return; };
   Void  codeSaoMaxUvlc    ( UInt code, UInt maxSymbol );
   Void  codeSaoMerge  ( UInt  uiCode );

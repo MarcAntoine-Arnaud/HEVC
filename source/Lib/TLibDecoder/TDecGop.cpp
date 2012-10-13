@@ -83,9 +83,6 @@ Void TDecGop::init( TDecEntropy*            pcEntropyDecoder,
                    TDecCavlc*              pcCavlcDecoder, 
                    TDecSlice*              pcSliceDecoder, 
                    TComLoopFilter*         pcLoopFilter,
-#if !REMOVE_ALF
-                   TComAdaptiveLoopFilter* pcAdaptiveLoopFilter,
-#endif
                    TComSampleAdaptiveOffset* pcSAO
                    )
 {
@@ -95,9 +92,6 @@ Void TDecGop::init( TDecEntropy*            pcEntropyDecoder,
   m_pcCavlcDecoder        = pcCavlcDecoder;
   m_pcSliceDecoder        = pcSliceDecoder;
   m_pcLoopFilter          = pcLoopFilter;
-#if !REMOVE_ALF
-  m_pcAdaptiveLoopFilter  = pcAdaptiveLoopFilter;
-#endif
   m_pcSAO  = pcSAO;
 }
 
@@ -157,15 +151,6 @@ Void TDecGop::decompressSlice(TComInputBitstream* pcBitstream, TComPic*& rpcPic)
   if(uiSliceStartCuAddr == uiStartCUAddr)
   {
     m_LFCrossSliceBoundaryFlag.push_back( pcSlice->getLFCrossSliceBoundaryFlag());
-#if !REMOVE_ALF
-    if(pcSlice->getSPS()->getUseALF())
-    {
-      for(Int compIdx=0; compIdx < 3; compIdx++)
-      {
-        m_sliceAlfEnabled[compIdx].push_back(  pcSlice->getAlfEnabledFlag(compIdx) );
-      }
-    }
-#endif
   }
   m_pcSbacDecoders[0].load(m_pcSbacDecoder);
   m_pcSliceDecoder->decompressSlice( pcBitstream, ppcSubstreams, rpcPic, m_pcSbacDecoder, m_pcSbacDecoders);
@@ -196,11 +181,7 @@ Void TDecGop::filterPicture(TComPic*& rpcPic)
   m_pcLoopFilter->loopFilterPic( rpcPic );
 
   pcSlice = rpcPic->getSlice(0);
-#if REMOVE_ALF
   if(pcSlice->getSPS()->getUseSAO())
-#else
-  if(pcSlice->getSPS()->getUseSAO() || pcSlice->getSPS()->getUseALF())
-#endif
   {
     m_sliceStartCUAddress.push_back(rpcPic->getNumCUsInFrame()* rpcPic->getNumPartInCU());
     rpcPic->createNonDBFilterInfo(m_sliceStartCUAddress, 0, &m_LFCrossSliceBoundaryFlag, rpcPic->getPicSym()->getNumTiles(), bLFCrossTileBoundary);
@@ -220,31 +201,12 @@ Void TDecGop::filterPicture(TComPic*& rpcPic)
       m_pcSAO->setSaoLcuBasedOptimization(1);
       m_pcSAO->createPicSaoInfo(rpcPic, (Int) m_sliceStartCUAddress.size() - 1);
       m_pcSAO->SAOProcess(rpcPic, saoParam);
-#if !REMOVE_ALF
-      m_pcAdaptiveLoopFilter->PCMLFDisableProcess(rpcPic);
-#else
       m_pcSAO->PCMLFDisableProcess(rpcPic);
-#endif
       m_pcSAO->destroyPicSaoInfo();
     }
   }
 
-#if !REMOVE_ALF
-  // adaptive loop filter
-  if( pcSlice->getSPS()->getUseALF() )
-  {
-    m_pcAdaptiveLoopFilter->createPicAlfInfo(rpcPic, (Int) m_sliceStartCUAddress.size()-1);
-    m_pcAdaptiveLoopFilter->ALFProcess(rpcPic, pcSlice->getAPS()->getAlfParam(), m_sliceAlfEnabled);
-    m_pcAdaptiveLoopFilter->PCMLFDisableProcess(rpcPic);
-    m_pcAdaptiveLoopFilter->destroyPicAlfInfo();
-  }
-#endif
-
-#if REMOVE_ALF
   if(pcSlice->getSPS()->getUseSAO())
-#else
-  if(pcSlice->getSPS()->getUseSAO() || pcSlice->getSPS()->getUseALF())
-#endif
   {
     rpcPic->destroyNonDBFilterInfo();
   }
@@ -284,12 +246,6 @@ Void TDecGop::filterPicture(TComPic*& rpcPic)
   rpcPic->setOutputMark(true);
   rpcPic->setReconMark(true);
   m_sliceStartCUAddress.clear();
-#if !REMOVE_ALF
-  for(Int compIdx=0; compIdx < 3; compIdx++)
-  {
-    m_sliceAlfEnabled[compIdx].clear();
-  }
-#endif
   m_LFCrossSliceBoundaryFlag.clear();
 }
 
