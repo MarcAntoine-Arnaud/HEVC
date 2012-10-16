@@ -45,8 +45,7 @@
 #define MAX_CPB_CNT                     32  ///< Upper bound of (cpb_cnt_minus1 + 1)
 #define MAX_NUM_LAYER_IDS                64
 
-#define COEF_REMAIN_BIN_REDUCTION        3 ///< J0142: Maximum codeword length of coeff_abs_level_remaining reduced to 32.
-                                           ///< COEF_REMAIN_BIN_REDUCTION is also used to indicate the level at which the VLC 
+#define COEF_REMAIN_BIN_REDUCTION        3 ///< indicates the level at which the VLC 
                                            ///< transitions from Golomb-Rice to TU+EG(k)
 
 #define CU_DQP_TU_CMAX 5                   ///< max number bins for truncated unary
