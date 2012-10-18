@@ -213,7 +213,7 @@ Void SEIReader::xParseSEIDecodedPictureHash(SEIDecodedPictureHash& sei, UInt pay
     }
   }
 }
-Void SEIReader::xParseSEIActiveParameterSets(SEIActiveParameterSets& sei, unsigned payloadSize)
+Void SEIReader::xParseSEIActiveParameterSets(SEIActiveParameterSets& sei, UInt payloadSize)
 {
   UInt val; 
   READ_CODE(4, val, "active_vps_id");

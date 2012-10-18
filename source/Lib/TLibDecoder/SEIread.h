@@ -60,7 +60,7 @@ public:
 protected:
   Void xReadSEImessage                (SEImessages& seis);
   Void xParseSEIuserDataUnregistered  (SEIuserDataUnregistered &sei, UInt payloadSize);
-  Void xParseSEIActiveParameterSets    (SEIActiveParameterSets& sei, UInt payloadSize);
+  Void xParseSEIActiveParameterSets   (SEIActiveParameterSets  &sei, UInt payloadSize);
   Void xParseSEIDecodedPictureHash    (SEIDecodedPictureHash& sei, UInt payloadSize);
   Void xParseSEIBufferingPeriod       (SEIBufferingPeriod& sei, UInt payloadSize);
   Void xParseSEIPictureTiming         (SEIPictureTiming& sei, UInt payloadSize);
