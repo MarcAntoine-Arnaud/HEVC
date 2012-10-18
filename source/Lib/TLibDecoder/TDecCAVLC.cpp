@@ -1048,10 +1048,13 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
       xParsePredWeightTable(rpcSlice);
       rpcSlice->initWpScaling();
     }
-    READ_UVLC( uiCode, "five_minus_max_num_merge_cand");
-    rpcSlice->setMaxNumMergeCand(MRG_MAX_NUM_CANDS - uiCode);
+    if (!rpcSlice->isIntra())
+    {
+      READ_UVLC( uiCode, "five_minus_max_num_merge_cand");
+      rpcSlice->setMaxNumMergeCand(MRG_MAX_NUM_CANDS - uiCode);
+    }
 
-    READ_SVLC( iCode, "slice_qp_delta" ); 
+    READ_SVLC( iCode, "slice_qp_delta" );
     rpcSlice->setSliceQp (26 + pps->getPicInitQPMinus26() + iCode);
 
     assert( rpcSlice->getSliceQp() >= -sps->getQpBDOffsetY() );
