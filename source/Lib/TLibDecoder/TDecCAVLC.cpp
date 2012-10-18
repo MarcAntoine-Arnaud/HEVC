@@ -588,7 +588,7 @@ Void TDecCavlc::parseSPS(TComSPS* pcSPS)
     for (UInt k = 0; k < pcSPS->getNumLongTermRefPicSPS(); k++)
     {
       READ_CODE( pcSPS->getBitsForPOC(), uiCode, "lt_ref_pic_poc_lsb_sps" );
-      pcSPS->setLtRefPicPocLsbSps(uiCode, k);
+      pcSPS->setLtRefPicPocLsbSps(k, uiCode);
       READ_FLAG( uiCode,  "used_by_curr_pic_lt_sps_flag[i]");
       pcSPS->setUsedByCurrPicLtSPSFlag(k, uiCode?1:0);
     }
