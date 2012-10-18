@@ -398,10 +398,9 @@ Void TDecSlice::decompressSlice(TComInputBitstream* pcBitstream, TComInputBitstr
 
 ParameterSetManagerDecoder::ParameterSetManagerDecoder()
 : m_vpsBuffer(MAX_NUM_VPS)
-,m_spsBuffer(256)
-, m_ppsBuffer(16)
+, m_spsBuffer(MAX_NUM_SPS)
+, m_ppsBuffer(MAX_NUM_PPS)
 {
-
 }
 
 ParameterSetManagerDecoder::~ParameterSetManagerDecoder()

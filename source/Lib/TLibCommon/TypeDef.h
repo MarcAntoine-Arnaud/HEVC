@@ -73,8 +73,10 @@
 #endif
 #endif
 
+#define MAX_NUM_VPS                16
 #define MAX_NUM_SPS                32
 #define MAX_NUM_PPS                256
+
 
 
 #define WEIGHTED_CHROMA_DISTORTION  1   ///< F386: weighting of chroma for RDO
@@ -180,7 +182,6 @@
 // VPS constants
 // ====================================================================================================================
 #define MAX_LAYER_NUM                     10
-#define MAX_NUM_VPS                16
 
 // ====================================================================================================================
 // Basic type redefinition
