@@ -31,6 +31,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ \file     AnnexBread.h
+ \brief    reading functions for Annex B byte streams
+ */
+
 #pragma once
 
 #include <stdint.h>

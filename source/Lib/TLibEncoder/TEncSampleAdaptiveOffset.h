@@ -31,7 +31,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     TEncAdaptiveLoopFilter.h
+/** 
+ \file     TEncSampleAdaptiveOffset.h
  \brief    estimation part of sample adaptive offset class (header)
  */
 

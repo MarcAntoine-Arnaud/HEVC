@@ -31,8 +31,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     WeightedPredAnalysis.cpp
-    \brief    encoder class
+/** \file     WeightPredAnalysis.cpp
+    \brief    weighted prediction encoder class
 */
 
 #include "../TLibCommon/TypeDef.h"

@@ -31,6 +31,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ \file     NALread.cpp
+ \brief    reading funtionality for NAL units
+ */
+
+
 #include <vector>
 #include <algorithm>
 #include <ostream>

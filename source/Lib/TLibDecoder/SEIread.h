@@ -31,6 +31,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ \file     SEIread.h
+ \brief    reading funtionality for SEI messages
+ */
+
 #ifndef __SEIREAD__
 #define __SEIREAD__
 

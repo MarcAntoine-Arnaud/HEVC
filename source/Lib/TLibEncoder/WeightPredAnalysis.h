@@ -31,8 +31,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     WeightedPredAnalysis.h
-    \brief    encoder class
+/** \file     WeightPredAnalysis.h
+    \brief    weighted prediction encoder class
 */
 #ifndef __WEIGHTPREDANALYSIS__
 #define __WEIGHTPREDANALYSIS__

@@ -31,7 +31,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     TEncSampleAdaptiveOffset.cpp
+/** 
+ \file     TEncSampleAdaptiveOffset.cpp
  \brief       estimation part of sample adaptive offset class
  */
 #include "TEncSampleAdaptiveOffset.h"

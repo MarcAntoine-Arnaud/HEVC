@@ -31,6 +31,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/** 
+ \file     SEIread.cpp
+ \brief    reading funtionality for SEI messages
+ */
+
 #include "TLibCommon/CommonDef.h"
 #include "TLibCommon/TComBitStream.h"
 #include "TLibCommon/SEI.h"
