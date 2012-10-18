@@ -1577,12 +1577,4 @@ Void TDecSbac::loadContexts ( TDecSbac* pScr )
 {
   xCopyContextsFrom(pScr);
 }
-
-Void TDecSbac::decodeFlush ( )
-{
-  UInt uiBit;
-  m_pcTDecBinIf->decodeBinTrm(uiBit);
-  m_pcTDecBinIf->flush();
-
-}
 //! \}

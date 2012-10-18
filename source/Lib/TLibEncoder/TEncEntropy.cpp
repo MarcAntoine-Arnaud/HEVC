@@ -80,11 +80,6 @@ Void TEncEntropy::encodeSliceFinish()
   m_pcEntropyCoderIf->codeSliceFinish();
 }
 
-Void TEncEntropy::encodeFlush()
-{
-  m_pcEntropyCoderIf->codeFlush();
-}
-
 Void TEncEntropy::encodeStart()
 {
   m_pcEntropyCoderIf->encodeStart();

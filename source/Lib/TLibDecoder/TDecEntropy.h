@@ -65,7 +65,6 @@ public:
   virtual Void  resetEntropy          ( TComSlice* pcSlice )     = 0;
   virtual Void  setBitstream          ( TComInputBitstream* p )  = 0;
 
-  virtual Void  decodeFlush()                                                                      = 0;
   virtual Void  parseVPS                  ( TComVPS* pcVPS )                       = 0;
   virtual Void  parseSPS                  ( TComSPS* pcSPS )                                      = 0;
   virtual Void  parsePPS                  ( TComPPS* pcPPS )                                      = 0;
@@ -165,8 +164,6 @@ private:
 public:
   Void decodeCoeff             ( TComDataCU* pcCU                 , UInt uiAbsPartIdx, UInt uiDepth, UInt uiWidth, UInt uiHeight, Bool& bCodeDQP );
   
-  Void decodeFlush() { m_pcEntropyDecoderIf->decodeFlush(); }
-
 };// END CLASS DEFINITION TDecEntropy
 
 //! \}

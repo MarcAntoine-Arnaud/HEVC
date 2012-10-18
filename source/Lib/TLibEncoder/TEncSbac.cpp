@@ -279,11 +279,6 @@ Void TEncSbac::codeSliceFinish()
   m_pcBinIf->finish();
 }
 
-Void TEncSbac::codeFlush()
-{
-  m_pcBinIf->flush();
-}
-
 Void TEncSbac::encodeStart()
 {
   m_pcBinIf->start();

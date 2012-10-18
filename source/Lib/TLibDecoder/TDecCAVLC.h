@@ -116,7 +116,6 @@ public:
   Void parseIPCMInfo        ( TComDataCU* pcCU, UInt uiAbsPartIdx, UInt uiDepth);
 
   Void updateContextTables  ( SliceType eSliceType, Int iQp ) { return; }
-  Void decodeFlush() {};
 
   Void xParsePredWeightTable ( TComSlice* pcSlice );
   Void  parseScalingList               ( TComScalingList* scalingList );
