@@ -74,8 +74,8 @@
 #endif
 
 #define MAX_NUM_VPS                16
-#define MAX_NUM_SPS                32
-#define MAX_NUM_PPS                256
+#define MAX_NUM_SPS                16
+#define MAX_NUM_PPS                64
 
 
 
