@@ -263,31 +263,6 @@ Void TEncCu::encodeCU ( TComDataCU* pcCU, Bool bForceTerminate )
 
   // Encode CU data
   xEncodeCU( pcCU, 0, 0 );
-  
-  bool bTerminateSlice = bForceTerminate;
-  UInt uiCUAddr = pcCU->getAddr();
-    /* If at the end of an LCU line but not at the end of a substream, perform CABAC flush */
-    if (!bTerminateSlice && pcCU->getSlice()->getPPS()->getNumSubstreams() > 1)
-    {
-      Int iNumSubstreams = pcCU->getSlice()->getPPS()->getNumSubstreams();
-      UInt uiWidthInLCUs = pcCU->getPic()->getPicSym()->getFrameWidthInCU();
-      UInt uiCol     = uiCUAddr % uiWidthInLCUs;
-      UInt uiLin     = uiCUAddr / uiWidthInLCUs;
-      UInt uiTileStartLCU = pcCU->getPic()->getPicSym()->getTComTile(pcCU->getPic()->getPicSym()->getTileIdxMap(uiCUAddr))->getFirstCUAddr();
-      UInt uiTileLCUX = uiTileStartLCU % uiWidthInLCUs;
-      UInt uiTileLCUY = uiTileStartLCU / uiWidthInLCUs;
-      UInt uiTileWidth = pcCU->getPic()->getPicSym()->getTComTile(pcCU->getPic()->getPicSym()->getTileIdxMap(uiCUAddr))->getTileWidth();
-      UInt uiTileHeight = pcCU->getPic()->getPicSym()->getTComTile(pcCU->getPic()->getPicSym()->getTileIdxMap(uiCUAddr))->getTileHeight();
-      Int iNumSubstreamsPerTile = iNumSubstreams;
-      if (pcCU->getSlice()->getPPS()->getNumSubstreams() > 1)
-      {
-        iNumSubstreamsPerTile /= pcCU->getPic()->getPicSym()->getNumTiles();
-      }
-      if ((uiCol == uiTileLCUX+uiTileWidth-1) && (uiLin+iNumSubstreamsPerTile < uiTileLCUY+uiTileHeight))
-      {
-        m_pcEntropyCoder->encodeFlush();
-      }
-    }
 }
 
 // ====================================================================================================================
