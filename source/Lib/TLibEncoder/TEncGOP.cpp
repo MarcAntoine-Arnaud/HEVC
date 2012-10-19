@@ -206,26 +206,26 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////// Initial to start encoding
-    UInt uiPOCCurr = iPOCLast -iNumPicRcvd+ m_pcCfg->getGOPEntry(iGOPid).m_POC;
+    Int pocCurr = iPOCLast -iNumPicRcvd+ m_pcCfg->getGOPEntry(iGOPid).m_POC;
     Int iTimeOffset = m_pcCfg->getGOPEntry(iGOPid).m_POC;
     if(iPOCLast == 0)
     {
-      uiPOCCurr=0;
+      pocCurr=0;
       iTimeOffset = 1;
     }
-    if(uiPOCCurr>=m_pcCfg->getFrameToBeEncoded())
+    if(pocCurr>=m_pcCfg->getFrameToBeEncoded())
     {
       continue;
     }
 
-    if( getNalUnitType(uiPOCCurr) == NAL_UNIT_CODED_SLICE_IDR || getNalUnitType(uiPOCCurr) == NAL_UNIT_CODED_SLICE_IDR_N_LP )
+    if( getNalUnitType(pocCurr) == NAL_UNIT_CODED_SLICE_IDR || getNalUnitType(pocCurr) == NAL_UNIT_CODED_SLICE_IDR_N_LP )
     {
-      m_iLastIDR = uiPOCCurr;
+      m_iLastIDR = pocCurr;
     }        
     // start a new access unit: create an entry in the list of output access units
     accessUnitsInGOP.push_back(AccessUnit());
     AccessUnit& accessUnit = accessUnitsInGOP.back();
-    xGetBuffer( rcListPic, rcListPicYuvRecOut, iNumPicRcvd, iTimeOffset, pcPic, pcPicYuvRecOut, uiPOCCurr );
+    xGetBuffer( rcListPic, rcListPicYuvRecOut, iNumPicRcvd, iTimeOffset, pcPic, pcPicYuvRecOut, pocCurr );
 
     //  Slice data initialization
     pcPic->clearSliceBuffer();
@@ -233,7 +233,7 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
     m_pcSliceEncoder->setSliceIdx(0);
     pcPic->setCurrSliceIdx(0);
 
-    m_pcSliceEncoder->initEncSlice ( pcPic, iPOCLast, uiPOCCurr, iNumPicRcvd, iGOPid, pcSlice, m_pcEncTop->getSPS(), m_pcEncTop->getPPS() );
+    m_pcSliceEncoder->initEncSlice ( pcPic, iPOCLast, pocCurr, iNumPicRcvd, iGOPid, pcSlice, m_pcEncTop->getSPS(), m_pcEncTop->getPPS() );
     pcSlice->setLastIDR(m_iLastIDR);
     pcSlice->setSliceIdx(0);
     //set default slice level flag to the same as SPS level flag
@@ -278,7 +278,7 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
       pcSlice->setSliceType(P_SLICE);
     }
     // Set the nal unit type
-    pcSlice->setNalUnitType(getNalUnitType(uiPOCCurr));
+    pcSlice->setNalUnitType(getNalUnitType(pocCurr));
     if(pcSlice->getNalUnitType()==NAL_UNIT_CODED_SLICE_TRAIL_R)
     {
       if(pcSlice->getTemporalLayerNonReferenceFlag())
@@ -289,7 +289,7 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
 
     // Do decoding refresh marking if any 
     pcSlice->decodingRefreshMarking(m_pocCRA, m_bRefreshPending, rcListPic);
-    m_pcEncTop->selectReferencePictureSet(pcSlice, uiPOCCurr, iGOPid,rcListPic);
+    m_pcEncTop->selectReferencePictureSet(pcSlice, pocCurr, iGOPid,rcListPic);
     pcSlice->getRPS()->setNumberOfLongtermPictures(0);
 
     if(pcSlice->checkThatAllRefPicsAreAvailable(rcListPic, pcSlice->getRPS(), false) != 0)
@@ -1418,13 +1418,13 @@ Void TEncGOP::xInitGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rcLis
   return;
 }
 
-Void TEncGOP::xGetBuffer( TComList<TComPic*>&       rcListPic,
+Void TEncGOP::xGetBuffer( TComList<TComPic*>&      rcListPic,
                          TComList<TComPicYuv*>&    rcListPicYuvRecOut,
                          Int                       iNumPicRcvd,
                          Int                       iTimeOffset,
                          TComPic*&                 rpcPic,
                          TComPicYuv*&              rpcPicYuvRecOut,
-                         UInt                      uiPOCCurr )
+                         Int                       pocCurr )
 {
   Int i;
   //  Rec. output
@@ -1442,14 +1442,14 @@ Void TEncGOP::xGetBuffer( TComList<TComPic*>&       rcListPic,
   {
     rpcPic = *(iterPic);
     rpcPic->setCurrSliceIdx(0);
-    if (rpcPic->getPOC() == (Int)uiPOCCurr)
+    if (rpcPic->getPOC() == pocCurr)
     {
       break;
     }
     iterPic++;
   }
   
-  assert (rpcPic->getPOC() == (Int)uiPOCCurr);
+  assert (rpcPic->getPOC() == pocCurr);
   
   return;
 }
@@ -1702,17 +1702,17 @@ Void TEncGOP::xCalculateAddPSNR( TComPic* pcPic, TComPicYuv* pcPicD, const Acces
 }
 
 /** Function for deciding the nal_unit_type.
- * \param uiPOCCurr POC of the current picture
- * \returns the nal_unit type of the picture
+ * \param pocCurr POC of the current picture
+ * \returns the nal unit type of the picture
  * This function checks the configuration and returns the appropriate nal_unit_type for the picture.
  */
-NalUnitType TEncGOP::getNalUnitType(UInt uiPOCCurr)
+NalUnitType TEncGOP::getNalUnitType(Int pocCurr)
 {
-  if (uiPOCCurr == 0)
+  if (pocCurr == 0)
   {
     return NAL_UNIT_CODED_SLICE_IDR;
   }
-  if (uiPOCCurr % m_pcCfg->getIntraPeriod() == 0)
+  if (pocCurr % m_pcCfg->getIntraPeriod() == 0)
   {
     if (m_pcCfg->getDecodingRefreshType() == 1)
     {
@@ -1725,7 +1725,7 @@ NalUnitType TEncGOP::getNalUnitType(UInt uiPOCCurr)
   }
   if(m_pocCRA>0)
   {
-    if(uiPOCCurr<m_pocCRA)
+    if(pocCurr<m_pocCRA)
     {
       // All leading pictures are being marked as TFD pictures here since current encoder uses all 
       // reference pictures while encoding leading pictures. An encoder can ensure that a leading 

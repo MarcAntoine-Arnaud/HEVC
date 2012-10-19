@@ -223,13 +223,13 @@ Void  TComSlice::sortPicList        (TComList<TComPic*>& rcListPic)
 }
 
 TComPic* TComSlice::xGetRefPic (TComList<TComPic*>& rcListPic,
-                                UInt                uiPOC)
+                                Int                 poc)
 {
   TComList<TComPic*>::iterator  iterPic = rcListPic.begin();  
   TComPic*                      pcPic = *(iterPic);
   while ( iterPic != rcListPic.end() )
   {
-    if(pcPic->getPOC() == uiPOC)
+    if(pcPic->getPOC() == poc)
     {
       break;
     }
@@ -241,7 +241,7 @@ TComPic* TComSlice::xGetRefPic (TComList<TComPic*>& rcListPic,
 
 
 TComPic* TComSlice::xGetLongTermRefPic (TComList<TComPic*>& rcListPic,
-                                UInt                uiPOC)
+                                        Int                 poc)
 {
   TComList<TComPic*>::iterator  iterPic = rcListPic.begin();  
   TComPic*                      pcPic = *(iterPic);
@@ -249,7 +249,7 @@ TComPic* TComSlice::xGetLongTermRefPic (TComList<TComPic*>& rcListPic,
   while ( iterPic != rcListPic.end() )
   {
     pcPic = *(iterPic);
-    if(pcPic && (pcPic->getPOC()%(1<<getSPS()->getBitsForPOC())) == (uiPOC%(1<<getSPS()->getBitsForPOC())))
+    if(pcPic && (pcPic->getPOC()%(1<<getSPS()->getBitsForPOC())) == (poc%(1<<getSPS()->getBitsForPOC())))
     {
       if(pcPic->getIsLongTerm())
       {
@@ -590,7 +590,7 @@ Void TComSlice::checkCRA(TComReferencePictureSet *pReferencePictureSet, Int& poc
 Void TComSlice::decodingRefreshMarking(Int& pocCRA, Bool& bRefreshPending, TComList<TComPic*>& rcListPic)
 {
   TComPic*                 rpcPic;
-  UInt uiPOCCurr = getPOC(); 
+  Int pocCurr = getPOC(); 
 
   if ( getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA
     || getNalUnitType() == NAL_UNIT_CODED_SLICE_BLANT
@@ -604,25 +604,25 @@ Void TComSlice::decodingRefreshMarking(Int& pocCRA, Bool& bRefreshPending, TComL
     {
       rpcPic = *(iterPic);
       rpcPic->setCurrSliceIdx(0);
-      if (rpcPic->getPOC() != uiPOCCurr) rpcPic->getSlice(0)->setReferenced(false);
+      if (rpcPic->getPOC() != pocCurr) rpcPic->getSlice(0)->setReferenced(false);
       iterPic++;
     }
     if ( getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA
       || getNalUnitType() == NAL_UNIT_CODED_SLICE_BLANT
       || getNalUnitType() == NAL_UNIT_CODED_SLICE_BLA_N_LP )
     {
-      pocCRA = uiPOCCurr;
+      pocCRA = pocCurr;
     }
   }
   else // CRA or No DR
   {
-    if (bRefreshPending==true && uiPOCCurr > pocCRA) // CRA reference marking pending 
+    if (bRefreshPending==true && pocCurr > pocCRA) // CRA reference marking pending 
     {
       TComList<TComPic*>::iterator        iterPic       = rcListPic.begin();
       while (iterPic != rcListPic.end())
       {
         rpcPic = *(iterPic);
-        if (rpcPic->getPOC() != uiPOCCurr && rpcPic->getPOC() != pocCRA) rpcPic->getSlice(0)->setReferenced(false);
+        if (rpcPic->getPOC() != pocCurr && rpcPic->getPOC() != pocCRA) rpcPic->getSlice(0)->setReferenced(false);
         iterPic++;
       }
       bRefreshPending = false; 
@@ -630,7 +630,7 @@ Void TComSlice::decodingRefreshMarking(Int& pocCRA, Bool& bRefreshPending, TComL
     if ( getNalUnitType() == NAL_UNIT_CODED_SLICE_CRA ) // CRA picture found
     {
       bRefreshPending = true; 
-      pocCRA = uiPOCCurr;
+      pocCRA = pocCurr;
     }
   }
 }

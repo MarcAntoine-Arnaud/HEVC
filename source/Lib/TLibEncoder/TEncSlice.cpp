@@ -170,8 +170,8 @@ Void TEncSlice::init( TEncTop* pcEncTop )
  - set temporal layer ID and the parameter sets
  .
  \param pcPic         picture class
- \param iPOCLast      POC of last picture
- \param uiPOCCurr     current POC
+ \param pocLast       POC of last picture
+ \param pocCurr       current POC
  \param iNumPicRcvd   number of received pictures
  \param iTimeOffset   POC offset for hierarchical structure
  \param iDepth        temporal layer depth
@@ -179,7 +179,7 @@ Void TEncSlice::init( TEncTop* pcEncTop )
  \param pSPS          SPS associated with the slice
  \param pPPS          PPS associated with the slice
  */
-Void TEncSlice::initEncSlice( TComPic* pcPic, Int iPOCLast, UInt uiPOCCurr, Int iNumPicRcvd, Int iGOPid, TComSlice*& rpcSlice, TComSPS* pSPS, TComPPS *pPPS )
+Void TEncSlice::initEncSlice( TComPic* pcPic, Int pocLast, Int pocCurr, Int iNumPicRcvd, Int iGOPid, TComSlice*& rpcSlice, TComSPS* pSPS, TComPPS *pPPS )
 {
   Double dQP;
   Double dLambda;
@@ -191,33 +191,32 @@ Void TEncSlice::initEncSlice( TComPic* pcPic, Int iPOCLast, UInt uiPOCCurr, Int 
   rpcSlice->setPic( pcPic );
   rpcSlice->initSlice();
   rpcSlice->setPicOutputFlag( true );
-  rpcSlice->setPOC( uiPOCCurr );
+  rpcSlice->setPOC( pocCurr );
   
   // depth computation based on GOP size
-  int iDepth;
+  Int depth;
   {
-    Int i, j;
-    Int iPOC = rpcSlice->getPOC()%m_pcCfg->getGOPSize();
-    if ( iPOC == 0 )
+    Int poc = rpcSlice->getPOC()%m_pcCfg->getGOPSize();
+    if ( poc == 0 )
     {
-      iDepth = 0;
+      depth = 0;
     }
     else
     {
-      Int iStep = m_pcCfg->getGOPSize();
-      iDepth    = 0;
-      for( i=iStep>>1; i>=1; i>>=1 )
+      Int step = m_pcCfg->getGOPSize();
+      depth    = 0;
+      for( Int i=step>>1; i>=1; i>>=1 )
       {
-        for ( j=i; j<m_pcCfg->getGOPSize(); j+=iStep )
+        for ( Int j=i; j<m_pcCfg->getGOPSize(); j+=step )
         {
-          if ( j == iPOC )
+          if ( j == poc )
           {
             i=0;
             break;
           }
         }
-        iStep>>=1;
-        iDepth++;
+        step >>= 1;
+        depth++;
       }
     }
   }
@@ -226,7 +225,7 @@ Void TEncSlice::initEncSlice( TComPic* pcPic, Int iPOCLast, UInt uiPOCCurr, Int 
   SliceType eSliceType;
   
   eSliceType=B_SLICE;
-  eSliceType = (iPOCLast == 0 || uiPOCCurr % m_pcCfg->getIntraPeriod() == 0 || m_pcGOPEncoder->getGOPSize() == 0) ? I_SLICE : eSliceType;
+  eSliceType = (pocLast == 0 || pocCurr % m_pcCfg->getIntraPeriod() == 0 || m_pcGOPEncoder->getGOPSize() == 0) ? I_SLICE : eSliceType;
   
   rpcSlice->setSliceType    ( eSliceType );
   
@@ -234,7 +233,7 @@ Void TEncSlice::initEncSlice( TComPic* pcPic, Int iPOCLast, UInt uiPOCCurr, Int 
   // Non-referenced frame marking
   // ------------------------------------------------------------------------------------------------------------------
   
-  if(iPOCLast == 0)
+  if(pocLast == 0)
   {
     rpcSlice->setTemporalLayerNonReferenceFlag(false);
   }
@@ -301,7 +300,7 @@ Void TEncSlice::initEncSlice( TComPic* pcPic, Int iPOCLast, UInt uiPOCCurr, Int 
     }
     dLambda = dQPFactor*pow( 2.0, qp_temp/3.0 );
 
-    if ( iDepth>0 )
+    if ( depth>0 )
     {
 #if FULL_NBIT
         dLambda *= Clip3( 2.00, 4.00, (qp_temp_orig / 6.0) ); // (j == B_SLICE && p_cur_frm->layer != 0 )
@@ -362,7 +361,7 @@ Void TEncSlice::initEncSlice( TComPic* pcPic, Int iPOCLast, UInt uiPOCCurr, Int 
   
 #if HB_LAMBDA_FOR_LDC
   // restore original slice type
-  eSliceType = (iPOCLast == 0 || uiPOCCurr % m_pcCfg->getIntraPeriod() == 0 || m_pcGOPEncoder->getGOPSize() == 0) ? I_SLICE : eSliceType;
+  eSliceType = (pocLast == 0 || pocCurr % m_pcCfg->getIntraPeriod() == 0 || m_pcGOPEncoder->getGOPSize() == 0) ? I_SLICE : eSliceType;
   
   rpcSlice->setSliceType        ( eSliceType );
 #endif
@@ -398,7 +397,7 @@ Void TEncSlice::initEncSlice( TComPic* pcPic, Int iPOCLast, UInt uiPOCCurr, Int 
     }
   }
 
-  rpcSlice->setDepth            ( iDepth );
+  rpcSlice->setDepth            ( depth );
   
   pcPic->setTLayer( m_pcCfg->getGOPEntry(iGOPid).m_temporalId );
   if(eSliceType==I_SLICE)

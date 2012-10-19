@@ -1286,9 +1286,9 @@ public:
 
 protected:
   TComPic*  xGetRefPic  (TComList<TComPic*>& rcListPic,
-                         UInt                uiPOC);
+                         Int                 poc);
   TComPic*  xGetLongTermRefPic  (TComList<TComPic*>& rcListPic,
-                         UInt                uiPOC);
+                         Int                 poc);
 };// END CLASS DEFINITION TComSlice
 
 
