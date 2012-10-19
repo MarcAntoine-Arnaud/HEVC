@@ -313,47 +313,46 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
       }
       else if(pcSlice->isStepwiseTemporalLayerSwitchingPointCandidate(rcListPic, pcSlice->getRPS()))
       {
-          Bool isSTSA=true;
-          for(Int ii=iGOPid+1;(ii<m_pcCfg->getGOPSize() && isSTSA==true);ii++)
+        Bool isSTSA=true;
+        for(Int ii=iGOPid+1;(ii<m_pcCfg->getGOPSize() && isSTSA==true);ii++)
+        {
+          Int lTid= m_pcCfg->getGOPEntry(ii).m_temporalId;
+          if(lTid==pcSlice->getTLayer()) 
           {
-              Int lTid= m_pcCfg->getGOPEntry(ii).m_temporalId;
-              if(lTid==pcSlice->getTLayer()) 
+            TComReferencePictureSet* nRPS = pcSlice->getSPS()->getRPSList()->getReferencePictureSet(ii);
+            for(Int jj=0;jj<nRPS->getNumberOfPictures();jj++)
+            {
+              if(nRPS->getUsed(jj)) 
               {
-                  TComReferencePictureSet* nRPS = pcSlice->getSPS()->getRPSList()->getReferencePictureSet(ii);
-                  for(Int jj=0;jj<nRPS->getNumberOfPictures();jj++)
-                  {
-                      if(nRPS->getUsed(jj)) {
-                          Int tPoc=m_pcCfg->getGOPEntry(ii).m_POC+nRPS->getDeltaPOC(jj);
-                          Int kk=0;
-                          for(kk=0;kk<m_pcCfg->getGOPSize();kk++)
-                          {
-                              if(m_pcCfg->getGOPEntry(kk).m_POC==tPoc)
-                                  break;
-                          }
-                          Int tTid=m_pcCfg->getGOPEntry(kk).m_temporalId;
-                          if(tTid >= pcSlice->getTLayer())
-                          {
-                              isSTSA=false;
-                              break;
-                          }
-                          
-                      }
-                  }
+                Int tPoc=m_pcCfg->getGOPEntry(ii).m_POC+nRPS->getDeltaPOC(jj);
+                Int kk=0;
+                for(kk=0;kk<m_pcCfg->getGOPSize();kk++)
+                {
+                  if(m_pcCfg->getGOPEntry(kk).m_POC==tPoc)
+                    break;
+                }
+                Int tTid=m_pcCfg->getGOPEntry(kk).m_temporalId;
+                if(tTid >= pcSlice->getTLayer())
+                {
+                  isSTSA=false;
+                  break;
+                }
               }
-          }
-          if(isSTSA==true)
-          {    
-            if(pcSlice->getTemporalLayerNonReferenceFlag())
-            {
-              pcSlice->setNalUnitType(NAL_UNIT_CODED_SLICE_STSA_N);
-            }
-            else
-            {
-              pcSlice->setNalUnitType(NAL_UNIT_CODED_SLICE_STSA_R);
             }
           }
+        }
+        if(isSTSA==true)
+        {    
+          if(pcSlice->getTemporalLayerNonReferenceFlag())
+          {
+            pcSlice->setNalUnitType(NAL_UNIT_CODED_SLICE_STSA_N);
+          }
+          else
+          {
+            pcSlice->setNalUnitType(NAL_UNIT_CODED_SLICE_STSA_R);
+          }
+        }
       }
-
     }
     arrangeLongtermPicturesInRPS(pcSlice, rcListPic);
     TComRefPicListModification* refPicListModification = pcSlice->getRefPicListModification();
