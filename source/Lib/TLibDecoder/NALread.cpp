@@ -31,6 +31,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ \file     NALread.cpp
+ \brief    reading funtionality for NAL units
+ */
+
+
 #include <vector>
 #include <algorithm>
 #include <ostream>
@@ -62,7 +68,6 @@ static void convertPayloadToRBSP(vector<uint8_t>& nalUnitBuf, TComInputBitstream
   nalUnitBuf.resize(it_write - nalUnitBuf.begin());
 }
 
-#if NAL_UNIT_HEADER
 Void readNalUnitHeader(InputNALUnit& nalu)
 {
   TComInputBitstream& bs = *nalu.m_Bitstream;
@@ -70,18 +75,12 @@ Void readNalUnitHeader(InputNALUnit& nalu)
   bool forbidden_zero_bit = bs.read(1);           // forbidden_zero_bit
   assert(forbidden_zero_bit == 0);
   nalu.m_nalUnitType = (NalUnitType) bs.read(6);  // nal_unit_type
-#if TARGET_DECLAYERID_SET
   nalu.m_reservedZero6Bits = bs.read(6);       // nuh_reserved_zero_6bits
   assert(nalu.m_reservedZero6Bits == 0);
-#else
-  unsigned reserved_one_6bits = bs.read(6);       // nuh_reserved_zero_6bits
-  assert(reserved_one_6bits == 0);
-#endif
   nalu.m_temporalId = bs.read(3) - 1;             // nuh_temporal_id_plus1
 
   if ( nalu.m_temporalId )
   {
-#if NAL_UNIT_TYPES_J1003_D7
     assert( nalu.m_nalUnitType != NAL_UNIT_CODED_SLICE_BLA
          && nalu.m_nalUnitType != NAL_UNIT_CODED_SLICE_BLANT
          && nalu.m_nalUnitType != NAL_UNIT_CODED_SLICE_BLA_N_LP
@@ -92,29 +91,15 @@ Void readNalUnitHeader(InputNALUnit& nalu)
          && nalu.m_nalUnitType != NAL_UNIT_SPS
          && nalu.m_nalUnitType != NAL_UNIT_EOS
          && nalu.m_nalUnitType != NAL_UNIT_EOB );
-#else
-    assert( nalu.m_nalUnitType != NAL_UNIT_CODED_SLICE_CRA
-         && nalu.m_nalUnitType != NAL_UNIT_CODED_SLICE_CRANT
-         && nalu.m_nalUnitType != NAL_UNIT_CODED_SLICE_BLA
-         && nalu.m_nalUnitType != NAL_UNIT_CODED_SLICE_BLANT
-         && nalu.m_nalUnitType != NAL_UNIT_CODED_SLICE_IDR
-         && nalu.m_nalUnitType != NAL_UNIT_VPS
-         && nalu.m_nalUnitType != NAL_UNIT_SPS );
-#endif
   }
   else
   {
-#if NAL_UNIT_TYPES_J1003_D7
     assert( nalu.m_nalUnitType != NAL_UNIT_CODED_SLICE_TLA
          && nalu.m_nalUnitType != NAL_UNIT_CODED_SLICE_TSA_N
          && nalu.m_nalUnitType != NAL_UNIT_CODED_SLICE_STSA_R
          && nalu.m_nalUnitType != NAL_UNIT_CODED_SLICE_STSA_N );
-#else
-    assert( nalu.m_nalUnitType != NAL_UNIT_CODED_SLICE_TLA );
-#endif
   }
 }
-#endif
 /**
  * create a NALunit structure with given header values and storage for
  * a bitstream
@@ -127,50 +112,6 @@ void read(InputNALUnit& nalu, vector<uint8_t>& nalUnitBuf)
 
   nalu.m_Bitstream = new TComInputBitstream(&nalUnitBuf);
   delete pcBitstream;
-#if NAL_UNIT_HEADER
   readNalUnitHeader(nalu);
-#else
-  TComInputBitstream& bs = *nalu.m_Bitstream;
-
-  bool forbidden_zero_bit = bs.read(1);
-  assert(forbidden_zero_bit == 0);
-#if !REMOVE_NAL_REF_FLAG
-  nalu.m_nalRefFlag  = (bs.read(1) != 0 );
-#endif
-  nalu.m_nalUnitType = (NalUnitType) bs.read(6);
-#if REMOVE_NAL_REF_FLAG
-  unsigned reserved_one_6bits = bs.read(6);
-  assert(reserved_one_6bits == 0);
-#endif
-#if TEMPORAL_ID_PLUS1
-  nalu.m_temporalId = bs.read(3) - 1;
-#if !REMOVE_NAL_REF_FLAG
-  unsigned reserved_one_5bits = bs.read(5);
-  assert(reserved_one_5bits == 0);
-#endif
-#else
-  nalu.m_temporalId = bs.read(3);
-  unsigned reserved_one_5bits = bs.read(5);
-  assert(reserved_one_5bits == 1);
-#endif
-
-  if ( nalu.m_temporalId )
-  {
-#if NAL_UNIT_TYPES_J1003_D7
-    assert( nalu.m_nalUnitType != NAL_UNIT_CODED_SLICE_BLA
-         && nalu.m_nalUnitType != NAL_UNIT_CODED_SLICE_BLANT
-         && nalu.m_nalUnitType != NAL_UNIT_CODED_SLICE_BLA_N_LP
-         && nalu.m_nalUnitType != NAL_UNIT_CODED_SLICE_IDR
-         && nalu.m_nalUnitType != NAL_UNIT_CODED_SLICE_IDR_N_LP
-         && nalu.m_nalUnitType != NAL_UNIT_CODED_SLICE_CRA );
-#else
-    assert( nalu.m_nalUnitType != NAL_UNIT_CODED_SLICE_CRA
-         && nalu.m_nalUnitType != NAL_UNIT_CODED_SLICE_CRANT
-         && nalu.m_nalUnitType != NAL_UNIT_CODED_SLICE_BLA
-         && nalu.m_nalUnitType != NAL_UNIT_CODED_SLICE_BLANT
-         && nalu.m_nalUnitType != NAL_UNIT_CODED_SLICE_IDR );
-#endif
-  }
-#endif
 }
 //! \}

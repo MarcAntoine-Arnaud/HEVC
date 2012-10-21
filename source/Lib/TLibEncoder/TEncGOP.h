@@ -47,7 +47,6 @@
 #include "TLibCommon/TComBitCounter.h"
 #include "TLibCommon/TComLoopFilter.h"
 #include "TLibCommon/AccessUnit.h"
-#include "TEncAdaptiveLoopFilter.h"
 #include "TEncSampleAdaptiveOffset.h"
 #include "TEncSlice.h"
 #include "TEncEntropy.h"
@@ -75,11 +74,9 @@ private:
   //  Data
   Bool                    m_bLongtermTestPictureHasBeenCoded;
   Bool                    m_bLongtermTestPictureHasBeenCoded2;
-#if LTRP_IN_SPS
   UInt            m_numLongTermRefPicSPS;
   UInt            m_ltRefPicPocLsbSps[33];
   Bool            m_ltRefPicUsedByCurrPicFlag[33];
-#endif
   Int                     m_iLastIDR;
   Int                     m_iGopSize;
   Int                     m_iNumPicCoded;
@@ -99,10 +96,6 @@ private:
 
   SEIWriter               m_seiWriter;
   
-#if !REMOVE_ALF
-  // Adaptive Loop filter
-  TEncAdaptiveLoopFilter* m_pcAdaptiveLoopFilter;
-#endif
   //--Adaptive Loop filter
   TEncSampleAdaptiveOffset*  m_pcSAO;
   TComBitCounter*         m_pcBitCounter;
@@ -117,11 +110,9 @@ private:
   std::vector<Int>        m_storedStartCUAddrForEncodingDependentSlice;
 
   std::vector<Int> m_vRVM_RP;
-#if BUFFERING_PERIOD_AND_TIMING_SEI
   UInt                    m_lastBPSEI;
   UInt                    m_totalCoded;
   UInt                    m_cpbRemovalDelay;
-#endif
 public:
   TEncGOP();
   virtual ~TEncGOP();
@@ -142,22 +133,14 @@ public:
   Void  preLoopFilterPicAll  ( TComPic* pcPic, UInt64& ruiDist, UInt64& ruiBits );
   
   TEncSlice*  getSliceEncoder()   { return m_pcSliceEncoder; }
-  NalUnitType getNalUnitType( UInt uiPOCCurr );
-#if !REMOVE_APS
-  Void freeAPS     (TComAPS* pAPS, TComSPS* pSPS);
-  Void allocAPS    (TComAPS* pAPS, TComSPS* pSPS);
-#endif
+  NalUnitType getNalUnitType( Int pocCurr );
   Void arrangeLongtermPicturesInRPS(TComSlice *, TComList<TComPic*>& );
 protected:
-#if !REMOVE_APS
-  Void encodeAPS   (TComAPS* pcAPS, TComOutputBitstream& APSbs, TComSlice* pcSlice);            //!< encode APS syntax elements
-  Void assignNewAPS(TComAPS& cAPS, Int apsID, std::vector<TComAPS>& vAPS, TComSlice* pcSlice);  //!< Assign APS object into APS container
-#endif
   TEncRateCtrl* getRateCtrl()       { return m_pcRateCtrl;  }
 
 protected:
   Void  xInitGOP          ( Int iPOC, Int iNumPicRcvd, TComList<TComPic*>& rcListPic, TComList<TComPicYuv*>& rcListPicYuvRecOut );
-  Void  xGetBuffer        ( TComList<TComPic*>& rcListPic, TComList<TComPicYuv*>& rcListPicYuvRecOut, Int iNumPicRcvd, Int iTimeOffset, TComPic*& rpcPic, TComPicYuv*& rpcPicYuvRecOut, UInt uiPOCCurr );
+  Void  xGetBuffer        ( TComList<TComPic*>& rcListPic, TComList<TComPicYuv*>& rcListPicYuvRecOut, Int iNumPicRcvd, Int iTimeOffset, TComPic*& rpcPic, TComPicYuv*& rpcPicYuvRecOut, Int pocCurr );
   
   Void  xCalculateAddPSNR ( TComPic* pcPic, TComPicYuv* pcPicD, const AccessUnit&, Double dEncTime );
   
@@ -172,7 +155,6 @@ protected:
 enum PROCESSING_STATE
 {
   EXECUTE_INLOOPFILTER,
-  ENCODE_APS,
   ENCODE_SLICE
 };
 

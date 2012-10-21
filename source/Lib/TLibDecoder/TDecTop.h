@@ -91,9 +91,6 @@ private:
   TDecBinCABAC            m_cBinCABAC;
   SEIReader               m_seiReader;
   TComLoopFilter          m_cLoopFilter;
-#if !REMOVE_ALF
-  TComAdaptiveLoopFilter  m_cAdaptiveLoopFilter;
-#endif
   TComSampleAdaptiveOffset m_cSAO;
 
   Bool isSkipPictureForBLA(Int& iPOCLastDisplay);
@@ -118,29 +115,20 @@ public:
   
   Void  deletePicBuffer();
 
-  Void executeDeblockAndAlf(UInt& ruiPOC, TComList<TComPic*>*& rpcListPic, Int& iSkipFrame,  Int& iPOCLastDisplay);
+  Void executeDeblockAndAlf(Int& poc, TComList<TComPic*>*& rpcListPic, Int& iSkipFrame,  Int& iPOCLastDisplay);
 
 protected:
   Void  xGetNewPicBuffer  (TComSlice* pcSlice, TComPic*& rpcPic);
   Void  xUpdateGopSize    (TComSlice* pcSlice);
   Void  xCreateLostPicture (Int iLostPOC);
 
-#if !REMOVE_APS
-  Void      decodeAPS( TComAPS* cAPS) { m_cEntropyDecoder.decodeAPS(cAPS); };
-#endif
   Void      xActivateParameterSets();
   Bool      xDecodeSlice(InputNALUnit &nalu, Int &iSkipFrame, Int iPOCLastDisplay);
   Void      xDecodeVPS();
   Void      xDecodeSPS();
   Void      xDecodePPS();
-#if !REMOVE_APS
-  Void      xDecodeAPS();
-#endif
   Void      xDecodeSEI( TComInputBitstream* bs );
 
-#if !REMOVE_APS
-  Void      allocAPS (TComAPS* pAPS); //!< memory allocation for APS
-#endif
 };// END CLASS DEFINITION TDecTop
 
 

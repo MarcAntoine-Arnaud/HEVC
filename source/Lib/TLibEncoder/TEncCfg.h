@@ -63,9 +63,6 @@ struct GOPEntry
 #else
   Bool m_interRPSPrediction;
 #endif
-#if !J0234_INTER_RPS_SIMPL
-  Int m_deltaRIdxMinus1;
-#endif
   Int m_deltaRPS;
   Int m_numRefIdc;
   Int m_refIdc[MAX_NUM_REF_PICS+1];
@@ -79,9 +76,6 @@ struct GOPEntry
   , m_sliceType('P')
   , m_numRefPics(0)
   , m_interRPSPrediction(false)
-#if !J0234_INTER_RPS_SIMPL
-  , m_deltaRIdxMinus1(0)
-#endif
   , m_deltaRPS(0)
   , m_numRefIdc(0)
   {
@@ -141,10 +135,6 @@ protected:
   UInt      m_uiQuadtreeTUMaxDepthInter;
   UInt      m_uiQuadtreeTUMaxDepthIntra;
   
-#if !REMOVE_NSQT
-  Bool      m_useNSQT;
-#endif
-  
   //====== Loop/Deblock Filter ========
   Bool      m_bLoopFilterDisable;
   Bool      m_loopFilterOffsetInPPS;
@@ -153,9 +143,7 @@ protected:
   Bool      m_DeblockingFilterControlPresent;
   Bool      m_bUseSAO;
   Int       m_maxNumOffsetsPerPic;
-#if SAO_LCU_BOUNDARY
   Bool      m_saoLcuBoundary;
-#endif
   Bool      m_saoLcuBasedOptimization;
 
   //====== Lossless ========
@@ -181,10 +169,6 @@ protected:
   
   //====== Tool list ========
   Bool      m_bUseSBACRD;
-#if !REMOVE_ALF
-  Bool      m_bUseALF;
-  Bool      m_alfLowLatencyEncoding;
-#endif
   Bool      m_bUseASR;
   Bool      m_bUseHADME;
   Bool      m_bUseLComb;
@@ -194,9 +178,6 @@ protected:
   Bool      m_useFastDecisionForMerge;
   Bool      m_bUseCbfFastMode;
   Bool      m_useEarlySkipDetection;
-#if !REMOVE_LMCHROMA
-  Bool      m_bUseLMChroma;
-#endif
   Bool      m_useTransformSkip;
   Bool      m_useTransformSkipFast;
   Int*      m_aidQP;
@@ -213,14 +194,7 @@ protected:
   Int       m_iDependentSliceMode;
   Int       m_iDependentSliceArgument;
 #if DEPENDENT_SLICES
-#if TILES_WPP_ENTROPYSLICES_FLAGS
   Bool      m_entropySliceEnabledFlag;
-#else
-  Bool      m_bCabacIndependentFlag;
-#endif
-#endif
-#if !REMOVE_FGS
-  Int       m_iSliceGranularity;
 #endif
   Bool      m_bLFCrossSliceBoundaryFlag;
 
@@ -239,13 +213,9 @@ protected:
   Int       m_iWaveFrontSubstreams;
 
   Int       m_decodedPictureHashSEIEnabled;              ///< Checksum(3)/CRC(2)/MD5(1)/disable(0) acting on decoded picture hash SEI message
-#if BUFFERING_PERIOD_AND_TIMING_SEI
   Int       m_bufferingPeriodSEIEnabled;
   Int       m_pictureTimingSEIEnabled;
-#endif
-#if RECOVERY_POINT_SEI
   Int       m_recoveryPointSEIEnabled;
-#endif
   //====== Weighted Prediction ========
   Bool      m_bUseWeightPred;       //< Use of Weighting Prediction (P_SLICE)
   Bool      m_useWeightedBiPred;    //< Use of Bi-directional Weighting Prediction (B_SLICE)
@@ -261,13 +231,8 @@ protected:
   Bool      m_TransquantBypassEnableFlag;                     ///< transquant_bypass_enable_flag setting in PPS.
   Bool      m_CUTransquantBypassFlagValue;                    ///< if transquant_bypass_enable_flag, the fixed value to use for the per-CU cu_transquant_bypass_flag.
   TComVPS                    m_cVPS;
-#if RECALCULATE_QP_ACCORDING_LAMBDA
   Bool      m_recalculateQPAccordingToLambda;                 ///< recalculate QP value according to the lambda value
-#endif
-#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE  
   Int       m_activeParameterSetsSEIEnabled;                  ///< enable active parameter set SEI message 
-#endif 
-#if SUPPORT_FOR_VUI
   Bool      m_vuiParametersPresentFlag;                       ///< enable generation of VUI parameters
   Bool      m_aspectRatioInfoPresentFlag;                     ///< Signals whether aspect_ratio_idc is present
   Int       m_aspectRatioIdc;                                 ///< aspect_ratio_idc
@@ -293,7 +258,6 @@ protected:
   Int       m_maxBitsPerMinCuDenom;                           ///< Indicates an upper bound for the number of bits of coding_unit() data
   Int       m_log2MaxMvLengthHorizontal;                      ///< Indicate the maximum absolute value of a decoded horizontal MV component in quarter-pel luma units
   Int       m_log2MaxMvLengthVertical;                        ///< Indicate the maximum absolute value of a decoded vertical MV component in quarter-pel luma units
-#endif
 public:
   TEncCfg()
   : m_puiColumnWidth()
@@ -342,9 +306,6 @@ public:
   Void      setQuadtreeTUMaxDepthInter      ( UInt  u )      { m_uiQuadtreeTUMaxDepthInter = u; }
   Void      setQuadtreeTUMaxDepthIntra      ( UInt  u )      { m_uiQuadtreeTUMaxDepthIntra = u; }
   
-#if !REMOVE_NSQT
-  Void setUseNSQT( Bool b ) { m_useNSQT = b; }
-#endif
   Void setUseAMP( Bool b ) { m_useAMP = b; }
   
   //====== Loop/Deblock Filter ========
@@ -429,9 +390,6 @@ public:
   Void      setUseSBACRD                    ( Bool  b )     { m_bUseSBACRD  = b; }
   Void      setUseASR                       ( Bool  b )     { m_bUseASR     = b; }
   Void      setUseHADME                     ( Bool  b )     { m_bUseHADME   = b; }
-#if !REMOVE_ALF
-  Void      setUseALF                       ( Bool  b )     { m_bUseALF   = b; }
-#endif
   Void      setUseLComb                     ( Bool  b )     { m_bUseLComb   = b; }
   Void      setUseRDOQ                      ( Bool  b )     { m_bUseRDOQ    = b; }
   Void      setUseFastEnc                   ( Bool  b )     { m_bUseFastEnc = b; }
@@ -450,11 +408,6 @@ public:
   Bool      getUseSBACRD                    ()      { return m_bUseSBACRD;  }
   Bool      getUseASR                       ()      { return m_bUseASR;     }
   Bool      getUseHADME                     ()      { return m_bUseHADME;   }
-#if !REMOVE_ALF
-  Bool      getUseALF                       ()      { return m_bUseALF;     }
-  Void      setALFLowLatencyEncoding        (Bool b) {m_alfLowLatencyEncoding = b;    }
-  Bool      getALFLowLatencyEncoding        ()       { return m_alfLowLatencyEncoding;}
-#endif
   Bool      getUseLComb                     ()      { return m_bUseLComb;   }
   Bool      getUseRDOQ                      ()      { return m_bUseRDOQ;    }
   Bool      getUseFastEnc                   ()      { return m_bUseFastEnc; }
@@ -463,21 +416,12 @@ public:
   Bool      getUseCbfFastMode           ()      { return m_bUseCbfFastMode; }
   Bool      getUseEarlySkipDetection        ()      { return m_useEarlySkipDetection; }
   Bool      getUseConstrainedIntraPred      ()      { return m_bUseConstrainedIntraPred; }
-#if !REMOVE_NSQT
-#if NS_HAD
-  Bool      getUseNSQT                      ()      { return m_useNSQT; }
-#endif
-#endif
   Bool      getPCMInputBitDepthFlag         ()      { return m_bPCMInputBitDepthFlag;   }
   Bool      getPCMFilterDisableFlag         ()      { return m_bPCMFilterDisableFlag;   } 
   Bool      getUsePCM                       ()      { return m_usePCM;                 }
   UInt      getPCMLog2MaxSize               ()      { return m_pcmLog2MaxSize;  }
   UInt      getPCMLog2MinSize               ()      { return  m_uiPCMLog2MinSize;  }
 
-#if !REMOVE_LMCHROMA
-  Bool getUseLMChroma                       ()      { return m_bUseLMChroma;        }
-  Void setUseLMChroma                       ( Bool b ) { m_bUseLMChroma  = b;       }
-#endif
   Bool getUseTransformSkip                             ()      { return m_useTransformSkip;        }
   Void setUseTransformSkip                             ( Bool b ) { m_useTransformSkip  = b;       }
   Bool getUseTransformSkipFast                         ()      { return m_useTransformSkipFast;    }
@@ -496,17 +440,8 @@ public:
   Int   getDependentSliceMode            ()              { return m_iDependentSliceMode;    }
   Int   getDependentSliceArgument        ()              { return m_iDependentSliceArgument;}
 #if DEPENDENT_SLICES
-#if TILES_WPP_ENTROPYSLICES_FLAGS
   Void  setEntropySliceEnabledFlag       ( Bool  b )     { m_entropySliceEnabledFlag = b;    }
   Bool  getEntropySliceEnabledFlag       ()              { return m_entropySliceEnabledFlag; }
-#else
-  Void  setCabacIndependentFlag            ( Bool  i )      { m_bCabacIndependentFlag = i;       }
-  Bool  getCabacIndependentFlag     ()                    { return m_bCabacIndependentFlag;   }
-#endif
-#endif
-#if !REMOVE_FGS
-  Void  setSliceGranularity            ( Int  i )      { m_iSliceGranularity = i;       }
-  Int   getSliceGranularity            ()              { return m_iSliceGranularity;    }
 #endif
   Void      setLFCrossSliceBoundaryFlag     ( Bool   bValue  )    { m_bLFCrossSliceBoundaryFlag = bValue; }
   Bool      getLFCrossSliceBoundaryFlag     ()                    { return m_bLFCrossSliceBoundaryFlag;   }
@@ -515,10 +450,8 @@ public:
   Bool      getUseSAO                  ()              {return m_bUseSAO;}
   Void  setMaxNumOffsetsPerPic                   (Int iVal)            { m_maxNumOffsetsPerPic = iVal; }
   Int   getMaxNumOffsetsPerPic                   ()                    { return m_maxNumOffsetsPerPic; }
-#if SAO_LCU_BOUNDARY
   Void  setSaoLcuBoundary              (Bool val)      { m_saoLcuBoundary = val; }
   Bool  getSaoLcuBoundary              ()              { return m_saoLcuBoundary; }
-#endif
   Void  setSaoLcuBasedOptimization               (Bool val)            { m_saoLcuBasedOptimization = val; }
   Bool  getSaoLcuBasedOptimization               ()                    { return m_saoLcuBasedOptimization; }
   Void  setLFCrossTileBoundaryFlag               ( Bool   val  )       { m_loopFilterAcrossTilesEnabledFlag = val; }
@@ -598,16 +531,12 @@ public:
   Int   getWaveFrontSubstreams()                         { return m_iWaveFrontSubstreams; }
   Void  setDecodedPictureHashSEIEnabled(Int b)           { m_decodedPictureHashSEIEnabled = b; }
   Int   getDecodedPictureHashSEIEnabled()                { return m_decodedPictureHashSEIEnabled; }
-#if BUFFERING_PERIOD_AND_TIMING_SEI
   Void  setBufferingPeriodSEIEnabled(Int b)              { m_bufferingPeriodSEIEnabled = b; }
   Int   getBufferingPeriodSEIEnabled()                   { return m_bufferingPeriodSEIEnabled; }
   Void  setPictureTimingSEIEnabled(Int b)                { m_pictureTimingSEIEnabled = b; }
   Int   getPictureTimingSEIEnabled()                     { return m_pictureTimingSEIEnabled; }
-#endif
-#if RECOVERY_POINT_SEI
   Void  setRecoveryPointSEIEnabled(Int b)                { m_recoveryPointSEIEnabled = b; }
   Int   getRecoveryPointSEIEnabled()                     { return m_recoveryPointSEIEnabled; }
-#endif
   Void      setUseWP               ( Bool  b )   { m_bUseWeightPred    = b;    }
   Void      setWPBiPred            ( Bool b )    { m_useWeightedBiPred = b;    }
   Bool      getUseWP               ()            { return m_bUseWeightPred;    }
@@ -636,15 +565,10 @@ public:
   Void      setCUTransquantBypassFlagValue(Bool flag) { m_CUTransquantBypassFlagValue = flag; }
   Void setVPS(TComVPS *p) { m_cVPS = *p; }
   TComVPS *getVPS() { return &m_cVPS; }
-#if RECALCULATE_QP_ACCORDING_LAMBDA
   Void      setUseRecalculateQPAccordingToLambda ( Bool b ) { m_recalculateQPAccordingToLambda = b;    }
   Bool      getUseRecalculateQPAccordingToLambda ()         { return m_recalculateQPAccordingToLambda; }
-#endif
-#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE 
   Void      setActiveParameterSetsSEIEnabled ( Int b )  { m_activeParameterSetsSEIEnabled = b; }  
   Int       getActiveParameterSetsSEIEnabled ()         { return m_activeParameterSetsSEIEnabled; }
-#endif 
-#if SUPPORT_FOR_VUI
   Bool      getVuiParametersPresentFlag()                 { return m_vuiParametersPresentFlag; }
   Void      setVuiParametersPresentFlag(Bool i)           { m_vuiParametersPresentFlag = i; }
   Bool      getAspectRatioInfoPresentFlag()               { return m_aspectRatioInfoPresentFlag; }
@@ -695,7 +619,6 @@ public:
   Void      setLog2MaxMvLengthHorizontal(Int i)           { m_log2MaxMvLengthHorizontal = i; }
   Int       getLog2MaxMvLengthVertical()                  { return m_log2MaxMvLengthVertical; }
   Void      setLog2MaxMvLengthVertical(Int i)             { m_log2MaxMvLengthVertical = i; }
-#endif
 };
 
 //! \}

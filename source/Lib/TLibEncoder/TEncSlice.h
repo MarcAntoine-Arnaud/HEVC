@@ -113,7 +113,7 @@ public:
   Void    init                ( TEncTop* pcEncTop );
   
   /// preparation of slice encoding (reference marking, QP and lambda)
-  Void    initEncSlice        ( TComPic*  pcPic, Int iPOCLast, UInt uiPOCCurr, Int iNumPicRcvd,
+  Void    initEncSlice        ( TComPic*  pcPic, Int pocLast, Int pocCurr, Int iNumPicRcvd,
                                 Int iGOPid,   TComSlice*& rpcSlice, TComSPS* pSPS, TComPPS *pPPS );
   Void    xLamdaRecalculation ( Int changeQP, Int idGOP, Int depth, SliceType eSliceType, TComSPS* pcSPS, TComSlice* pcSlice);
   // compress and encode slice
@@ -134,10 +134,8 @@ public:
   Void      setCtxMem( TEncSbac* sb, int b )   { CTXMem[b] = sb; }
 #endif
 
-#if RECALCULATE_QP_ACCORDING_LAMBDA
 private:
   Double  xGetQPValueAccordingToLambda ( Double lambda );
-#endif
 };
 
 //! \}

@@ -31,6 +31,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/** 
+ \file     SEIread.cpp
+ \brief    reading funtionality for SEI messages
+ */
+
 #include "TLibCommon/CommonDef.h"
 #include "TLibCommon/TComBitStream.h"
 #include "TLibCommon/SEI.h"
@@ -54,11 +59,9 @@ Void  xTraceSEIMessageType(SEI::PayloadType payloadType)
   case SEI::DECODED_PICTURE_HASH:
     fprintf( g_hTrace, "=========== Decoded picture hash SEI message ===========\n");
     break;
-#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE 
   case SEI::ACTIVE_PARAMETER_SETS:
     fprintf( g_hTrace, "=========== Active Parameter Sets SEI message ===========\n");
     break;
-#endif
   case SEI::USER_DATA_UNREGISTERED:
     fprintf( g_hTrace, "=========== User Data Unregistered SEI message ===========\n");
     break;
@@ -118,17 +121,14 @@ Void SEIReader::xReadSEImessage(SEImessages& seis)
     seis.user_data_unregistered = new SEIuserDataUnregistered;
     xParseSEIuserDataUnregistered(*seis.user_data_unregistered, payloadSize);
     break;
-#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE    
   case SEI::ACTIVE_PARAMETER_SETS:
     seis.active_parameter_sets = new SEIActiveParameterSets; 
     xParseSEIActiveParameterSets(*seis.active_parameter_sets, payloadSize); 
     break; 
-#endif 
   case SEI::DECODED_PICTURE_HASH:
     seis.picture_digest = new SEIDecodedPictureHash;
     xParseSEIDecodedPictureHash(*seis.picture_digest, payloadSize);
     break;
-#if BUFFERING_PERIOD_AND_TIMING_SEI
   case SEI::BUFFERING_PERIOD:
     seis.buffering_period = new SEIBufferingPeriod;
     seis.buffering_period->m_sps = seis.m_pSPS;
@@ -139,13 +139,10 @@ Void SEIReader::xReadSEImessage(SEImessages& seis)
     seis.picture_timing->m_sps = seis.m_pSPS;
     xParseSEIPictureTiming(*seis.picture_timing, payloadSize);
     break;
-#endif
-#if RECOVERY_POINT_SEI
   case SEI::RECOVERY_POINT:
     seis.recovery_point = new SEIRecoveryPoint;
     xParseSEIRecoveryPoint(*seis.recovery_point, payloadSize);
     break;
-#endif
   default:
     assert(!"Unhandled SEI message");
   }
@@ -216,8 +213,7 @@ Void SEIReader::xParseSEIDecodedPictureHash(SEIDecodedPictureHash& sei, UInt pay
     }
   }
 }
-#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE 
-Void SEIReader::xParseSEIActiveParameterSets(SEIActiveParameterSets& sei, unsigned payloadSize)
+Void SEIReader::xParseSEIActiveParameterSets(SEIActiveParameterSets& sei, UInt payloadSize)
 {
   UInt val; 
   READ_CODE(4, val, "active_vps_id");
@@ -242,9 +238,7 @@ Void SEIReader::xParseSEIActiveParameterSets(SEIActiveParameterSets& sei, unsign
     READ_FLAG(val, "alignment_bit");
   }
 }
-#endif
 
-#if BUFFERING_PERIOD_AND_TIMING_SEI
 Void SEIReader::xParseSEIBufferingPeriod(SEIBufferingPeriod& sei, UInt payloadSize)
 {
   Int i, nalOrVcl;
@@ -333,8 +327,6 @@ Void SEIReader::xParseSEIPictureTiming(SEIPictureTiming& sei, UInt payloadSize)
   }
   xParseByteAlign();
 }
-#endif
-#if RECOVERY_POINT_SEI
 Void SEIReader::xParseSEIRecoveryPoint(SEIRecoveryPoint& sei, UInt payloadSize)
 {
   Int  iCode;
@@ -344,9 +336,7 @@ Void SEIReader::xParseSEIRecoveryPoint(SEIRecoveryPoint& sei, UInt payloadSize)
   READ_FLAG( uiCode, "broken_link_flag" );      sei.m_brokenLinkFlag     = uiCode;
   xParseByteAlign();
 }
-#endif
 
-#if RECOVERY_POINT_SEI || BUFFERING_PERIOD_AND_TIMING_SEI
 Void SEIReader::xParseByteAlign()
 {
   UInt code;
@@ -359,5 +349,4 @@ Void SEIReader::xParseByteAlign()
     READ_FLAG( code, "bit_equal_to_zero" );         assert( code == 0 );
   }
 }
-#endif
 //! \}

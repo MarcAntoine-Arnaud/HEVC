@@ -127,18 +127,13 @@ private:
   // -------------------------------------------------------------------------------------------------------------------
   // CU data
   // -------------------------------------------------------------------------------------------------------------------
-#if SKIP_FLAG
   Bool*         m_skipFlag;           ///< array of skip flags
-#endif
   Char*         m_pePartSize;         ///< array of partition sizes
   Char*         m_pePredMode;         ///< array of prediction modes
   Bool*         m_CUTransquantBypass;   ///< array of cu_transquant_bypass flags
   Char*         m_phQP;               ///< array of QP values
   UChar*        m_puhTrIdx;           ///< array of transform indices
   UChar*        m_puhTransformSkip[3];///< array of transform skipping flags
-#if !REMOVE_NSQT
-  UChar*        m_nsqtPartIdx;        ///< array of absPartIdx mapping table, map zigzag to NSQT
-#endif
   UChar*        m_puhCbf[3];          ///< array of coded block flags (CBF)
   TComCUMvField m_acCUMvField[2];     ///< array of motion vectors
   TCoeff*       m_pcTrCoeffY;         ///< transformed coefficient buffer (Y)
@@ -190,7 +185,6 @@ private:
   UChar*        m_puhInterDir;        ///< array of inter directions
   Char*         m_apiMVPIdx[2];       ///< array of motion vector predictor candidates
   Char*         m_apiMVPNum[2];       ///< array of number of possible motion vectors predictors
-  Bool          m_lcuAlfEnabled[3];
   Bool*         m_pbIPCMFlag;         ///< array of intra_pcm flags
 
   Int           m_numSucIPCM;         ///< the number of succesive IPCM blocks associated with the current log2CUSize
@@ -283,12 +277,10 @@ public:
   Void          setPartSizeSubParts   ( PartSize eMode, UInt uiAbsPartIdx, UInt uiDepth );
   Void          setCUTransquantBypassSubParts( bool flag, UInt uiAbsPartIdx, UInt uiDepth );
   
-#if SKIP_FLAG
   Bool*        getSkipFlag            ()                        { return m_skipFlag;          }
   Bool         getSkipFlag            (UInt idx)                { return m_skipFlag[idx];     }
   Void         setSkipFlag           ( UInt idx, Bool skip)     { m_skipFlag[idx] = skip;   }
   Void         setSkipFlagSubParts   ( Bool skip, UInt absPartIdx, UInt depth );
-#endif
 
   Char*         getPredictionMode     ()                        { return m_pePredMode;        }
   PredMode      getPredictionMode     ( UInt uiIdx )            { return static_cast<PredMode>( m_pePredMode[uiIdx] ); }
@@ -318,12 +310,6 @@ public:
   Char          getCodedQP            ()                        { return m_codedQP;           }
 
   Bool          isLosslessCoded(UInt absPartIdx);
-#if !REMOVE_NSQT
-  UChar*        getNSQTPartIdx        ()                        { return m_nsqtPartIdx;        }
-  UChar         getNSQTPartIdx        ( UInt idx )              { return m_nsqtPartIdx[idx];   }
-  Void          setNSQTIdxSubParts    ( UInt absPartIdx, UInt depth );
-  Void          setNSQTIdxSubParts    ( UInt log2TrafoSize, UInt absPartIdx, UInt absTUPartIdx, UInt trMode );
-#endif
   
   UChar*        getTransformIdx       ()                        { return m_puhTrIdx;          }
   UChar         getTransformIdx       ( UInt uiIdx )            { return m_puhTrIdx[uiIdx];   }
@@ -397,8 +383,6 @@ public:
   UChar         getInterDir           ( UInt uiIdx )            { return m_puhInterDir[uiIdx];        }
   Void          setInterDir           ( UInt uiIdx, UChar  uh ) { m_puhInterDir[uiIdx] = uh;          }
   Void          setInterDirSubParts   ( UInt uiDir,  UInt uiAbsPartIdx, UInt uiPartIdx, UInt uiDepth );
-  Bool          getAlfLCUEnabled      (Int compIdx)             {return m_lcuAlfEnabled[compIdx];     }
-  Void          setAlfLCUEnabled      (Bool b, Int compIdx)     {m_lcuAlfEnabled[compIdx] = b;        }
   Bool*         getIPCMFlag           ()                        { return m_pbIPCMFlag;               }
   Bool          getIPCMFlag           (UInt uiIdx )             { return m_pbIPCMFlag[uiIdx];        }
   Void          setIPCMFlag           (UInt uiIdx, Bool b )     { m_pbIPCMFlag[uiIdx] = b;           }
@@ -437,9 +421,6 @@ public:
   
   Void          getMvField            ( TComDataCU* pcCU, UInt uiAbsPartIdx, RefPicList eRefPicList, TComMvField& rcMvField );
   
-#if !SPS_AMVP_CLEANUP
-  AMVP_MODE     getAMVPMode           ( UInt uiIdx );
-#endif
   Void          fillMvpCand           ( UInt uiPartIdx, UInt uiPartAddr, RefPicList eRefPicList, Int iRefIdx, AMVPInfo* pInfo );
   Bool          isDiffMER             ( Int xN, Int yN, Int xP, Int yP);
   Void          getPartPosition       ( UInt partIdx, Int& xP, Int& yP, Int& nPSW, Int& nPSH);
@@ -551,14 +532,6 @@ public:
 
   UInt          getCoefScanIdx(UInt uiAbsPartIdx, UInt uiWidth, Bool bIsLuma, Bool bIsIntra);
 
-#if !REMOVE_NSQT
-  Bool          useNonSquareTrans( UInt uiTrMode, Int absPartIdx );
-  Void          getNSQTSize(Int trMode, Int absPartIdx, Int &trWidth, Int &trHeight);
-  Bool          useNonSquarePU   ( UInt absPartIdx);
-  UInt          getInterTUSplitDirection ( Int width, Int height, Int trLastWidth, Int trLastHeight );
-  UInt          getNSAbsPartIdx  ( UInt log2TrafoSize, UInt absPartIdx, UInt absTUPartIdx, UInt innerQuadIdx, UInt trMode );
-  UInt          getNSAddrChroma   ( UInt uiLog2TrSizeC, UInt uiTrModeC, UInt uiQuadrant, UInt absTUPartIdx );
-#endif
 };
 
 namespace RasterAddress

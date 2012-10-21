@@ -90,7 +90,7 @@ Void TAppDecTop::destroy()
  */
 Void TAppDecTop::decode()
 {
-  UInt                uiPOC;
+  Int                 poc;
   TComList<TComPic*>* pcListPic = NULL;
 
   ifstream bitstreamFile(m_pchBitstreamFile, ifstream::in | ifstream::binary);
@@ -138,11 +138,7 @@ Void TAppDecTop::decode()
     else
     {
       read(nalu, nalUnit);
-#if TARGET_DECLAYERID_SET
       if( (m_iMaxTemporalLayer >= 0 && nalu.m_temporalId > m_iMaxTemporalLayer) || !isNaluWithinTargetDecLayerIdSet(&nalu)  )
-#else
-      if(m_iMaxTemporalLayer >= 0 && nalu.m_temporalId > m_iMaxTemporalLayer)
-#endif
       {
         if(bPreviousPictureDecoded)
         {
@@ -172,7 +168,7 @@ Void TAppDecTop::decode()
     }
     if (bNewPicture || !bitstreamFile)
     {
-      m_cTDecTop.executeDeblockAndAlf(uiPOC, pcListPic, m_iSkipFrame, m_iPOCLastDisplay);
+      m_cTDecTop.executeDeblockAndAlf(poc, pcListPic, m_iSkipFrame, m_iPOCLastDisplay);
     }
 
     if( pcListPic )
@@ -189,10 +185,8 @@ Void TAppDecTop::decode()
       }
       if ( bNewPicture && 
            (   nalu.m_nalUnitType == NAL_UNIT_CODED_SLICE_IDR
-#if SUPPORT_FOR_RAP_N_LP
             || nalu.m_nalUnitType == NAL_UNIT_CODED_SLICE_IDR_N_LP
             || nalu.m_nalUnitType == NAL_UNIT_CODED_SLICE_BLA_N_LP
-#endif
             || nalu.m_nalUnitType == NAL_UNIT_CODED_SLICE_BLANT
             || nalu.m_nalUnitType == NAL_UNIT_CODED_SLICE_BLA ) )
       {
@@ -362,7 +356,6 @@ Void TAppDecTop::xFlushOutput( TComList<TComPic*>* pcListPic )
   m_iPOCLastDisplay = -MAX_INT;
 }
 
-#if TARGET_DECLAYERID_SET
 /** \param nalu Input nalu to check whether its LayerId is within targetDecLayerIdSet
  */
 Bool TAppDecTop::isNaluWithinTargetDecLayerIdSet( InputNALUnit* nalu )
@@ -380,6 +373,5 @@ Bool TAppDecTop::isNaluWithinTargetDecLayerIdSet( InputNALUnit* nalu )
   }
   return false;
 }
-#endif
 
 //! \}

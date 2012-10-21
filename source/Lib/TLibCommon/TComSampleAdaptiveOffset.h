@@ -102,16 +102,12 @@ protected:
   Pel* m_pTmpL2;
   Int* m_iLcuPartIdx;
   Int     m_maxNumOffsetsPerPic;
-#if SAO_LCU_BOUNDARY
   Bool    m_saoLcuBoundary;
-#endif
   Bool    m_saoLcuBasedOptimization;
 
-#if REMOVE_ALF
   Void xPCMRestoration        (TComPic* pcPic);
   Void xPCMCURestoration      (TComDataCU* pcCU, UInt uiAbsZorderIdx, UInt uiDepth);
   Void xPCMSampleRestoration  (TComDataCU* pcCU, UInt uiAbsZorderIdx, UInt uiDepth, TextType ttText);
-#endif
 public:
   TComSampleAdaptiveOffset         ();
   virtual ~TComSampleAdaptiveOffset();
@@ -124,11 +120,7 @@ public:
   Void initSAOParam   (SAOParam *pcSaoParam, Int iPartLevel, Int iPartRow, Int iPartCol, Int iParentPartIdx, Int StartCUX, Int EndCUX, Int StartCUY, Int EndCUY, Int iYCbCr);
   Void allocSaoParam  (SAOParam* pcSaoParam);
   Void resetSAOParam  (SAOParam *pcSaoParam);
-#if REMOVE_APS
   static Void freeSaoParam   (SAOParam *pcSaoParam);
-#else
-  Void freeSaoParam   (SAOParam *pcSaoParam);
-#endif
   
   Void SAOProcess(TComPic* pcPic, SAOParam* pcSaoParam);
   Void processSaoCu(Int iAddr, Int iSaoType, Int iYCbCr);
@@ -143,19 +135,13 @@ public:
   Void convertQT2SaoUnit(SAOParam* saoParam, UInt partIdx, Int yCbCr);
   Void convertOnePart2SaoUnit(SAOParam *saoParam, UInt partIdx, Int yCbCr);
   Void processSaoUnitAll(SaoLcuParam* saoLcuParam, Bool oneUnitFlag, Int yCbCr);
-#if SAO_LCU_BOUNDARY
   Void setSaoLcuBoundary (Bool bVal)  {m_saoLcuBoundary = bVal;}
   Bool getSaoLcuBoundary ()           {return m_saoLcuBoundary;}
-#endif
   Void setSaoLcuBasedOptimization (Bool bVal)  {m_saoLcuBasedOptimization = bVal;}
   Bool getSaoLcuBasedOptimization ()           {return m_saoLcuBasedOptimization;}
   Void resetSaoUnit(SaoLcuParam* saoUnit);
-#if SAO_SINGLE_MERGE
   Void copySaoUnit(SaoLcuParam* saoUnitDst, SaoLcuParam* saoUnitSrc );
-#endif
-#if REMOVE_ALF
   Void PCMLFDisableProcess    ( TComPic* pcPic);                        ///< interface function for ALF process 
-#endif
 };
 
 //! \}

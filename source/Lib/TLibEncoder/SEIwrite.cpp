@@ -56,11 +56,9 @@ Void  xTraceSEIMessageType(SEI::PayloadType payloadType)
   case SEI::USER_DATA_UNREGISTERED:
     fprintf( g_hTrace, "=========== User Data Unregistered SEI message ===========\n");
     break;
-#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE
   case SEI::ACTIVE_PARAMETER_SETS:
     fprintf( g_hTrace, "=========== Active Parameter sets SEI message ===========\n");
     break;
-#endif 
   default:
     fprintf( g_hTrace, "=========== Unknown SEI message ===========\n");
     break;
@@ -75,27 +73,21 @@ void SEIWriter::xWriteSEIpayloadData(const SEI& sei)
   case SEI::USER_DATA_UNREGISTERED:
     xWriteSEIuserDataUnregistered(*static_cast<const SEIuserDataUnregistered*>(&sei));
     break;
-#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE  
   case SEI::ACTIVE_PARAMETER_SETS:
     xWriteSEIActiveParameterSets(*static_cast<const SEIActiveParameterSets*>(& sei)); 
     break; 
-#endif 
   case SEI::DECODED_PICTURE_HASH:
     xWriteSEIDecodedPictureHash(*static_cast<const SEIDecodedPictureHash*>(&sei));
     break;
-#if BUFFERING_PERIOD_AND_TIMING_SEI
   case SEI::BUFFERING_PERIOD:
     xWriteSEIBufferingPeriod(*static_cast<const SEIBufferingPeriod*>(&sei));
     break;
   case SEI::PICTURE_TIMING:
     xWriteSEIPictureTiming(*static_cast<const SEIPictureTiming*>(&sei));
     break;
-#endif
-#if RECOVERY_POINT_SEI
   case SEI::RECOVERY_POINT:
     xWriteSEIRecoveryPoint(*static_cast<const SEIRecoveryPoint*>(&sei));
     break;
-#endif
   default:
     assert(!"Unhandled SEI message");
   }
@@ -200,7 +192,6 @@ Void SEIWriter::xWriteSEIDecodedPictureHash(const SEIDecodedPictureHash& sei)
   }
 }
 
-#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE  
 Void SEIWriter::xWriteSEIActiveParameterSets(const SEIActiveParameterSets& sei)
 {
   WRITE_CODE(sei.activeVPSId, 4, "active_vps_id");
@@ -225,9 +216,7 @@ Void SEIWriter::xWriteSEIActiveParameterSets(const SEIActiveParameterSets& sei)
     }
   }
 }
-#endif 
 
-#if BUFFERING_PERIOD_AND_TIMING_SEI
 Void SEIWriter::xWriteSEIBufferingPeriod(const SEIBufferingPeriod& sei)
 {
   Int i, nalOrVcl;
@@ -285,8 +274,6 @@ Void SEIWriter::xWriteSEIPictureTiming(const SEIPictureTiming& sei)
   }
   xWriteByteAlign();
 }
-#endif
-#if RECOVERY_POINT_SEI
 Void SEIWriter::xWriteSEIRecoveryPoint(const SEIRecoveryPoint& sei)
 {
   WRITE_SVLC( sei.m_recoveryPocCnt,    "recovery_poc_cnt"    );
@@ -294,9 +281,7 @@ Void SEIWriter::xWriteSEIRecoveryPoint(const SEIRecoveryPoint& sei)
   WRITE_FLAG( sei.m_brokenLinkFlag,    "broken_link_flag"    );
   xWriteByteAlign();
 }
-#endif
 
-#if RECOVERY_POINT_SEI || BUFFERING_PERIOD_AND_TIMING_SEI
 Void SEIWriter::xWriteByteAlign()
 {
   if( m_pcBitIf->getNumberOfWrittenBits() % 8 != 0)
@@ -308,6 +293,5 @@ Void SEIWriter::xWriteByteAlign()
     }
   }
 };
-#endif
 
 //! \}

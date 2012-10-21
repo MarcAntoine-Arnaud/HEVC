@@ -100,9 +100,6 @@ std::istringstream &operator>>(std::istringstream &in, GOPEntry &entry)     //in
   in>>entry.m_QPFactor;
   in>>entry.m_temporalId;
   in>>entry.m_numRefPicsActive;
-#if !TEMPORAL_LAYER_NON_REFERENCE
-  in>>entry.m_refPic;
-#endif
   in>>entry.m_numRefPics;
   for ( Int i = 0; i < entry.m_numRefPics; i++ )
   {
@@ -112,9 +109,6 @@ std::istringstream &operator>>(std::istringstream &in, GOPEntry &entry)     //in
 #if AUTO_INTER_RPS
   if (entry.m_interRPSPrediction==1)
   {
-#if !J0234_INTER_RPS_SIMPL
-    in>>entry.m_deltaRIdxMinus1;
-#endif
     in>>entry.m_deltaRPS;
     in>>entry.m_numRefIdc;
     for ( Int i = 0; i < entry.m_numRefIdc; i++ )
@@ -124,17 +118,11 @@ std::istringstream &operator>>(std::istringstream &in, GOPEntry &entry)     //in
   }
   else if (entry.m_interRPSPrediction==2)
   {
-#if !J0234_INTER_RPS_SIMPL
-    in>>entry.m_deltaRIdxMinus1;
-#endif
     in>>entry.m_deltaRPS;
   }
 #else
   if (entry.m_interRPSPrediction)
   {
-#if !J0234_INTER_RPS_SIMPL
-    in>>entry.m_deltaRIdxMinus1;
-#endif
     in>>entry.m_deltaRPS;
     in>>entry.m_numRefIdc;
     for ( Int i = 0; i < entry.m_numRefIdc; i++ )
@@ -256,40 +244,19 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
   ("DeblockingFilterControlPresent", m_DeblockingFilterControlPresent, false )
 
   // Coding tools
-#if !REMOVE_NSQT
-  ("NSQT",                    m_enableNSQT,              true, "Enable non-square transforms")
-#endif
   ("AMP",                     m_enableAMP,               true, "Enable asymmetric motion partitions")
-#if !REMOVE_LMCHROMA
-  ("LMChroma",                m_bUseLMChroma,            true, "Intra chroma prediction based on reconstructed luma")
-#endif
   ("TransformSkip",           m_useTransformSkip,        false, "Intra transform skipping")
   ("TransformSkipFast",       m_useTransformSkipFast,    false, "Fast intra transform skipping")
-#if !REMOVE_ALF
-  ("ALF",                     m_bUseALF,                 true, "Enable Adaptive Loop Filter")
-#endif
   ("SAO",                     m_bUseSAO,                 true, "Enable Sample Adaptive Offset")
   ("MaxNumOffsetsPerPic",     m_maxNumOffsetsPerPic,     2048, "Max number of SAO offset per picture (Default: 2048)")   
-#if SAO_LCU_BOUNDARY
   ("SAOLcuBoundary",          m_saoLcuBoundary,          false, "0: right/bottom LCU boundary areas skipped from SAO parameter estimation, 1: non-deblocked pixels are used for those areas")
-#endif
   ("SAOLcuBasedOptimization", m_saoLcuBasedOptimization, true, "0: SAO picture-based optimization, 1: SAO LCU-based optimization ")
-#if !REMOVE_ALF
-  ("ALFLowLatencyEncode", m_alfLowLatencyEncoding, false, "Low-latency ALF encoding, 0: picture latency (trained from current frame), 1: LCU latency(trained from previous frame)")
-#endif
   ("SliceMode",            m_iSliceMode,           0, "0: Disable all Recon slice limits, 1: Enforce max # of LCUs, 2: Enforce max # of bytes")
     ("SliceArgument",        m_iSliceArgument,       0, "if SliceMode==1 SliceArgument represents max # of LCUs. if SliceMode==2 SliceArgument represents max # of bytes.")
     ("DependentSliceMode",     m_iDependentSliceMode,    0, "0: Disable all dependent slice limits, 1: Enforce max # of LCUs, 2: Enforce constraint based dependent slices")
     ("DependentSliceArgument", m_iDependentSliceArgument,0, "if DependentSliceMode==1 SliceArgument represents max # of LCUs. if DependentSliceMode==2 DependentSliceArgument represents max # of bins.")
 #if DEPENDENT_SLICES
-#if TILES_WPP_ENTROPYSLICES_FLAGS
     ("EntropySliceEnabledFlag", m_entropySliceEnabledFlag, false, "Enable use of entropy slices instead of dependent slices." )
-#else
-    ("CabacIndependentFlag", m_bCabacIndependentFlag, false)
-#endif
-#endif
-#if !REMOVE_FGS
-    ("SliceGranularity",     m_iSliceGranularity,    0, "0: Slices always end at LCU borders. 1-3: slices may end at a depth of 1-3 below LCU level.")
 #endif
     ("LFCrossSliceBoundaryFlag", m_bLFCrossSliceBoundaryFlag, true)
 
@@ -334,16 +301,11 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
 
   ("TransquantBypassEnableFlag", m_TransquantBypassEnableFlag, false, "transquant_bypass_enable_flag indicator in PPS")
   ("CUTransquantBypassFlagValue", m_CUTransquantBypassFlagValue, false, "Fixed cu_transquant_bypass_flag value, when transquant_bypass_enable_flag is enabled")
-#if RECALCULATE_QP_ACCORDING_LAMBDA
   ("RecalculateQPAccordingToLambda", m_recalculateQPAccordingToLambda, false, "Recalculate QP values according to lambda values. Do not suggest to be enabled in all intra case")
-#endif
-#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE 
   ("ActiveParameterSets", m_activeParameterSetsSEIEnabled, 0, "Control generation of active parameter sets SEI messages\n"
                                                               "\t2: enable active parameter sets SEI message with active_sps_id\n"
                                                               "\t1: enable active parameter sets SEI message without active_sps_id\n"
                                                               "\t0: disable")
-#endif 
-#if SUPPORT_FOR_VUI
   ("VuiParametersPresent,-vui",      m_vuiParametersPresentFlag,           false, "Enable generation of vui_parameters()")
   ("AspectRatioInfoPresent",         m_aspectRatioInfoPresentFlag,         false, "Signals whether aspect_ratio_idc is present")
   ("AspectRatioIdc",                 m_aspectRatioIdc,                         0, "aspect_ratio_idc")
@@ -369,14 +331,9 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
   ("MaxBitsPerMinCuDenom",           m_maxBitsPerMinCuDenom,                   1, "Indicates an upper bound for the number of bits of coding_unit() data")
   ("Log2MaxMvLengthHorizontal",      m_log2MaxMvLengthHorizontal,             15, "Indicate the maximum absolute value of a decoded horizontal MV component in quarter-pel luma units")
   ("Log2MaxMvLengthVertical",        m_log2MaxMvLengthVertical,               15, "Indicate the maximum absolute value of a decoded vertical MV component in quarter-pel luma units")
-#endif
-#if RECOVERY_POINT_SEI
   ("SEIRecoveryPoint",               m_recoveryPointSEIEnabled,                0, "Control generation of recovery point SEI messages")
-#endif
-#if BUFFERING_PERIOD_AND_TIMING_SEI
   ("SEIBufferingPeriod",             m_bufferingPeriodSEIEnabled,              0, "Control generation of buffering period SEI messages")
   ("SEIPictureTiming",               m_pictureTimingSEIEnabled,                0, "Control generation of picture timing SEI messages")
-#endif
   ;
   
   for(Int i=1; i<MAX_GOP+1; i++) {
@@ -609,37 +566,19 @@ Void TAppEncCfg::xCheckParameter()
   {
     xConfirmPara( m_iSliceArgument < 1 ,         "SliceArgument should be larger than or equal to 1" );
   }
-#if !REMOVE_FGS
-  if (m_iSliceMode==3)
-  {
-    xConfirmPara( m_iSliceGranularity > 0 ,      "When SliceMode == 3 is chosen, the SliceGranularity must be 0" );
-  }
-#endif
   xConfirmPara( m_iDependentSliceMode < 0 || m_iDependentSliceMode > 2, "DependentSliceMode exceeds supported range (0 to 2)" );
   if (m_iDependentSliceMode!=0)
   {
     xConfirmPara( m_iDependentSliceArgument < 1 ,         "DependentSliceArgument should be larger than or equal to 1" );
   }
-#if !REMOVE_FGS
-  xConfirmPara( m_iSliceGranularity >= m_uiMaxCUDepth, "SliceGranularity must be smaller than maximum cu depth");
-  xConfirmPara( m_iSliceGranularity <0 || m_iSliceGranularity > 3, "SliceGranularity exceeds supported range (0 to 3)" );
-  xConfirmPara( m_iSliceGranularity > m_iMaxCuDQPDepth, "SliceGranularity must be smaller smaller than or equal to maximum dqp depth" );
-#endif
   
   bool tileFlag = (m_iNumColumnsMinus1 > 0 || m_iNumRowsMinus1 > 0 );
-#if !TILES_WPP_ENTROPYSLICES_FLAGS
-  xConfirmPara( tileFlag && m_iDependentSliceMode,            "Tile and Dependent Slice can not be applied together");
-#endif
   xConfirmPara( tileFlag && m_iWaveFrontSynchro,            "Tile and Wavefront can not be applied together");
 #if !DEPENDENT_SLICES
   xConfirmPara( m_iWaveFrontSynchro && m_iDependentSliceMode, "Wavefront and Dependent Slice can not be applied together");
 #endif
 #if DEPENDENT_SLICES
-#if TILES_WPP_ENTROPYSLICES_FLAGS
   xConfirmPara( m_iWaveFrontSynchro && m_entropySliceEnabledFlag, "WaveFrontSynchro and EntropySliceEnabledFlag can not be applied together");
-#else
-  xConfirmPara( m_iWaveFrontSynchro && m_bCabacIndependentFlag, "Wavefront and CabacIndependentFlag can not be applied together");
-#endif
 #endif
 
   //TODO:ChromaFmt assumes 4:2:0 below
@@ -726,12 +665,10 @@ Void TAppEncCfg::xCheckParameter()
               {
                 if(absPOC%m_iGOPSize == m_GOPList[k].m_POC%m_iGOPSize)
                 {
-#if TEMPORAL_LAYER_NON_REFERENCE
                   if(m_GOPList[k].m_temporalId==m_GOPList[curGOP].m_temporalId)
                   {
                     m_GOPList[k].m_refPic = true;
                   }
-#endif
                   m_GOPList[curGOP].m_usedByCurrPic[i]=m_GOPList[k].m_temporalId<=m_GOPList[curGOP].m_temporalId;
                 }
               }
@@ -779,11 +716,7 @@ Void TAppEncCfg::xCheckParameter()
           //step backwards in coding order and include any extra available pictures we might find useful to replace the ones with POC < 0.
           Int offGOP = (checkGOP-1+offset)%m_iGOPSize;
           Int offPOC = ((checkGOP-1+offset)/m_iGOPSize)*m_iGOPSize + m_GOPList[offGOP].m_POC;
-#if TEMPORAL_LAYER_NON_REFERENCE
           if(offPOC>=0&&m_GOPList[offGOP].m_temporalId<=m_GOPList[curGOP].m_temporalId)
-#else
-          if(offPOC>=0&&m_GOPList[offGOP].m_refPic&&m_GOPList[offGOP].m_temporalId<=m_GOPList[curGOP].m_temporalId) 
-#endif
           {
             Bool newRef=false;
             for(Int i=0; i<numRefs; i++)
@@ -804,12 +737,10 @@ Void TAppEncCfg::xCheckParameter()
             {
               Int insertPoint=newRefs;
               //this picture can be added, find appropriate place in list and insert it.
-#if TEMPORAL_LAYER_NON_REFERENCE
               if(m_GOPList[offGOP].m_temporalId==m_GOPList[curGOP].m_temporalId)
               {
                 m_GOPList[offGOP].m_refPic = true;
               }
-#endif
               for(Int j=0; j<newRefs; j++)
               {
                 if(m_GOPList[m_iGOPSize+m_extraRPSs].m_referencePics[j]<offPOC-curPOC||m_GOPList[m_iGOPSize+m_extraRPSs].m_referencePics[j]>0)
@@ -875,9 +806,6 @@ Void TAppEncCfg::xCheckParameter()
           m_GOPList[m_iGOPSize+m_extraRPSs].m_interRPSPrediction = 1;  
           m_GOPList[m_iGOPSize+m_extraRPSs].m_numRefIdc = newIdc;
           m_GOPList[m_iGOPSize+m_extraRPSs].m_deltaRPS = refPOC - m_GOPList[m_iGOPSize+m_extraRPSs].m_POC; 
-#if !J0234_INTER_RPS_SIMPL
-          m_GOPList[m_iGOPSize+m_extraRPSs].m_deltaRIdxMinus1 = 0; 
-#endif
         }
         curGOP=m_iGOPSize+m_extraRPSs;
         m_extraRPSs++;
@@ -987,9 +915,7 @@ Void TAppEncCfg::xCheckParameter()
 
   xConfirmPara(m_log2ParallelMergeLevel < 2, "Log2ParallelMergeLevel should be larger than or equal to 2");
 
-#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE
   xConfirmPara(m_activeParameterSetsSEIEnabled < 0 || m_activeParameterSetsSEIEnabled > 2, "ActiveParametersSEIEnabled exceeds supported range (0 to 2)"); 
-#endif 
 
 #undef xConfirmPara
   if (check_failed)
@@ -1077,10 +1003,6 @@ Void TAppEncCfg::xPrintParameter()
   printf("\n");
   
   printf("TOOL CFG: ");
-#if !REMOVE_ALF
-  printf("ALF:%d ", m_bUseALF             );
-  printf("ALFLowLatencyEncode:%d ", m_alfLowLatencyEncoding?1:0);
-#endif
   printf("IBD:%d ", !!g_uiBitIncrement);
   printf("HAD:%d ", m_bUseHADME           );
   printf("SRD:%d ", m_bUseSBACRD          );
@@ -1094,16 +1016,9 @@ Void TAppEncCfg::xPrintParameter()
   printf("CFM:%d ", m_bUseCbfFastMode         );
   printf("ESD:%d ", m_useEarlySkipDetection  );
   printf("RQT:%d ", 1     );
-#if !REMOVE_LMCHROMA
-  printf("LMC:%d ", m_bUseLMChroma        );
-#endif
   printf("TransformSkip:%d ",     m_useTransformSkip              );
   printf("TransformSkipFast:%d ", m_useTransformSkipFast       );
-#if REMOVE_FGS
   printf("Slice: M=%d ", m_iSliceMode);
-#else
-  printf("Slice: G=%d M=%d ", m_iSliceGranularity, m_iSliceMode);
-#endif
   if (m_iSliceMode!=0)
   {
     printf("A=%d ", m_iSliceArgument);
@@ -1131,9 +1046,7 @@ Void TAppEncCfg::xPrintParameter()
 #endif
 
   printf(" SignBitHidingFlag:%d ", m_signHideFlag);
-#if RECALCULATE_QP_ACCORDING_LAMBDA
   printf("RecalQP:%d", m_recalculateQPAccordingToLambda ? 1 : 0 );
-#endif
   printf("\n\n");
   
   fflush(stdout);

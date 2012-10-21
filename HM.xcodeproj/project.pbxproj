@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 45;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -32,8 +32,6 @@
 		671E0D8211B6ADE900F3747B /* TEncBinCoderCABAC.h in Headers */ = {isa = PBXBuildFile; fileRef = 671E0D7411B6ADE900F3747B /* TEncBinCoderCABAC.h */; };
 		676795C411AD61FC00421804 /* CommonDef.h in Headers */ = {isa = PBXBuildFile; fileRef = 6767959911AD61FC00421804 /* CommonDef.h */; };
 		676795C511AD61FC00421804 /* ContextTables.h in Headers */ = {isa = PBXBuildFile; fileRef = 6767959A11AD61FC00421804 /* ContextTables.h */; };
-		676795CB11AD61FC00421804 /* TComAdaptiveLoopFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 676795A011AD61FC00421804 /* TComAdaptiveLoopFilter.cpp */; };
-		676795CC11AD61FC00421804 /* TComAdaptiveLoopFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 676795A111AD61FC00421804 /* TComAdaptiveLoopFilter.h */; };
 		676795CE11AD61FC00421804 /* TComBitStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 676795A311AD61FC00421804 /* TComBitStream.cpp */; };
 		676795CF11AD61FC00421804 /* TComBitStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 676795A411AD61FC00421804 /* TComBitStream.h */; };
 		676795D011AD61FC00421804 /* TComDataCU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 676795A511AD61FC00421804 /* TComDataCU.cpp */; };
@@ -78,8 +76,6 @@
 		6767961111AD623900421804 /* TDecSlice.h in Headers */ = {isa = PBXBuildFile; fileRef = 6767960311AD623900421804 /* TDecSlice.h */; };
 		6767961211AD623900421804 /* TDecTop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6767960411AD623900421804 /* TDecTop.cpp */; };
 		6767961311AD623900421804 /* TDecTop.h in Headers */ = {isa = PBXBuildFile; fileRef = 6767960511AD623900421804 /* TDecTop.h */; };
-		6767963111AD628100421804 /* TEncAdaptiveLoopFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6767961C11AD628100421804 /* TEncAdaptiveLoopFilter.cpp */; };
-		6767963211AD628100421804 /* TEncAdaptiveLoopFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 6767961D11AD628100421804 /* TEncAdaptiveLoopFilter.h */; };
 		6767963311AD628100421804 /* TEncAnalyze.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6767961E11AD628100421804 /* TEncAnalyze.cpp */; };
 		6767963411AD628100421804 /* TEncAnalyze.h in Headers */ = {isa = PBXBuildFile; fileRef = 6767961F11AD628100421804 /* TEncAnalyze.h */; };
 		6767963511AD628100421804 /* TEncCavlc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6767962011AD628100421804 /* TEncCavlc.cpp */; };
@@ -238,8 +234,6 @@
 		6767959411AD61BB00421804 /* libTLibCommon.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTLibCommon.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		6767959911AD61FC00421804 /* CommonDef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CommonDef.h; path = source/Lib/TLibCommon/CommonDef.h; sourceTree = "<group>"; };
 		6767959A11AD61FC00421804 /* ContextTables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContextTables.h; path = source/Lib/TLibCommon/ContextTables.h; sourceTree = "<group>"; };
-		676795A011AD61FC00421804 /* TComAdaptiveLoopFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TComAdaptiveLoopFilter.cpp; path = source/Lib/TLibCommon/TComAdaptiveLoopFilter.cpp; sourceTree = "<group>"; };
-		676795A111AD61FC00421804 /* TComAdaptiveLoopFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TComAdaptiveLoopFilter.h; path = source/Lib/TLibCommon/TComAdaptiveLoopFilter.h; sourceTree = "<group>"; };
 		676795A311AD61FC00421804 /* TComBitStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TComBitStream.cpp; path = source/Lib/TLibCommon/TComBitStream.cpp; sourceTree = "<group>"; };
 		676795A411AD61FC00421804 /* TComBitStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TComBitStream.h; path = source/Lib/TLibCommon/TComBitStream.h; sourceTree = "<group>"; };
 		676795A511AD61FC00421804 /* TComDataCU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TComDataCU.cpp; path = source/Lib/TLibCommon/TComDataCU.cpp; sourceTree = "<group>"; };
@@ -286,8 +280,6 @@
 		6767960411AD623900421804 /* TDecTop.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TDecTop.cpp; path = source/Lib/TLibDecoder/TDecTop.cpp; sourceTree = "<group>"; };
 		6767960511AD623900421804 /* TDecTop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TDecTop.h; path = source/Lib/TLibDecoder/TDecTop.h; sourceTree = "<group>"; };
 		6767961911AD626F00421804 /* libTLibEncoder.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTLibEncoder.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		6767961C11AD628100421804 /* TEncAdaptiveLoopFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TEncAdaptiveLoopFilter.cpp; path = source/Lib/TLibEncoder/TEncAdaptiveLoopFilter.cpp; sourceTree = "<group>"; };
-		6767961D11AD628100421804 /* TEncAdaptiveLoopFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TEncAdaptiveLoopFilter.h; path = source/Lib/TLibEncoder/TEncAdaptiveLoopFilter.h; sourceTree = "<group>"; };
 		6767961E11AD628100421804 /* TEncAnalyze.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TEncAnalyze.cpp; path = source/Lib/TLibEncoder/TEncAnalyze.cpp; sourceTree = "<group>"; };
 		6767961F11AD628100421804 /* TEncAnalyze.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TEncAnalyze.h; path = source/Lib/TLibEncoder/TEncAnalyze.h; sourceTree = "<group>"; };
 		6767962011AD628100421804 /* TEncCavlc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TEncCavlc.cpp; path = source/Lib/TLibEncoder/TEncCavlc.cpp; sourceTree = "<group>"; };
@@ -477,8 +469,6 @@
 				671E0D3F11B6AD8C00F3747B /* TComCABACTables.cpp */,
 				671E0D4011B6AD8C00F3747B /* TComCABACTables.h */,
 				671E0D4111B6AD8C00F3747B /* TComMv.h */,
-				676795A011AD61FC00421804 /* TComAdaptiveLoopFilter.cpp */,
-				676795A111AD61FC00421804 /* TComAdaptiveLoopFilter.h */,
 				676795A311AD61FC00421804 /* TComBitStream.cpp */,
 				65EA1B96135745D500988950 /* TComPicYuvMD5.cpp */,
 				676795A411AD61FC00421804 /* TComBitStream.h */,
@@ -570,8 +560,6 @@
 				671E0D7411B6ADE900F3747B /* TEncBinCoderCABAC.h */,
 				DBA796C61499ADE2003F7D5D /* TEncBinCoderCABACCounter.cpp */,
 				DBA796C71499ADE3003F7D5D /* TEncBinCoderCABACCounter.h */,
-				6767961C11AD628100421804 /* TEncAdaptiveLoopFilter.cpp */,
-				6767961D11AD628100421804 /* TEncAdaptiveLoopFilter.h */,
 				6767961E11AD628100421804 /* TEncAnalyze.cpp */,
 				6767961F11AD628100421804 /* TEncAnalyze.h */,
 				6767962011AD628100421804 /* TEncCavlc.cpp */,
@@ -663,7 +651,6 @@
 			files = (
 				676795C411AD61FC00421804 /* CommonDef.h in Headers */,
 				676795C511AD61FC00421804 /* ContextTables.h in Headers */,
-				676795CC11AD61FC00421804 /* TComAdaptiveLoopFilter.h in Headers */,
 				676795CF11AD61FC00421804 /* TComBitStream.h in Headers */,
 				676795D111AD61FC00421804 /* TComDataCU.h in Headers */,
 				676795D211AD61FC00421804 /* TComList.h in Headers */,
@@ -723,7 +710,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6767963211AD628100421804 /* TEncAdaptiveLoopFilter.h in Headers */,
 				6767963411AD628100421804 /* TEncAnalyze.h in Headers */,
 				6767963611AD628100421804 /* TEncCavlc.h in Headers */,
 				6767963711AD628100421804 /* TEncCfg.h in Headers */,
@@ -898,9 +884,10 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 0450;
 			};
 			buildConfigurationList = 1DEB923508733DC60010E9CD /* Build configuration list for PBXProject "HM" */;
-			compatibilityVersion = "Xcode 3.1";
+			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
@@ -929,7 +916,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				676795CB11AD61FC00421804 /* TComAdaptiveLoopFilter.cpp in Sources */,
 				676795CE11AD61FC00421804 /* TComBitStream.cpp in Sources */,
 				676795D011AD61FC00421804 /* TComDataCU.cpp in Sources */,
 				676795D311AD61FC00421804 /* TComLoopFilter.cpp in Sources */,
@@ -981,7 +967,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6767963111AD628100421804 /* TEncAdaptiveLoopFilter.cpp in Sources */,
 				6767963311AD628100421804 /* TEncAnalyze.cpp in Sources */,
 				6767963511AD628100421804 /* TEncCavlc.cpp in Sources */,
 				6767963811AD628100421804 /* TEncCu.cpp in Sources */,
@@ -1094,7 +1079,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = source/Lib;
 				ONLY_ACTIVE_ARCH = YES;
-				PREBINDING = NO;
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -1109,7 +1093,6 @@
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = source/Lib;
-				PREBINDING = NO;
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -1118,13 +1101,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/local/lib;
-				PREBINDING = NO;
 				PRODUCT_NAME = TLibCommon;
 			};
 			name = Debug;
@@ -1133,12 +1115,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/lib;
-				PREBINDING = NO;
 				PRODUCT_NAME = TLibCommon;
 				ZERO_LINK = NO;
 			};
@@ -1148,13 +1129,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/local/lib;
-				PREBINDING = NO;
 				PRODUCT_NAME = TLibDecoder;
 			};
 			name = Debug;
@@ -1163,12 +1143,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/lib;
-				PREBINDING = NO;
 				PRODUCT_NAME = TLibDecoder;
 				ZERO_LINK = NO;
 			};
@@ -1178,13 +1157,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/local/lib;
-				PREBINDING = NO;
 				PRODUCT_NAME = TLibEncoder;
 			};
 			name = Debug;
@@ -1193,12 +1171,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/lib;
-				PREBINDING = NO;
 				PRODUCT_NAME = TLibEncoder;
 				ZERO_LINK = NO;
 			};
@@ -1208,13 +1185,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/local/lib;
-				PREBINDING = NO;
 				PRODUCT_NAME = TLibVideoIO;
 			};
 			name = Debug;
@@ -1223,12 +1199,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/lib;
-				PREBINDING = NO;
 				PRODUCT_NAME = TLibVideoIO;
 				ZERO_LINK = NO;
 			};
@@ -1240,7 +1215,6 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -1250,7 +1224,6 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/build/Debug\"",
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = TAppEncoder;
 			};
 			name = Debug;
@@ -1261,7 +1234,6 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
@@ -1270,7 +1242,6 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/build/Debug\"",
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = TAppEncoder;
 				ZERO_LINK = NO;
 			};
@@ -1282,13 +1253,11 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				INSTALL_PATH = /usr/local/bin;
-				PREBINDING = NO;
 				PRODUCT_NAME = TAppDecoder;
 			};
 			name = Debug;
@@ -1299,12 +1268,10 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				INSTALL_PATH = /usr/local/bin;
-				PREBINDING = NO;
 				PRODUCT_NAME = TAppDecoder;
 				ZERO_LINK = NO;
 			};
@@ -1314,13 +1281,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/local/lib;
-				PREBINDING = NO;
 				PRODUCT_NAME = TAppCommon;
 			};
 			name = Debug;
@@ -1329,12 +1295,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/lib;
-				PREBINDING = NO;
 				PRODUCT_NAME = TAppCommon;
 				ZERO_LINK = NO;
 			};

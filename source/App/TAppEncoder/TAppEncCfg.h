@@ -82,9 +82,6 @@ protected:
   Bool      m_bUseLComb;                                      ///< flag for using combined reference list for uni-prediction in B-slices (JCTVC-D421)
   Bool      m_useTransformSkip;                               ///< flag for enabling intra transform skipping
   Bool      m_useTransformSkipFast;                           ///< flag for enabling fast intra transform skipping
-#if !REMOVE_NSQT
-  Bool      m_enableNSQT;                                     ///< flag for enabling NSQT
-#endif
   Bool      m_enableAMP;
   // coding quality
   Double    m_fQP;                                            ///< QP value of key-picture (floating point)
@@ -132,25 +129,15 @@ protected:
   Bool      m_useLossless;                                    ///< flag for using lossless coding
   Bool      m_bUseSAO; 
   Int       m_maxNumOffsetsPerPic;                            ///< SAO maximun number of offset per picture
-#if SAO_LCU_BOUNDARY
   Bool      m_saoLcuBoundary;                                 ///< SAO parameter estimation using non-deblocked pixels for LCU bottom and right boundary areas
-#endif
   Bool      m_saoLcuBasedOptimization;                        ///< SAO LCU-based optimization
   // coding tools (loop filter)
-#if !REMOVE_ALF
-  Bool      m_bUseALF;                                        ///< flag for using adaptive loop filter
-  Bool      m_alfLowLatencyEncoding;
-#endif
   Bool      m_bLoopFilterDisable;                             ///< flag for using deblocking filter
   Bool      m_loopFilterOffsetInPPS;                         ///< offset for deblocking filter in 0 = slice header, 1 = PPS
   Int       m_loopFilterBetaOffsetDiv2;                     ///< beta offset for deblocking filter
   Int       m_loopFilterTcOffsetDiv2;                       ///< tc offset for deblocking filter
   Bool      m_DeblockingFilterControlPresent;                 ///< deblocking filter control present flag in PPS
  
-#if !REMOVE_LMCHROMA
-  Bool      m_bUseLMChroma;                                  ///< JL: Chroma intra prediction based on luma signal
-#endif
-  
   // coding tools (PCM)
   Bool      m_usePCM;                                         ///< flag for using IPCM
   UInt      m_pcmLog2MaxSize;                                 ///< log2 of maximum PCM block size
@@ -175,16 +162,9 @@ protected:
   Int       m_iDependentSliceMode;    ///< 0: Disable all dependent slice limits, 1 : Maximum number of largest coding units per slice, 2: Constraint based dependent slice
   Int       m_iDependentSliceArgument;///< If m_iDependentSliceMode==1, m_iEDependentSliceArgument=max. # of largest coding units. If m_iDependnetSliceMode==2, m_iDependnetSliceArgument=max. # of bins.
 #if DEPENDENT_SLICES
-#if TILES_WPP_ENTROPYSLICES_FLAGS
   Bool      m_entropySliceEnabledFlag;
-#else
-  Bool       m_bCabacIndependentFlag;  // 0: CABAC dependence between slices, 1:CABAC independence between slices
-#endif
 #endif
 
-#if !REMOVE_FGS
-  Int       m_iSliceGranularity;///< 0: Slices always end at LCU borders. 1-3: slices may end at a depth of 1-3 below LCU level.
-#endif
   Bool      m_bLFCrossSliceBoundaryFlag;  ///< 0: Cross-slice-boundary in-loop filtering 1: non-cross-slice-boundary in-loop filtering
   Bool      m_bLFCrossTileBoundaryFlag;  //!< 1: Cross-tile-boundary in-loop filtering 0: non-cross-tile-boundary in-loop filtering
   Int       m_iUniformSpacingIdr;
@@ -198,13 +178,9 @@ protected:
   Bool      m_bUseConstrainedIntraPred;                       ///< flag for using constrained intra prediction
   
   Int       m_decodePictureHashSEIEnabled;                    ///< Checksum(3)/CRC(2)/MD5(1)/disable(0) acting on decoded picture hash SEI message
-#if RECOVERY_POINT_SEI
   Int       m_recoveryPointSEIEnabled;
-#endif
-#if BUFFERING_PERIOD_AND_TIMING_SEI
   Int       m_bufferingPeriodSEIEnabled;
   Int       m_pictureTimingSEIEnabled;
-#endif
   // weighted prediction
   Bool      m_bUseWeightPred;                                 ///< Use of explicit Weighting Prediction for P_SLICE
   Bool      m_useWeightedBiPred;                                    ///< Use of Bi-Directional Weighting Prediction (B_SLICE)
@@ -223,14 +199,9 @@ protected:
   Bool      m_TransquantBypassEnableFlag;                     ///< transquant_bypass_enable_flag setting in PPS.
   Bool      m_CUTransquantBypassFlagValue;                    ///< if transquant_bypass_enable_flag, the fixed value to use for the per-CU cu_transquant_bypass_flag.
 
-#if RECALCULATE_QP_ACCORDING_LAMBDA
   Bool      m_recalculateQPAccordingToLambda;                 ///< recalculate QP value according to the lambda value
-#endif
-#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE
   Int       m_activeParameterSetsSEIEnabled;
-#endif 
 
-#if SUPPORT_FOR_VUI
   Bool      m_vuiParametersPresentFlag;                       ///< enable generation of VUI parameters
   Bool      m_aspectRatioInfoPresentFlag;                     ///< Signals whether aspect_ratio_idc is present
   Int       m_aspectRatioIdc;                                 ///< aspect_ratio_idc
@@ -256,7 +227,6 @@ protected:
   Int       m_maxBitsPerMinCuDenom;                           ///< Indicates an upper bound for the number of bits of coding_unit() data
   Int       m_log2MaxMvLengthHorizontal;                      ///< Indicate the maximum absolute value of a decoded horizontal MV component in quarter-pel luma units
   Int       m_log2MaxMvLengthVertical;                        ///< Indicate the maximum absolute value of a decoded vertical MV component in quarter-pel luma units
-#endif
 
   // internal member functions
   Void  xSetGlobal      ();                                   ///< set global variables

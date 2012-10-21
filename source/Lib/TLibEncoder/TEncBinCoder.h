@@ -57,8 +57,6 @@ public:
   virtual Void  copyState         ( TEncBinIf* pcTEncBinIf )                  = 0;
   virtual Void  flush            ()                                           = 0;
 
-  virtual Void  encodeFlush     (Bool bEnd) = 0;
-
   virtual Void  resetBac          ()                                          = 0;
   virtual Void  encodeNumSubseqIPCM( Int numSubseqIPCM )                   = 0;
   virtual Void  encodePCMAlignBits()                                          = 0;

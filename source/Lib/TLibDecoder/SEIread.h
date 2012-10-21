@@ -31,6 +31,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ \file     SEIread.h
+ \brief    reading funtionality for SEI messages
+ */
+
 #ifndef __SEIREAD__
 #define __SEIREAD__
 
@@ -55,20 +60,12 @@ public:
 protected:
   Void xReadSEImessage                (SEImessages& seis);
   Void xParseSEIuserDataUnregistered  (SEIuserDataUnregistered &sei, UInt payloadSize);
-#if ACTIVE_PARAMETER_SETS_SEI_MESSAGE 
-  Void xParseSEIActiveParameterSets    (SEIActiveParameterSets& sei, UInt payloadSize);
-#endif
+  Void xParseSEIActiveParameterSets   (SEIActiveParameterSets  &sei, UInt payloadSize);
   Void xParseSEIDecodedPictureHash    (SEIDecodedPictureHash& sei, UInt payloadSize);
-#if BUFFERING_PERIOD_AND_TIMING_SEI
   Void xParseSEIBufferingPeriod       (SEIBufferingPeriod& sei, UInt payloadSize);
   Void xParseSEIPictureTiming         (SEIPictureTiming& sei, UInt payloadSize);
-#endif
-#if RECOVERY_POINT_SEI
   Void xParseSEIRecoveryPoint         (SEIRecoveryPoint& sei, UInt payloadSize);
-#endif
-#if RECOVERY_POINT_SEI || BUFFERING_PERIOD_AND_TIMING_SEI
   Void xParseByteAlign();
-#endif
 };
 
 

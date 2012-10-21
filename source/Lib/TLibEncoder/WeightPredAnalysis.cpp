@@ -31,8 +31,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** \file     WeightedPredAnalysis.cpp
-    \brief    encoder class
+/** \file     WeightPredAnalysis.cpp
+    \brief    weighted prediction encoder class
 */
 
 #include "../TLibCommon/TypeDef.h"
@@ -176,24 +176,13 @@ Void  WeightPredAnalysis::xCheckWPEnable(TComSlice *slice)
 Bool  WeightPredAnalysis::xEstimateWPParamSlice(TComSlice *slice)
 {
   Int iDenom  = 6;
-#if WP_PARAM_RANGE_LIMIT
   Bool validRangeFlag = false;
-#else
-  Int iRealDenom = iDenom + (g_uiBitDepth+g_uiBitIncrement-8);
-  Int iRealOffset = ((Int)1<<(iRealDenom-1));
-#endif
 
   if(slice->getNumRefIdx(REF_PIC_LIST_0)>3)
   {
     iDenom  = 7;
-#if WP_PARAM_RANGE_LIMIT
-#else
-    iRealDenom = iDenom + (g_uiBitDepth+g_uiBitIncrement-8);
-    iRealOffset = ((Int)1<<(iRealDenom-1));
-#endif
   }
 
-#if WP_PARAM_RANGE_LIMIT
   do
   {
     validRangeFlag = xUpdatingWPParameters(slice, m_wp, iDenom);
@@ -202,39 +191,6 @@ Bool  WeightPredAnalysis::xEstimateWPParamSlice(TComSlice *slice)
       iDenom--; // decrement to satisfy the range limitation
     }
   } while (validRangeFlag == false);
-#else
-  Int iNumPredDir = slice->isInterP() ? 1 : 2;
-  for ( Int iRefList = 0; iRefList < iNumPredDir; iRefList++ )
-  {
-    RefPicList  eRefPicList = ( iRefList ? REF_PIC_LIST_1 : REF_PIC_LIST_0 );
-    for ( Int iRefIdxTemp = 0; iRefIdxTemp < slice->getNumRefIdx(eRefPicList); iRefIdxTemp++ )
-    {
-      wpACDCParam *CurrWeightACDCParam, *RefWeightACDCParam;
-      slice->getWpAcDcParam(CurrWeightACDCParam);
-      slice->getRefPic(eRefPicList, iRefIdxTemp)->getSlice(0)->getWpAcDcParam(RefWeightACDCParam);
-
-      for ( Int iComp = 0; iComp < 3; iComp++ )
-      {
-        // current frame
-        Int64 iCurrDC = CurrWeightACDCParam[iComp].iDC;
-        Int64 iCurrAC = CurrWeightACDCParam[iComp].iAC;
-        // reference frame
-        Int64 iRefDC = RefWeightACDCParam[iComp].iDC;
-        Int64 iRefAC = RefWeightACDCParam[iComp].iAC;
-
-        // calculating iWeight and iOffset params
-        Double dWeight = (iRefAC==0) ? (Double)1.0 : Clip3( -16.0, 15.0, ((Double)iCurrAC / (Double)iRefAC) );
-        Int iWeight = (Int)( 0.5 + dWeight * (Double)(1<<iDenom) );
-        Int iOffset = (Int)( ((iCurrDC<<iDenom) - ((Int64)iWeight * iRefDC) + (Int64)iRealOffset) >> iRealDenom );
-
-        m_wp[iRefList][iRefIdxTemp][iComp].bPresentFlag = true;
-        m_wp[iRefList][iRefIdxTemp][iComp].iWeight = (Int)iWeight;
-        m_wp[iRefList][iRefIdxTemp][iComp].iOffset = (Int)iOffset;
-        m_wp[iRefList][iRefIdxTemp][iComp].uiLog2WeightDenom = (Int)iDenom;
-      }
-    }
-  }
-#endif
 
   // selecting whether WP is used, or not
   xSelectWP(slice, m_wp, iDenom);
@@ -244,7 +200,6 @@ Bool  WeightPredAnalysis::xEstimateWPParamSlice(TComSlice *slice)
   return (true);
 }
 
-#if WP_PARAM_RANGE_LIMIT
 /** update wp tables for explicit wp w.r.t ramge limitation
  * \param TComSlice *slice
  * \returns Bool
@@ -302,7 +257,6 @@ Bool WeightPredAnalysis::xUpdatingWPParameters(TComSlice *slice, wpScalingParam 
   }
   return (true);
 }
-#endif
 
 /** select whether weighted pred enables or not. 
  * \param TComSlice *slice
