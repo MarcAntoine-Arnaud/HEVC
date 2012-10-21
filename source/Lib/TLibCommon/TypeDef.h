@@ -42,6 +42,8 @@
 
 //! \ingroup TLibCommon
 //! \{
+#define RESTRICT_INTRA_BOUNDARY_SMOOTHING    1  ///< K0380, K0186 
+
 #define MAX_CPB_CNT                     32  ///< Upper bound of (cpb_cnt_minus1 + 1)
 #define MAX_NUM_LAYER_IDS                64
 

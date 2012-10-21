@@ -356,12 +356,23 @@ Void TComPrediction::predIntraLumaAng(TComPattern* pcTComPattern, UInt uiDirMode
   }
   else
   {
+#if RESTRICT_INTRA_BOUNDARY_SMOOTHING
+    if ( (iWidth > 16) || (iHeight > 16) )
+    {
+      xPredIntraAng( ptrSrc+sw+1, sw, pDst, uiStride, iWidth, iHeight, uiDirMode, bAbove, bLeft, false );
+    }
+    else
+    {
+#endif
     xPredIntraAng( ptrSrc+sw+1, sw, pDst, uiStride, iWidth, iHeight, uiDirMode, bAbove, bLeft, true );
 
     if( (uiDirMode == DC_IDX ) && bAbove && bLeft )
     {
       xDCPredFiltering( ptrSrc+sw+1, sw, pDst, uiStride, iWidth, iHeight);
     }
+#if RESTRICT_INTRA_BOUNDARY_SMOOTHING
+    }
+#endif
   }
 }
 
