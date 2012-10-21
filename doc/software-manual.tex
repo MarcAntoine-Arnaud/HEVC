@@ -117,7 +117,7 @@
 \maketitle
 \begin{abstract}
 This document is a user manual describing usage of reference software
-for the HEVC project. It applies to version 8.1
+for the HEVC project. It applies to version 8.2
 of the software.
 \end{abstract}
 
@@ -249,9 +249,6 @@ not used, but is kept for possible use in future frames.
 and L1, indicating how many reference pictures in each direction that
 are used during coding.
 
-\item[]\textbf{ref_pic}: A value of 1 indicates that this is a reference
-picture, 0 that it is a non-reference picture.
-
 \item[]\textbf{num_ref_pics}: The number of reference pictures kept for
 this frame.  This includes pictures that are used for reference for the
 current picture as well as pictures that will be used for reference in
@@ -361,7 +358,6 @@ QPoffset            &   1  &    2   &      3   &       3 \\
 QPfactor            & 0.5  &  0.5   &    0.5   &     0.5 \\
 temporal_id         &   0  &    1   &      2   &       2 \\
 num_ref_pics_active &   1  &    1   &      1   &       1 \\
-ref_pic             &   1  &    1   &      0   &       0 \\
 num_ref_pics        &   1  &    2   &      3   &       2 \\
 reference_pictures  & $-$4 & $-$2 2 & $-$1 1 3 &  $-$1 1 \\
 predict             &   0  &    1   &      1   &       1 \\
@@ -381,10 +377,10 @@ line should contain information for one frame, so this
 configuration would be specified as:
 
 \begin{verbatim}
-Frame1: P 4 1 0.5 0 1 1 1 -4 0
-Frame2: B 2 2 0.5 1 1 1 2 -2 2 1 0 2 2 1 1
-Frame3: B 1 3 0.5 2 1 0 3 -1 1 3 1 0 1 3 1 1 1
-Frame4: B 3 3 0.5 2 1 0 2 -1 1 1 0 -2 4 0 1 1 0
+Frame1: P 4 1 0.5 0 1 1 -4 0
+Frame2: B 2 2 0.5 1 1 2 -2 2 1 0 2 2 1 1
+Frame3: B 1 3 0.5 2 1 3 -1 1 3 1 0 1 3 1 1 1
+Frame4: B 3 3 0.5 2 1 2 -1 1 1 0 -2 4 0 1 1 0
 \end{verbatim}
 
 The values of deltaRIdx$-1$, deltaRPS, num_ref_idcs and reference
