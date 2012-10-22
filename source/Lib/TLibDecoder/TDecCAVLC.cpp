@@ -82,7 +82,20 @@ void TDecCavlc::parseShortTermRefPicSet( TComSPS* sps, TComReferencePictureSet* 
 {
   UInt code;
   UInt interRPSPred;
+#if SPS_INTER_REF_SET_PRED
+  if (idx > 0)
+  {
+#endif 
   READ_FLAG(interRPSPred, "inter_ref_pic_set_prediction_flag");  rps->setInterRPSPrediction(interRPSPred);
+#if SPS_INTER_REF_SET_PRED
+  }
+  else
+  {
+    interRPSPred = false;
+    rps->setInterRPSPrediction(false);
+  }
+#endif
+
   if (interRPSPred) 
   {
     UInt bit;
