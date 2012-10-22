@@ -594,6 +594,11 @@ Void TDecCavlc::parseSPS(TComSPS* pcSPS)
     }
   }
   READ_FLAG( uiCode, "sps_temporal_mvp_enable_flag" );            pcSPS->setTMVPFlagsPresent(uiCode);
+
+#if STRONG_INTRA_SMOOTHING
+  READ_FLAG( uiCode, "sps_strong_intra_smoothing_enable_flag" );  pcSPS->setUseStrongIntraSmoothing(uiCode);
+#endif
+
   READ_FLAG( uiCode, "vui_parameters_present_flag" );             pcSPS->setVuiParametersPresentFlag(uiCode);
 
   if (pcSPS->getVuiParametersPresentFlag())

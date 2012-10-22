@@ -493,6 +493,10 @@ Void TEncTop::xInitSPS()
 
   m_cSPS.setScalingListFlag ( (m_useScalingListId == 0) ? 0 : 1 );
 
+#if STRONG_INTRA_SMOOTHING
+  m_cSPS.setUseStrongIntraSmoothing( m_useStrongIntraSmoothing );
+#endif
+
   m_cSPS.setVuiParametersPresentFlag(getVuiParametersPresentFlag());
   if (m_cSPS.getVuiParametersPresentFlag())
   {

@@ -302,6 +302,9 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
   ("TransquantBypassEnableFlag", m_TransquantBypassEnableFlag, false, "transquant_bypass_enable_flag indicator in PPS")
   ("CUTransquantBypassFlagValue", m_CUTransquantBypassFlagValue, false, "Fixed cu_transquant_bypass_flag value, when transquant_bypass_enable_flag is enabled")
   ("RecalculateQPAccordingToLambda", m_recalculateQPAccordingToLambda, false, "Recalculate QP values according to lambda values. Do not suggest to be enabled in all intra case")
+#if STRONG_INTRA_SMOOTHING
+  ("StrongIntraSmoothing,-sis",      m_useStrongIntraSmoothing,           true, "Enable strong intra smoothing for 32x32 blocks")
+#endif
   ("ActiveParameterSets", m_activeParameterSetsSEIEnabled, 0, "Control generation of active parameter sets SEI messages\n"
                                                               "\t2: enable active parameter sets SEI message with active_sps_id\n"
                                                               "\t1: enable active parameter sets SEI message without active_sps_id\n"

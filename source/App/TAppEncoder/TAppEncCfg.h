@@ -200,6 +200,9 @@ protected:
   Bool      m_CUTransquantBypassFlagValue;                    ///< if transquant_bypass_enable_flag, the fixed value to use for the per-CU cu_transquant_bypass_flag.
 
   Bool      m_recalculateQPAccordingToLambda;                 ///< recalculate QP value according to the lambda value
+#if STRONG_INTRA_SMOOTHING
+  Bool      m_useStrongIntraSmoothing;                        ///< enable strong intra smoothing for 32x32 blocks where the reference samples are flat
+#endif
   Int       m_activeParameterSetsSEIEnabled;
 
   Bool      m_vuiParametersPresentFlag;                       ///< enable generation of VUI parameters

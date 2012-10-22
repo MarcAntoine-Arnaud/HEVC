@@ -582,6 +582,9 @@ private:
   UInt        m_uiMaxLatencyIncrease[MAX_TLAYER];
 
   Bool        m_useDF;
+#if STRONG_INTRA_SMOOTHING
+  Bool        m_useStrongIntraSmoothing; 
+#endif
 
   Bool        m_vuiParametersPresentFlag;
   TComVUI     m_vuiParameters;
@@ -717,6 +720,11 @@ public:
   Void setMaxDecPicBuffering  ( UInt ui, UInt tlayer ) { m_uiMaxDecPicBuffering[tlayer] = ui;   }
   UInt getMaxLatencyIncrease  (UInt tlayer)            { return m_uiMaxLatencyIncrease[tlayer];   }
   Void setMaxLatencyIncrease  ( UInt ui , UInt tlayer) { m_uiMaxLatencyIncrease[tlayer] = ui;      }
+
+#if STRONG_INTRA_SMOOTHING
+  Void setUseStrongIntraSmoothing (Bool bVal)  {m_useStrongIntraSmoothing = bVal;}
+  Bool getUseStrongIntraSmoothing ()           {return m_useStrongIntraSmoothing;}
+#endif
 
   Bool getVuiParametersPresentFlag() { return m_vuiParametersPresentFlag; }
   Void setVuiParametersPresentFlag(Bool b) { m_vuiParametersPresentFlag = b; }
