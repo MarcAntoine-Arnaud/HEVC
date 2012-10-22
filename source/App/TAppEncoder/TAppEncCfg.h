@@ -149,6 +149,9 @@ protected:
   Bool      m_bUseASR;                                        ///< flag for using adaptive motion search range
   Bool      m_bUseHADME;                                      ///< flag for using HAD in sub-pel ME
   Bool      m_bUseRDOQ;                                       ///< flag for using RD optimized quantization
+#if RDOQ_TRANSFORMSKIP
+  Bool      m_bUseRDOQTS;                                     ///< flag for using RD optimized quantization for transform skip
+#endif
   Int       m_iFastSearch;                                    ///< ME mode, 0 = full, 1 = diamond, 2 = PMVFAST
   Int       m_iSearchRange;                                   ///< ME search range
   Int       m_bipredSearchRange;                              ///< ME search range for bipred refinement

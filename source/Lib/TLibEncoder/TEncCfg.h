@@ -173,6 +173,9 @@ protected:
   Bool      m_bUseHADME;
   Bool      m_bUseLComb;
   Bool      m_bUseRDOQ;
+#if RDOQ_TRANSFORMSKIP
+  Bool      m_bUseRDOQTS;
+#endif
   Bool      m_bUseFastEnc;
   Bool      m_bUseEarlyCU;
   Bool      m_useFastDecisionForMerge;
@@ -397,6 +400,9 @@ public:
   Void      setUseHADME                     ( Bool  b )     { m_bUseHADME   = b; }
   Void      setUseLComb                     ( Bool  b )     { m_bUseLComb   = b; }
   Void      setUseRDOQ                      ( Bool  b )     { m_bUseRDOQ    = b; }
+#if RDOQ_TRANSFORMSKIP
+  Void      setUseRDOQTS                    ( Bool  b )     { m_bUseRDOQTS  = b; }
+#endif
   Void      setUseFastEnc                   ( Bool  b )     { m_bUseFastEnc = b; }
   Void      setUseEarlyCU                   ( Bool  b )     { m_bUseEarlyCU = b; }
   Void      setUseFastDecisionForMerge      ( Bool  b )     { m_useFastDecisionForMerge = b; }
@@ -415,6 +421,9 @@ public:
   Bool      getUseHADME                     ()      { return m_bUseHADME;   }
   Bool      getUseLComb                     ()      { return m_bUseLComb;   }
   Bool      getUseRDOQ                      ()      { return m_bUseRDOQ;    }
+#if RDOQ_TRANSFORMSKIP
+  Bool      getUseRDOQTS                    ()      { return m_bUseRDOQTS;  }
+#endif
   Bool      getUseFastEnc                   ()      { return m_bUseFastEnc; }
   Bool      getUseEarlyCU                   ()      { return m_bUseEarlyCU; }
   Bool      getUseFastDecisionForMerge      ()      { return m_useFastDecisionForMerge; }
