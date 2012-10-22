@@ -621,6 +621,7 @@ Void initNonSquareSigLastScan(UInt* pBuffZ, UInt uiWidth, UInt uiHeight)
   }
 }
 
+#if !FLAT_4x4_DSL
 Int g_quantIntraDefault4x4[16] =
 {
   16,16,17,21,
@@ -635,6 +636,7 @@ Int g_quantInterDefault4x4[16] =
   17,21,24,36,
   21,24,36,57
 };
+#endif
 Int g_quantTSDefault4x4[16] =
 {
   16,16,16,16,

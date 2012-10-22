@@ -283,11 +283,15 @@ static const char MatrixType_DC[4][12][22] =
   "INTER32X32_LUMA_DC",
   },
 };
+#if !FLAT_4x4_DSL
 extern Int g_quantIntraDefault4x4[16];
+#endif
 extern Int g_quantIntraDefault8x8[64];
 extern Int g_quantIntraDefault16x16[256];
 extern Int g_quantIntraDefault32x32[1024];
+#if !FLAT_4x4_DSL
 extern Int g_quantInterDefault4x4[16];
+#endif
 extern Int g_quantInterDefault8x8[64];
 extern Int g_quantInterDefault16x16[256];
 extern Int g_quantInterDefault32x32[1024];

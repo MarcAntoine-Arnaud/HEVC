@@ -1794,6 +1794,9 @@ Int* TComScalingList::getScalingListDefaultAddress(UInt sizeId, UInt listId)
   switch(sizeId)
   {
     case SCALING_LIST_4x4:
+#if FLAT_4x4_DSL
+      src = g_quantTSDefault4x4;
+#else
       if( m_useTransformSkip )
       {
         src = g_quantTSDefault4x4;
@@ -1802,6 +1805,7 @@ Int* TComScalingList::getScalingListDefaultAddress(UInt sizeId, UInt listId)
       {
         src = (listId<3) ? g_quantIntraDefault4x4 : g_quantInterDefault4x4;
       }
+#endif
       break;
     case SCALING_LIST_8x8:
       src = (listId<3) ? g_quantIntraDefault8x8 : g_quantInterDefault8x8;

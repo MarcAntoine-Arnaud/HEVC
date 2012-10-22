@@ -52,6 +52,8 @@
 #define MAX_CPB_CNT                     32  ///< Upper bound of (cpb_cnt_minus1 + 1)
 #define MAX_NUM_LAYER_IDS                64
 
+#define FLAT_4x4_DSL 1 ///< Use flat 4x4 default scaling list (see notes on K0203)
+
 #define COEF_REMAIN_BIN_REDUCTION        3 ///< indicates the level at which the VLC 
                                            ///< transitions from Golomb-Rice to TU+EG(k)
 
