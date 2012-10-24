@@ -589,21 +589,19 @@ Void TEncTop::xInitPPS()
   m_cPPS.setLog2ParallelMergeLevelMinus2   (m_log2ParallelMergeLevelMinus2 );
   m_cPPS.setCabacInitPresentFlag(CABAC_INIT_PRESENT_FLAG);
   m_cPPS.setLoopFilterAcrossSlicesEnabledFlag( m_bLFCrossSliceBoundaryFlag );
-  Int histogram[8];
-  for(Int i=0; i<8; i++)
+  Int histogram[MAX_NUM_REF + 1];
+  for( Int i = 0; i <= MAX_NUM_REF; i++ )
   {
     histogram[i]=0;
   }
-  for( Int i = 0; i < getGOPSize(); i++) 
+  for( Int i = 0; i < getGOPSize(); i++ )
   {
-    if(getGOPEntry(i).m_numRefPicsActive<8)
-    {
-      histogram[getGOPEntry(i).m_numRefPicsActive]++;
-    }
+    assert(getGOPEntry(i).m_numRefPicsActive >= 0 && getGOPEntry(i).m_numRefPicsActive <= MAX_NUM_REF);
+    histogram[getGOPEntry(i).m_numRefPicsActive]++;
   }
   Int maxHist=-1;
   Int bestPos=0;
-  for(Int i=0; i<8; i++)
+  for( Int i = 0; i <= MAX_NUM_REF; i++ )
   {
     if(histogram[i]>maxHist)
     {

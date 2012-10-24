@@ -107,8 +107,9 @@
 
 #define MAX_GOP                     64          ///< max. value of hierarchical GOP size
 
-#define MAX_NUM_REF                 4           ///< max. value of multiple reference frames
-#define MAX_NUM_REF_LC              8           ///< max. value of combined reference frames
+#define MAX_NUM_REF_PICS            16          ///< max. number of pictures used for reference
+#define MAX_NUM_REF                 16          ///< max. number of entries in picture reference list
+#define MAX_NUM_REF_LC              MAX_NUM_REF_PICS  // TODO: remove this macro definition (leftover from combined list concept)
 
 #define MAX_UINT                    0xFFFFFFFFU ///< max. value of unsigned 32-bit integer
 #define MAX_INT                     2147483647  ///< max. value of signed 32-bit integer
@@ -184,7 +185,6 @@ template <typename T> inline T Clip3( T minVal, T maxVal, T a) { return std::min
 // Early-skip threshold (encoder)
 #define EARLY_SKIP_THRES            1.50        ///< if RD < thres*avg[BestSkipRD]
 
-#define MAX_NUM_REF_PICS 16
 
 #define MAX_CHROMA_FORMAT_IDC      3
 
