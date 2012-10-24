@@ -987,7 +987,7 @@ Void TComSampleAdaptiveOffset::SAOProcess(TComPic* pcPic, SAOParam* pcSaoParam)
   if (pcSaoParam->bSaoFlag[0] || pcSaoParam->bSaoFlag[1])
   {
 #if FULL_NBIT
-    m_uiSaoBitIncrease = g_uiBitDepth + (g_uiBitDepth-8) - min((Int)(g_uiBitDepth + (g_uiBitDepth-8)), 10);
+    m_uiSaoBitIncrease = g_uiBitDepth - std::min(g_uiBitDepth, 10u);
 #else
     m_uiSaoBitIncrease = g_uiBitDepth + g_uiBitIncrement - min((Int)(g_uiBitDepth + g_uiBitIncrement), 10);
 #endif

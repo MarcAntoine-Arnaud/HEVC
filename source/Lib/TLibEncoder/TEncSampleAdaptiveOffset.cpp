@@ -1726,13 +1726,13 @@ Void TEncSampleAdaptiveOffset::SAOProcess(SAOParam *pcSaoParam, Double dLambda)
   }
 
 #if FULL_NBIT
-  m_uiSaoBitIncrease = g_uiBitDepth + (g_uiBitDepth-8) - min((Int)(g_uiBitDepth + (g_uiBitDepth-8)), 10);
+  m_uiSaoBitIncrease = g_uiBitDepth - std::min(g_uiBitDepth, 10u);
 #else
   m_uiSaoBitIncrease = g_uiBitDepth + g_uiBitIncrement - min((Int)(g_uiBitDepth + g_uiBitIncrement), 10);
 #endif
   
 #if FULL_NBIT
-  m_iOffsetTh = 1 << ( min((Int)(g_uiBitDepth + (g_uiBitDepth-8)-5),5) );
+  m_iOffsetTh = 1 << (std::min(g_uiBitDepth, 10u) - 5);
 #else
   m_iOffsetTh = 1 << ( min((Int)(g_uiBitDepth + g_uiBitIncrement-5),5) );
 #endif
