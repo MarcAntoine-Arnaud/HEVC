@@ -1053,7 +1053,6 @@ private:
 
   wpScalingParam  m_weightPredTable[2][MAX_NUM_REF][3]; // [REF_PIC_LIST_0 or REF_PIC_LIST_1][refIdx][0:Y, 1:U, 2:V]
   wpACDCParam    m_weightACDCParam[3];                 // [0:Y, 1:U, 2:V]
-  wpScalingParam  m_weightPredTableLC[2*MAX_NUM_REF][3]; // [refIdxLC][0:Y, 1:U, 2:V]
 
   std::vector<UInt> m_tileByteLocation;
   UInt        m_uiTileOffstForMultES;
