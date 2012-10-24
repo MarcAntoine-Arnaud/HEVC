@@ -169,7 +169,11 @@ Void TEncCavlc::codePPS( TComPPS* pcPPS )
   
   WRITE_UVLC( pcPPS->getPPSId(),                             "pic_parameter_set_id" );
   WRITE_UVLC( pcPPS->getSPSId(),                             "seq_parameter_set_id" );
-
+#if DEPENDENT_SLICE_SEGMENT_FLAGS
+#if DEPENDENT_SLICES
+  WRITE_FLAG( pcPPS->getDependentSliceEnabledFlag()    ? 1 : 0, "dependent_slice_enabled_flag" );
+#endif
+#endif
   WRITE_FLAG( pcPPS->getSignHideFlag(), "sign_data_hiding_flag" );
   WRITE_FLAG( pcPPS->getCabacInitPresentFlag() ? 1 : 0,   "cabac_init_present_flag" );
   WRITE_UVLC( pcPPS->getNumRefIdxL0DefaultActive()-1,     "num_ref_idx_l0_default_active_minus1");
@@ -191,9 +195,10 @@ Void TEncCavlc::codePPS( TComPPS* pcPPS )
   WRITE_FLAG( pcPPS->getWPBiPred() ? 1 : 0, "weighted_bipred_flag" );  // Use of Weighting Bi-Prediction (B_SLICE)
   WRITE_FLAG( pcPPS->getOutputFlagPresentFlag() ? 1 : 0,  "output_flag_present_flag" );
   WRITE_FLAG( pcPPS->getTransquantBypassEnableFlag() ? 1 : 0, "transquant_bypass_enable_flag" );
-
+#if !DEPENDENT_SLICE_SEGMENT_FLAGS
 #if DEPENDENT_SLICES
   WRITE_FLAG( pcPPS->getDependentSliceEnabledFlag()    ? 1 : 0, "dependent_slice_enabled_flag" );
+#endif
 #endif
   WRITE_FLAG( pcPPS->getTilesEnabledFlag()             ? 1 : 0, "tiles_enabled_flag" );
   WRITE_FLAG( pcPPS->getEntropyCodingSyncEnabledFlag() ? 1 : 0, "entropy_coding_sync_enabled_flag" );
@@ -562,16 +567,24 @@ Void TEncCavlc::codeSliceHeader         ( TComSlice* pcSlice )
     WRITE_FLAG( 0, "no_output_of_prior_pics_flag" );
   }
   WRITE_UVLC( pcSlice->getPPS()->getPPSId(), "pic_parameter_set_id" );
-  if(address>0) 
-  {
-    WRITE_CODE( address, reqBitsOuter+reqBitsInner, "slice_address" );
-  }
-
+#if DEPENDENT_SLICE_SEGMENT_FLAGS
   pcSlice->setDependentSliceFlag(!pcSlice->isNextSlice());
   if ( pcSlice->getPPS()->getDependentSliceEnabledFlag() && (address!=0) )
   {
     WRITE_FLAG( pcSlice->getDependentSliceFlag() ? 1 : 0, "dependent_slice_flag" );
   }
+#endif
+  if(address>0) 
+  {
+    WRITE_CODE( address, reqBitsOuter+reqBitsInner, "slice_address" );
+  }
+#if !DEPENDENT_SLICE_SEGMENT_FLAGS
+  pcSlice->setDependentSliceFlag(!pcSlice->isNextSlice());
+  if ( pcSlice->getPPS()->getDependentSliceEnabledFlag() && (address!=0) )
+  {
+    WRITE_FLAG( pcSlice->getDependentSliceFlag() ? 1 : 0, "dependent_slice_flag" );
+  }
+#endif
   if ( !pcSlice->getDependentSliceFlag() )
   {
 
