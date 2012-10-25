@@ -100,7 +100,9 @@ UInt g_auiZscanToRaster [ MAX_NUM_SPU_W*MAX_NUM_SPU_W ] = { 0, };
 UInt g_auiRasterToZscan [ MAX_NUM_SPU_W*MAX_NUM_SPU_W ] = { 0, };
 UInt g_auiRasterToPelX  [ MAX_NUM_SPU_W*MAX_NUM_SPU_W ] = { 0, };
 UInt g_auiRasterToPelY  [ MAX_NUM_SPU_W*MAX_NUM_SPU_W ] = { 0, };
+#if !LINEBUF_CLEANUP
 UInt g_motionRefer   [ MAX_NUM_SPU_W*MAX_NUM_SPU_W ] = { 0, }; 
+#endif
 
 UInt g_auiPUOffset[8] = { 0, 8, 4, 4, 2, 10, 1, 5};
 
@@ -137,6 +139,7 @@ Void initRasterToZscan ( UInt uiMaxCUWidth, UInt uiMaxCUHeight, UInt uiMaxDepth 
   }
 }
 
+#if !LINEBUF_CLEANUP
 /** generate motion data compression mapping table
 * \param uiMaxCUWidth, width of LCU
 * \param uiMaxCUHeight, hight of LCU
@@ -182,6 +185,8 @@ Void initMotionReferIdx ( UInt uiMaxCUWidth, UInt uiMaxCUHeight, UInt uiMaxDepth
     }
   }
 }
+
+#endif
 
 Void initRasterToPelXY ( UInt uiMaxCUWidth, UInt uiMaxCUHeight, UInt uiMaxDepth )
 {
