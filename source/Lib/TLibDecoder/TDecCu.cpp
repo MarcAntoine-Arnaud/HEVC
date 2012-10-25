@@ -127,7 +127,9 @@ Void TDecCu::decodeCU( TComDataCU* pcCU, UInt& ruiIsLast )
     setdQPFlag(true);
   }
 
+#if !REMOVE_BURST_IPCM
   pcCU->setNumSucIPCM(0);
+#endif
 
   // start from the top level CU
   xDecodeCU( pcCU, 0, 0, ruiIsLast);
@@ -211,6 +213,7 @@ Void TDecCu::xDecodeCU( TComDataCU* pcCU, UInt uiAbsPartIdx, UInt uiDepth, UInt&
   Bool bStartInCU = pcCU->getSCUAddr()+uiAbsPartIdx+uiCurNumParts>pcSlice->getDependentSliceCurStartCUAddr()&&pcCU->getSCUAddr()+uiAbsPartIdx<pcSlice->getDependentSliceCurStartCUAddr();
   if((!bStartInCU) && ( uiRPelX < pcSlice->getSPS()->getPicWidthInLumaSamples() ) && ( uiBPelY < pcSlice->getSPS()->getPicHeightInLumaSamples() ) )
   {
+#if !REMOVE_BURST_IPCM
     if(pcCU->getNumSucIPCM() == 0)
     {
       m_pcEntropyDecoder->decodeSplitFlag( pcCU, uiAbsPartIdx, uiDepth );
@@ -219,6 +222,9 @@ Void TDecCu::xDecodeCU( TComDataCU* pcCU, UInt uiAbsPartIdx, UInt uiDepth, UInt&
     {
       pcCU->setDepthSubParts( uiDepth, uiAbsPartIdx );
     }
+#else
+    m_pcEntropyDecoder->decodeSplitFlag( pcCU, uiAbsPartIdx, uiDepth );
+#endif
   }
   else
   {
@@ -283,13 +289,21 @@ Void TDecCu::xDecodeCU( TComDataCU* pcCU, UInt uiAbsPartIdx, UInt uiDepth, UInt&
     pcCU->setQPSubParts( pcCU->getRefQP(uiAbsPartIdx), uiAbsPartIdx, uiDepth ); // set QP to default QP
   }
 
+#if !REMOVE_BURST_IPCM
   if (pcCU->getSlice()->getPPS()->getTransquantBypassEnableFlag() && pcCU->getNumSucIPCM() == 0 )
+#else
+  if (pcCU->getSlice()->getPPS()->getTransquantBypassEnableFlag())
+#endif
   {
     m_pcEntropyDecoder->decodeCUTransquantBypassFlag( pcCU, uiAbsPartIdx, uiDepth );
   }
   
   // decode CU mode and the partition size
+#if !REMOVE_BURST_IPCM
   if( !pcCU->getSlice()->isIntra() && pcCU->getNumSucIPCM() == 0 )
+#else
+  if( !pcCU->getSlice()->isIntra())
+#endif
   {
     m_pcEntropyDecoder->decodeSkipFlag( pcCU, uiAbsPartIdx, uiDepth );
   }
@@ -325,6 +339,7 @@ Void TDecCu::xDecodeCU( TComDataCU* pcCU, UInt uiAbsPartIdx, UInt uiDepth, UInt&
     return;
   }
 
+#if !REMOVE_BURST_IPCM
   if( pcCU->getNumSucIPCM() == 0 ) 
   {
     m_pcEntropyDecoder->decodePredMode( pcCU, uiAbsPartIdx, uiDepth );
@@ -337,6 +352,10 @@ Void TDecCu::xDecodeCU( TComDataCU* pcCU, UInt uiAbsPartIdx, UInt uiDepth, UInt&
     pcCU->setSizeSubParts( g_uiMaxCUWidth>>uiDepth, g_uiMaxCUHeight>>uiDepth, uiAbsPartIdx, uiDepth ); 
     pcCU->setTrIdxSubParts( 0, uiAbsPartIdx, uiDepth );
   }
+#else
+  m_pcEntropyDecoder->decodePredMode( pcCU, uiAbsPartIdx, uiDepth );
+  m_pcEntropyDecoder->decodePartSize( pcCU, uiAbsPartIdx, uiDepth );
+#endif
 
   if (pcCU->isIntra( uiAbsPartIdx ) && pcCU->getPartitionSize( uiAbsPartIdx ) == SIZE_2Nx2N )
   {
@@ -368,11 +387,14 @@ Void TDecCu::xFinishDecodeCU( TComDataCU* pcCU, UInt uiAbsPartIdx, UInt uiDepth,
   {
     pcCU->setQPSubParts( getdQPFlag()?pcCU->getRefQP(uiAbsPartIdx):pcCU->getCodedQP(), uiAbsPartIdx, uiDepth ); // set QP
   }
+
+#if !REMOVE_BURST_IPCM
   if( pcCU->getNumSucIPCM() > 0 )
   {
     ruiIsLast = 0;
     return;
   }
+#endif
 
   ruiIsLast = xDecodeSliceEnd( pcCU, uiAbsPartIdx, uiDepth);
 }

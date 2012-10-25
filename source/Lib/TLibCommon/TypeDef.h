@@ -38,10 +38,10 @@
 #ifndef _TYPEDEF__
 #define _TYPEDEF__
 
-
-
 //! \ingroup TLibCommon
 //! \{
+#define REMOVE_BURST_IPCM                1  /// Ticket763
+
 #define DEPENDENT_SLICE_SEGMENT_FLAGS   1   ///< K0184: Move dependent_slice_enabled_flag after seq_parameter_set_id in PPS.
                                             ///< Move dependent_slice_flag between pic_parameter_set_id and slice_address.
 #define SPS_INTER_REF_SET_PRED      1   ///< K0136: Not send inter_ref_pic_set_prediction_flag for index 0

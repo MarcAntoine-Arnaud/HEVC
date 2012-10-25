@@ -1053,6 +1053,7 @@ Void TEncCavlc::codeTransformSkipFlags (TComDataCU* pcCU, UInt uiAbsPartIdx, UIn
   assert(0);
 }
 
+#if !REMOVE_BURST_IPCM
 /** Code I_PCM information. 
  * \param pcCU pointer to CU
  * \param uiAbsPartIdx CU index
@@ -1061,6 +1062,14 @@ Void TEncCavlc::codeTransformSkipFlags (TComDataCU* pcCU, UInt uiAbsPartIdx, UIn
  * \returns Void
  */
 Void TEncCavlc::codeIPCMInfo( TComDataCU* pcCU, UInt uiAbsPartIdx, Int numIPCM, Bool firstIPCMFlag)
+#else
+/** Code I_PCM information. 
+ * \param pcCU pointer to CU
+ * \param uiAbsPartIdx CU index
+ * \returns Void
+ */
+Void TEncCavlc::codeIPCMInfo( TComDataCU* pcCU, UInt uiAbsPartIdx )
+#endif
 {
   assert(0);
 }

@@ -871,6 +871,7 @@ void TEncSbac::codeTransformSkipFlags (TComDataCU* pcCU, UInt uiAbsPartIdx, UInt
   DTRACE_CABAC_T( "\n" )
 }
 
+#if !REMOVE_BURST_IPCM
 /** Code I_PCM information. 
  * \param pcCU pointer to CU
  * \param uiAbsPartIdx CU index
@@ -879,11 +880,20 @@ void TEncSbac::codeTransformSkipFlags (TComDataCU* pcCU, UInt uiAbsPartIdx, UInt
  * \returns Void
  */
 Void TEncSbac::codeIPCMInfo( TComDataCU* pcCU, UInt uiAbsPartIdx, Int numIPCM, Bool firstIPCMFlag)
+#else
+/** Code I_PCM information. 
+ * \param pcCU pointer to CU
+ * \param uiAbsPartIdx CU index
+ * \returns Void
+ */
+Void TEncSbac::codeIPCMInfo( TComDataCU* pcCU, UInt uiAbsPartIdx )
+#endif
 {
   UInt uiIPCM = (pcCU->getIPCMFlag(uiAbsPartIdx) == true)? 1 : 0;
 
   Bool writePCMSampleFlag = pcCU->getIPCMFlag(uiAbsPartIdx);
 
+#if !REMOVE_BURST_IPCM
   if( uiIPCM == 0 || firstIPCMFlag)
   {
     m_pcBinIf->encodeBinTrm (uiIPCM);
@@ -894,9 +904,16 @@ Void TEncSbac::codeIPCMInfo( TComDataCU* pcCU, UInt uiAbsPartIdx, Int numIPCM, B
       m_pcBinIf->encodePCMAlignBits();
     }
   }
+#else
+  m_pcBinIf->encodeBinTrm (uiIPCM);
+#endif
 
   if (writePCMSampleFlag)
   {
+#if REMOVE_BURST_IPCM
+    m_pcBinIf->encodePCMAlignBits();
+#endif
+
     UInt uiMinCoeffSize = pcCU->getPic()->getMinCUWidth()*pcCU->getPic()->getMinCUHeight();
     UInt uiLumaOffset   = uiMinCoeffSize*uiAbsPartIdx;
     UInt uiChromaOffset = uiLumaOffset>>2;
@@ -953,11 +970,15 @@ Void TEncSbac::codeIPCMInfo( TComDataCU* pcCU, UInt uiAbsPartIdx, Int numIPCM, B
       }
       piPCMSample += uiWidth;
     }
+#if !REMOVE_BURST_IPCM
     numIPCM--;
     if(numIPCM == 0)
     {
       m_pcBinIf->resetBac();
     }
+#else
+    m_pcBinIf->resetBac();
+#endif
   }
 }
 
