@@ -255,9 +255,9 @@ Void TEncCu::encodeCU ( TComDataCU* pcCU, Bool bForceTerminate )
     setdQPFlag(true);
   }
 
+#if !REMOVE_BURST_IPCM
   TComPic* pcPic = pcCU->getPic();
 
-#if !REMOVE_BURST_IPCM
   Bool checkBurstIPCMFlag = (pcPic->getSlice(0)->getSPS()->getUsePCM())? true : false;
 
   setCheckBurstIPCMFlag( checkBurstIPCMFlag );
