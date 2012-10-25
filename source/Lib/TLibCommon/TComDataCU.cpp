@@ -1755,10 +1755,18 @@ Int TComDataCU::getIntraDirLumaPredictor( UInt uiAbsPartIdx, Int* uiIntraDirPred
   iLeftIntraDir  = pcTempCU ? ( pcTempCU->isIntra( uiTempPartIdx ) ? pcTempCU->getLumaIntraDir( uiTempPartIdx ) : DC_IDX ) : DC_IDX;
   
   // Get intra direction of above PU
+#if LINEBUF_CLEANUP
+#if DEPENDENT_SLICES
+  pcTempCU = getPUAbove( uiTempPartIdx, m_uiAbsIdxInLCU + uiAbsPartIdx, true, bDepSliceRestriction, true );
+#else
+  pcTempCU = getPUAbove( uiTempPartIdx, m_uiAbsIdxInLCU + uiAbsPartIdx, true, true, true );
+#endif
+#else
 #if DEPENDENT_SLICES
   pcTempCU = getPUAbove( uiTempPartIdx, m_uiAbsIdxInLCU + uiAbsPartIdx, true, bDepSliceRestriction, false, true );
 #else
   pcTempCU = getPUAbove( uiTempPartIdx, m_uiAbsIdxInLCU + uiAbsPartIdx, true, true, false, true );
+#endif
 #endif
   
   iAboveIntraDir = pcTempCU ? ( pcTempCU->isIntra( uiTempPartIdx ) ? pcTempCU->getLumaIntraDir( uiTempPartIdx ) : DC_IDX ) : DC_IDX;
@@ -2574,8 +2582,12 @@ Void TComDataCU::getInterMergeCandidates( UInt uiAbsPartIdx, UInt uiPUIdx, UInt 
   // above
   UInt uiAbovePartIdx = 0;
   TComDataCU* pcCUAbove = 0;
+#if LINEBUF_CLEANUP
+  pcCUAbove = getPUAbove( uiAbovePartIdx, uiPartIdxRT, true, false );
+#else
   pcCUAbove = getPUAbove( uiAbovePartIdx, uiPartIdxRT, true, false, true );
-    if (pcCUAbove) 
+#endif
+    if (pcCUAbove)
     {
       if (!pcCUAbove->isDiffMER(xP+nPSW-1, yP-1, xP, yP))
       {
@@ -3237,7 +3249,11 @@ Bool TComDataCU::xAddMVPCand( AMVPInfo* pInfo, RefPicList eRefPicList, Int iRefI
     }
     case MD_ABOVE:
     {
+#if LINEBUF_CLEANUP
+      pcTmpCU = getPUAbove(uiIdx, uiPartUnitIdx, true, false);
+#else
       pcTmpCU = getPUAbove(uiIdx, uiPartUnitIdx, true, false, true);
+#endif
       break;
     }
     case MD_ABOVE_RIGHT:
@@ -3331,7 +3347,11 @@ Bool TComDataCU::xAddMVPCandOrder( AMVPInfo* pInfo, RefPicList eRefPicList, Int 
     }
   case MD_ABOVE:
     {
+#if LINEBUF_CLEANUP
+      pcTmpCU = getPUAbove(uiIdx, uiPartUnitIdx, true, false);
+#else
       pcTmpCU = getPUAbove(uiIdx, uiPartUnitIdx, true, false, true);
+#endif
       break;
     }
   case MD_ABOVE_RIGHT:
