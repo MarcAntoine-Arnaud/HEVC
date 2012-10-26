@@ -51,6 +51,7 @@
 #define RESTRICT_INTRA_BOUNDARY_SMOOTHING    1  ///< K0380, K0186 
 #define LINEBUF_CLEANUP               1 ///< K0101
 #define MERGE_CLEANUP_AND_K0197     1  //<Code cleanup and K0197: removal of indirect use of A1 and B1 in merging candidate list construction.
+#define RPL_INIT_FIX 1 ///< K0255 2nd part (editorial)
 
 #define MAX_CPB_CNT                     32  ///< Upper bound of (cpb_cnt_minus1 + 1)
 #define MAX_NUM_LAYER_IDS                64
