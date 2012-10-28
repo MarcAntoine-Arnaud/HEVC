@@ -48,7 +48,11 @@
 
 #define   EDGE_VER    0
 #define   EDGE_HOR    1
+#if USE_PIC_CHROMA_QP_OFFSETS_IN_DEBLOCKING
+#define   QpUV(iQpY)  ( ((iQpY) < 0) ? (iQpY) : (((iQpY) > 57) ? ((iQpY)-6) : g_aucChromaScale[(iQpY)]) )
+#else
 #define   QpUV(iQpY)  ( g_aucChromaScale[ max( min( (iQpY), MAX_QP ), MIN_QP ) ] )
+#endif
 
 #define DEFAULT_INTRA_TC_OFFSET 2 ///< Default intra TC offset
 
@@ -758,11 +762,13 @@ Void TComLoopFilter::xEdgeFilterChroma( TComDataCU* pcCU, UInt uiAbsZorderIdx, U
       }
 
       iQP_P = pcCUP->getQP(uiPartPIdx);
+#if !USE_PIC_CHROMA_QP_OFFSETS_IN_DEBLOCKING
       iQP = QpUV((iQP_P + iQP_Q + 1) >> 1);
       Int iBitdepthScale = (1<<(g_uiBitIncrement+g_uiBitDepth-8));
       
       Int iIndexTC = Clip3(0, MAX_QP+DEFAULT_INTRA_TC_OFFSET, iQP + DEFAULT_INTRA_TC_OFFSET*(ucBs - 1) + (m_tcOffsetDiv2 << 1));
       Int iTc =  tctable_8x8[iIndexTC]*iBitdepthScale;
+#endif
       
       if (bPCMFilter || pcCU->getSlice()->getPPS()->getTransquantBypassEnableFlag())
       {
@@ -775,11 +781,30 @@ Void TComLoopFilter::xEdgeFilterChroma( TComDataCU* pcCU, UInt uiAbsZorderIdx, U
         bPartQNoFilter = bPartQNoFilter || (pcCUQ->isLosslessCoded(uiPartQIdx));
       }
       
+#if USE_PIC_CHROMA_QP_OFFSETS_IN_DEBLOCKING
+      for ( UInt chromaIdx = 0; chromaIdx < 2; chromaIdx++ )
+      {
+        Int chromaQPOffset  = (chromaIdx == 0) ? pcCU->getSlice()->getPPS()->getChromaCbQpOffset() : pcCU->getSlice()->getPPS()->getChromaCrQpOffset();
+        Pel* piTmpSrcChroma = (chromaIdx == 0) ? piTmpSrcCb : piTmpSrcCr;
+
+        iQP = QpUV( ((iQP_P + iQP_Q + 1) >> 1) + chromaQPOffset );
+        Int iBitdepthScale = (1<<(g_uiBitIncrement+g_uiBitDepth-8));
+
+        Int iIndexTC = Clip3(0, MAX_QP+DEFAULT_INTRA_TC_OFFSET, iQP + DEFAULT_INTRA_TC_OFFSET*(ucBs - 1) + (m_tcOffsetDiv2 << 1));
+        Int iTc =  tctable_8x8[iIndexTC]*iBitdepthScale;
+
+        for ( UInt uiStep = 0; uiStep < uiPelsInPartChroma; uiStep++ )
+        {
+          xPelFilterChroma( piTmpSrcChroma + iSrcStep*(uiStep+iIdx*uiPelsInPartChroma), iOffset, iTc , bPartPNoFilter, bPartQNoFilter);
+        }
+      }
+#else
       for ( UInt uiStep = 0; uiStep < uiPelsInPartChroma; uiStep++ )
       {
         xPelFilterChroma( piTmpSrcCb + iSrcStep*(uiStep+iIdx*uiPelsInPartChroma), iOffset, iTc , bPartPNoFilter, bPartQNoFilter);
         xPelFilterChroma( piTmpSrcCr + iSrcStep*(uiStep+iIdx*uiPelsInPartChroma), iOffset, iTc , bPartPNoFilter, bPartQNoFilter);
       }
+#endif
     }
   }
 }
