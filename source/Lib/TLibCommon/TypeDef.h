@@ -40,6 +40,8 @@
 
 //! \ingroup TLibCommon
 //! \{
+#define SAVE_BITS_REFPICLIST_MOD_FLAG               1  ///< K0224 Proposal#1: Send ref_pic_list_modification_flag_lX only when NumPocTotalCurr is greater than 1.
+
 #define USE_PIC_CHROMA_QP_OFFSETS_IN_DEBLOCKING     1  ///< K0220: Use picture-based chroma QP offsets in deblocking filter.
 
 #define REMOVE_BURST_IPCM                1  /// Ticket763
