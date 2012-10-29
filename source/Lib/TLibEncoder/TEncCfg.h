@@ -172,9 +172,9 @@ protected:
   Bool      m_bUseASR;
   Bool      m_bUseHADME;
   Bool      m_bUseLComb;
-  Bool      m_bUseRDOQ;
+  Bool      m_useRDOQ;
 #if RDOQ_TRANSFORMSKIP
-  Bool      m_bUseRDOQTS;
+  Bool      m_useRDOQTS;
 #endif
   Bool      m_bUseFastEnc;
   Bool      m_bUseEarlyCU;
@@ -399,9 +399,9 @@ public:
   Void      setUseASR                       ( Bool  b )     { m_bUseASR     = b; }
   Void      setUseHADME                     ( Bool  b )     { m_bUseHADME   = b; }
   Void      setUseLComb                     ( Bool  b )     { m_bUseLComb   = b; }
-  Void      setUseRDOQ                      ( Bool  b )     { m_bUseRDOQ    = b; }
+  Void      setUseRDOQ                      ( Bool  b )     { m_useRDOQ    = b; }
 #if RDOQ_TRANSFORMSKIP
-  Void      setUseRDOQTS                    ( Bool  b )     { m_bUseRDOQTS  = b; }
+  Void      setUseRDOQTS                    ( Bool  b )     { m_useRDOQTS  = b; }
 #endif
   Void      setUseFastEnc                   ( Bool  b )     { m_bUseFastEnc = b; }
   Void      setUseEarlyCU                   ( Bool  b )     { m_bUseEarlyCU = b; }
@@ -420,9 +420,9 @@ public:
   Bool      getUseASR                       ()      { return m_bUseASR;     }
   Bool      getUseHADME                     ()      { return m_bUseHADME;   }
   Bool      getUseLComb                     ()      { return m_bUseLComb;   }
-  Bool      getUseRDOQ                      ()      { return m_bUseRDOQ;    }
+  Bool      getUseRDOQ                      ()      { return m_useRDOQ;    }
 #if RDOQ_TRANSFORMSKIP
-  Bool      getUseRDOQTS                    ()      { return m_bUseRDOQTS;  }
+  Bool      getUseRDOQTS                    ()      { return m_useRDOQTS;  }
 #endif
   Bool      getUseFastEnc                   ()      { return m_bUseFastEnc; }
   Bool      getUseEarlyCU                   ()      { return m_bUseEarlyCU; }

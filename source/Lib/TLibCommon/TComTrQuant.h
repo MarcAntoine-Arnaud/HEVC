@@ -120,9 +120,9 @@ public:
   ~TComTrQuant();
   
   // initialize class
-  Void init                 ( UInt uiMaxWidth, UInt uiMaxHeight, UInt uiMaxTrSize, Int iSymbolMode = 0, UInt *aTable4 = NULL, UInt *aTable8 = NULL, UInt *aTableLastPosVlcIndex=NULL, Bool bUseRDOQ = false,  
+  Void init                 ( UInt uiMaxWidth, UInt uiMaxHeight, UInt uiMaxTrSize, Int iSymbolMode = 0, UInt *aTable4 = NULL, UInt *aTable8 = NULL, UInt *aTableLastPosVlcIndex=NULL, Bool useRDOQ = false,  
 #if RDOQ_TRANSFORMSKIP
-    Bool bUseRDOQTS = false,  
+    Bool useRDOQTS = false,  
 #endif
     Bool bEnc = false, Bool useTransformSkipFast = false
 #if ADAPTIVE_QP_SELECTION
@@ -220,9 +220,9 @@ protected:
   UInt     m_uiRDOQOffset;
   UInt     m_uiMaxTrSize;
   Bool     m_bEnc;
-  Bool     m_bUseRDOQ;
+  Bool     m_useRDOQ;
 #if RDOQ_TRANSFORMSKIP
-  Bool     m_bUseRDOQTS;
+  Bool     m_useRDOQTS;
 #endif
 #if ADAPTIVE_QP_SELECTION
   Bool     m_bUseAdaptQpSelect;

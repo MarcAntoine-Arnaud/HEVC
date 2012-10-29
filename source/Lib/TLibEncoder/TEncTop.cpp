@@ -291,9 +291,9 @@ Void TEncTop::init()
   m_cTrQuant.init( g_uiMaxCUWidth, g_uiMaxCUHeight, 1 << m_uiQuadtreeTULog2MaxSize,
                   0,
                   aTable4, aTable8, 
-                  aTableLastPosVlcIndex, m_bUseRDOQ, 
+                  aTableLastPosVlcIndex, m_useRDOQ, 
 #if RDOQ_TRANSFORMSKIP
-                  m_bUseRDOQTS,
+                  m_useRDOQTS,
 #endif
                   true 
                   ,m_useTransformSkipFast

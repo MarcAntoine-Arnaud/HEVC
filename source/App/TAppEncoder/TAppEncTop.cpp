@@ -153,9 +153,9 @@ Void TAppEncTop::xInitLibCfg()
   m_cTEncTop.setUseLossless                  ( m_useLossless );
   m_cTEncTop.setUseLComb                     ( m_bUseLComb    );
   m_cTEncTop.setdQPs                         ( m_aidQP        );
-  m_cTEncTop.setUseRDOQ                      ( m_bUseRDOQ     );
+  m_cTEncTop.setUseRDOQ                      ( m_useRDOQ     );
 #if RDOQ_TRANSFORMSKIP
-  m_cTEncTop.setUseRDOQTS                    ( m_bUseRDOQTS   );
+  m_cTEncTop.setUseRDOQTS                    ( m_useRDOQTS   );
 #endif
   m_cTEncTop.setQuadtreeTULog2MaxSize        ( m_uiQuadtreeTULog2MaxSize );
   m_cTEncTop.setQuadtreeTULog2MinSize        ( m_uiQuadtreeTULog2MinSize );
