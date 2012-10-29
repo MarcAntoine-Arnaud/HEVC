@@ -584,7 +584,11 @@ Void TDecTop::xDecodePPS()
   m_parameterSetManagerDecoder.storePrefetchedPPS( pps );
 
 #if DEPENDENT_SLICES
+#if REMOVE_ENTROPY_SLICES
+  if( pps->getDependentSliceEnabledFlag() )
+#else
   if( pps->getDependentSliceEnabledFlag() && (!pps->getEntropySliceEnabledFlag()) )
+#endif
   {
     int NumCtx = pps->getEntropyCodingSyncEnabledFlag()?2:1;
     m_cSliceDecoder.initCtxMem(NumCtx);

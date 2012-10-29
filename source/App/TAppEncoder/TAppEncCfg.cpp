@@ -257,7 +257,7 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
     ("SliceArgument",        m_iSliceArgument,       0, "if SliceMode==1 SliceArgument represents max # of LCUs. if SliceMode==2 SliceArgument represents max # of bytes.")
     ("DependentSliceMode",     m_iDependentSliceMode,    0, "0: Disable all dependent slice limits, 1: Enforce max # of LCUs, 2: Enforce constraint based dependent slices")
     ("DependentSliceArgument", m_iDependentSliceArgument,0, "if DependentSliceMode==1 SliceArgument represents max # of LCUs. if DependentSliceMode==2 DependentSliceArgument represents max # of bins.")
-#if DEPENDENT_SLICES
+#if DEPENDENT_SLICES && !REMOVE_ENTROPY_SLICES
     ("EntropySliceEnabledFlag", m_entropySliceEnabledFlag, false, "Enable use of entropy slices instead of dependent slices." )
 #endif
     ("LFCrossSliceBoundaryFlag", m_bLFCrossSliceBoundaryFlag, true)
@@ -582,7 +582,7 @@ Void TAppEncCfg::xCheckParameter()
 #if !DEPENDENT_SLICES
   xConfirmPara( m_iWaveFrontSynchro && m_iDependentSliceMode, "Wavefront and Dependent Slice can not be applied together");
 #endif
-#if DEPENDENT_SLICES
+#if DEPENDENT_SLICES && !REMOVE_ENTROPY_SLICES
   xConfirmPara( m_iWaveFrontSynchro && m_entropySliceEnabledFlag, "WaveFrontSynchro and EntropySliceEnabledFlag can not be applied together");
 #endif
 

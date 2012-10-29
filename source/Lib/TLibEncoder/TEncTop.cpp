@@ -616,10 +616,16 @@ Void TEncTop::xInitPPS()
   if (m_iDependentSliceMode)
   {
     m_cPPS.setDependentSliceEnabledFlag( true );
+#if !REMOVE_ENTROPY_SLICES
     m_cPPS.setEntropySliceEnabledFlag( m_entropySliceEnabledFlag );
+#endif
   }
 #if DEPENDENT_SLICES
+#if REMOVE_ENTROPY_SLICES
+  if( m_cPPS.getDependentSliceEnabledFlag() )
+#else
   if( m_cPPS.getDependentSliceEnabledFlag()&&(!m_cPPS.getEntropySliceEnabledFlag()) )
+#endif
   {
     int NumCtx = m_cPPS.getEntropyCodingSyncEnabledFlag()?2:1;
     m_cSliceEncoder.initCtxMem( NumCtx );

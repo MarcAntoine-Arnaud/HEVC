@@ -189,7 +189,7 @@ Void TAppEncTop::xInitLibCfg()
   //====== Dependent Slice ========
   m_cTEncTop.setDependentSliceMode        ( m_iDependentSliceMode         );
   m_cTEncTop.setDependentSliceArgument    ( m_iDependentSliceArgument     );
-#if DEPENDENT_SLICES
+#if DEPENDENT_SLICES && !REMOVE_ENTROPY_SLICES
   m_cTEncTop.setEntropySliceEnabledFlag   ( m_entropySliceEnabledFlag );
 #endif
   int iNumPartInCU = 1<<(m_uiMaxCUDepth<<1);

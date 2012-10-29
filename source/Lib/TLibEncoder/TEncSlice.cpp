@@ -783,7 +783,11 @@ Void TEncSlice::compressSlice( TComPic*& rpcPic )
   UInt uiTileLCUX     = 0;
 #if DEPENDENT_SLICES
   Bool bAllowDependence = false;
+#if REMOVE_ENTROPY_SLICES
+  if( pcSlice->getPPS()->getDependentSliceEnabledFlag() )
+#else
   if( pcSlice->getPPS()->getDependentSliceEnabledFlag()&&(!pcSlice->getPPS()->getEntropySliceEnabledFlag()) )
+#endif
   {
     bAllowDependence = true;
   }
@@ -1076,7 +1080,11 @@ Void TEncSlice::encodeSlice   ( TComPic*& rpcPic, TComOutputBitstream* pcBitstre
   UInt uiTileLCUX     = 0;
 #if DEPENDENT_SLICES
   Bool bAllowDependence = false;
+#if REMOVE_ENTROPY_SLICES
+  if( pcSlice->getPPS()->getDependentSliceEnabledFlag() )
+#else
   if( pcSlice->getPPS()->getDependentSliceEnabledFlag()&&(!pcSlice->getPPS()->getEntropySliceEnabledFlag()) )
+#endif
   {
     bAllowDependence = true;
   }

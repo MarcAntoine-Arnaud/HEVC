@@ -1453,7 +1453,9 @@ TComPPS::TComPPS()
 , m_dependentSliceEnabledFlag    (false)
 , m_tilesEnabledFlag               (false)
 , m_entropyCodingSyncEnabledFlag   (false)
+#if !REMOVE_ENTROPY_SLICES
 , m_entropySliceEnabledFlag        (false)
+#endif
 , m_loopFilterAcrossTilesEnabledFlag  (true)
 , m_uniformSpacingFlag           (0)
 , m_iNumColumnsMinus1            (0)

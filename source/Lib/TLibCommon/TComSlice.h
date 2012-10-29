@@ -791,8 +791,10 @@ private:
   Bool        m_dependentSliceEnabledFlag;     //!< Indicates the presence of dependent slices
   Bool        m_tilesEnabledFlag;              //!< Indicates the presence of tiles
   Bool        m_entropyCodingSyncEnabledFlag;  //!< Indicates the presence of wavefronts
+#if !REMOVE_ENTROPY_SLICES
   Bool        m_entropySliceEnabledFlag;       //!< Indicates the presence of entropy slices
-
+#endif
+  
   Bool     m_loopFilterAcrossTilesEnabledFlag;
   Int      m_uniformSpacingFlag;
   Int      m_iNumColumnsMinus1;
@@ -872,8 +874,10 @@ public:
   Void    setTilesEnabledFlag(Bool val)                    { m_tilesEnabledFlag = val; }
   Bool    getEntropyCodingSyncEnabledFlag() const          { return m_entropyCodingSyncEnabledFlag; }
   Void    setEntropyCodingSyncEnabledFlag(Bool val)        { m_entropyCodingSyncEnabledFlag = val; }
+#if !REMOVE_ENTROPY_SLICES
   Bool    getEntropySliceEnabledFlag() const               { return m_entropySliceEnabledFlag; }
   Void    setEntropySliceEnabledFlag(Bool val)             { m_entropySliceEnabledFlag = val; }
+#endif
   Void     setUniformSpacingFlag            ( Bool b )          { m_uniformSpacingFlag = b; }
   Bool     getUniformSpacingFlag            ()                  { return m_uniformSpacingFlag; }
   Void     setNumColumnsMinus1              ( Int i )           { m_iNumColumnsMinus1 = i; }

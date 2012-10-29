@@ -273,9 +273,11 @@ Void TDecCavlc::parsePPS(TComPPS* pcPPS)
 #endif
 #endif
   READ_FLAG( uiCode, "tiles_enabled_flag"               );    pcPPS->setTilesEnabledFlag            ( uiCode == 1 );
-  READ_FLAG( uiCode, "entropy_coding_sync_enabled_flag" );    pcPPS->setEntropyCodingSyncEnabledFlag( uiCode == 1 );   
-  READ_FLAG( uiCode, "entropy_slice_enabled_flag"       );    pcPPS->setEntropySliceEnabledFlag     ( uiCode == 1 );   
-
+  READ_FLAG( uiCode, "entropy_coding_sync_enabled_flag" );    pcPPS->setEntropyCodingSyncEnabledFlag( uiCode == 1 );
+#if !REMOVE_ENTROPY_SLICES
+  READ_FLAG( uiCode, "entropy_slice_enabled_flag"       );    pcPPS->setEntropySliceEnabledFlag     ( uiCode == 1 );
+#endif
+  
   if( pcPPS->getTilesEnabledFlag() )
   {
     READ_UVLC ( uiCode, "num_tile_columns_minus1" );                pcPPS->setNumColumnsMinus1( uiCode );  

@@ -202,7 +202,9 @@ Void TEncCavlc::codePPS( TComPPS* pcPPS )
 #endif
   WRITE_FLAG( pcPPS->getTilesEnabledFlag()             ? 1 : 0, "tiles_enabled_flag" );
   WRITE_FLAG( pcPPS->getEntropyCodingSyncEnabledFlag() ? 1 : 0, "entropy_coding_sync_enabled_flag" );
+#if !REMOVE_ENTROPY_SLICES
   WRITE_FLAG( pcPPS->getEntropySliceEnabledFlag()      ? 1 : 0, "entropy_slice_enabled_flag" );
+#endif
   if( pcPPS->getTilesEnabledFlag() )
   {
     WRITE_UVLC( pcPPS->getNumColumnsMinus1(),                                    "num_tile_columns_minus1" );

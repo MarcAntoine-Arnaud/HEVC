@@ -189,7 +189,11 @@ Void TDecSlice::decompressSlice(TComInputBitstream* pcBitstream, TComInputBitstr
   Int iNumSubstreamsPerTile = 1; // if independent.
 #if DEPENDENT_SLICES
   Bool bAllowDependence = false;
+#if REMOVE_ENTROPY_SLICES
+  if( rpcPic->getSlice(rpcPic->getCurrSliceIdx())->getPPS()->getDependentSliceEnabledFlag() )
+#else
   if( rpcPic->getSlice(rpcPic->getCurrSliceIdx())->getPPS()->getDependentSliceEnabledFlag()&& (!rpcPic->getSlice(rpcPic->getCurrSliceIdx())->getPPS()->getEntropySliceEnabledFlag()) )
+#endif
   {
     bAllowDependence = true;
   }

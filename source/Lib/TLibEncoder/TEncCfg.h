@@ -453,7 +453,7 @@ public:
   Void  setDependentSliceArgument        ( Int  i )      { m_iDependentSliceArgument = i;   }
   Int   getDependentSliceMode            ()              { return m_iDependentSliceMode;    }
   Int   getDependentSliceArgument        ()              { return m_iDependentSliceArgument;}
-#if DEPENDENT_SLICES
+#if DEPENDENT_SLICES && !REMOVE_ENTROPY_SLICES
   Void  setEntropySliceEnabledFlag       ( Bool  b )     { m_entropySliceEnabledFlag = b;    }
   Bool  getEntropySliceEnabledFlag       ()              { return m_entropySliceEnabledFlag; }
 #endif
