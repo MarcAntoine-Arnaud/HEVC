@@ -2115,8 +2115,27 @@ if( saoParam->saoLcuParam[1][addr].typeIdx == -1)
   }
 #if SAO_ENCODING_CHOICE
 #if SAO_ENCODING_CHOICE_CHROMA
+#if SAO_ENCODING_CHOICE_CHROMA_BF
+  if( !saoParam->bSaoFlag[0]) 
+  {
+    m_depthSaoRate[0][depth] = 1.0;
+  }
+  else
+  {
+    m_depthSaoRate[0][depth] = numNoSao[0]/((Double) frameHeightInCU*frameWidthInCU);
+  }
+  if( !saoParam->bSaoFlag[1]) 
+  {
+    m_depthSaoRate[1][depth] = 1.0;
+  }
+  else 
+  {
+    m_depthSaoRate[1][depth] = numNoSao[1]/((Double) frameHeightInCU*frameWidthInCU*2);
+  }
+#else
 m_depthSaoRate[0][depth] = numNoSao[0]/((Double) frameHeightInCU*frameWidthInCU);
 m_depthSaoRate[1][depth] = numNoSao[1]/((Double) frameHeightInCU*frameWidthInCU*2);
+#endif
 #else
   if( depth == 0)
   {

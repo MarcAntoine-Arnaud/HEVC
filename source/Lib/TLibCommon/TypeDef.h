@@ -90,6 +90,7 @@
 #define SAO_ENCODING_CHOICE_CHROMA       1 ///< J0044: picture early termination Luma and Chroma are handled separatenly
 #if SAO_ENCODING_CHOICE_CHROMA
 #define SAO_ENCODING_RATE_CHROMA         0.5
+#define SAO_ENCODING_CHOICE_CHROMA_BF    1 ///  K0156: Bug fix for SAO selection consistency
 #endif
 #endif
 
