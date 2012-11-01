@@ -357,7 +357,7 @@ Void  TDecCavlc::parseVUI(TComVUI* pcVUI, TComSPS *pcSPS)
     if (pcVUI->getAspectRatioIdc() == 255)
     {
       READ_CODE(16, uiCode, "sar_width");                             pcVUI->setSarWidth(uiCode);
-      READ_CODE(16, uiCode, "sar_height");                            pcVUI->setSarWidth(uiCode);
+      READ_CODE(16, uiCode, "sar_height");                            pcVUI->setSarHeight(uiCode);
     }
   }
 
