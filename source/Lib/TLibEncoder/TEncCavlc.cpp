@@ -321,7 +321,7 @@ Void TEncCavlc::codeVUI( TComVUI *pcVUI, TComSPS* pcSPS )
       WRITE_CODE(pcVUI->getDpbOutputDelayLengthMinus1(),         5, "dpb_output_delay_length_minus1");
     }
     Int i, j, nalOrVcl;
-    for( i = 0; i <= pcSPS->getMaxTLayers(); i ++ )
+    for( i = 0; i < pcSPS->getMaxTLayers(); i ++ )
     {
       WRITE_FLAG(pcVUI->getFixedPicRateFlag(i),                 "fixed_pic_rate_flag");
       if( pcVUI->getFixedPicRateFlag( i ) )
