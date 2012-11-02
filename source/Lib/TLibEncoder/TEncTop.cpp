@@ -473,10 +473,9 @@ Void TEncTop::xInitSPS()
     m_cSPS.setAMPAcc(i, 0);
   }
 
-  m_cSPS.setBitDepth    ( g_uiBitDepth        );
-  m_cSPS.setBitIncrement( g_uiBitIncrement    );
-  m_cSPS.setQpBDOffsetY ( (Int)(6*(g_uiBitDepth + g_uiBitIncrement - 8)) );
-  m_cSPS.setQpBDOffsetC ( (Int)(6*(g_uiBitDepth + g_uiBitIncrement - 8)) );
+  m_cSPS.setBitDepth    ( g_bitDepth );
+  m_cSPS.setQpBDOffsetY ( 6*(g_bitDepth - 8) );
+  m_cSPS.setQpBDOffsetC ( 6*(g_bitDepth - 8) );
 
   m_cSPS.setUseSAO( m_bUseSAO );
 

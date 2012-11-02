@@ -553,7 +553,6 @@ private:
 
   // Parameter
   UInt        m_uiBitDepth;
-  UInt        m_uiBitIncrement;
   Int         m_qpBDOffsetY;
   Int         m_qpBDOffsetC;
 
@@ -689,8 +688,6 @@ public:
   // Bit-depth
   UInt      getBitDepth     ()         { return m_uiBitDepth;     }
   Void      setBitDepth     ( UInt u ) { m_uiBitDepth = u;        }
-  UInt      getBitIncrement ()         { return m_uiBitIncrement; }
-  Void      setBitIncrement ( UInt u ) { m_uiBitIncrement = u;    }
   Int       getQpBDOffsetY  ()             { return m_qpBDOffsetY;   }
   Void      setQpBDOffsetY  ( Int value  ) { m_qpBDOffsetY = value;  }
   Int       getQpBDOffsetC  ()             { return m_qpBDOffsetC;   }

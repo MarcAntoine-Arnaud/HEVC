@@ -361,8 +361,7 @@ const UChar g_aucConvertTxtTypeToIdx[4] = { 0, 1, 1, 2 };
 // Bit-depth
 // ====================================================================================================================
 
-UInt g_uiBitDepth     = 8;    // base bit-depth
-UInt g_uiBitIncrement = 0;    // increments
+Int  g_bitDepth = 8;
 Int  g_maxLumaVal     = 255;  ///< Maximum Luma sample value
 
 UInt g_uiPCMBitDepthLuma     = 8;    // PCM bit-depth

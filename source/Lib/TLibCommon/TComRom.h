@@ -151,8 +151,7 @@ extern const UChar g_aucAngIntraModeOrder[NUM_INTRA_MODE];
 // Bit-depth
 // ====================================================================================================================
 
-extern       UInt g_uiBitDepth;
-extern       UInt g_uiBitIncrement;
+extern        Int g_bitDepth;
 extern        Int g_maxLumaVal;
 extern       UInt g_uiPCMBitDepthLuma;
 extern       UInt g_uiPCMBitDepthChroma;

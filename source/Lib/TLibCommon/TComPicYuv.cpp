@@ -227,7 +227,7 @@ Void  TComPicYuv::copyToPicCr (TComPicYuv*  pcPicYuvDst)
 Void TComPicYuv::getLumaMinMax( Int *pMin, Int *pMax )
 {
   Pel*  piY   = getLumaAddr();
-  Int   iMin  = (1<<(g_uiBitDepth))-1;
+  Int   iMin  = (1<<g_bitDepth) - 1;
   Int   iMax  = 0;
   Int   x, y;
   
@@ -298,7 +298,7 @@ Void TComPicYuv::dump (char* pFileName, Bool bAdd)
     pFile = fopen (pFileName, "ab");
   }
   
-  Int     shift = g_uiBitIncrement;
+  Int     shift = g_bitDepth-8;
   Int     offset = (shift>0)?(1<<(shift-1)):0;
   
   Int   x, y;

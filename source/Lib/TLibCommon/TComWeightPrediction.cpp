@@ -77,7 +77,7 @@ Void TComWeightPrediction::addWeightBi( TComYuv* pcYuvSrc0, TComYuv* pcYuvSrc1, 
   // Luma : --------------------------------------------
   Int w0      = wp0[0].w;
   Int offset  = wp0[0].offset;
-  Int shiftNum = IF_INTERNAL_PREC - ( g_uiBitDepth + g_uiBitIncrement );
+  Int shiftNum = IF_INTERNAL_PREC - g_bitDepth;
   Int shift   = wp0[0].shift + shiftNum;
   Int round   = shift?(1<<(shift-1)) * bRound:0;
   Int w1      = wp1[0].w;
@@ -173,7 +173,7 @@ Void TComWeightPrediction::addWeightUni( TComYuv* pcYuvSrc0, UInt iPartUnitIdx, 
   // Luma : --------------------------------------------
   Int w0      = wp0[0].w;
   Int offset  = wp0[0].offset;
-  Int shiftNum = IF_INTERNAL_PREC - ( g_uiBitDepth + g_uiBitIncrement );
+  Int shiftNum = IF_INTERNAL_PREC - g_bitDepth;
   Int shift   = wp0[0].shift + shiftNum;
   Int round   = shift?(1<<(shift-1)):0;
   UInt  iSrc0Stride = pcYuvSrc0->getStride();
@@ -330,8 +330,7 @@ Void TComWeightPrediction::xWeightedPredictionBi( TComDataCU* pcCU, TComYuv* pcY
   TComPPS         *pps = pcCU->getSlice()->getPPS();
   assert( pps->getWPBiPred());
 
-  Int ibdi = (g_uiBitDepth+g_uiBitIncrement);
-  getWpScaling(pcCU, iRefIdx0, iRefIdx1, pwp0, pwp1, ibdi);
+  getWpScaling(pcCU, iRefIdx0, iRefIdx1, pwp0, pwp1, g_bitDepth);
 
   if( iRefIdx0 >= 0 && iRefIdx1 >= 0 )
   {
@@ -372,15 +371,13 @@ Void TComWeightPrediction::xWeightedPredictionUni( TComDataCU* pcCU, TComYuv* pc
   }
   assert (iRefIdx >= 0);
 
-  Int ibdi = (g_uiBitDepth+g_uiBitIncrement);
-
   if ( eRefPicList == REF_PIC_LIST_0 )
   {
-    getWpScaling(pcCU, iRefIdx, -1, pwp, pwpTmp, ibdi);
+    getWpScaling(pcCU, iRefIdx, -1, pwp, pwpTmp, g_bitDepth);
   }
   else
   {
-    getWpScaling(pcCU, -1, iRefIdx, pwpTmp, pwp, ibdi);
+    getWpScaling(pcCU, -1, iRefIdx, pwpTmp, pwp, g_bitDepth);
   }
   addWeightUni( pcYuvSrc, uiPartAddr, iWidth, iHeight, pwp, rpcYuvPred );
 }

@@ -2825,7 +2825,6 @@ Void TEncSearch::xEncPCM (TComDataCU* pcCU, UInt uiAbsPartIdx, Pel* piOrg, Pel* 
   Pel* pResi = piResi;
   Pel* pReco = piReco;
   Pel* pRecoPic;
-  UInt uiInternalBitDepth = g_uiBitDepth + g_uiBitIncrement;
   UInt uiPCMBitDepth;
 
   if( eText == TEXT_LUMA)
@@ -2866,7 +2865,7 @@ Void TEncSearch::xEncPCM (TComDataCU* pcCU, UInt uiAbsPartIdx, Pel* piOrg, Pel* 
   {
     for( uiX = 0; uiX < uiWidth; uiX++ )
     {
-      pPCM[uiX] = (pOrg[uiX]>>(uiInternalBitDepth - uiPCMBitDepth));
+      pPCM[uiX] = (pOrg[uiX]>>(g_bitDepth - uiPCMBitDepth));
     }
     pPCM += uiWidth;
     pOrg += uiStride;
@@ -2879,7 +2878,7 @@ Void TEncSearch::xEncPCM (TComDataCU* pcCU, UInt uiAbsPartIdx, Pel* piOrg, Pel* 
   {
     for( uiX = 0; uiX < uiWidth; uiX++ )
     {
-      pReco   [uiX] = (pPCM[uiX]<<(uiInternalBitDepth - uiPCMBitDepth));
+      pReco   [uiX] = (pPCM[uiX]<<(g_bitDepth - uiPCMBitDepth));
       pRecoPic[uiX] = pReco[uiX];
     }
     pPCM += uiWidth;

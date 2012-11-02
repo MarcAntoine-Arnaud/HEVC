@@ -443,7 +443,8 @@ UInt TComRdCost::calcHAD( Pel* pi0, Int iStride0, Pel* pi1, Int iStride1, Int iW
     }
   }
   
-  return ( uiSum >> g_uiBitIncrement );
+  return uiSum >> DISTORTION_PRECISION_ADJUSTMENT(g_bitDepth-8);
+
 }
 
 #if WEIGHTED_CHROMA_DISTORTION
@@ -512,7 +513,7 @@ UInt TComRdCost::xGetSAD( DistParam* pcDtParam )
     piCur += iStrideCur;
   }
   
-  return ( uiSum >> g_uiBitIncrement );
+  return uiSum >> DISTORTION_PRECISION_ADJUSTMENT(g_bitDepth-8);
 }
 
 UInt TComRdCost::xGetSAD4( DistParam* pcDtParam )
@@ -543,7 +544,7 @@ UInt TComRdCost::xGetSAD4( DistParam* pcDtParam )
   }
   
   uiSum <<= iSubShift;
-  return ( uiSum >> g_uiBitIncrement );
+  return uiSum >> DISTORTION_PRECISION_ADJUSTMENT(g_bitDepth-8);
 }
 
 UInt TComRdCost::xGetSAD8( DistParam* pcDtParam )
@@ -578,7 +579,7 @@ UInt TComRdCost::xGetSAD8( DistParam* pcDtParam )
   }
   
   uiSum <<= iSubShift;
-  return ( uiSum >> g_uiBitIncrement );
+  return uiSum >> DISTORTION_PRECISION_ADJUSTMENT(g_bitDepth-8);
 }
 
 UInt TComRdCost::xGetSAD16( DistParam* pcDtParam )
@@ -621,7 +622,7 @@ UInt TComRdCost::xGetSAD16( DistParam* pcDtParam )
   }
   
   uiSum <<= iSubShift;
-  return ( uiSum >> g_uiBitIncrement );
+  return uiSum >> DISTORTION_PRECISION_ADJUSTMENT(g_bitDepth-8);
 }
 
 #if AMP_SAD
@@ -661,7 +662,7 @@ UInt TComRdCost::xGetSAD12( DistParam* pcDtParam )
   }
   
   uiSum <<= iSubShift;
-  return ( uiSum >> g_uiBitIncrement );
+  return uiSum >> DISTORTION_PRECISION_ADJUSTMENT(g_bitDepth-8);
 }
 #endif
 
@@ -704,7 +705,7 @@ UInt TComRdCost::xGetSAD16N( DistParam* pcDtParam )
   }
   
   uiSum <<= iSubShift;
-  return ( uiSum >> g_uiBitIncrement );
+  return uiSum >> DISTORTION_PRECISION_ADJUSTMENT(g_bitDepth-8);
 }
 
 UInt TComRdCost::xGetSAD32( DistParam* pcDtParam )
@@ -763,7 +764,7 @@ UInt TComRdCost::xGetSAD32( DistParam* pcDtParam )
   }
   
   uiSum <<= iSubShift;
-  return ( uiSum >> g_uiBitIncrement );
+  return uiSum >> DISTORTION_PRECISION_ADJUSTMENT(g_bitDepth-8);
 }
 
 #if AMP_SAD
@@ -815,7 +816,7 @@ UInt TComRdCost::xGetSAD24( DistParam* pcDtParam )
   }
   
   uiSum <<= iSubShift;
-  return ( uiSum >> g_uiBitIncrement );
+  return uiSum >> DISTORTION_PRECISION_ADJUSTMENT(g_bitDepth-8);
 }
 
 #endif
@@ -908,7 +909,7 @@ UInt TComRdCost::xGetSAD64( DistParam* pcDtParam )
   }
   
   uiSum <<= iSubShift;
-  return ( uiSum >> g_uiBitIncrement );
+  return uiSum >> DISTORTION_PRECISION_ADJUSTMENT(g_bitDepth-8);
 }
 
 #if AMP_SAD
@@ -984,7 +985,7 @@ UInt TComRdCost::xGetSAD48( DistParam* pcDtParam )
   }
   
   uiSum <<= iSubShift;
-  return ( uiSum >> g_uiBitIncrement );
+  return uiSum >> DISTORTION_PRECISION_ADJUSTMENT(g_bitDepth-8);
 }
 #endif
 
@@ -1006,7 +1007,7 @@ UInt TComRdCost::xGetSSE( DistParam* pcDtParam )
   Int  iStrideCur = pcDtParam->iStrideCur;
   
   UInt uiSum = 0;
-  UInt uiShift = g_uiBitIncrement<<1;
+  UInt uiShift = DISTORTION_PRECISION_ADJUSTMENT((g_bitDepth-8) << 1);
   
   Int iTemp;
   
@@ -1038,7 +1039,7 @@ UInt TComRdCost::xGetSSE4( DistParam* pcDtParam )
   Int  iStrideCur = pcDtParam->iStrideCur;
   
   UInt uiSum = 0;
-  UInt uiShift = g_uiBitIncrement<<1;
+  UInt uiShift = DISTORTION_PRECISION_ADJUSTMENT((g_bitDepth-8) << 1);
   
   Int  iTemp;
   
@@ -1071,7 +1072,7 @@ UInt TComRdCost::xGetSSE8( DistParam* pcDtParam )
   Int  iStrideCur = pcDtParam->iStrideCur;
   
   UInt uiSum = 0;
-  UInt uiShift = g_uiBitIncrement<<1;
+  UInt uiShift = DISTORTION_PRECISION_ADJUSTMENT((g_bitDepth-8) << 1);
   
   Int  iTemp;
   
@@ -1107,7 +1108,7 @@ UInt TComRdCost::xGetSSE16( DistParam* pcDtParam )
   Int  iStrideCur = pcDtParam->iStrideCur;
   
   UInt uiSum = 0;
-  UInt uiShift = g_uiBitIncrement<<1;
+  UInt uiShift = DISTORTION_PRECISION_ADJUSTMENT((g_bitDepth-8) << 1);
   
   Int  iTemp;
   
@@ -1152,7 +1153,7 @@ UInt TComRdCost::xGetSSE16N( DistParam* pcDtParam )
   Int  iStrideCur = pcDtParam->iStrideCur;
   
   UInt uiSum = 0;
-  UInt uiShift = g_uiBitIncrement<<1;
+  UInt uiShift = DISTORTION_PRECISION_ADJUSTMENT((g_bitDepth-8) << 1);
   Int  iTemp;
   
   for( ; iRows != 0; iRows-- )
@@ -1199,7 +1200,7 @@ UInt TComRdCost::xGetSSE32( DistParam* pcDtParam )
   Int  iStrideCur = pcDtParam->iStrideCur;
   
   UInt uiSum = 0;
-  UInt uiShift = g_uiBitIncrement<<1;
+  UInt uiShift = DISTORTION_PRECISION_ADJUSTMENT((g_bitDepth-8) << 1);
   Int  iTemp;
   
   for( ; iRows != 0; iRows-- )
@@ -1259,7 +1260,7 @@ UInt TComRdCost::xGetSSE64( DistParam* pcDtParam )
   Int  iStrideCur = pcDtParam->iStrideCur;
   
   UInt uiSum = 0;
-  UInt uiShift = g_uiBitIncrement<<1;
+  UInt uiShift = DISTORTION_PRECISION_ADJUSTMENT((g_bitDepth-8) << 1);
   Int  iTemp;
   
   for( ; iRows != 0; iRows-- )
@@ -1824,7 +1825,7 @@ UInt TComRdCost::xGetHADs4( DistParam* pcDtParam )
     piCur += iOffsetCur;
   }
   
-  return ( uiSum >> g_uiBitIncrement );
+  return uiSum >> DISTORTION_PRECISION_ADJUSTMENT(g_bitDepth-8);
 }
 
 UInt TComRdCost::xGetHADs8( DistParam* pcDtParam )
@@ -1860,7 +1861,7 @@ UInt TComRdCost::xGetHADs8( DistParam* pcDtParam )
     }
   }
   
-  return ( uiSum >> g_uiBitIncrement );
+  return uiSum >> DISTORTION_PRECISION_ADJUSTMENT(g_bitDepth-8);
 }
 
 UInt TComRdCost::xGetHADs( DistParam* pcDtParam )
@@ -1963,7 +1964,7 @@ UInt TComRdCost::xGetHADs( DistParam* pcDtParam )
     assert(false);
   }
   
-  return ( uiSum >> g_uiBitIncrement );
+  return uiSum >> DISTORTION_PRECISION_ADJUSTMENT(g_bitDepth-8);
 }
 
 //! \}

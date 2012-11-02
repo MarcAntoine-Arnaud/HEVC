@@ -249,12 +249,7 @@ void xTr(Pel *block, Int *coeff, UInt uiStride, UInt uiTrSize, UInt uiMode)
     assert(0);
   }
 
-#if FULL_NBIT
-  int shift_1st = uiLog2TrSize - 1 + g_uiBitDepth - 8; // log2(N) - 1 + g_uiBitDepth - 8
-#else
-  int shift_1st = uiLog2TrSize - 1 + g_uiBitIncrement; // log2(N) - 1 + g_uiBitIncrement
-#endif
-
+  int shift_1st = uiLog2TrSize - 1 + g_bitDepth-8; // log2(N) - 1 + g_bitDepth-8
   int add_1st = 1<<(shift_1st-1);
   int shift_2nd = uiLog2TrSize + 6;
   int add_2nd = 1<<(shift_2nd-1);
@@ -343,11 +338,7 @@ void xITr(Int *coeff, Pel *block, UInt uiStride, UInt uiTrSize, UInt uiMode)
   
   int shift_1st = SHIFT_INV_1ST;
   int add_1st = 1<<(shift_1st-1);  
-#if FULL_NBIT
-  int shift_2nd = SHIFT_INV_2ND - ((short)g_uiBitDepth - 8);
-#else
-  int shift_2nd = SHIFT_INV_2ND - g_uiBitIncrement;
-#endif
+  int shift_2nd = SHIFT_INV_2ND - g_bitDepth-8;
   int add_2nd = 1<<(shift_2nd-1);
   if (uiTrSize==4)
   {
@@ -794,11 +785,7 @@ void partialButterflyInverse32(short *src,short *dst,int shift, int line)
 */
 void xTrMxN(short *block,short *coeff, int iWidth, int iHeight, UInt uiMode)
 {
-#if FULL_NBIT
-  int shift_1st = g_aucConvertToBit[iWidth]  + 1 + g_uiBitDepth - 8; // log2(iWidth) - 1 + g_uiBitDepth - 8
-#else
-  int shift_1st = g_aucConvertToBit[iWidth]  + 1 + g_uiBitIncrement; // log2(iWidth) - 1 + g_uiBitIncrement
-#endif
+  int shift_1st = g_aucConvertToBit[iWidth]  + 1 + g_bitDepth-8; // log2(iWidth) - 1 + g_bitDepth - 8
   int shift_2nd = g_aucConvertToBit[iHeight]  + 8;                   // log2(iHeight) + 6
 
   short tmp[ 64 * 64 ];
@@ -842,11 +829,7 @@ void xTrMxN(short *block,short *coeff, int iWidth, int iHeight, UInt uiMode)
 void xITrMxN(short *coeff,short *block, int iWidth, int iHeight, UInt uiMode)
 {
   int shift_1st = SHIFT_INV_1ST;
-#if FULL_NBIT
-  int shift_2nd = SHIFT_INV_2ND - ((short)g_uiBitDepth - 8);
-#else
-  int shift_2nd = SHIFT_INV_2ND - g_uiBitIncrement;
-#endif
+  int shift_2nd = SHIFT_INV_2ND - (g_bitDepth-8);
 
   short tmp[ 64*64];
   if( iWidth == 4 && iHeight == 4)
@@ -1089,11 +1072,7 @@ Void TComTrQuant::xQuant( TComDataCU* pcCU,
     Int *piQuantCoeff = 0;
     piQuantCoeff = getQuantCoeff(scalingListType,m_cQP.m_iRem,uiLog2TrSize-2, dir);
 
-#if FULL_NBIT
-    UInt uiBitDepth = g_uiBitDepth;
-#else
-    UInt uiBitDepth = g_uiBitDepth + g_uiBitIncrement;
-#endif
+    UInt uiBitDepth = g_bitDepth;
     Int iTransformShift = MAX_TR_DYNAMIC_RANGE - uiBitDepth - uiLog2TrSize;  // Represents scaling through forward transform
 
     Int iQBits = QUANT_SHIFT + m_cQP.m_iPer + iTransformShift;                // Right shift of non-RDOQ quantizer;  level = (coeff*uiQ + offset)>>q_bits
@@ -1160,11 +1139,7 @@ Void TComTrQuant::xDeQuant( const TCoeff* pSrc, Int* pDes, Int iWidth, Int iHeig
   Int iShift,iAdd,iCoeffQ;
   UInt uiLog2TrSize = g_aucConvertToBit[ iWidth ] + 2;
 
-#if FULL_NBIT
-  UInt uiBitDepth = g_uiBitDepth;
-#else
-  UInt uiBitDepth = g_uiBitDepth + g_uiBitIncrement;
-#endif
+  UInt uiBitDepth = g_bitDepth;
   Int iTransformShift = MAX_TR_DYNAMIC_RANGE - uiBitDepth - uiLog2TrSize; 
 
   iShift = QUANT_IQUANT_SHIFT - QUANT_SHIFT - iTransformShift;
@@ -1450,11 +1425,7 @@ Void TComTrQuant::xTransformSkip( Pel* piBlkResi, UInt uiStride, Int* psCoeff, I
 {
   assert( width == height );
   UInt uiLog2TrSize = g_aucConvertToBit[ width ] + 2;
-#if FULL_NBIT
-  UInt uiBitDepth = g_uiBitDepth;
-#else
-  UInt uiBitDepth = g_uiBitDepth + g_uiBitIncrement;
-#endif
+  UInt uiBitDepth = g_bitDepth;
   Int  shift = MAX_TR_DYNAMIC_RANGE - uiBitDepth - uiLog2TrSize;
   UInt transformSkipShift;
   Int  j,k;
@@ -1495,11 +1466,7 @@ Void TComTrQuant::xITransformSkip( Int* plCoef, Pel* pResidual, UInt uiStride, I
 {
   assert( width == height );
   UInt uiLog2TrSize = g_aucConvertToBit[ width ] + 2;
-#if FULL_NBIT
-  UInt uiBitDepth = g_uiBitDepth;
-#else
-  UInt uiBitDepth = g_uiBitDepth + g_uiBitIncrement;
-#endif
+  UInt uiBitDepth = g_bitDepth;
   Int  shift = MAX_TR_DYNAMIC_RANGE - uiBitDepth - uiLog2TrSize; 
   UInt transformSkipShift; 
   Int  j,k;
@@ -1561,11 +1528,7 @@ Void TComTrQuant::xRateDistOptQuant                 ( TComDataCU*               
   UInt uiLog2TrSize = g_aucConvertToBit[ uiWidth ] + 2;
   Int uiQ = g_quantScales[m_cQP.rem()];
   
-#if FULL_NBIT
-  UInt uiBitDepth = g_uiBitDepth;
-#else
-  UInt uiBitDepth = g_uiBitDepth + g_uiBitIncrement;  
-#endif
+  UInt uiBitDepth = g_bitDepth;
   Int iTransformShift = MAX_TR_DYNAMIC_RANGE - uiBitDepth - uiLog2TrSize;  // Represents scaling through forward transform
   UInt       uiGoRiceParam       = 0;
   Double     d64BlockUncodedCost = 0;
@@ -1943,7 +1906,7 @@ Void TComTrQuant::xRateDistOptQuant                 ( TComDataCU*               
   {
     Int64 rdFactor = (Int64) (
                      g_invQuantScales[m_cQP.rem()] * g_invQuantScales[m_cQP.rem()] * (1<<(2*m_cQP.m_iPer))
-                   / m_dLambda / 16 / (1<<(2*g_uiBitIncrement))
+                   / m_dLambda / 16 / (1<<DISTORTION_PRECISION_ADJUSTMENT(2*(g_bitDepth-8)))
                    + 0.5);
     Int lastCG = -1;
     Int absSum = 0 ;
@@ -2504,12 +2467,7 @@ Void TComTrQuant::setErrScaleCoeff(UInt list,UInt size, UInt qp, UInt dir)
 {
 
   UInt uiLog2TrSize = g_aucConvertToBit[ g_scalingListSizeX[size] ] + 2;
-#if FULL_NBIT
-  UInt uiBitDepth = g_uiBitDepth;
-#else
-  UInt uiBitDepth = g_uiBitDepth + g_uiBitIncrement;  
-#endif
-
+  UInt uiBitDepth = g_bitDepth;
   Int iTransformShift = MAX_TR_DYNAMIC_RANGE - uiBitDepth - uiLog2TrSize;  // Represents scaling through forward transform
 
   UInt i,uiMaxNumCoeff = g_scalingListSize[size];
@@ -2522,7 +2480,7 @@ Void TComTrQuant::setErrScaleCoeff(UInt list,UInt size, UInt qp, UInt dir)
   dErrScale = dErrScale*pow(2.0,-2.0*iTransformShift);                     // Compensate for scaling through forward transform
   for(i=0;i<uiMaxNumCoeff;i++)
   {
-    pdErrScale[i] = dErrScale / piQuantcoeff[i] / piQuantcoeff[i] / (1<<(2*g_uiBitIncrement));
+    pdErrScale[i] = dErrScale / piQuantcoeff[i] / piQuantcoeff[i] / (1<<DISTORTION_PRECISION_ADJUSTMENT(2*(g_bitDepth-8)));
   }
 }
 

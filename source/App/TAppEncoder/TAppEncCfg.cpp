@@ -167,7 +167,8 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
   ("InputBitDepth",         m_uiInputBitDepth,    8u, "Bit-depth of input file")
   ("BitDepth",              m_uiInputBitDepth,    8u, "Deprecated alias of InputBitDepth")
   ("OutputBitDepth",        m_uiOutputBitDepth,   0u, "Bit-depth of output file")
-  ("InternalBitDepth",      m_uiInternalBitDepth, 0u, "Internal bit-depth (BitDepth+BitIncrement)")
+  ("InternalBitDepth",      m_uiInternalBitDepth, 0u, "Bit-depth the codec operates at."
+                                                      "If different to InputBitDepth, source data will be converted")
   ("CroppingMode",          m_croppingMode,        0, "Cropping mode (0: no cropping, 1:automatic padding, 2: padding, 3:cropping")
   ("HorizontalPadding,-pdx",m_aiPad[0],            0, "Horizontal source padding for cropping mode 2")
   ("VerticalPadding,-pdy",  m_aiPad[1],            0, "Vertical source padding for cropping mode 2")
@@ -955,15 +956,8 @@ Void TAppEncCfg::xSetGlobal()
   g_uiMaxCUDepth = m_uiMaxCUDepth;
   
   // set internal bit-depth and constants
-#if FULL_NBIT
-  g_uiBitDepth = m_uiInternalBitDepth;
-  g_uiBitIncrement = 0;
-#else
-  g_uiBitDepth = 8;
-  g_uiBitIncrement = m_uiInternalBitDepth - g_uiBitDepth;
-#endif
-
-  g_maxLumaVal     = ((1<<(g_uiBitDepth+g_uiBitIncrement))-1);
+  g_bitDepth = m_uiInternalBitDepth;
+  g_maxLumaVal = (1 << g_bitDepth) - 1;
   
   if (m_uiOutputBitDepth == 0)
   {
@@ -1011,7 +1005,7 @@ Void TAppEncCfg::xPrintParameter()
   printf("\n");
   
   printf("TOOL CFG: ");
-  printf("IBD:%d ", !!g_uiBitIncrement);
+  printf("IBD:%d ", g_bitDepth > m_uiInputBitDepth);
   printf("HAD:%d ", m_bUseHADME           );
   printf("SRD:%d ", m_bUseSBACRD          );
   printf("RDQ:%d ", m_useRDOQ            );

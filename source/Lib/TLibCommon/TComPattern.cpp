@@ -292,7 +292,7 @@ Void TComPattern::initPattern( TComDataCU* pcCU, UInt uiPartDepth, UInt uiAbsPar
     Int bottomLeft = piFilterBuf[0];
     Int topLeft = piFilterBuf[uiCuHeight2];
     Int topRight = piFilterBuf[iBufSize-1];
-    Int threshold = 1 << (g_uiBitDepth + g_uiBitIncrement - 5);
+    Int threshold = 1 << (g_bitDepth - 5);
     Bool bilinearLeft = abs(bottomLeft+topLeft-2*piFilterBuf[uiCuHeight]) < threshold;
     Bool bilinearAbove  = abs(topLeft+topRight-2*piFilterBuf[uiCuHeight2+uiCuHeight]) < threshold;
   
@@ -419,7 +419,7 @@ Void TComPattern::fillReferenceSamples( TComDataCU* pcCU, Pel* piRoiOrigin, Int*
 {
   Pel* piRoiTemp;
   Int  i, j;
-  Int  iDCValue = ( 1<<( g_uiBitDepth + g_uiBitIncrement - 1) );
+  Int  iDCValue = 1 << (g_bitDepth - 1);
 
   if (iNumIntraNeighbor == 0)
   {

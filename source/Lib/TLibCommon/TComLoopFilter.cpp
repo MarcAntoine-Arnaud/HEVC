@@ -625,7 +625,7 @@ Void TComLoopFilter::xEdgeFilterLuma( TComDataCU* pcCU, UInt uiAbsZorderIdx, UIn
 
       iQP_P = pcCUP->getQP(uiPartPIdx);
       iQP = (iQP_P + iQP_Q + 1) >> 1;
-      Int iBitdepthScale = (1<<(g_uiBitIncrement+g_uiBitDepth-8));
+      Int iBitdepthScale = 1 << (g_bitDepth-8);
       
       Int iIndexTC = Clip3(0, MAX_QP+DEFAULT_INTRA_TC_OFFSET, Int(iQP + DEFAULT_INTRA_TC_OFFSET*(uiBs-1) + (m_tcOffsetDiv2 << 1)));
       Int iIndexB = Clip3(0, MAX_QP, iQP + (m_betaOffsetDiv2 << 1));
@@ -764,7 +764,7 @@ Void TComLoopFilter::xEdgeFilterChroma( TComDataCU* pcCU, UInt uiAbsZorderIdx, U
       iQP_P = pcCUP->getQP(uiPartPIdx);
 #if !USE_PIC_CHROMA_QP_OFFSETS_IN_DEBLOCKING
       iQP = QpUV((iQP_P + iQP_Q + 1) >> 1);
-      Int iBitdepthScale = (1<<(g_uiBitIncrement+g_uiBitDepth-8));
+      Int iBitdepthScale = 1 << (g_bitDepth-8);
       
       Int iIndexTC = Clip3(0, MAX_QP+DEFAULT_INTRA_TC_OFFSET, iQP + DEFAULT_INTRA_TC_OFFSET*(ucBs - 1) + (m_tcOffsetDiv2 << 1));
       Int iTc =  tctable_8x8[iIndexTC]*iBitdepthScale;
@@ -788,7 +788,7 @@ Void TComLoopFilter::xEdgeFilterChroma( TComDataCU* pcCU, UInt uiAbsZorderIdx, U
         Pel* piTmpSrcChroma = (chromaIdx == 0) ? piTmpSrcCb : piTmpSrcCr;
 
         iQP = QpUV( ((iQP_P + iQP_Q + 1) >> 1) + chromaQPOffset );
-        Int iBitdepthScale = (1<<(g_uiBitIncrement+g_uiBitDepth-8));
+        Int iBitdepthScale = 1 << (g_bitDepth-8);
 
         Int iIndexTC = Clip3(0, MAX_QP+DEFAULT_INTRA_TC_OFFSET, iQP + DEFAULT_INTRA_TC_OFFSET*(ucBs - 1) + (m_tcOffsetDiv2 << 1));
         Int iTc =  tctable_8x8[iIndexTC]*iBitdepthScale;

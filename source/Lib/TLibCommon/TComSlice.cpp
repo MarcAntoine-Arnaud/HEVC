@@ -1237,7 +1237,7 @@ Void  TComSlice::initWpScaling(wpScalingParam  wp[2][MAX_NUM_REF][3])
         }
 
         pwp->w      = pwp->iWeight;
-        pwp->o      = pwp->iOffset * (1 << (g_uiBitDepth-8));
+        pwp->o      = pwp->iOffset << (g_bitDepth-8);
         pwp->shift  = pwp->uiLog2WeightDenom;
         pwp->round  = (pwp->uiLog2WeightDenom>=1) ? (1 << (pwp->uiLog2WeightDenom-1)) : (0);
       }
@@ -1304,7 +1304,6 @@ TComSPS::TComSPS()
 , m_restrictedRefPicListsFlag   (  1)
 , m_listsModificationPresentFlag(  0)
 , m_uiBitDepth                (  8)
-, m_uiBitIncrement            (  0)
 , m_qpBDOffsetY               (  0)
 , m_qpBDOffsetC               (  0)
 , m_useLossless               (false)

@@ -716,11 +716,7 @@ Void TEncEntropy::encodeSaoOffset(SaoLcuParam* saoLcuParam, UInt compIdx)
     {
       saoLcuParam->subTypeIdx = saoLcuParam->typeIdx;
     }
-#if FULL_NBIT
-    Int offsetTh = 1 << ( min((Int)(g_uiBitDepth - 5),5) );
-#else
-    Int offsetTh = 1 << ( min((Int)(g_uiBitDepth + g_uiBitIncrement-5),5) );
-#endif
+    Int offsetTh = 1 << min(g_bitDepth - 5,5);
     if( saoLcuParam->typeIdx == SAO_BO )
     {
       for( i=0; i< saoLcuParam->length; i++)
