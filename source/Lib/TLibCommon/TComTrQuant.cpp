@@ -1941,7 +1941,10 @@ Void TComTrQuant::xRateDistOptQuant                 ( TComDataCU*               
   
   if( pcCU->getSlice()->getPPS()->getSignHideFlag() && uiAbsSum>=2)
   {
-    Int64 rdFactor = (Int64)((Double)(g_invQuantScales[m_cQP.rem()])*(Double)(g_invQuantScales[m_cQP.rem()])*(Double)(1<<(2*m_cQP.m_iPer))/m_dLambda/16/(Double)(1<<(2*g_uiBitIncrement)) + 0.5);
+    Int64 rdFactor = (Int64) (
+                     g_invQuantScales[m_cQP.rem()] * g_invQuantScales[m_cQP.rem()] * (1<<(2*m_cQP.m_iPer))
+                   / m_dLambda / 16 / (1<<(2*g_uiBitIncrement))
+                   + 0.5);
     Int lastCG = -1;
     Int absSum = 0 ;
     Int n ;
@@ -2519,7 +2522,7 @@ Void TComTrQuant::setErrScaleCoeff(UInt list,UInt size, UInt qp, UInt dir)
   dErrScale = dErrScale*pow(2.0,-2.0*iTransformShift);                     // Compensate for scaling through forward transform
   for(i=0;i<uiMaxNumCoeff;i++)
   {
-    pdErrScale[i] =  dErrScale/(double)piQuantcoeff[i]/(double)piQuantcoeff[i]/(double)(1<<(2*g_uiBitIncrement));
+    pdErrScale[i] = dErrScale / piQuantcoeff[i] / piQuantcoeff[i] / (1<<(2*g_uiBitIncrement));
   }
 }
 
