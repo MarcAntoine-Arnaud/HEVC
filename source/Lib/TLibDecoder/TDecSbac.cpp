@@ -1423,14 +1423,14 @@ Void TDecSbac::parseSaoOffset(SaoLcuParam* psSaoLcuParam, UInt compIdx)
     SAO_BO_LEN
   }; 
 
-if (compIdx==2)
-{
-uiSymbol = (UInt)( psSaoLcuParam->typeIdx + 1);
-}
-else
-{
-parseSaoTypeIdx(uiSymbol);
-}
+  if (compIdx==2)
+  {
+    uiSymbol = (UInt)( psSaoLcuParam->typeIdx + 1);
+  }
+  else
+  {
+    parseSaoTypeIdx(uiSymbol);
+  }
   psSaoLcuParam->typeIdx = (Int)uiSymbol - 1;
   if (uiSymbol)
   {
