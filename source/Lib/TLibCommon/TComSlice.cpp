@@ -1237,7 +1237,8 @@ Void  TComSlice::initWpScaling(wpScalingParam  wp[2][MAX_NUM_REF][3])
         }
 
         pwp->w      = pwp->iWeight;
-        pwp->o      = pwp->iOffset << (g_bitDepth-8);
+        int bitDepth = yuv ? g_bitDepthC : g_bitDepthY;
+        pwp->o      = pwp->iOffset << (bitDepth-8);
         pwp->shift  = pwp->uiLog2WeightDenom;
         pwp->round  = (pwp->uiLog2WeightDenom>=1) ? (1 << (pwp->uiLog2WeightDenom-1)) : (0);
       }
