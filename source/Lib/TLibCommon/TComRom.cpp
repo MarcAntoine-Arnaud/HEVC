@@ -361,7 +361,6 @@ const UChar g_aucConvertTxtTypeToIdx[4] = { 0, 1, 1, 2 };
 // Bit-depth
 // ====================================================================================================================
 
-Int  g_bitDepth = 8;
 Int  g_bitDepthY = 8;
 Int  g_bitDepthC = 8;
 
