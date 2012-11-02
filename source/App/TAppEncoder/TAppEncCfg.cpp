@@ -134,6 +134,80 @@ std::istringstream &operator>>(std::istringstream &in, GOPEntry &entry)     //in
   return in;
 }
 
+static const struct MapStrToProfile {
+  const char* str;
+  Profile::Name value;
+} strToProfile[] = {
+  {"none", Profile::NONE},
+  {"main", Profile::MAIN},
+  {"main10", Profile::MAIN10},
+  {"main-still-picture", Profile::MAINSTILLPICTURE},
+};
+
+static const struct MapStrToTier {
+  const char* str;
+  Level::Tier value;
+} strToTier[] = {
+  {"main", Level::MAIN},
+  {"high", Level::HIGH},
+};
+
+static const struct MapStrToLevel {
+  const char* str;
+  Level::Name value;
+} strToLevel[] = {
+  {"none",Level::NONE},
+  {"1",   Level::LEVEL1},
+  {"2",   Level::LEVEL2},
+  {"2.1", Level::LEVEL2_1},
+  {"3",   Level::LEVEL3},
+  {"3.1", Level::LEVEL3_1},
+  {"4",   Level::LEVEL4},
+  {"4.1", Level::LEVEL4_1},
+  {"5",   Level::LEVEL5},
+  {"5.1", Level::LEVEL5_1},
+  {"5.2", Level::LEVEL5_2},
+  {"6",   Level::LEVEL6},
+  {"6.1", Level::LEVEL6_1},
+  {"6.2", Level::LEVEL6_2},
+};
+
+template<typename T, typename P>
+istream& readStrToEnum(P map[], unsigned long mapLen, istream &in, T &val)
+{
+  string str;
+  in >> str;
+
+  for (int i = 0; i < mapLen; i++)
+  {
+    if (str == map[i].str)
+    {
+      val = map[i].value;
+      goto found;
+    }
+  }
+  /* not found */
+  in.setstate(ios::failbit);
+found:
+  return in;
+}
+
+istream& operator>>(istream &in, Profile::Name &profile)
+{
+  return readStrToEnum(strToProfile, sizeof(strToProfile)/sizeof(*strToProfile), in, profile);
+}
+
+istream& operator>>(istream &in, Level::Tier &tier)
+{
+  return readStrToEnum(strToTier, sizeof(strToTier)/sizeof(*strToTier), in, tier);
+}
+
+istream& operator>>(istream &in, Level::Name &level)
+{
+  return readStrToEnum(strToLevel, sizeof(strToLevel)/sizeof(*strToLevel), in, level);
+}
+
+
 // ====================================================================================================================
 // Public member functions
 // ====================================================================================================================
@@ -180,6 +254,11 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
   ("FrameSkip,-fs",         m_FrameSkip,          0u, "Number of frames to skip at start of input YUV")
   ("FramesToBeEncoded,f",   m_iFrameToBeEncoded,   0, "Number of frames to be encoded (default=all)")
   
+  // Profile and level
+  ("Profile", m_profile,   Profile::NONE, "Profile to be used when encoding (Incomplete)")
+  ("Level",   m_level,     Level::NONE,   "Level limit to be used, eg 5.1 (Incomplete)")
+  ("Tier",    m_levelTier, Level::MAIN,   "Tier to use for interpretation of --Level")
+
   // Unit definition parameters
   ("MaxCUWidth",              m_uiMaxCUWidth,             64u)
   ("MaxCUHeight",             m_uiMaxCUHeight,            64u)

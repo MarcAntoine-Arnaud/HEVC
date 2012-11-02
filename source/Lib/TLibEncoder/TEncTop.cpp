@@ -273,6 +273,9 @@ Void TEncTop::init()
   // initialize SPS
   xInitSPS();
   
+  /* set the VPS profile information */
+  *m_cVPS.getPTL() = *m_cSPS.getPTL();
+
   // initialize PPS
   m_cPPS.setSPS(&m_cSPS);
   xInitPPS();
@@ -426,6 +429,19 @@ Void TEncTop::xGetNewPicBuffer ( TComPic*& rpcPic )
 
 Void TEncTop::xInitSPS()
 {
+  ProfileTierLevel& profileTierLevel = *m_cSPS.getPTL()->getGeneralPTL();
+  profileTierLevel.setLevelIdc(m_level);
+  profileTierLevel.setTierFlag(m_levelTier);
+  profileTierLevel.setProfileIdc(m_profile);
+  profileTierLevel.setProfileCompatibilityFlag(m_profile, 1);
+  if (m_profile == Profile::MAIN10 && g_bitDepth == 8)
+  {
+    profileTierLevel.setProfileCompatibilityFlag(Profile::MAIN, 1);
+  }
+  /* XXX: should Main be marked as compatible with still picture? */
+  /* XXX: may be a good idea to refactor the above into a function
+   * that chooses the actual compatibility based upon options */
+
   m_cSPS.setPicWidthInLumaSamples         ( m_iSourceWidth      );
   m_cSPS.setPicHeightInLumaSamples        ( m_iSourceHeight     );
   m_cSPS.setPicCroppingFlag( m_croppingMode!= 0 );

@@ -71,6 +71,11 @@ protected:
   Int       m_iFrameToBeEncoded;                              ///< number of encoded frames
   Int       m_aiPad[2];                                       ///< number of padded pixels for width and height
   
+  // profile/level
+  Profile::Name m_profile;
+  Level::Tier   m_levelTier;
+  Level::Name   m_level;
+
   // coding structure
   Int       m_iIntraPeriod;                                   ///< period of I-slice (random access period)
   Int       m_iDecodingRefreshType;                           ///< random access type

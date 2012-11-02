@@ -77,6 +77,10 @@ Void TAppEncTop::xInitLibCfg()
     vps.setMaxDecPicBuffering             ( m_maxDecPicBuffering[i], i );
   }
   m_cTEncTop.setVPS(&vps);
+
+  m_cTEncTop.setProfile(m_profile);
+  m_cTEncTop.setLevel(m_levelTier, m_level);
+
   m_cTEncTop.setFrameRate                    ( m_iFrameRate );
   m_cTEncTop.setFrameSkip                    ( m_FrameSkip );
   m_cTEncTop.setSourceWidth                  ( m_iSourceWidth );

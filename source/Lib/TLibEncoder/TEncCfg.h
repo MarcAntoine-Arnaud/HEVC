@@ -110,6 +110,11 @@ protected:
   Int       m_iFrameToBeEncoded;
   Double    m_adLambdaModifier[ MAX_TLAYER ];
 
+  /* profile & level */
+  Profile::Name m_profile;
+  Level::Tier   m_levelTier;
+  Level::Name   m_level;
+
   //====== Coding Structure ========
   UInt      m_uiIntraPeriod;
   UInt      m_uiDecodingRefreshType;            ///< the type of decoding refresh employed for the random access.
@@ -278,6 +283,9 @@ public:
     delete[] m_puiRowHeight;
   }
   
+  Void setProfile(Profile::Name profile) { m_profile = profile; }
+  Void setLevel(Level::Tier tier, Level::Name level) { m_levelTier = tier; m_level = level; }
+
   Void      setFrameRate                    ( Int   i )      { m_iFrameRate = i; }
   Void      setFrameSkip                    ( unsigned int i ) { m_FrameSkip = i; }
   Void      setSourceWidth                  ( Int   i )      { m_iSourceWidth = i; }
