@@ -159,9 +159,6 @@ public:
   
   // Set border extension flag
   Void  setBorderExtension(Bool b) { m_bIsBorderExtended = b; }
-#if FIXED_ROUNDING_FRAME_MEMORY
-  Void  xFixedRoundingPic();
-#endif  
 };// END CLASS DEFINITION TComPicYuv
 
 void calcChecksum(TComPicYuv& pic, unsigned char digest[3][16]);

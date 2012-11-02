@@ -1301,10 +1301,6 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
         AccessUnit::iterator it = find_if(accessUnit.begin(), accessUnit.end(), mem_fun(&NALUnit::isSlice));
         accessUnit.insert(it, new NALUnitEBSP(nalu));
       }
-#if FIXED_ROUNDING_FRAME_MEMORY
-      /* TODO: this should happen after copyToPic(pcPicYuvRecOut) */
-      pcPic->getPicYuvRec()->xFixedRoundingPic();
-#endif
       pcPic->getPicYuvRec()->copyToPic(pcPicYuvRecOut);
 
       pcPic->setReconMark   ( true );
