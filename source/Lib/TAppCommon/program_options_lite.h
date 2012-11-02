@@ -48,8 +48,8 @@ namespace df
     
     struct ParseFailure : public std::exception
     {
-      ParseFailure(std::string arg, std::string val) throw()
-      : arg(arg), val(val)
+      ParseFailure(std::string arg0, std::string val0) throw()
+      : arg(arg0), val(val0)
       {}
 
       ~ParseFailure() throw() {};
