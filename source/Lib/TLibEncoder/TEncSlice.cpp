@@ -885,7 +885,7 @@ Void TEncSlice::compressSlice( TComPic*& rpcPic )
            )
         {
 #if DEPENDENT_SLICES
-          if ( (uiCUAddr != 0) && (pcCUTR->getSCUAddr()+uiMaxParts-1 >= pcSlice->getSliceCurStartCUAddr())  && bAllowDependence)
+          if ( (uiCUAddr != 0) && pcCUTR && (pcCUTR->getSCUAddr()+uiMaxParts-1 >= pcSlice->getSliceCurStartCUAddr())  && bAllowDependence)
           {
             ppppcRDSbacCoders[uiSubStrm][0][CI_CURR_BEST]->loadContexts( &m_pcBufferSbacCoders[uiTileCol] );
           }
@@ -1176,7 +1176,7 @@ Void TEncSlice::encodeSlice   ( TComPic*& rpcPic, TComOutputBitstream* pcBitstre
            )
         {
 #if DEPENDENT_SLICES
-          if ( (uiCUAddr != 0) && ( pcCUTR->getSCUAddr()+uiMaxParts-1 >= pcSlice->getSliceCurStartCUAddr() ) && bAllowDependence)
+          if ( (uiCUAddr != 0) && pcCUTR && ( pcCUTR->getSCUAddr()+uiMaxParts-1 >= pcSlice->getSliceCurStartCUAddr() ) && bAllowDependence)
           {
             pcSbacCoders[uiSubStrm].loadContexts( &m_pcBufferSbacCoders[uiTileCol] );
           }
