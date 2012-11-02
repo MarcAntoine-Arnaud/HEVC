@@ -124,10 +124,12 @@
 // ====================================================================================================================
 // Macro functions
 // ====================================================================================================================
-extern Int g_maxLumaVal;
+extern Int g_bitDepthY;
+extern Int g_bitDepthC;
 
 /** clip x, such that 0 <= x <= #g_maxLumaVal */
-template <typename T> inline T Clip(T x) { return std::min<T>(T(g_maxLumaVal), std::max<T>( T(0), x)); }
+template <typename T> inline T ClipY(T x) { return std::min<T>(T((1 << g_bitDepthY)-1), std::max<T>( T(0), x)); }
+template <typename T> inline T ClipC(T x) { return std::min<T>(T((1 << g_bitDepthC)-1), std::max<T>( T(0), x)); }
 
 /** clip a, such that minVal <= a <= maxVal */
 template <typename T> inline T Clip3( T minVal, T maxVal, T a) { return std::min<T> (std::max<T> (minVal, a) , maxVal); }  ///< general min/max clip
