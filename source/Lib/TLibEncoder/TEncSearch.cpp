@@ -2827,13 +2827,13 @@ Void TEncSearch::xEncPCM (TComDataCU* pcCU, UInt uiAbsPartIdx, Pel* piOrg, Pel* 
   Pel* pResi = piResi;
   Pel* pReco = piReco;
   Pel* pRecoPic;
-  UInt uiPCMBitDepth;
+  Int shiftPcm;
 
   if( eText == TEXT_LUMA)
   {
     uiReconStride = pcCU->getPic()->getPicYuvRec()->getStride();
     pRecoPic      = pcCU->getPic()->getPicYuvRec()->getLumaAddr(pcCU->getAddr(), pcCU->getZorderIdxInCU()+uiAbsPartIdx);
-    uiPCMBitDepth = pcCU->getSlice()->getSPS()->getPCMBitDepthLuma();
+    shiftPcm = g_bitDepthY - pcCU->getSlice()->getSPS()->getPCMBitDepthLuma();
   }
   else
   {
@@ -2847,7 +2847,7 @@ Void TEncSearch::xEncPCM (TComDataCU* pcCU, UInt uiAbsPartIdx, Pel* piOrg, Pel* 
     {
       pRecoPic = pcCU->getPic()->getPicYuvRec()->getCrAddr(pcCU->getAddr(), pcCU->getZorderIdxInCU()+uiAbsPartIdx);
     }
-    uiPCMBitDepth = pcCU->getSlice()->getSPS()->getPCMBitDepthChroma();
+    shiftPcm = g_bitDepthC - pcCU->getSlice()->getSPS()->getPCMBitDepthChroma();
   }
 
   // Reset pred and residual
@@ -2867,7 +2867,7 @@ Void TEncSearch::xEncPCM (TComDataCU* pcCU, UInt uiAbsPartIdx, Pel* piOrg, Pel* 
   {
     for( uiX = 0; uiX < uiWidth; uiX++ )
     {
-      pPCM[uiX] = (pOrg[uiX]>>(g_bitDepth - uiPCMBitDepth));
+      pPCM[uiX] = pOrg[uiX]>> shiftPcm;
     }
     pPCM += uiWidth;
     pOrg += uiStride;
@@ -2880,7 +2880,7 @@ Void TEncSearch::xEncPCM (TComDataCU* pcCU, UInt uiAbsPartIdx, Pel* piOrg, Pel* 
   {
     for( uiX = 0; uiX < uiWidth; uiX++ )
     {
-      pReco   [uiX] = (pPCM[uiX]<<(g_bitDepth - uiPCMBitDepth));
+      pReco   [uiX] = pPCM[uiX]<< shiftPcm;
       pRecoPic[uiX] = pReco[uiX];
     }
     pPCM += uiWidth;
