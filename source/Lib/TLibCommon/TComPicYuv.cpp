@@ -223,28 +223,6 @@ Void  TComPicYuv::copyToPicCr (TComPicYuv*  pcPicYuvDst)
   return;
 }
 
-
-Void TComPicYuv::getLumaMinMax( Int *pMin, Int *pMax )
-{
-  Pel*  piY   = getLumaAddr();
-  Int   iMin  = (1<<g_bitDepth) - 1;
-  Int   iMax  = 0;
-  Int   x, y;
-  
-  for ( y = 0; y < m_iPicHeight; y++ )
-  {
-    for ( x = 0; x < m_iPicWidth; x++ )
-    {
-      if ( piY[x] < iMin ) iMin = piY[x];
-      if ( piY[x] > iMax ) iMax = piY[x];
-    }
-    piY += getStride();
-  }
-  
-  *pMin = iMin;
-  *pMax = iMax;
-}
-
 Void TComPicYuv::extendPicBorder ()
 {
   if ( m_bIsBorderExtended ) return;

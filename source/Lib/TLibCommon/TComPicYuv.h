@@ -117,8 +117,6 @@ public:
   Int   getLumaMargin   () { return m_iLumaMarginX;  }
   Int   getChromaMargin () { return m_iChromaMarginX;}
   
-  Void  getLumaMinMax( Int* pMin, Int* pMax );
-  
   // ------------------------------------------------------------------------------------------------
   //  Access function for picture buffer
   // ------------------------------------------------------------------------------------------------
