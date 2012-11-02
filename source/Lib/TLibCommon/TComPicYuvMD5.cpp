@@ -83,9 +83,8 @@ static void md5_plane(MD5& md5, const Pel* plane, unsigned width, unsigned heigh
   }
 }
 
-void compCRC(const Pel* plane, unsigned int width, unsigned int height, unsigned int stride, unsigned char digest[16])
+static void compCRC(int bitdepth, const Pel* plane, unsigned int width, unsigned int height, unsigned int stride, unsigned char digest[16])
 {
-  unsigned int bitdepth = g_bitDepth;
   unsigned int dataMsbIdx = bitdepth - 1;
   unsigned int crcMsb;
   unsigned int bitVal;
@@ -119,20 +118,18 @@ void calcCRC(TComPicYuv& pic, unsigned char digest[3][16])
   unsigned height = pic.getHeight();
   unsigned stride = pic.getStride();
 
-  compCRC(pic.getLumaAddr(), width, height, stride, digest[0]);
+  compCRC(g_bitDepthY, pic.getLumaAddr(), width, height, stride, digest[0]);
 
   width >>= 1;
   height >>= 1;
   stride >>= 1;
 
-  compCRC(pic.getCbAddr(), width, height, stride, digest[1]);
-  compCRC(pic.getCrAddr(), width, height, stride, digest[2]);
+  compCRC(g_bitDepthC, pic.getCbAddr(), width, height, stride, digest[1]);
+  compCRC(g_bitDepthC, pic.getCrAddr(), width, height, stride, digest[2]);
 }
 
-void compChecksum(const Pel* plane, unsigned int width, unsigned int height, unsigned int stride, unsigned char digest[16])
+static void compChecksum(int bitdepth, const Pel* plane, unsigned int width, unsigned int height, unsigned int stride, unsigned char digest[16])
 {
-  unsigned int bitdepth = g_bitDepth;
-
   unsigned int checksum = 0;
   unsigned char xor_mask;
 
@@ -162,14 +159,14 @@ void calcChecksum(TComPicYuv& pic, unsigned char digest[3][16])
   unsigned height = pic.getHeight();
   unsigned stride = pic.getStride();
 
-  compChecksum(pic.getLumaAddr(), width, height, stride, digest[0]);
+  compChecksum(g_bitDepthY, pic.getLumaAddr(), width, height, stride, digest[0]);
 
   width >>= 1;
   height >>= 1;
   stride >>= 1;
 
-  compChecksum(pic.getCbAddr(), width, height, stride, digest[1]);
-  compChecksum(pic.getCrAddr(), width, height, stride, digest[2]);
+  compChecksum(g_bitDepthC, pic.getCbAddr(), width, height, stride, digest[1]);
+  compChecksum(g_bitDepthC, pic.getCrAddr(), width, height, stride, digest[2]);
 }
 /**
  * Calculate the MD5sum of pic, storing the result in digest.
@@ -180,11 +177,10 @@ void calcChecksum(TComPicYuv& pic, unsigned char digest[3][16])
  */
 void calcMD5(TComPicYuv& pic, unsigned char digest[3][16])
 {
-  unsigned bitdepth = g_bitDepth;
   /* choose an md5_plane packing function based on the system bitdepth */
   typedef void (*MD5PlaneFunc)(MD5&, const Pel*, unsigned, unsigned, unsigned);
   MD5PlaneFunc md5_plane_func;
-  md5_plane_func = bitdepth <= 8 ? (MD5PlaneFunc)md5_plane<1> : (MD5PlaneFunc)md5_plane<2>;
+  md5_plane_func = g_bitDepthY <= 8 ? (MD5PlaneFunc)md5_plane<1> : (MD5PlaneFunc)md5_plane<2>;
 
   MD5 md5Y, md5U, md5V;
   unsigned width = pic.getWidth();
@@ -194,6 +190,7 @@ void calcMD5(TComPicYuv& pic, unsigned char digest[3][16])
   md5_plane_func(md5Y, pic.getLumaAddr(), width, height, stride);
   md5Y.finalize(digest[0]);
 
+  md5_plane_func = g_bitDepthC <= 8 ? (MD5PlaneFunc)md5_plane<1> : (MD5PlaneFunc)md5_plane<2>;
   width >>= 1;
   height >>= 1;
   stride >>= 1;
