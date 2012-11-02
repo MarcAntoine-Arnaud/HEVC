@@ -361,7 +361,7 @@ Void TAppEncTop::encode()
     // increase number of received frames
     m_iFrameRcvd++;
     
-    bEos = m_iFrameRcvd == m_iFrameToBeEncoded;
+    bEos = (m_iFrameRcvd == m_iFrameToBeEncoded);
 
     bool flush = 0;
     // if end of file (which is only detected on a read failure) flush the encoder of any queued pictures
