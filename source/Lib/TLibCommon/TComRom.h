@@ -62,7 +62,6 @@
 Void         initROM();
 Void         destroyROM();
 Void         initSigLastScan(UInt* pBuffZ, UInt* pBuffH, UInt* pBuffV, UInt* pBuffD, Int iWidth, Int iHeight, Int iDepth);
-Void         initNonSquareSigLastScan(UInt* pBuffZ, UInt uiWidth, UInt uiHeight);
 // ====================================================================================================================
 // Data structure related table & variable
 // ====================================================================================================================
@@ -70,12 +69,16 @@ Void         initNonSquareSigLastScan(UInt* pBuffZ, UInt uiWidth, UInt uiHeight)
 // flexible conversion from relative to absolute index
 extern       UInt   g_auiZscanToRaster[ MAX_NUM_SPU_W*MAX_NUM_SPU_W ];
 extern       UInt   g_auiRasterToZscan[ MAX_NUM_SPU_W*MAX_NUM_SPU_W ];
+#if !LINEBUF_CLEANUP
 extern       UInt   g_motionRefer[ MAX_NUM_SPU_W*MAX_NUM_SPU_W ];
+#endif
 
 Void         initZscanToRaster ( Int iMaxDepth, Int iDepth, UInt uiStartVal, UInt*& rpuiCurrIdx );
 Void         initRasterToZscan ( UInt uiMaxCUWidth, UInt uiMaxCUHeight, UInt uiMaxDepth         );
 
+#if !LINEBUF_CLEANUP
 Void          initMotionReferIdx ( UInt uiMaxCUWidth, UInt uiMaxCUHeight, UInt uiMaxDepth );
+#endif
 
 // conversion of partition index to picture pel position
 extern       UInt   g_auiRasterToPelX[ MAX_NUM_SPU_W*MAX_NUM_SPU_W ];
@@ -121,8 +124,6 @@ extern const UChar  g_aucChromaScale      [58];
 
 extern       UInt*  g_auiSigLastScan[4][ MAX_CU_DEPTH ];  // raster index from scanning index (zigzag, hor, ver, diag)
 
-extern       UInt*  g_auiNonSquareSigLastScan[ 4 ];      // raster index from scanning index (zigzag)
-
 extern const UInt   g_uiGroupIdx[ 32 ];
 extern const UInt   g_uiMinInGroup[ 10 ];
 
@@ -150,10 +151,8 @@ extern const UChar g_aucAngIntraModeOrder[NUM_INTRA_MODE];
 // Bit-depth
 // ====================================================================================================================
 
-extern       UInt g_uiBitDepth;
-extern       UInt g_uiBitIncrement;
-extern       UInt g_uiIBDI_MAX;
-extern       UInt g_uiBASE_MAX;
+extern        Int g_bitDepth;
+extern        Int g_maxLumaVal;
 extern       UInt g_uiPCMBitDepthLuma;
 extern       UInt g_uiPCMBitDepthChroma;
 
@@ -176,7 +175,7 @@ extern const UChar g_aucDCTDSTMode_Hor[NUM_INTRA_MODE];
 
 extern       Char   g_aucConvertToBit  [ MAX_CU_SIZE+1 ];   // from width to log2(width)-2
 
-#define ENC_DEC_TRACE 0
+#define ENC_DEC_TRACE 1
 
 
 #if ENC_DEC_TRACE
@@ -218,13 +217,6 @@ extern UInt64 g_nSymbolCounter;
 #define MAX_MATRIX_COEF_NUM 64     ///< max coefficient number for quantization matrix
 #define MAX_MATRIX_SIZE_NUM 8      ///< max size number for quantization matrix
 #define SCALING_LIST_DC 16         ///< default DC value
-enum ScalingListDIR
-{
-  SCALING_LIST_SQT = 0,
-  SCALING_LIST_VER,
-  SCALING_LIST_HOR,
-  SCALING_LIST_DIR_NUM
-};
 enum ScalingListSize
 {
   SCALING_LIST_4x4 = 0,
@@ -283,11 +275,15 @@ static const char MatrixType_DC[4][12][22] =
   "INTER32X32_LUMA_DC",
   },
 };
+#if !FLAT_4x4_DSL
 extern Int g_quantIntraDefault4x4[16];
+#endif
 extern Int g_quantIntraDefault8x8[64];
 extern Int g_quantIntraDefault16x16[256];
 extern Int g_quantIntraDefault32x32[1024];
+#if !FLAT_4x4_DSL
 extern Int g_quantInterDefault4x4[16];
+#endif
 extern Int g_quantInterDefault8x8[64];
 extern Int g_quantInterDefault16x16[256];
 extern Int g_quantInterDefault32x32[1024];

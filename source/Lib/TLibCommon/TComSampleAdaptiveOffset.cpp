@@ -171,9 +171,8 @@ Void TComSampleAdaptiveOffset::create( UInt uiSourceWidth, UInt uiSourceHeight, 
    * m_iNumTotalParts must allow for sufficient storage in any allocated arrays */
   m_iNumTotalParts  = max(3,m_aiNumCulPartsLevel[m_uiMaxSplitLevel]);
 
-  UInt uiInternalBitDepth = g_uiBitDepth+g_uiBitIncrement;
-  UInt uiPixelRange = 1<<uiInternalBitDepth;
-  UInt uiBoRangeShift = uiInternalBitDepth - SAO_BO_BITS;
+  UInt uiPixelRange = 1 << g_bitDepth;
+  UInt uiBoRangeShift = g_bitDepth - SAO_BO_BITS;
 
   m_lumaTableBo = new Pel [uiPixelRange];
   for (Int k2=0; k2<uiPixelRange; k2++)
@@ -189,7 +188,7 @@ Void TComSampleAdaptiveOffset::create( UInt uiSourceWidth, UInt uiSourceHeight, 
   m_iUpBufft++;
   Pel i;
 
-  UInt uiMaxY  = g_uiIBDI_MAX;
+  UInt uiMaxY  = g_maxLumaVal;
   UInt uiMinY  = 0;
 
   Int iCRangeExt = uiMaxY>>1;
@@ -986,11 +985,7 @@ Void TComSampleAdaptiveOffset::SAOProcess(TComPic* pcPic, SAOParam* pcSaoParam)
 {
   if (pcSaoParam->bSaoFlag[0] || pcSaoParam->bSaoFlag[1])
   {
-#if FULL_NBIT
-    m_uiSaoBitIncrease = g_uiBitDepth + (g_uiBitDepth-8) - min((Int)(g_uiBitDepth + (g_uiBitDepth-8)), 10);
-#else
-    m_uiSaoBitIncrease = g_uiBitDepth + g_uiBitIncrement - min((Int)(g_uiBitDepth + g_uiBitIncrement), 10);
-#endif
+    m_uiSaoBitIncrease = max(g_bitDepth - 10, 0);
 
     if(m_bUseNIF)
     {
@@ -1143,11 +1138,7 @@ Void TComSampleAdaptiveOffset::processSaoUnitAll(SaoLcuParam* saoLcuParam, Bool 
 
             ppLumaTable = m_lumaTableBo;
 
-#if FULL_NBIT
-            for (i=0;i<(1<<(g_uiBitDepth));i++)
-#else
-            for (i=0;i<(1<<(g_uiBitIncrement+8));i++)
-#endif
+            for (i=0;i<(1<<g_bitDepth);i++)
             {
               m_iOffsetBo[i] = m_pClipTable[i + offset[ppLumaTable[i]]];
             }
@@ -1410,13 +1401,13 @@ Void TComSampleAdaptiveOffset::xPCMSampleRestoration (TComDataCU* pcCU, UInt uiA
     uiStride  = pcPicYuvRec->getStride();
     uiWidth  = (g_uiMaxCUWidth >> uiDepth);
     uiHeight = (g_uiMaxCUHeight >> uiDepth);
-    if ( pcCU->isLosslessCoded(uiAbsZorderIdx) )
+    if ( pcCU->isLosslessCoded(uiAbsZorderIdx) && !pcCU->getIPCMFlag(uiAbsZorderIdx) )
     {
       uiPcmLeftShiftBit = 0;
     }
     else
     {
-        uiPcmLeftShiftBit = g_uiBitDepth + g_uiBitIncrement - pcCU->getSlice()->getSPS()->getPCMBitDepthLuma();
+      uiPcmLeftShiftBit = g_bitDepth - pcCU->getSlice()->getSPS()->getPCMBitDepthLuma();
     }
   }
   else
@@ -1435,13 +1426,13 @@ Void TComSampleAdaptiveOffset::xPCMSampleRestoration (TComDataCU* pcCU, UInt uiA
     uiStride = pcPicYuvRec->getCStride();
     uiWidth  = ((g_uiMaxCUWidth >> uiDepth)/2);
     uiHeight = ((g_uiMaxCUWidth >> uiDepth)/2);
-    if ( pcCU->isLosslessCoded(uiAbsZorderIdx) )
+    if ( pcCU->isLosslessCoded(uiAbsZorderIdx) && !pcCU->getIPCMFlag(uiAbsZorderIdx) )
     {
       uiPcmLeftShiftBit = 0;
     }
     else
     {
-      uiPcmLeftShiftBit = g_uiBitDepth + g_uiBitIncrement - pcCU->getSlice()->getSPS()->getPCMBitDepthChroma();
+      uiPcmLeftShiftBit = g_bitDepth - pcCU->getSlice()->getSPS()->getPCMBitDepthChroma();
     }
   }
 

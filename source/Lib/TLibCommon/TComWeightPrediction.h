@@ -53,12 +53,11 @@
 class TComWeightPrediction
 {
   wpScalingParam  m_wp0[3], m_wp1[3];
-  Int             m_ibdi;
 
 public:
   TComWeightPrediction();
 
-  Void  getWpScaling( TComDataCU* pcCU, Int iRefIdx0, Int iRefIdx1, wpScalingParam *&wp0 , wpScalingParam *&wp1 , Int ibdi=(g_uiBitDepth+g_uiBitIncrement));
+  Void  getWpScaling( TComDataCU* pcCU, Int iRefIdx0, Int iRefIdx1, wpScalingParam *&wp0 , wpScalingParam *&wp1 , Int bitDepth=g_bitDepth);
 
   Void  addWeightBi( TComYuv* pcYuvSrc0, TComYuv* pcYuvSrc1, UInt iPartUnitIdx, UInt iWidth, UInt iHeight, wpScalingParam *wp0, wpScalingParam *wp1, TComYuv* rpcYuvDst, Bool bRound=true );
   Void  addWeightUni( TComYuv* pcYuvSrc0, UInt iPartUnitIdx, UInt iWidth, UInt iHeight, wpScalingParam *wp0, TComYuv* rpcYuvDst );
@@ -74,7 +73,7 @@ public:
 
 inline  Pel TComWeightPrediction::xClip( Int x )
 { 
-  Int max = (Int)g_uiIBDI_MAX;
+  Int max = g_maxLumaVal;
   Pel pel = (Pel)( (x < 0) ? 0 : (x > max) ? max : x );
   return( pel );
 }

@@ -112,13 +112,6 @@ Void TComPrediction::initTempBuff()
       m_pLumaRecBuffer = new Pel[ m_iLumaRecStride * m_iLumaRecStride ];
     }
   }
-
-  Int shift = g_uiBitDepth + g_uiBitIncrement + 4;
-
-  for( Int i = 32; i < 64; i++ )
-  {
-    m_uiaShift[i-32] = ( ( 1 << shift ) + i/2 ) / i;
-  }
 }
 
 // ====================================================================================================================
@@ -356,12 +349,23 @@ Void TComPrediction::predIntraLumaAng(TComPattern* pcTComPattern, UInt uiDirMode
   }
   else
   {
-    xPredIntraAng( ptrSrc+sw+1, sw, pDst, uiStride, iWidth, iHeight, uiDirMode, bAbove, bLeft, true );
-
-    if( (uiDirMode == DC_IDX ) && bAbove && bLeft )
+#if RESTRICT_INTRA_BOUNDARY_SMOOTHING
+    if ( (iWidth > 16) || (iHeight > 16) )
     {
-      xDCPredFiltering( ptrSrc+sw+1, sw, pDst, uiStride, iWidth, iHeight);
+      xPredIntraAng( ptrSrc+sw+1, sw, pDst, uiStride, iWidth, iHeight, uiDirMode, bAbove, bLeft, false );
     }
+    else
+    {
+#endif
+      xPredIntraAng( ptrSrc+sw+1, sw, pDst, uiStride, iWidth, iHeight, uiDirMode, bAbove, bLeft, true );
+
+      if( (uiDirMode == DC_IDX ) && bAbove && bLeft )
+      {
+        xDCPredFiltering( ptrSrc+sw+1, sw, pDst, uiStride, iWidth, iHeight);
+      }
+#if RESTRICT_INTRA_BOUNDARY_SMOOTHING
+    }
+#endif
   }
 }
 

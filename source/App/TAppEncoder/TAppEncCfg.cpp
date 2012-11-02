@@ -134,6 +134,80 @@ std::istringstream &operator>>(std::istringstream &in, GOPEntry &entry)     //in
   return in;
 }
 
+static const struct MapStrToProfile {
+  const char* str;
+  Profile::Name value;
+} strToProfile[] = {
+  {"none", Profile::NONE},
+  {"main", Profile::MAIN},
+  {"main10", Profile::MAIN10},
+  {"main-still-picture", Profile::MAINSTILLPICTURE},
+};
+
+static const struct MapStrToTier {
+  const char* str;
+  Level::Tier value;
+} strToTier[] = {
+  {"main", Level::MAIN},
+  {"high", Level::HIGH},
+};
+
+static const struct MapStrToLevel {
+  const char* str;
+  Level::Name value;
+} strToLevel[] = {
+  {"none",Level::NONE},
+  {"1",   Level::LEVEL1},
+  {"2",   Level::LEVEL2},
+  {"2.1", Level::LEVEL2_1},
+  {"3",   Level::LEVEL3},
+  {"3.1", Level::LEVEL3_1},
+  {"4",   Level::LEVEL4},
+  {"4.1", Level::LEVEL4_1},
+  {"5",   Level::LEVEL5},
+  {"5.1", Level::LEVEL5_1},
+  {"5.2", Level::LEVEL5_2},
+  {"6",   Level::LEVEL6},
+  {"6.1", Level::LEVEL6_1},
+  {"6.2", Level::LEVEL6_2},
+};
+
+template<typename T, typename P>
+istream& readStrToEnum(P map[], unsigned long mapLen, istream &in, T &val)
+{
+  string str;
+  in >> str;
+
+  for (int i = 0; i < mapLen; i++)
+  {
+    if (str == map[i].str)
+    {
+      val = map[i].value;
+      goto found;
+    }
+  }
+  /* not found */
+  in.setstate(ios::failbit);
+found:
+  return in;
+}
+
+istream& operator>>(istream &in, Profile::Name &profile)
+{
+  return readStrToEnum(strToProfile, sizeof(strToProfile)/sizeof(*strToProfile), in, profile);
+}
+
+istream& operator>>(istream &in, Level::Tier &tier)
+{
+  return readStrToEnum(strToTier, sizeof(strToTier)/sizeof(*strToTier), in, tier);
+}
+
+istream& operator>>(istream &in, Level::Name &level)
+{
+  return readStrToEnum(strToLevel, sizeof(strToLevel)/sizeof(*strToLevel), in, level);
+}
+
+
 // ====================================================================================================================
 // Public member functions
 // ====================================================================================================================
@@ -167,7 +241,8 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
   ("InputBitDepth",         m_uiInputBitDepth,    8u, "Bit-depth of input file")
   ("BitDepth",              m_uiInputBitDepth,    8u, "Deprecated alias of InputBitDepth")
   ("OutputBitDepth",        m_uiOutputBitDepth,   0u, "Bit-depth of output file")
-  ("InternalBitDepth",      m_uiInternalBitDepth, 0u, "Internal bit-depth (BitDepth+BitIncrement)")
+  ("InternalBitDepth",      m_uiInternalBitDepth, 0u, "Bit-depth the codec operates at."
+                                                      "If different to InputBitDepth, source data will be converted")
   ("CroppingMode",          m_croppingMode,        0, "Cropping mode (0: no cropping, 1:automatic padding, 2: padding, 3:cropping")
   ("HorizontalPadding,-pdx",m_aiPad[0],            0, "Horizontal source padding for cropping mode 2")
   ("VerticalPadding,-pdy",  m_aiPad[1],            0, "Vertical source padding for cropping mode 2")
@@ -179,6 +254,11 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
   ("FrameSkip,-fs",         m_FrameSkip,          0u, "Number of frames to skip at start of input YUV")
   ("FramesToBeEncoded,f",   m_iFrameToBeEncoded,   0, "Number of frames to be encoded (default=all)")
   
+  // Profile and level
+  ("Profile", m_profile,   Profile::NONE, "Profile to be used when encoding (Incomplete)")
+  ("Level",   m_level,     Level::NONE,   "Level limit to be used, eg 5.1 (Incomplete)")
+  ("Tier",    m_levelTier, Level::MAIN,   "Tier to use for interpretation of --Level")
+
   // Unit definition parameters
   ("MaxCUWidth",              m_uiMaxCUWidth,             64u)
   ("MaxCUHeight",             m_uiMaxCUHeight,            64u)
@@ -231,8 +311,10 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
   ("AdaptiveQP,-aq",                m_bUseAdaptiveQP,           false, "QP adaptation based on a psycho-visual model")
   ("MaxQPAdaptationRange,-aqr",     m_iQPAdaptationRange,           6, "QP adaptation range")
   ("dQPFile,m",                     cfg_dQPFile,           string(""), "dQP file name")
-  ("RDOQ",                          m_bUseRDOQ,                  true )
-  
+  ("RDOQ",                          m_useRDOQ,                  true )
+#if RDOQ_TRANSFORMSKIP
+  ("RDOQTS",                        m_useRDOQTS,                true )
+#endif  
   // Entropy coding parameters
   ("SBACRD",                         m_bUseSBACRD,                      true, "SBAC based RD estimation")
   
@@ -255,7 +337,7 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
     ("SliceArgument",        m_iSliceArgument,       0, "if SliceMode==1 SliceArgument represents max # of LCUs. if SliceMode==2 SliceArgument represents max # of bytes.")
     ("DependentSliceMode",     m_iDependentSliceMode,    0, "0: Disable all dependent slice limits, 1: Enforce max # of LCUs, 2: Enforce constraint based dependent slices")
     ("DependentSliceArgument", m_iDependentSliceArgument,0, "if DependentSliceMode==1 SliceArgument represents max # of LCUs. if DependentSliceMode==2 DependentSliceArgument represents max # of bins.")
-#if DEPENDENT_SLICES
+#if DEPENDENT_SLICES && !REMOVE_ENTROPY_SLICES
     ("EntropySliceEnabledFlag", m_entropySliceEnabledFlag, false, "Enable use of entropy slices instead of dependent slices." )
 #endif
     ("LFCrossSliceBoundaryFlag", m_bLFCrossSliceBoundaryFlag, true)
@@ -302,6 +384,9 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
   ("TransquantBypassEnableFlag", m_TransquantBypassEnableFlag, false, "transquant_bypass_enable_flag indicator in PPS")
   ("CUTransquantBypassFlagValue", m_CUTransquantBypassFlagValue, false, "Fixed cu_transquant_bypass_flag value, when transquant_bypass_enable_flag is enabled")
   ("RecalculateQPAccordingToLambda", m_recalculateQPAccordingToLambda, false, "Recalculate QP values according to lambda values. Do not suggest to be enabled in all intra case")
+#if STRONG_INTRA_SMOOTHING
+  ("StrongIntraSmoothing,-sis",      m_useStrongIntraSmoothing,           true, "Enable strong intra smoothing for 32x32 blocks")
+#endif
   ("ActiveParameterSets", m_activeParameterSetsSEIEnabled, 0, "Control generation of active parameter sets SEI messages\n"
                                                               "\t2: enable active parameter sets SEI message with active_sps_id\n"
                                                               "\t1: enable active parameter sets SEI message without active_sps_id\n"
@@ -577,7 +662,7 @@ Void TAppEncCfg::xCheckParameter()
 #if !DEPENDENT_SLICES
   xConfirmPara( m_iWaveFrontSynchro && m_iDependentSliceMode, "Wavefront and Dependent Slice can not be applied together");
 #endif
-#if DEPENDENT_SLICES
+#if DEPENDENT_SLICES && !REMOVE_ENTROPY_SLICES
   xConfirmPara( m_iWaveFrontSynchro && m_entropySliceEnabledFlag, "WaveFrontSynchro and EntropySliceEnabledFlag can not be applied together");
 #endif
 
@@ -607,6 +692,15 @@ Void TAppEncCfg::xCheckParameter()
     ui >>= 1;
     if( (ui & 1) == 1)
       xConfirmPara( ui != 1 , "Height should be 2^n");
+  }
+
+  /* if this is an intra-only sequence, ie IntraPeriod=1, don't verify the GOP structure
+   * This permits the ability to omit a GOP structure specification */
+  if (m_iIntraPeriod == 1 && m_GOPList[0].m_POC == -1) {
+    m_GOPList[0] = GOPEntry();
+    m_GOPList[0].m_QPFactor = 1;
+    m_GOPList[0].m_POC = 1;
+    m_GOPList[0].m_numRefPicsActive = 4;
   }
   
   Bool verifiedGOP=false;
@@ -941,21 +1035,8 @@ Void TAppEncCfg::xSetGlobal()
   g_uiMaxCUDepth = m_uiMaxCUDepth;
   
   // set internal bit-depth and constants
-#if FULL_NBIT
-  g_uiBitDepth = m_uiInternalBitDepth;
-  g_uiBitIncrement = 0;
-#else
-  g_uiBitDepth = 8;
-  g_uiBitIncrement = m_uiInternalBitDepth - g_uiBitDepth;
-#endif
-
-  g_uiBASE_MAX     = ((1<<(g_uiBitDepth))-1);
-  
-#if IBDI_NOCLIP_RANGE
-  g_uiIBDI_MAX     = g_uiBASE_MAX << g_uiBitIncrement;
-#else
-  g_uiIBDI_MAX     = ((1<<(g_uiBitDepth+g_uiBitIncrement))-1);
-#endif
+  g_bitDepth = m_uiInternalBitDepth;
+  g_maxLumaVal = (1 << g_bitDepth) - 1;
   
   if (m_uiOutputBitDepth == 0)
   {
@@ -1003,10 +1084,13 @@ Void TAppEncCfg::xPrintParameter()
   printf("\n");
   
   printf("TOOL CFG: ");
-  printf("IBD:%d ", !!g_uiBitIncrement);
+  printf("IBD:%d ", g_bitDepth > m_uiInputBitDepth);
   printf("HAD:%d ", m_bUseHADME           );
   printf("SRD:%d ", m_bUseSBACRD          );
-  printf("RDQ:%d ", m_bUseRDOQ            );
+  printf("RDQ:%d ", m_useRDOQ            );
+#if RDOQ_TRANSFORMSKIP
+  printf("RDQTS:%d ", m_useRDOQTS        );
+#endif
   printf("SQP:%d ", m_uiDeltaQpRD         );
   printf("ASR:%d ", m_bUseASR             );
   printf("LComb:%d ", m_bUseLComb         );

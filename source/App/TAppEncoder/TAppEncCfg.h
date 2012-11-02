@@ -71,6 +71,11 @@ protected:
   Int       m_iFrameToBeEncoded;                              ///< number of encoded frames
   Int       m_aiPad[2];                                       ///< number of padded pixels for width and height
   
+  // profile/level
+  Profile::Name m_profile;
+  Level::Tier   m_levelTier;
+  Level::Name   m_level;
+
   // coding structure
   Int       m_iIntraPeriod;                                   ///< period of I-slice (random access period)
   Int       m_iDecodingRefreshType;                           ///< random access type
@@ -119,7 +124,7 @@ protected:
   // coding tools (bit-depth)
   UInt      m_uiInputBitDepth;                                ///< bit-depth of input file
   UInt      m_uiOutputBitDepth;                               ///< bit-depth of output file
-  UInt      m_uiInternalBitDepth;                             ///< Internal bit-depth (BitDepth+BitIncrement)
+  UInt      m_uiInternalBitDepth;                             ///< bit-depth codec operates at (input/output files will be converted)
 
   // coding tools (PCM bit-depth)
   Bool      m_bPCMInputBitDepthFlag;                          ///< 0: PCM bit-depth is internal bit-depth. 1: PCM bit-depth is input bit-depth.
@@ -148,7 +153,10 @@ protected:
   Bool      m_bUseSBACRD;                                     ///< flag for using RD optimization based on SBAC
   Bool      m_bUseASR;                                        ///< flag for using adaptive motion search range
   Bool      m_bUseHADME;                                      ///< flag for using HAD in sub-pel ME
-  Bool      m_bUseRDOQ;                                       ///< flag for using RD optimized quantization
+  Bool      m_useRDOQ;                                       ///< flag for using RD optimized quantization
+#if RDOQ_TRANSFORMSKIP
+  Bool      m_useRDOQTS;                                     ///< flag for using RD optimized quantization for transform skip
+#endif
   Int       m_iFastSearch;                                    ///< ME mode, 0 = full, 1 = diamond, 2 = PMVFAST
   Int       m_iSearchRange;                                   ///< ME search range
   Int       m_bipredSearchRange;                              ///< ME search range for bipred refinement
@@ -161,7 +169,7 @@ protected:
   Int       m_iSliceArgument;       ///< If m_iSliceMode==1, m_iSliceArgument=max. # of largest coding units. If m_iSliceMode==2, m_iSliceArgument=max. # of bytes.
   Int       m_iDependentSliceMode;    ///< 0: Disable all dependent slice limits, 1 : Maximum number of largest coding units per slice, 2: Constraint based dependent slice
   Int       m_iDependentSliceArgument;///< If m_iDependentSliceMode==1, m_iEDependentSliceArgument=max. # of largest coding units. If m_iDependnetSliceMode==2, m_iDependnetSliceArgument=max. # of bins.
-#if DEPENDENT_SLICES
+#if DEPENDENT_SLICES && !REMOVE_ENTROPY_SLICES
   Bool      m_entropySliceEnabledFlag;
 #endif
 
@@ -200,6 +208,9 @@ protected:
   Bool      m_CUTransquantBypassFlagValue;                    ///< if transquant_bypass_enable_flag, the fixed value to use for the per-CU cu_transquant_bypass_flag.
 
   Bool      m_recalculateQPAccordingToLambda;                 ///< recalculate QP value according to the lambda value
+#if STRONG_INTRA_SMOOTHING
+  Bool      m_useStrongIntraSmoothing;                        ///< enable strong intra smoothing for 32x32 blocks where the reference samples are flat
+#endif
   Int       m_activeParameterSetsSEIEnabled;
 
   Bool      m_vuiParametersPresentFlag;                       ///< enable generation of VUI parameters

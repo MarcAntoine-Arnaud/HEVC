@@ -38,12 +38,33 @@
 #ifndef _TYPEDEF__
 #define _TYPEDEF__
 
-
-
 //! \ingroup TLibCommon
 //! \{
+#define SAVE_BITS_REFPICLIST_MOD_FLAG               1  ///< K0224 Proposal#1: Send ref_pic_list_modification_flag_lX only when NumPocTotalCurr is greater than 1.
+
+#define USE_PIC_CHROMA_QP_OFFSETS_IN_DEBLOCKING     1  ///< K0220: Use picture-based chroma QP offsets in deblocking filter.
+
+#define REMOVE_BURST_IPCM                1  /// Ticket763
+#define REMOVE_ENTROPY_SLICES 1
+
+#define DEPENDENT_SLICE_SEGMENT_FLAGS   1   ///< K0184: Move dependent_slice_enabled_flag after seq_parameter_set_id in PPS.
+                                            ///< Move dependent_slice_flag between pic_parameter_set_id and slice_address.
+#define SPS_INTER_REF_SET_PRED      1   ///< K0136: Not send inter_ref_pic_set_prediction_flag for index 0
+#define HM9_NALU_TYPES 1
+
+#define STRONG_INTRA_SMOOTHING           1  ///< Enables Bilinear interploation of reference samples instead of 121 filter in intra prediction when reference samples are flat.
+
+#define RESTRICT_INTRA_BOUNDARY_SMOOTHING    1  ///< K0380, K0186 
+#define LINEBUF_CLEANUP               1 ///< K0101
+#define MERGE_CLEANUP_AND_K0197     1  //<Code cleanup and K0197: removal of indirect use of A1 and B1 in merging candidate list construction.
+#define RPL_INIT_FIX 1 ///< K0255 2nd part (editorial)
+
 #define MAX_CPB_CNT                     32  ///< Upper bound of (cpb_cnt_minus1 + 1)
 #define MAX_NUM_LAYER_IDS                64
+
+#define FLAT_4x4_DSL 1 ///< Use flat 4x4 default scaling list (see notes on K0203)
+
+#define RDOQ_TRANSFORMSKIP          1   // Enable RDOQ for transform skip (see noted on K0245)
 
 #define COEF_REMAIN_BIN_REDUCTION        3 ///< indicates the level at which the VLC 
                                            ///< transitions from Golomb-Rice to TU+EG(k)
@@ -70,6 +91,7 @@
 #define SAO_ENCODING_CHOICE_CHROMA       1 ///< J0044: picture early termination Luma and Chroma are handled separatenly
 #if SAO_ENCODING_CHOICE_CHROMA
 #define SAO_ENCODING_RATE_CHROMA         0.5
+#define SAO_ENCODING_CHOICE_CHROMA_BF    1 ///  K0156: Bug fix for SAO selection consistency
 #endif
 #endif
 
@@ -98,6 +120,8 @@
 
 #define NS_HAD                               0
 
+#define K0251                             1           ///< explicitly signal slice_temporal_mvp_enable_flag in non-IDR I Slices
+
 #define HHI_RQT_INTRA_SPEEDUP             1           ///< tests one best mode with full rqt
 #define HHI_RQT_INTRA_SPEEDUP_MOD         0           ///< tests two best modes with full rqt
 
@@ -121,9 +145,6 @@
 #define LM_CHROMA_IDX  35
 #endif
 
-#define IBDI_DISTORTION                0           ///< enable/disable SSE modification when IBDI is used (JCTVC-D152)
-#define FIXED_ROUNDING_FRAME_MEMORY    0           ///< enable/disable fixed rounding to 8-bitdepth of frame memory when IBDI is used  
-
 #define WRITE_BACK                      1           ///< Enable/disable the encoder to replace the deltaPOC and Used by current from the config file with the values derived by the refIdc parameter.
 #define AUTO_INTER_RPS                  1           ///< Enable/disable the automatic generation of refIdc from the deltaPOC and Used by current from the config file.
 #define PRINT_RPS_INFO                  0           ///< Enable/disable the printing of bits used to send the RPS.
@@ -145,7 +166,13 @@
 
 #define RDO_WITHOUT_DQP_BITS              0           ///< Disable counting dQP bits in RDO-based mode decision
 
-#define FULL_NBIT 0 ///< When enabled, does not use g_uiBitIncrement anymore to support > 8 bit data
+#define FULL_NBIT 0 ///< When enabled, compute costs using full sample bitdepth.  When disabled, compute costs as if it is 8-bit source video.
+#if FULL_NBIT
+# define DISTORTION_PRECISION_ADJUSTMENT(x) 0
+#else
+# define DISTORTION_PRECISION_ADJUSTMENT(x) (x)
+#endif
+
 
 #define AD_HOC_SLICES_FIXED_NUMBER_OF_LCU_IN_SLICE      1          ///< OPTION IDENTIFIER. mode==1 -> Limit maximum number of largest coding tree blocks in a slice
 #define AD_HOC_SLICES_FIXED_NUMBER_OF_BYTES_IN_SLICE    2          ///< OPTION IDENTIFIER. mode==2 -> Limit maximum number of bins/bits in a slice
@@ -454,6 +481,43 @@ enum COEFF_SCAN_TYPE
   SCAN_DIAG              ///< up-right diagonal scan
 };
 
+namespace Profile
+{
+  enum Name
+  {
+    NONE = 0,
+    MAIN = 1,
+    MAIN10 = 2,
+    MAINSTILLPICTURE = 3,
+  };
+}
+
+namespace Level
+{
+  enum Tier
+  {
+    MAIN = 0,
+    HIGH = 1,
+  };
+
+  enum Name
+  {
+    NONE     = 0,
+    LEVEL1   = 30,
+    LEVEL2   = 60,
+    LEVEL2_1 = 63,
+    LEVEL3   = 90,
+    LEVEL3_1 = 93,
+    LEVEL4   = 120,
+    LEVEL4_1 = 123,
+    LEVEL5   = 150,
+    LEVEL5_1 = 153,
+    LEVEL5_2 = 156,
+    LEVEL6   = 180,
+    LEVEL6_1 = 183,
+    LEVEL6_2 = 186,
+  };
+}
 //! \}
 
 #endif

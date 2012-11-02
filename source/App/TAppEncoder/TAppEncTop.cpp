@@ -77,6 +77,10 @@ Void TAppEncTop::xInitLibCfg()
     vps.setMaxDecPicBuffering             ( m_maxDecPicBuffering[i], i );
   }
   m_cTEncTop.setVPS(&vps);
+
+  m_cTEncTop.setProfile(m_profile);
+  m_cTEncTop.setLevel(m_levelTier, m_level);
+
   m_cTEncTop.setFrameRate                    ( m_iFrameRate );
   m_cTEncTop.setFrameSkip                    ( m_FrameSkip );
   m_cTEncTop.setSourceWidth                  ( m_iSourceWidth );
@@ -136,7 +140,7 @@ Void TAppEncTop::xInitLibCfg()
 #endif
 
   Int lowestQP;
-  lowestQP =  - ( (Int)(6*(g_uiBitDepth + g_uiBitIncrement - 8)) );
+  lowestQP =  - 6*(g_bitDepth - 8);
 
   if ((m_iMaxDeltaQP == 0 ) && (m_iQP == lowestQP) && (m_useLossless == true))
   {
@@ -153,7 +157,10 @@ Void TAppEncTop::xInitLibCfg()
   m_cTEncTop.setUseLossless                  ( m_useLossless );
   m_cTEncTop.setUseLComb                     ( m_bUseLComb    );
   m_cTEncTop.setdQPs                         ( m_aidQP        );
-  m_cTEncTop.setUseRDOQ                      ( m_bUseRDOQ     );
+  m_cTEncTop.setUseRDOQ                      ( m_useRDOQ     );
+#if RDOQ_TRANSFORMSKIP
+  m_cTEncTop.setUseRDOQTS                    ( m_useRDOQTS   );
+#endif
   m_cTEncTop.setQuadtreeTULog2MaxSize        ( m_uiQuadtreeTULog2MaxSize );
   m_cTEncTop.setQuadtreeTULog2MinSize        ( m_uiQuadtreeTULog2MinSize );
   m_cTEncTop.setQuadtreeTUMaxDepthInter      ( m_uiQuadtreeTUMaxDepthInter );
@@ -186,7 +193,7 @@ Void TAppEncTop::xInitLibCfg()
   //====== Dependent Slice ========
   m_cTEncTop.setDependentSliceMode        ( m_iDependentSliceMode         );
   m_cTEncTop.setDependentSliceArgument    ( m_iDependentSliceArgument     );
-#if DEPENDENT_SLICES
+#if DEPENDENT_SLICES && !REMOVE_ENTROPY_SLICES
   m_cTEncTop.setEntropySliceEnabledFlag   ( m_entropySliceEnabledFlag );
 #endif
   int iNumPartInCU = 1<<(m_uiMaxCUDepth<<1);
@@ -247,6 +254,9 @@ Void TAppEncTop::xInitLibCfg()
   m_cTEncTop.setTransquantBypassEnableFlag(m_TransquantBypassEnableFlag);
   m_cTEncTop.setCUTransquantBypassFlagValue(m_CUTransquantBypassFlagValue);
   m_cTEncTop.setUseRecalculateQPAccordingToLambda( m_recalculateQPAccordingToLambda );
+#if STRONG_INTRA_SMOOTHING
+  m_cTEncTop.setUseStrongIntraSmoothing( m_useStrongIntraSmoothing );
+#endif
   m_cTEncTop.setActiveParameterSetsSEIEnabled ( m_activeParameterSetsSEIEnabled ); 
   m_cTEncTop.setVuiParametersPresentFlag( m_vuiParametersPresentFlag );
   m_cTEncTop.setAspectRatioIdc( m_aspectRatioIdc );
@@ -351,12 +361,20 @@ Void TAppEncTop::encode()
     // increase number of received frames
     m_iFrameRcvd++;
     
-    // check end of file
-    bEos = ( m_cTVideoIOYuvInputFile.isEof() == 1 ?   true : false  );
-    bEos = ( m_iFrameRcvd == m_iFrameToBeEncoded ?    true : bEos   );
-    
+    bEos = (m_iFrameRcvd == m_iFrameToBeEncoded);
+
+    bool flush = 0;
+    // if end of file (which is only detected on a read failure) flush the encoder of any queued pictures
+    if (m_cTVideoIOYuvInputFile.isEof())
+    {
+      flush = true;
+      bEos = true;
+      m_iFrameRcvd--;
+      m_cTEncTop.setFrameToBeEncoded(m_iFrameRcvd);
+    }
+
     // call encoding function for one frame
-    m_cTEncTop.encode( bEos, pcPicYuvOrg, m_cListPicYuvRec, outputAccessUnits, iNumEncoded );
+    m_cTEncTop.encode( bEos, flush ? 0 : pcPicYuvOrg, m_cListPicYuvRec, outputAccessUnits, iNumEncoded );
     
     // write bistream to file if necessary
     if ( iNumEncoded > 0 )
@@ -365,6 +383,9 @@ Void TAppEncTop::encode()
       outputAccessUnits.clear();
     }
   }
+
+  m_cTEncTop.printSummary();
+
   // delete original YUV buffer
   pcPicYuvOrg->destroy();
   delete pcPicYuvOrg;

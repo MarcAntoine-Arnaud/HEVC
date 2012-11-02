@@ -388,10 +388,12 @@ public:
   Void          setIPCMFlag           (UInt uiIdx, Bool b )     { m_pbIPCMFlag[uiIdx] = b;           }
   Void          setIPCMFlagSubParts   (Bool bIpcmFlag, UInt uiAbsPartIdx, UInt uiDepth);
 
+#if !REMOVE_BURST_IPCM
   Int           getNumSucIPCM         ()                        { return m_numSucIPCM;             }
   Void          setNumSucIPCM         ( Int num )               { m_numSucIPCM = num;              }
   Bool          getLastCUSucIPCMFlag  ()                        { return m_lastCUSucIPCMFlag;        }
   Void          setLastCUSucIPCMFlag  ( Bool flg )              { m_lastCUSucIPCMFlag = flg;         }
+#endif
 
   /// get slice ID for SU
   Int           getSUSliceID          (UInt uiIdx)              {return m_piSliceSUMap[uiIdx];      } 
@@ -458,7 +460,7 @@ public:
                                               Bool bEnforceSliceRestriction=true, 
                                               Bool bEnforceDependentSliceRestriction=true,
                                               Bool bEnforceTileRestriction=true );
-
+#if !LINEBUF_CLEANUP
   TComDataCU*   getPUAbove                  ( UInt&  uiAPartUnitIdx, 
                                               UInt uiCurrPartUnitIdx, 
                                               Bool bEnforceSliceRestriction=true, 
@@ -466,9 +468,18 @@ public:
                                               Bool MotionDataCompresssion = false,
                                               Bool planarAtLCUBoundary = false,
                                               Bool bEnforceTileRestriction=true );
-
   TComDataCU*   getPUAboveLeft              ( UInt&  uiALPartUnitIdx, UInt uiCurrPartUnitIdx, Bool bEnforceSliceRestriction=true, Bool bEnforceDependentSliceRestriction=true, Bool MotionDataCompresssion = false );
   TComDataCU*   getPUAboveRight             ( UInt&  uiARPartUnitIdx, UInt uiCurrPartUnitIdx, Bool bEnforceSliceRestriction=true, Bool bEnforceDependentSliceRestriction=true, Bool MotionDataCompresssion = false );
+#else
+  TComDataCU*   getPUAbove                  ( UInt&  uiAPartUnitIdx, 
+                                              UInt uiCurrPartUnitIdx, 
+                                              Bool bEnforceSliceRestriction=true, 
+                                              Bool bEnforceDependentSliceRestriction=true, 
+                                              Bool planarAtLCUBoundary = false,
+                                              Bool bEnforceTileRestriction=true );
+  TComDataCU*   getPUAboveLeft              ( UInt&  uiALPartUnitIdx, UInt uiCurrPartUnitIdx, Bool bEnforceSliceRestriction=true, Bool bEnforceDependentSliceRestriction=true );
+  TComDataCU*   getPUAboveRight             ( UInt&  uiARPartUnitIdx, UInt uiCurrPartUnitIdx, Bool bEnforceSliceRestriction=true, Bool bEnforceDependentSliceRestriction=true );
+#endif
   TComDataCU*   getPUBelowLeft              ( UInt&  uiBLPartUnitIdx, UInt uiCurrPartUnitIdx, Bool bEnforceSliceRestriction=true, Bool bEnforceDependentSliceRestriction=true );
 
   TComDataCU*   getQpMinCuLeft              ( UInt&  uiLPartUnitIdx , UInt uiCurrAbsIdxInLCU, Bool bEnforceSliceRestriction=true, Bool bEnforceDependentSliceRestriction=true );

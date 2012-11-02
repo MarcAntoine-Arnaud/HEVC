@@ -110,6 +110,11 @@ protected:
   Int       m_iFrameToBeEncoded;
   Double    m_adLambdaModifier[ MAX_TLAYER ];
 
+  /* profile & level */
+  Profile::Name m_profile;
+  Level::Tier   m_levelTier;
+  Level::Name   m_level;
+
   //====== Coding Structure ========
   UInt      m_uiIntraPeriod;
   UInt      m_uiDecodingRefreshType;            ///< the type of decoding refresh employed for the random access.
@@ -172,7 +177,10 @@ protected:
   Bool      m_bUseASR;
   Bool      m_bUseHADME;
   Bool      m_bUseLComb;
-  Bool      m_bUseRDOQ;
+  Bool      m_useRDOQ;
+#if RDOQ_TRANSFORMSKIP
+  Bool      m_useRDOQTS;
+#endif
   Bool      m_bUseFastEnc;
   Bool      m_bUseEarlyCU;
   Bool      m_useFastDecisionForMerge;
@@ -258,6 +266,11 @@ protected:
   Int       m_maxBitsPerMinCuDenom;                           ///< Indicates an upper bound for the number of bits of coding_unit() data
   Int       m_log2MaxMvLengthHorizontal;                      ///< Indicate the maximum absolute value of a decoded horizontal MV component in quarter-pel luma units
   Int       m_log2MaxMvLengthVertical;                        ///< Indicate the maximum absolute value of a decoded vertical MV component in quarter-pel luma units
+
+#if STRONG_INTRA_SMOOTHING
+  Bool      m_useStrongIntraSmoothing;                        ///< enable the use of strong intra smoothing (bi_linear interpolation) for 32x32 blocks when reference samples are flat.
+#endif
+
 public:
   TEncCfg()
   : m_puiColumnWidth()
@@ -270,6 +283,9 @@ public:
     delete[] m_puiRowHeight;
   }
   
+  Void setProfile(Profile::Name profile) { m_profile = profile; }
+  Void setLevel(Level::Tier tier, Level::Name level) { m_levelTier = tier; m_level = level; }
+
   Void      setFrameRate                    ( Int   i )      { m_iFrameRate = i; }
   Void      setFrameSkip                    ( unsigned int i ) { m_FrameSkip = i; }
   Void      setSourceWidth                  ( Int   i )      { m_iSourceWidth = i; }
@@ -391,7 +407,10 @@ public:
   Void      setUseASR                       ( Bool  b )     { m_bUseASR     = b; }
   Void      setUseHADME                     ( Bool  b )     { m_bUseHADME   = b; }
   Void      setUseLComb                     ( Bool  b )     { m_bUseLComb   = b; }
-  Void      setUseRDOQ                      ( Bool  b )     { m_bUseRDOQ    = b; }
+  Void      setUseRDOQ                      ( Bool  b )     { m_useRDOQ    = b; }
+#if RDOQ_TRANSFORMSKIP
+  Void      setUseRDOQTS                    ( Bool  b )     { m_useRDOQTS  = b; }
+#endif
   Void      setUseFastEnc                   ( Bool  b )     { m_bUseFastEnc = b; }
   Void      setUseEarlyCU                   ( Bool  b )     { m_bUseEarlyCU = b; }
   Void      setUseFastDecisionForMerge      ( Bool  b )     { m_useFastDecisionForMerge = b; }
@@ -409,7 +428,10 @@ public:
   Bool      getUseASR                       ()      { return m_bUseASR;     }
   Bool      getUseHADME                     ()      { return m_bUseHADME;   }
   Bool      getUseLComb                     ()      { return m_bUseLComb;   }
-  Bool      getUseRDOQ                      ()      { return m_bUseRDOQ;    }
+  Bool      getUseRDOQ                      ()      { return m_useRDOQ;    }
+#if RDOQ_TRANSFORMSKIP
+  Bool      getUseRDOQTS                    ()      { return m_useRDOQTS;  }
+#endif
   Bool      getUseFastEnc                   ()      { return m_bUseFastEnc; }
   Bool      getUseEarlyCU                   ()      { return m_bUseEarlyCU; }
   Bool      getUseFastDecisionForMerge      ()      { return m_useFastDecisionForMerge; }
@@ -439,7 +461,7 @@ public:
   Void  setDependentSliceArgument        ( Int  i )      { m_iDependentSliceArgument = i;   }
   Int   getDependentSliceMode            ()              { return m_iDependentSliceMode;    }
   Int   getDependentSliceArgument        ()              { return m_iDependentSliceArgument;}
-#if DEPENDENT_SLICES
+#if DEPENDENT_SLICES && !REMOVE_ENTROPY_SLICES
   Void  setEntropySliceEnabledFlag       ( Bool  b )     { m_entropySliceEnabledFlag = b;    }
   Bool  getEntropySliceEnabledFlag       ()              { return m_entropySliceEnabledFlag; }
 #endif
@@ -567,6 +589,12 @@ public:
   TComVPS *getVPS() { return &m_cVPS; }
   Void      setUseRecalculateQPAccordingToLambda ( Bool b ) { m_recalculateQPAccordingToLambda = b;    }
   Bool      getUseRecalculateQPAccordingToLambda ()         { return m_recalculateQPAccordingToLambda; }
+
+#if STRONG_INTRA_SMOOTHING
+  Void      setUseStrongIntraSmoothing ( Bool b ) { m_useStrongIntraSmoothing = b;    }
+  Bool      getUseStrongIntraSmoothing ()         { return m_useStrongIntraSmoothing; }
+#endif
+
   Void      setActiveParameterSetsSEIEnabled ( Int b )  { m_activeParameterSetsSEIEnabled = b; }  
   Int       getActiveParameterSetsSEIEnabled ()         { return m_activeParameterSetsSEIEnabled; }
   Bool      getVuiParametersPresentFlag()                 { return m_vuiParametersPresentFlag; }

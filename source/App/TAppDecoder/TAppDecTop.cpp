@@ -177,10 +177,10 @@ Void TAppDecTop::decode()
       {
         if ( m_outputBitDepth == 0 )
         {
-          m_outputBitDepth = g_uiBitDepth + g_uiBitIncrement;
+          m_outputBitDepth = g_bitDepth;
         }
 
-        m_cTVideoIOYuvReconFile.open( m_pchReconFile, true, m_outputBitDepth, g_uiBitDepth + g_uiBitIncrement ); // write mode
+        m_cTVideoIOYuvReconFile.open( m_pchReconFile, true, m_outputBitDepth, g_bitDepth ); // write mode
         recon_opened = true;
       }
       if ( bNewPicture && 

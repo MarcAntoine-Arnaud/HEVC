@@ -284,7 +284,7 @@ Void TEncSlice::initEncSlice( TComPic* pcPic, Int pocLast, Int pocCurr, Int iNum
     Int    SHIFT_QP = 12;
     Double dLambda_scale = 1.0 - Clip3( 0.0, 0.5, 0.05*(Double)NumberBFrames );
 #if FULL_NBIT
-    Int    bitdepth_luma_qp_scale = 6 * (g_uiBitDepth - 8);
+    Int    bitdepth_luma_qp_scale = 6 * (g_bitDepth - 8);
 #else
     Int    bitdepth_luma_qp_scale = 0;
 #endif
@@ -441,7 +441,7 @@ Void TEncSlice::xLamdaRecalculation(Int changeQP, Int idGOP, Int depth, SliceTyp
     Int    SHIFT_QP = 12;
     Double dLambda_scale = 1.0 - Clip3( 0.0, 0.5, 0.05*(Double)NumberBFrames );
 #if FULL_NBIT
-    Int    bitdepth_luma_qp_scale = 6 * (g_uiBitDepth - 8);
+    Int    bitdepth_luma_qp_scale = 6 * (g_bitDepth - 8);
 #else
     Int    bitdepth_luma_qp_scale = 0;
 #endif
@@ -561,7 +561,7 @@ Void TEncSlice::precompressSlice( TComPic*& rpcPic )
   
   Double dFrameLambda;
 #if FULL_NBIT
-  Int    SHIFT_QP = 12 + 6 * (g_uiBitDepth - 8);
+  Int    SHIFT_QP = 12 + 6 * (g_bitDepth - 8);
 #else
   Int    SHIFT_QP = 12;
 #endif
@@ -783,7 +783,11 @@ Void TEncSlice::compressSlice( TComPic*& rpcPic )
   UInt uiTileLCUX     = 0;
 #if DEPENDENT_SLICES
   Bool bAllowDependence = false;
+#if REMOVE_ENTROPY_SLICES
+  if( pcSlice->getPPS()->getDependentSliceEnabledFlag() )
+#else
   if( pcSlice->getPPS()->getDependentSliceEnabledFlag()&&(!pcSlice->getPPS()->getEntropySliceEnabledFlag()) )
+#endif
   {
     bAllowDependence = true;
   }
@@ -881,7 +885,7 @@ Void TEncSlice::compressSlice( TComPic*& rpcPic )
            )
         {
 #if DEPENDENT_SLICES
-          if ( (uiCUAddr != 0) && (pcCUTR->getSCUAddr()+uiMaxParts-1 >= pcSlice->getSliceCurStartCUAddr())  && bAllowDependence)
+          if ( (uiCUAddr != 0) && pcCUTR && (pcCUTR->getSCUAddr()+uiMaxParts-1 >= pcSlice->getSliceCurStartCUAddr())  && bAllowDependence)
           {
             ppppcRDSbacCoders[uiSubStrm][0][CI_CURR_BEST]->loadContexts( &m_pcBufferSbacCoders[uiTileCol] );
           }
@@ -1076,7 +1080,11 @@ Void TEncSlice::encodeSlice   ( TComPic*& rpcPic, TComOutputBitstream* pcBitstre
   UInt uiTileLCUX     = 0;
 #if DEPENDENT_SLICES
   Bool bAllowDependence = false;
+#if REMOVE_ENTROPY_SLICES
+  if( pcSlice->getPPS()->getDependentSliceEnabledFlag() )
+#else
   if( pcSlice->getPPS()->getDependentSliceEnabledFlag()&&(!pcSlice->getPPS()->getEntropySliceEnabledFlag()) )
+#endif
   {
     bAllowDependence = true;
   }
@@ -1168,7 +1176,7 @@ Void TEncSlice::encodeSlice   ( TComPic*& rpcPic, TComOutputBitstream* pcBitstre
            )
         {
 #if DEPENDENT_SLICES
-          if ( (uiCUAddr != 0) && ( pcCUTR->getSCUAddr()+uiMaxParts-1 >= pcSlice->getSliceCurStartCUAddr() ) && bAllowDependence)
+          if ( (uiCUAddr != 0) && pcCUTR && ( pcCUTR->getSCUAddr()+uiMaxParts-1 >= pcSlice->getSliceCurStartCUAddr() ) && bAllowDependence)
           {
             pcSbacCoders[uiSubStrm].loadContexts( &m_pcBufferSbacCoders[uiTileCol] );
           }

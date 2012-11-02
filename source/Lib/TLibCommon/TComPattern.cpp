@@ -285,6 +285,55 @@ Void TComPattern::initPattern( TComDataCU* pcCU, UInt uiPartDepth, UInt uiAbsPar
     piFilterBuf[l++] = piAdiTemp[1 + i];
   }
 
+#if STRONG_INTRA_SMOOTHING
+  if (pcCU->getSlice()->getSPS()->getUseStrongIntraSmoothing())
+  {
+    Int blkSize = 32;
+    Int bottomLeft = piFilterBuf[0];
+    Int topLeft = piFilterBuf[uiCuHeight2];
+    Int topRight = piFilterBuf[iBufSize-1];
+    Int threshold = 1 << (g_bitDepth - 5);
+    Bool bilinearLeft = abs(bottomLeft+topLeft-2*piFilterBuf[uiCuHeight]) < threshold;
+    Bool bilinearAbove  = abs(topLeft+topRight-2*piFilterBuf[uiCuHeight2+uiCuHeight]) < threshold;
+  
+    if (uiCuWidth>=blkSize && (bilinearLeft && bilinearAbove))
+    {
+      Int shift = g_aucConvertToBit[uiCuWidth] + 3;  // log2(uiCuHeight2)
+      piFilterBufN[0] = piFilterBuf[0];
+      piFilterBufN[uiCuHeight2] = piFilterBuf[uiCuHeight2];
+      piFilterBufN[iBufSize - 1] = piFilterBuf[iBufSize - 1];
+      for (i = 1; i < uiCuHeight2; i++)
+      {
+        piFilterBufN[i] = ((uiCuHeight2-i)*bottomLeft + i*topLeft + uiCuHeight) >> shift;
+      }
+  
+      for (i = 1; i < uiCuWidth2; i++)
+      {
+        piFilterBufN[uiCuHeight2 + i] = ((uiCuWidth2-i)*topLeft + i*topRight + uiCuWidth) >> shift;
+      }
+    }
+    else 
+    {
+      // 1. filtering with [1 2 1]
+      piFilterBufN[0] = piFilterBuf[0];
+      piFilterBufN[iBufSize - 1] = piFilterBuf[iBufSize - 1];
+      for (i = 1; i < iBufSize - 1; i++)
+      {
+        piFilterBufN[i] = (piFilterBuf[i - 1] + 2 * piFilterBuf[i]+piFilterBuf[i + 1] + 2) >> 2;
+      }
+    }
+  }
+  else 
+  {
+    // 1. filtering with [1 2 1]
+    piFilterBufN[0] = piFilterBuf[0];
+    piFilterBufN[iBufSize - 1] = piFilterBuf[iBufSize - 1];
+    for (i = 1; i < iBufSize - 1; i++)
+    {
+      piFilterBufN[i] = (piFilterBuf[i - 1] + 2 * piFilterBuf[i]+piFilterBuf[i + 1] + 2) >> 2;
+    }
+  }
+#else
   // 1. filtering with [1 2 1]
   piFilterBufN[0] = piFilterBuf[0];
   piFilterBufN[iBufSize - 1] = piFilterBuf[iBufSize - 1];
@@ -292,6 +341,7 @@ Void TComPattern::initPattern( TComDataCU* pcCU, UInt uiPartDepth, UInt uiAbsPar
   {
     piFilterBufN[i] = (piFilterBuf[i - 1] + 2 * piFilterBuf[i]+piFilterBuf[i + 1] + 2) >> 2;
   }
+#endif
 
   // fill 1. filter buffer with filtered values
   l=0;
@@ -369,7 +419,7 @@ Void TComPattern::fillReferenceSamples( TComDataCU* pcCU, Pel* piRoiOrigin, Int*
 {
   Pel* piRoiTemp;
   Int  i, j;
-  Int  iDCValue = ( 1<<( g_uiBitDepth + g_uiBitIncrement - 1) );
+  Int  iDCValue = 1 << (g_bitDepth - 1);
 
   if (iNumIntraNeighbor == 0)
   {

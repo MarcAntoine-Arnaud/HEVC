@@ -100,7 +100,9 @@ UInt g_auiZscanToRaster [ MAX_NUM_SPU_W*MAX_NUM_SPU_W ] = { 0, };
 UInt g_auiRasterToZscan [ MAX_NUM_SPU_W*MAX_NUM_SPU_W ] = { 0, };
 UInt g_auiRasterToPelX  [ MAX_NUM_SPU_W*MAX_NUM_SPU_W ] = { 0, };
 UInt g_auiRasterToPelY  [ MAX_NUM_SPU_W*MAX_NUM_SPU_W ] = { 0, };
+#if !LINEBUF_CLEANUP
 UInt g_motionRefer   [ MAX_NUM_SPU_W*MAX_NUM_SPU_W ] = { 0, }; 
+#endif
 
 UInt g_auiPUOffset[8] = { 0, 8, 4, 4, 2, 10, 1, 5};
 
@@ -137,6 +139,7 @@ Void initRasterToZscan ( UInt uiMaxCUWidth, UInt uiMaxCUHeight, UInt uiMaxDepth 
   }
 }
 
+#if !LINEBUF_CLEANUP
 /** generate motion data compression mapping table
 * \param uiMaxCUWidth, width of LCU
 * \param uiMaxCUHeight, hight of LCU
@@ -182,6 +185,8 @@ Void initMotionReferIdx ( UInt uiMaxCUWidth, UInt uiMaxCUHeight, UInt uiMaxDepth
     }
   }
 }
+
+#endif
 
 Void initRasterToPelXY ( UInt uiMaxCUWidth, UInt uiMaxCUHeight, UInt uiMaxDepth )
 {
@@ -356,10 +361,8 @@ const UChar g_aucConvertTxtTypeToIdx[4] = { 0, 1, 1, 2 };
 // Bit-depth
 // ====================================================================================================================
 
-UInt g_uiBitDepth     = 8;    // base bit-depth
-UInt g_uiBitIncrement = 0;    // increments
-UInt g_uiIBDI_MAX     = 255;  // max. value after  IBDI
-UInt g_uiBASE_MAX     = 255;  // max. value before IBDI
+Int  g_bitDepth = 8;
+Int  g_maxLumaVal     = 255;  ///< Maximum Luma sample value
 
 UInt g_uiPCMBitDepthLuma     = 8;    // PCM bit-depth
 UInt g_uiPCMBitDepthChroma   = 8;    // PCM bit-depth
@@ -393,8 +396,6 @@ const UInt g_sigLastScan8x8[ 4 ][ 4 ] =
   {0, 2, 1, 3}
 };
 UInt g_sigLastScanCG32x32[ 64 ];
-
-UInt* g_auiNonSquareSigLastScan[ 4 ];
 
 const UInt g_uiMinInGroup[ 10 ] = {0,1,2,3,4,6,8,12,16,24};
 const UInt g_uiGroupIdx[ 32 ]   = {0,1,2,3,4,4,5,5,6,6,6,6,7,7,7,7,8,8,8,8,8,8,8,8,9,9,9,9,9,9,9,9};
@@ -538,89 +539,7 @@ Void initSigLastScan(UInt* pBuffZ, UInt* pBuffH, UInt* pBuffV, UInt* pBuffD, Int
   }
 }
 
-Void initNonSquareSigLastScan(UInt* pBuffZ, UInt uiWidth, UInt uiHeight)
-{
-
-  Int x, y, c = 0;
-
-  // starting point
-  pBuffZ[ c++ ] = 0;
-
-  // loop
-  if ( uiWidth > uiHeight )
-  {
-    x=0; y=1;
-    while (1)
-    {
-      // increase loop
-      while ( y>=0 )
-      {
-        if ( x >= 0 && x < uiWidth && y >= 0 && y < uiHeight )
-        {
-          pBuffZ[ c++ ] = x + y * uiWidth;
-        }
-        x++;
-        y--;
-      }
-      y=0;
-
-      // decrease loop
-      while ( x>=0 )
-      {
-        if ( x >= 0 && x < uiWidth && y >= 0 && y < uiHeight )
-        {
-          pBuffZ[ c++ ] = x + y * uiWidth;
-        }
-        x--;
-        y++;
-      }
-      x=0;
-
-      // termination condition
-      if ( c >= uiWidth * uiHeight ) 
-      {
-        break;
-      }
-    }
-  }
-  else
-  {
-    x=1; y=0;
-    while (1)
-    {
-      // increase loop
-      while ( x>=0 )
-      {
-        if ( x >= 0 && x < uiWidth && y >= 0 && y < uiHeight )
-        {
-          pBuffZ[ c++ ] = x + y * uiWidth;
-        }
-        x--;
-        y++;
-      }
-      x=0;
-
-      // decrease loop
-      while ( y>=0 )
-      {
-        if ( x >= 0 && x < uiWidth && y >= 0 && y < uiHeight )
-        {
-          pBuffZ[ c++ ] = x + y * uiWidth;
-        }
-        x++;
-        y--;
-      }
-      y=0;
-
-      // termination condition
-      if ( c >= uiWidth * uiHeight )
-      {
-        break;
-      }
-    }
-  }
-}
-
+#if !FLAT_4x4_DSL
 Int g_quantIntraDefault4x4[16] =
 {
   16,16,17,21,
@@ -635,6 +554,7 @@ Int g_quantInterDefault4x4[16] =
   17,21,24,36,
   21,24,36,57
 };
+#endif
 Int g_quantTSDefault4x4[16] =
 {
   16,16,16,16,

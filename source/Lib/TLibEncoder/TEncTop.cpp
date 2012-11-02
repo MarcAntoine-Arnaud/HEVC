@@ -273,6 +273,9 @@ Void TEncTop::init()
   // initialize SPS
   xInitSPS();
   
+  /* set the VPS profile information */
+  *m_cVPS.getPTL() = *m_cSPS.getPTL();
+
   // initialize PPS
   m_cPPS.setSPS(&m_cSPS);
   xInitPPS();
@@ -291,7 +294,11 @@ Void TEncTop::init()
   m_cTrQuant.init( g_uiMaxCUWidth, g_uiMaxCUHeight, 1 << m_uiQuadtreeTULog2MaxSize,
                   0,
                   aTable4, aTable8, 
-                  aTableLastPosVlcIndex, m_bUseRDOQ, true 
+                  aTableLastPosVlcIndex, m_useRDOQ, 
+#if RDOQ_TRANSFORMSKIP
+                  m_useRDOQTS,
+#endif
+                  true 
                   ,m_useTransformSkipFast
 #if ADAPTIVE_QP_SELECTION                  
                   , m_bUseAdaptQpSelect
@@ -328,27 +335,28 @@ Void TEncTop::deletePicBuffer()
  - Picture buffer list acts like as ring buffer
  - End of the list has the latest picture
  .
- \param   bEos                true if end-of-sequence is reached
+ \param   flush               cause encoder to encode a partial GOP
  \param   pcPicYuvOrg         original YUV picture
  \retval  rcListPicYuvRecOut  list of reconstruction YUV pictures
  \retval  rcListBitstreamOut  list of output bitstreams
  \retval  iNumEncoded         number of encoded pictures
  */
-Void TEncTop::encode( bool bEos, TComPicYuv* pcPicYuvOrg, TComList<TComPicYuv*>& rcListPicYuvRecOut, std::list<AccessUnit>& accessUnitsOut, Int& iNumEncoded )
+Void TEncTop::encode(bool flush, TComPicYuv* pcPicYuvOrg, TComList<TComPicYuv*>& rcListPicYuvRecOut, std::list<AccessUnit>& accessUnitsOut, Int& iNumEncoded )
 {
-  TComPic* pcPicCurr = NULL;
-  
-  // get original YUV
-  xGetNewPicBuffer( pcPicCurr );
-  pcPicYuvOrg->copyToPic( pcPicCurr->getPicYuvOrg() );
-  
-  // compute image characteristics
-  if ( getUseAdaptiveQP() )
-  {
-    m_cPreanalyzer.xPreanalyze( dynamic_cast<TEncPic*>( pcPicCurr ) );
+  if (pcPicYuvOrg) {
+    // get original YUV
+    TComPic* pcPicCurr = NULL;
+    xGetNewPicBuffer( pcPicCurr );
+    pcPicYuvOrg->copyToPic( pcPicCurr->getPicYuvOrg() );
+
+    // compute image characteristics
+    if ( getUseAdaptiveQP() )
+    {
+      m_cPreanalyzer.xPreanalyze( dynamic_cast<TEncPic*>( pcPicCurr ) );
+    }
   }
   
-  if ( m_iPOCLast != 0 && ( m_iNumPicRcvd != m_iGOPSize && m_iGOPSize ) && !bEos )
+  if (!m_iNumPicRcvd || (!flush && m_iPOCLast != 0 && m_iNumPicRcvd != m_iGOPSize && m_iGOPSize))
   {
     iNumEncoded = 0;
     return;
@@ -360,11 +368,6 @@ Void TEncTop::encode( bool bEos, TComPicYuv* pcPicYuvOrg, TComList<TComPicYuv*>&
   iNumEncoded         = m_iNumPicRcvd;
   m_iNumPicRcvd       = 0;
   m_uiNumAllPicCoded += iNumEncoded;
-  
-  if (bEos)
-  {
-    m_cGOPEncoder.printOutSummary (m_uiNumAllPicCoded);
-  }
 }
 
 // ====================================================================================================================
@@ -426,6 +429,25 @@ Void TEncTop::xGetNewPicBuffer ( TComPic*& rpcPic )
 
 Void TEncTop::xInitSPS()
 {
+  ProfileTierLevel& profileTierLevel = *m_cSPS.getPTL()->getGeneralPTL();
+  profileTierLevel.setLevelIdc(m_level);
+  profileTierLevel.setTierFlag(m_levelTier);
+  profileTierLevel.setProfileIdc(m_profile);
+  profileTierLevel.setProfileCompatibilityFlag(m_profile, 1);
+  if (m_profile == Profile::MAIN10 && g_bitDepth == 8)
+  {
+    /* The above constraint is equal to Profile::MAIN */
+    profileTierLevel.setProfileCompatibilityFlag(Profile::MAIN, 1);
+  }
+  if (m_profile == Profile::MAIN)
+  {
+    /* A Profile::MAIN10 decoder can always decode Profile::MAIN */
+    profileTierLevel.setProfileCompatibilityFlag(Profile::MAIN10, 1);
+  }
+  /* XXX: should Main be marked as compatible with still picture? */
+  /* XXX: may be a good idea to refactor the above into a function
+   * that chooses the actual compatibility based upon options */
+
   m_cSPS.setPicWidthInLumaSamples         ( m_iSourceWidth      );
   m_cSPS.setPicHeightInLumaSamples        ( m_iSourceHeight     );
   m_cSPS.setPicCroppingFlag( m_croppingMode!= 0 );
@@ -473,10 +495,9 @@ Void TEncTop::xInitSPS()
     m_cSPS.setAMPAcc(i, 0);
   }
 
-  m_cSPS.setBitDepth    ( g_uiBitDepth        );
-  m_cSPS.setBitIncrement( g_uiBitIncrement    );
-  m_cSPS.setQpBDOffsetY ( (Int)(6*(g_uiBitDepth + g_uiBitIncrement - 8)) );
-  m_cSPS.setQpBDOffsetC ( (Int)(6*(g_uiBitDepth + g_uiBitIncrement - 8)) );
+  m_cSPS.setBitDepth    ( g_bitDepth );
+  m_cSPS.setQpBDOffsetY ( 6*(g_bitDepth - 8) );
+  m_cSPS.setQpBDOffsetC ( 6*(g_bitDepth - 8) );
 
   m_cSPS.setUseSAO( m_bUseSAO );
 
@@ -492,6 +513,10 @@ Void TEncTop::xInitSPS()
   m_cSPS.setPCMFilterDisableFlag  ( m_bPCMFilterDisableFlag );
 
   m_cSPS.setScalingListFlag ( (m_useScalingListId == 0) ? 0 : 1 );
+
+#if STRONG_INTRA_SMOOTHING
+  m_cSPS.setUseStrongIntraSmoothing( m_useStrongIntraSmoothing );
+#endif
 
   m_cSPS.setVuiParametersPresentFlag(getVuiParametersPresentFlag());
   if (m_cSPS.getVuiParametersPresentFlag())
@@ -581,21 +606,19 @@ Void TEncTop::xInitPPS()
   m_cPPS.setLog2ParallelMergeLevelMinus2   (m_log2ParallelMergeLevelMinus2 );
   m_cPPS.setCabacInitPresentFlag(CABAC_INIT_PRESENT_FLAG);
   m_cPPS.setLoopFilterAcrossSlicesEnabledFlag( m_bLFCrossSliceBoundaryFlag );
-  Int histogram[8];
-  for(Int i=0; i<8; i++)
+  Int histogram[MAX_NUM_REF + 1];
+  for( Int i = 0; i <= MAX_NUM_REF; i++ )
   {
     histogram[i]=0;
   }
-  for( Int i = 0; i < getGOPSize(); i++) 
+  for( Int i = 0; i < getGOPSize(); i++ )
   {
-    if(getGOPEntry(i).m_numRefPicsActive<8)
-    {
-      histogram[getGOPEntry(i).m_numRefPicsActive]++;
-    }
+    assert(getGOPEntry(i).m_numRefPicsActive >= 0 && getGOPEntry(i).m_numRefPicsActive <= MAX_NUM_REF);
+    histogram[getGOPEntry(i).m_numRefPicsActive]++;
   }
   Int maxHist=-1;
   Int bestPos=0;
-  for(Int i=0; i<8; i++)
+  for( Int i = 0; i <= MAX_NUM_REF; i++ )
   {
     if(histogram[i]>maxHist)
     {
@@ -610,10 +633,16 @@ Void TEncTop::xInitPPS()
   if (m_iDependentSliceMode)
   {
     m_cPPS.setDependentSliceEnabledFlag( true );
+#if !REMOVE_ENTROPY_SLICES
     m_cPPS.setEntropySliceEnabledFlag( m_entropySliceEnabledFlag );
+#endif
   }
 #if DEPENDENT_SLICES
+#if REMOVE_ENTROPY_SLICES
+  if( m_cPPS.getDependentSliceEnabledFlag() )
+#else
   if( m_cPPS.getDependentSliceEnabledFlag()&&(!m_cPPS.getEntropySliceEnabledFlag()) )
+#endif
   {
     int NumCtx = m_cPPS.getEntropyCodingSyncEnabledFlag()?2:1;
     m_cSliceEncoder.initCtxMem( NumCtx );

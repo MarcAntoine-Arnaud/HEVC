@@ -1301,10 +1301,6 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
         AccessUnit::iterator it = find_if(accessUnit.begin(), accessUnit.end(), mem_fun(&NALUnit::isSlice));
         accessUnit.insert(it, new NALUnitEBSP(nalu));
       }
-#if FIXED_ROUNDING_FRAME_MEMORY
-      /* TODO: this should happen after copyToPic(pcPicYuvRecOut) */
-      pcPic->getPicYuvRec()->xFixedRoundingPic();
-#endif
       pcPic->getPicYuvRec()->copyToPic(pcPicYuvRecOut);
 
       pcPic->setReconMark   ( true );
@@ -1458,12 +1454,7 @@ UInt64 TEncGOP::xFindDistortionFrame (TComPicYuv* pcPic0, TComPicYuv* pcPic1)
   Int     x, y;
   Pel*  pSrc0   = pcPic0 ->getLumaAddr();
   Pel*  pSrc1   = pcPic1 ->getLumaAddr();
-#if IBDI_DISTORTION
-  Int  iShift = g_uiBitIncrement;
-  Int  iOffset = 1<<(g_uiBitIncrement-1);
-#else
-  UInt  uiShift = g_uiBitIncrement<<1;
-#endif
+  UInt  uiShift = 2 * DISTORTION_PRECISION_ADJUSTMENT(g_bitDepth-8);
   Int   iTemp;
   
   Int   iStride = pcPic0->getStride();
@@ -1476,11 +1467,7 @@ UInt64 TEncGOP::xFindDistortionFrame (TComPicYuv* pcPic0, TComPicYuv* pcPic1)
   {
     for( x = 0; x < iWidth; x++ )
     {
-#if IBDI_DISTORTION
-      iTemp = ((pSrc0[x]+iOffset)>>iShift) - ((pSrc1[x]+iOffset)>>iShift); uiTotalDiff += iTemp * iTemp;
-#else
       iTemp = pSrc0[x] - pSrc1[x]; uiTotalDiff += (iTemp*iTemp) >> uiShift;
-#endif
     }
     pSrc0 += iStride;
     pSrc1 += iStride;
@@ -1497,11 +1484,7 @@ UInt64 TEncGOP::xFindDistortionFrame (TComPicYuv* pcPic0, TComPicYuv* pcPic1)
   {
     for( x = 0; x < iWidth; x++ )
     {
-#if IBDI_DISTORTION
-      iTemp = ((pSrc0[x]+iOffset)>>iShift) - ((pSrc1[x]+iOffset)>>iShift); uiTotalDiff += iTemp * iTemp;
-#else
       iTemp = pSrc0[x] - pSrc1[x]; uiTotalDiff += (iTemp*iTemp) >> uiShift;
-#endif
     }
     pSrc0 += iStride;
     pSrc1 += iStride;
@@ -1514,11 +1497,7 @@ UInt64 TEncGOP::xFindDistortionFrame (TComPicYuv* pcPic0, TComPicYuv* pcPic1)
   {
     for( x = 0; x < iWidth; x++ )
     {
-#if IBDI_DISTORTION
-      iTemp = ((pSrc0[x]+iOffset)>>iShift) - ((pSrc1[x]+iOffset)>>iShift); uiTotalDiff += iTemp * iTemp;
-#else
       iTemp = pSrc0[x] - pSrc1[x]; uiTotalDiff += (iTemp*iTemp) >> uiShift;
-#endif
     }
     pSrc0 += iStride;
     pSrc1 += iStride;
@@ -1625,7 +1604,7 @@ Void TEncGOP::xCalculateAddPSNR( TComPic* pcPic, TComPicYuv* pcPicD, const Acces
     pRec += iStride;
   }
   
-  unsigned int maxval = 255 * (1<<(g_uiBitDepth + g_uiBitIncrement -8));
+  unsigned int maxval = 255 << (g_bitDepth-8);
   Double fRefValueY = (double) maxval * maxval * iSize;
   Double fRefValueC = fRefValueY / 4.0;
   dYPSNR            = ( uiSSDY ? 10.0 * log10( fRefValueY / (Double)uiSSDY ) : 99.99 );
