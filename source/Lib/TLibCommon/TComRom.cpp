@@ -364,7 +364,6 @@ const UChar g_aucConvertTxtTypeToIdx[4] = { 0, 1, 1, 2 };
 UInt g_uiBitDepth     = 8;    // base bit-depth
 UInt g_uiBitIncrement = 0;    // increments
 UInt g_uiIBDI_MAX     = 255;  // max. value after  IBDI
-UInt g_uiBASE_MAX     = 255;  // max. value before IBDI
 
 UInt g_uiPCMBitDepthLuma     = 8;    // PCM bit-depth
 UInt g_uiPCMBitDepthChroma   = 8;    // PCM bit-depth
