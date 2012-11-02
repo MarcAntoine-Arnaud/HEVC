@@ -53,7 +53,6 @@
 class TComWeightPrediction
 {
   wpScalingParam  m_wp0[3], m_wp1[3];
-  Int             m_ibdi;
 
 public:
   TComWeightPrediction();
