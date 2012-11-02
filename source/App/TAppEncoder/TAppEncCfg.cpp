@@ -1048,7 +1048,6 @@ Void TAppEncCfg::xSetGlobal()
   g_bitDepthY = m_internalBitDepthY;
   g_bitDepthC = m_internalBitDepthC;
   g_bitDepth = g_bitDepthY; /* XXX: to be removed */
-  g_maxLumaVal = (1 << g_bitDepthY) - 1;
   
   g_uiPCMBitDepthLuma = m_bPCMInputBitDepthFlag ? m_inputBitDepthY : m_internalBitDepthY;
   g_uiPCMBitDepthChroma = m_bPCMInputBitDepthFlag ? m_inputBitDepthC : m_internalBitDepthC;

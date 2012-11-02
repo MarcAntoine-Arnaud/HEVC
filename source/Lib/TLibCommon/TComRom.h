@@ -154,7 +154,6 @@ extern const UChar g_aucAngIntraModeOrder[NUM_INTRA_MODE];
 extern        Int g_bitDepth;
 extern        Int g_bitDepthY;
 extern        Int g_bitDepthC;
-extern        Int g_maxLumaVal;
 extern       UInt g_uiPCMBitDepthLuma;
 extern       UInt g_uiPCMBitDepthChroma;
 
