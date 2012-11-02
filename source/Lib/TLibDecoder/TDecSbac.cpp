@@ -1436,7 +1436,7 @@ parseSaoTypeIdx(uiSymbol);
   {
     psSaoLcuParam->length = iTypeLength[psSaoLcuParam->typeIdx];
 #if FULL_NBIT
-    Int offsetTh = 1 << ( min((Int)(g_uiBitDepth + (g_uiBitDepth-8)-5),5) );
+    Int offsetTh = 1 << ( min((Int)(g_uiBitDepth - 5),5) );
 #else
     Int offsetTh = 1 << ( min((Int)(g_uiBitDepth + g_uiBitIncrement-5),5) );
 #endif
