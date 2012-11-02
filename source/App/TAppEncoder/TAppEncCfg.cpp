@@ -613,6 +613,15 @@ Void TAppEncCfg::xCheckParameter()
     if( (ui & 1) == 1)
       xConfirmPara( ui != 1 , "Height should be 2^n");
   }
+
+  /* if this is an intra-only sequence, ie IntraPeriod=1, don't verify the GOP structure
+   * This permits the ability to omit a GOP structure specification */
+  if (m_iIntraPeriod == 1 && m_GOPList[0].m_POC == -1) {
+    m_GOPList[0] = GOPEntry();
+    m_GOPList[0].m_QPFactor = 1;
+    m_GOPList[0].m_POC = 1;
+    m_GOPList[0].m_numRefPicsActive = 4;
+  }
   
   Bool verifiedGOP=false;
   Bool errorGOP=false;
