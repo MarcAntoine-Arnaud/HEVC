@@ -503,12 +503,8 @@ Void TDecCavlc::parseSPS(TComSPS* pcSPS)
   pcSPS->setQpBDOffsetY( (Int) (6*uiCode) );
 
   g_uiBASE_MAX  = ((1<<(g_uiBitDepth))-1);
-
-#if IBDI_NOCLIP_RANGE
-  g_uiIBDI_MAX  = g_uiBASE_MAX << g_uiBitIncrement;
-#else
   g_uiIBDI_MAX  = ((1<<(g_uiBitDepth+g_uiBitIncrement))-1);
-#endif
+
   READ_UVLC( uiCode,    "bit_depth_chroma_minus8" );
   pcSPS->setQpBDOffsetC( (Int) (6*uiCode) );
 

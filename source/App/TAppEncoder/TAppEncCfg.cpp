@@ -964,12 +964,7 @@ Void TAppEncCfg::xSetGlobal()
 #endif
 
   g_uiBASE_MAX     = ((1<<(g_uiBitDepth))-1);
-  
-#if IBDI_NOCLIP_RANGE
-  g_uiIBDI_MAX     = g_uiBASE_MAX << g_uiBitIncrement;
-#else
   g_uiIBDI_MAX     = ((1<<(g_uiBitDepth+g_uiBitIncrement))-1);
-#endif
   
   if (m_uiOutputBitDepth == 0)
   {

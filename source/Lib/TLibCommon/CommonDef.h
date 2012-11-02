@@ -179,9 +179,6 @@ template <typename T> inline T Clip3( T minVal, T maxVal, T a) { return std::min
 
 #define CLIP_TO_709_RANGE           0
 
-// IBDI range restriction for skipping clip
-#define IBDI_NOCLIP_RANGE           0           ///< restrict max. value after IBDI to skip clip
-
 // Early-skip threshold (encoder)
 #define EARLY_SKIP_THRES            1.50        ///< if RD < thres*avg[BestSkipRD]
 
