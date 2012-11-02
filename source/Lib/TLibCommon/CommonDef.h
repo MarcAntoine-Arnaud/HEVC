@@ -124,10 +124,10 @@
 // ====================================================================================================================
 // Macro functions
 // ====================================================================================================================
-extern UInt g_uiIBDI_MAX;
+extern Int g_maxLumaVal;
 
-/** clip x, such that 0 <= x <= #g_uiIBDI_MAX */
-template <typename T> inline T Clip(T x) { return std::min<T>(T(g_uiIBDI_MAX), std::max<T>( T(0), x)); }
+/** clip x, such that 0 <= x <= #g_maxLumaVal */
+template <typename T> inline T Clip(T x) { return std::min<T>(T(g_maxLumaVal), std::max<T>( T(0), x)); }
 
 /** clip a, such that minVal <= a <= maxVal */
 template <typename T> inline T Clip3( T minVal, T maxVal, T a) { return std::min<T> (std::max<T> (minVal, a) , maxVal); }  ///< general min/max clip

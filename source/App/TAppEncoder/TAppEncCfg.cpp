@@ -963,7 +963,7 @@ Void TAppEncCfg::xSetGlobal()
   g_uiBitIncrement = m_uiInternalBitDepth - g_uiBitDepth;
 #endif
 
-  g_uiIBDI_MAX     = ((1<<(g_uiBitDepth+g_uiBitIncrement))-1);
+  g_maxLumaVal     = ((1<<(g_uiBitDepth+g_uiBitIncrement))-1);
   
   if (m_uiOutputBitDepth == 0)
   {

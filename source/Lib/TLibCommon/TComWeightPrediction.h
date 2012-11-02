@@ -74,7 +74,7 @@ public:
 
 inline  Pel TComWeightPrediction::xClip( Int x )
 { 
-  Int max = (Int)g_uiIBDI_MAX;
+  Int max = g_maxLumaVal;
   Pel pel = (Pel)( (x < 0) ? 0 : (x > max) ? max : x );
   return( pel );
 }

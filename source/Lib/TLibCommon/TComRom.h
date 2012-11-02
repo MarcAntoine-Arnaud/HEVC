@@ -153,7 +153,7 @@ extern const UChar g_aucAngIntraModeOrder[NUM_INTRA_MODE];
 
 extern       UInt g_uiBitDepth;
 extern       UInt g_uiBitIncrement;
-extern       UInt g_uiIBDI_MAX;
+extern        Int g_maxLumaVal;
 extern       UInt g_uiPCMBitDepthLuma;
 extern       UInt g_uiPCMBitDepthChroma;
 

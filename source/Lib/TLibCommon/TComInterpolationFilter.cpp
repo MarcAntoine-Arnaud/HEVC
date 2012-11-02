@@ -126,7 +126,7 @@ Void TComInterpolationFilter::filterCopy(const Pel *src, Int srcStride, Short *d
     Int shift = IF_INTERNAL_PREC - ( g_uiBitDepth + g_uiBitIncrement );
     Short offset = IF_INTERNAL_OFFS;
     offset += shift?(1 << (shift - 1)):0;
-    Short maxVal = g_uiIBDI_MAX;
+    Short maxVal = g_maxLumaVal;
     Short minVal = 0;
     for (row = 0; row < height; row++)
     {
@@ -196,7 +196,7 @@ Void TComInterpolationFilter::filter(Short const *src, Int srcStride, Short *dst
     shift += (isFirst) ? 0 : headRoom;
     offset = 1 << (shift - 1);
     offset += (isFirst) ? 0 : IF_INTERNAL_OFFS << IF_FILTER_PREC;
-    maxVal = g_uiIBDI_MAX;
+    maxVal = g_maxLumaVal;
   }
   else
   {
