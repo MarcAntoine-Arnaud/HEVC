@@ -100,7 +100,7 @@ UInt TComRdCostWeightPrediction::xGetSADw( DistParam* pcDtParam )
   
   pcDtParam->uiComp = 255;  // reset for DEBUG (assert test)
 
-  return uiSum >> DISTORTION_PRECISION_ADJUSTMENT(g_bitDepth-8);
+  return uiSum >> DISTORTION_PRECISION_ADJUSTMENT(pcDtParam->bitDepth-8);
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -131,7 +131,7 @@ UInt TComRdCostWeightPrediction::xGetSSEw( DistParam* pcDtParam )
         round   = wpCur->round;
  
   UInt uiSum = 0;
-  UInt uiShift = DISTORTION_PRECISION_ADJUSTMENT((g_bitDepth-8) << 1);
+  UInt uiShift = DISTORTION_PRECISION_ADJUSTMENT((pcDtParam->bitDepth-8) << 1);
   
   Int iTemp;
   
@@ -447,7 +447,7 @@ UInt TComRdCostWeightPrediction::xGetHADs4w( DistParam* pcDtParam )
     piCur += iOffsetCur;
   }
   
-  return uiSum >> DISTORTION_PRECISION_ADJUSTMENT(g_bitDepth-8);
+  return uiSum >> DISTORTION_PRECISION_ADJUSTMENT(pcDtParam->bitDepth-8);
 }
 
 /** get weighted Hadamard cost
@@ -483,7 +483,7 @@ UInt TComRdCostWeightPrediction::xGetHADs8w( DistParam* pcDtParam )
     }
   }
   
-  return uiSum >> DISTORTION_PRECISION_ADJUSTMENT(g_bitDepth-8);
+  return uiSum >> DISTORTION_PRECISION_ADJUSTMENT(pcDtParam->bitDepth-8);
 }
 
 /** get weighted Hadamard cost
@@ -554,5 +554,5 @@ UInt TComRdCostWeightPrediction::xGetHADsw( DistParam* pcDtParam )
   
   m_xSetDone  = false;
 
-  return uiSum >> DISTORTION_PRECISION_ADJUSTMENT(g_bitDepth-8);
+  return uiSum >> DISTORTION_PRECISION_ADJUSTMENT(pcDtParam->bitDepth-8);
 }
