@@ -357,12 +357,19 @@ Void TAppEncTop::encode()
     // increase number of received frames
     m_iFrameRcvd++;
     
-    // check end of file
-    bEos = ( m_cTVideoIOYuvInputFile.isEof() == 1 ?   true : false  );
-    bEos = ( m_iFrameRcvd == m_iFrameToBeEncoded ?    true : bEos   );
-    
+    bEos = m_iFrameRcvd == m_iFrameToBeEncoded;
+
+    bool flush = 0;
+    // if end of file (which is only detected on a read failure) flush the encoder of any queued pictures
+    if (m_cTVideoIOYuvInputFile.isEof())
+    {
+      flush = bEos = 1;
+      m_iFrameRcvd--;
+      m_cTEncTop.setFrameToBeEncoded(m_iFrameRcvd);
+    }
+
     // call encoding function for one frame
-    m_cTEncTop.encode( bEos, pcPicYuvOrg, m_cListPicYuvRec, outputAccessUnits, iNumEncoded );
+    m_cTEncTop.encode( bEos, flush ? 0 : pcPicYuvOrg, m_cListPicYuvRec, outputAccessUnits, iNumEncoded );
     
     // write bistream to file if necessary
     if ( iNumEncoded > 0 )

@@ -332,27 +332,28 @@ Void TEncTop::deletePicBuffer()
  - Picture buffer list acts like as ring buffer
  - End of the list has the latest picture
  .
- \param   bEos                true if end-of-sequence is reached
+ \param   flush               cause encoder to encode a partial GOP
  \param   pcPicYuvOrg         original YUV picture
  \retval  rcListPicYuvRecOut  list of reconstruction YUV pictures
  \retval  rcListBitstreamOut  list of output bitstreams
  \retval  iNumEncoded         number of encoded pictures
  */
-Void TEncTop::encode( bool bEos, TComPicYuv* pcPicYuvOrg, TComList<TComPicYuv*>& rcListPicYuvRecOut, std::list<AccessUnit>& accessUnitsOut, Int& iNumEncoded )
+Void TEncTop::encode(bool flush, TComPicYuv* pcPicYuvOrg, TComList<TComPicYuv*>& rcListPicYuvRecOut, std::list<AccessUnit>& accessUnitsOut, Int& iNumEncoded )
 {
-  TComPic* pcPicCurr = NULL;
-  
-  // get original YUV
-  xGetNewPicBuffer( pcPicCurr );
-  pcPicYuvOrg->copyToPic( pcPicCurr->getPicYuvOrg() );
-  
-  // compute image characteristics
-  if ( getUseAdaptiveQP() )
-  {
-    m_cPreanalyzer.xPreanalyze( dynamic_cast<TEncPic*>( pcPicCurr ) );
+  if (pcPicYuvOrg) {
+    // get original YUV
+    TComPic* pcPicCurr = NULL;
+    xGetNewPicBuffer( pcPicCurr );
+    pcPicYuvOrg->copyToPic( pcPicCurr->getPicYuvOrg() );
+
+    // compute image characteristics
+    if ( getUseAdaptiveQP() )
+    {
+      m_cPreanalyzer.xPreanalyze( dynamic_cast<TEncPic*>( pcPicCurr ) );
+    }
   }
   
-  if ( m_iPOCLast != 0 && ( m_iNumPicRcvd != m_iGOPSize && m_iGOPSize ) && !bEos )
+  if (!m_iNumPicRcvd || (!flush && m_iPOCLast != 0 && m_iNumPicRcvd != m_iGOPSize && m_iGOPSize))
   {
     iNumEncoded = 0;
     return;
