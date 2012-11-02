@@ -436,7 +436,13 @@ Void TEncTop::xInitSPS()
   profileTierLevel.setProfileCompatibilityFlag(m_profile, 1);
   if (m_profile == Profile::MAIN10 && g_bitDepth == 8)
   {
+    /* The above constraint is equal to Profile::MAIN */
     profileTierLevel.setProfileCompatibilityFlag(Profile::MAIN, 1);
+  }
+  if (m_profile == Profile::MAIN)
+  {
+    /* A Profile::MAIN10 decoder can always decode Profile::MAIN */
+    profileTierLevel.setProfileCompatibilityFlag(Profile::MAIN10, 1);
   }
   /* XXX: should Main be marked as compatible with still picture? */
   /* XXX: may be a good idea to refactor the above into a function
