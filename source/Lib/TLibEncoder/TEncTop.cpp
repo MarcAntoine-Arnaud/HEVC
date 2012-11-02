@@ -434,7 +434,7 @@ Void TEncTop::xInitSPS()
   profileTierLevel.setTierFlag(m_levelTier);
   profileTierLevel.setProfileIdc(m_profile);
   profileTierLevel.setProfileCompatibilityFlag(m_profile, 1);
-  if (m_profile == Profile::MAIN10 && g_bitDepth == 8)
+  if (m_profile == Profile::MAIN10 && g_bitDepthY == 8 && g_bitDepthC == 8)
   {
     profileTierLevel.setProfileCompatibilityFlag(Profile::MAIN, 1);
   }
@@ -489,9 +489,11 @@ Void TEncTop::xInitSPS()
     m_cSPS.setAMPAcc(i, 0);
   }
 
-  m_cSPS.setBitDepth    ( g_bitDepth );
-  m_cSPS.setQpBDOffsetY ( 6*(g_bitDepth - 8) );
-  m_cSPS.setQpBDOffsetC ( 6*(g_bitDepth - 8) );
+  m_cSPS.setBitDepthY( g_bitDepthY );
+  m_cSPS.setBitDepthC( g_bitDepthC );
+
+  m_cSPS.setQpBDOffsetY ( 6*(g_bitDepthY - 8) );
+  m_cSPS.setQpBDOffsetC ( 6*(g_bitDepthC - 8) );
 
   m_cSPS.setUseSAO( m_bUseSAO );
 

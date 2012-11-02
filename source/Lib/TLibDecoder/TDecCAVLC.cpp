@@ -488,13 +488,15 @@ Void TDecCavlc::parseSPS(TComSPS* pcSPS)
   }
 
   READ_UVLC(     uiCode, "bit_depth_luma_minus8" );
-  g_bitDepth = 8 + uiCode;
-  pcSPS->setBitDepth(g_bitDepth);
+  g_bitDepthY = 8 + uiCode;
+  pcSPS->setBitDepthY(g_bitDepthY);
   pcSPS->setQpBDOffsetY( (Int) (6*uiCode) );
 
-  g_maxLumaVal = (1<<g_bitDepth) - 1;
+  g_maxLumaVal = (1<<g_bitDepthY) - 1;
 
   READ_UVLC( uiCode,    "bit_depth_chroma_minus8" );
+  g_bitDepthC = 8 + uiCode;
+  pcSPS->setBitDepthC(g_bitDepthC);
   pcSPS->setQpBDOffsetC( (Int) (6*uiCode) );
 
   READ_FLAG( uiCode, "pcm_enabled_flag" ); pcSPS->setUsePCM( uiCode ? true : false );
