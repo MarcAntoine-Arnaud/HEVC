@@ -72,7 +72,8 @@ Bool TAppDecCfg::parseCfg( Int argc, Char* argv[] )
   ("ReconFile,o",     cfg_ReconFile,     string(""), "reconstructed YUV output file name\n"
                                                      "YUV writing is skipped if omitted")
   ("SkipFrames,s", m_iSkipFrame, 0, "number of frames to skip before random access")
-  ("OutputBitDepth,d", m_outputBitDepth, 0u, "bit depth of YUV output file (use 0 for native depth)")
+  ("OutputBitDepth,d", m_outputBitDepthY, 0, "bit depth of YUV output luma component (default: use 0 for native depth)")
+  ("OutputBitDepthC,d", m_outputBitDepthC, 0, "bit depth of YUV output chroma component (default: use 0 for native depth)")
   ("MaxTemporalLayer,t", m_iMaxTemporalLayer, -1, "Maximum Temporal Layer to be decoded. -1 to decode all layers")
   ("SEIpictureDigest", m_decodedPictureHashSEIEnabled, 1, "Control handling of decoded picture hash SEI messages\n"
                                               "\t3: checksum\n"

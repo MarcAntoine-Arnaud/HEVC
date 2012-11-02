@@ -287,11 +287,11 @@ Void TAppEncTop::xInitLibCfg()
 Void TAppEncTop::xCreateLib()
 {
   // Video I/O
-  m_cTVideoIOYuvInputFile.open( m_pchInputFile,     false, m_uiInputBitDepth, m_uiInternalBitDepth );  // read  mode
+  m_cTVideoIOYuvInputFile.open( m_pchInputFile,     false, m_inputBitDepthY, m_internalBitDepthY );  // read  mode
   m_cTVideoIOYuvInputFile.skipFrames(m_FrameSkip, m_iSourceWidth - m_aiPad[0], m_iSourceHeight - m_aiPad[1]);
 
   if (m_pchReconFile)
-    m_cTVideoIOYuvReconFile.open(m_pchReconFile, true, m_uiOutputBitDepth, m_uiInternalBitDepth);  // write mode
+    m_cTVideoIOYuvReconFile.open(m_pchReconFile, true, m_outputBitDepthY, m_internalBitDepthY);  // write mode
   
   // Neo Decoder
   m_cTEncTop.create();

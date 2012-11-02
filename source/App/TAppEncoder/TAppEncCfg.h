@@ -122,13 +122,15 @@ protected:
   UInt      m_uiQuadtreeTUMaxDepthIntra;
   
   // coding tools (bit-depth)
-  UInt      m_uiInputBitDepth;                                ///< bit-depth of input file
-  UInt      m_uiOutputBitDepth;                               ///< bit-depth of output file
-  UInt      m_uiInternalBitDepth;                             ///< bit-depth codec operates at (input/output files will be converted)
+  Int       m_inputBitDepthY;                               ///< bit-depth of input file (luma component)
+  Int       m_inputBitDepthC;                               ///< bit-depth of input file (chroma component)
+  Int       m_outputBitDepthY;                              ///< bit-depth of output file (luma component)
+  Int       m_outputBitDepthC;                              ///< bit-depth of output file (chroma component)
+  Int       m_internalBitDepthY;                            ///< bit-depth codec operates at in luma (input/output files will be converted)
+  Int       m_internalBitDepthC;                            ///< bit-depth codec operates at in chroma (input/output files will be converted)
 
   // coding tools (PCM bit-depth)
   Bool      m_bPCMInputBitDepthFlag;                          ///< 0: PCM bit-depth is internal bit-depth. 1: PCM bit-depth is input bit-depth.
-  UInt      m_uiPCMBitDepthLuma;                              ///< PCM bit-depth for luma
 
   // coding tool (lossless)
   Bool      m_useLossless;                                    ///< flag for using lossless coding
