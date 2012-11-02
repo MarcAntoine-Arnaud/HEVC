@@ -181,10 +181,10 @@ public:
                                        Int width, Int height);
   Void initScalingList                      ();
   Void destroyScalingList                   ();
-  Void setErrScaleCoeff    ( UInt list, UInt size, UInt qp, UInt dir);
-  double* getErrScaleCoeff ( UInt list, UInt size, UInt qp, UInt dir) {return m_errScale[size][list][qp][dir];};    //!< get Error Scale Coefficent
-  Int* getQuantCoeff       ( UInt list, UInt qp, UInt size, UInt dir) {return m_quantCoef[size][list][qp][dir];};   //!< get Quant Coefficent
-  Int* getDequantCoeff     ( UInt list, UInt qp, UInt size, UInt dir) {return m_dequantCoef[size][list][qp][dir];}; //!< get DeQuant Coefficent
+  Void setErrScaleCoeff    ( UInt list, UInt size, UInt qp);
+  double* getErrScaleCoeff ( UInt list, UInt size, UInt qp) {return m_errScale[size][list][qp];};    //!< get Error Scale Coefficent
+  Int* getQuantCoeff       ( UInt list, UInt qp, UInt size) {return m_quantCoef[size][list][qp];};   //!< get Quant Coefficent
+  Int* getDequantCoeff     ( UInt list, UInt qp, UInt size) {return m_dequantCoef[size][list][qp];}; //!< get DeQuant Coefficent
   Void setUseScalingList   ( Bool bUseScalingList){ m_scalingListEnabledFlag = bUseScalingList; };
   Bool getUseScalingList   (){ return m_scalingListEnabledFlag; };
   Void setFlatScalingList  ();
@@ -229,9 +229,9 @@ protected:
 #endif
   Bool     m_useTransformSkipFast;
   Bool     m_scalingListEnabledFlag;
-  Int      *m_quantCoef      [SCALING_LIST_SIZE_NUM][SCALING_LIST_NUM][SCALING_LIST_REM_NUM][SCALING_LIST_DIR_NUM]; ///< array of quantization matrix coefficient 4x4
-  Int      *m_dequantCoef    [SCALING_LIST_SIZE_NUM][SCALING_LIST_NUM][SCALING_LIST_REM_NUM][SCALING_LIST_DIR_NUM]; ///< array of dequantization matrix coefficient 4x4
-  double   *m_errScale       [SCALING_LIST_SIZE_NUM][SCALING_LIST_NUM][SCALING_LIST_REM_NUM][SCALING_LIST_DIR_NUM]; ///< array of quantization matrix coefficient 4x4
+  Int      *m_quantCoef      [SCALING_LIST_SIZE_NUM][SCALING_LIST_NUM][SCALING_LIST_REM_NUM]; ///< array of quantization matrix coefficient 4x4
+  Int      *m_dequantCoef    [SCALING_LIST_SIZE_NUM][SCALING_LIST_NUM][SCALING_LIST_REM_NUM]; ///< array of dequantization matrix coefficient 4x4
+  double   *m_errScale       [SCALING_LIST_SIZE_NUM][SCALING_LIST_NUM][SCALING_LIST_REM_NUM]; ///< array of quantization matrix coefficient 4x4
 private:
   // forward Transform
   Void xT   ( UInt uiMode,Pel* pResidual, UInt uiStride, Int* plCoeff, Int iWidth, Int iHeight );

@@ -217,13 +217,6 @@ extern UInt64 g_nSymbolCounter;
 #define MAX_MATRIX_COEF_NUM 64     ///< max coefficient number for quantization matrix
 #define MAX_MATRIX_SIZE_NUM 8      ///< max size number for quantization matrix
 #define SCALING_LIST_DC 16         ///< default DC value
-enum ScalingListDIR
-{
-  SCALING_LIST_SQT = 0,
-  SCALING_LIST_VER,
-  SCALING_LIST_HOR,
-  SCALING_LIST_DIR_NUM
-};
 enum ScalingListSize
 {
   SCALING_LIST_4x4 = 0,
