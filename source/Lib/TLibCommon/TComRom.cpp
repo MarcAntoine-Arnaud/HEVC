@@ -399,8 +399,6 @@ const UInt g_sigLastScan8x8[ 4 ][ 4 ] =
 };
 UInt g_sigLastScanCG32x32[ 64 ];
 
-UInt* g_auiNonSquareSigLastScan[ 4 ];
-
 const UInt g_uiMinInGroup[ 10 ] = {0,1,2,3,4,6,8,12,16,24};
 const UInt g_uiGroupIdx[ 32 ]   = {0,1,2,3,4,4,5,5,6,6,6,6,7,7,7,7,8,8,8,8,8,8,8,8,9,9,9,9,9,9,9,9};
 
@@ -540,89 +538,6 @@ Void initSigLastScan(UInt* pBuffZ, UInt* pBuffH, UInt* pBuffV, UInt* pBuffD, Int
       uiCnt ++;
     }
   }    
-  }
-}
-
-Void initNonSquareSigLastScan(UInt* pBuffZ, UInt uiWidth, UInt uiHeight)
-{
-
-  Int x, y, c = 0;
-
-  // starting point
-  pBuffZ[ c++ ] = 0;
-
-  // loop
-  if ( uiWidth > uiHeight )
-  {
-    x=0; y=1;
-    while (1)
-    {
-      // increase loop
-      while ( y>=0 )
-      {
-        if ( x >= 0 && x < uiWidth && y >= 0 && y < uiHeight )
-        {
-          pBuffZ[ c++ ] = x + y * uiWidth;
-        }
-        x++;
-        y--;
-      }
-      y=0;
-
-      // decrease loop
-      while ( x>=0 )
-      {
-        if ( x >= 0 && x < uiWidth && y >= 0 && y < uiHeight )
-        {
-          pBuffZ[ c++ ] = x + y * uiWidth;
-        }
-        x--;
-        y++;
-      }
-      x=0;
-
-      // termination condition
-      if ( c >= uiWidth * uiHeight ) 
-      {
-        break;
-      }
-    }
-  }
-  else
-  {
-    x=1; y=0;
-    while (1)
-    {
-      // increase loop
-      while ( x>=0 )
-      {
-        if ( x >= 0 && x < uiWidth && y >= 0 && y < uiHeight )
-        {
-          pBuffZ[ c++ ] = x + y * uiWidth;
-        }
-        x--;
-        y++;
-      }
-      x=0;
-
-      // decrease loop
-      while ( y>=0 )
-      {
-        if ( x >= 0 && x < uiWidth && y >= 0 && y < uiHeight )
-        {
-          pBuffZ[ c++ ] = x + y * uiWidth;
-        }
-        x++;
-        y--;
-      }
-      y=0;
-
-      // termination condition
-      if ( c >= uiWidth * uiHeight )
-      {
-        break;
-      }
-    }
   }
 }
 
