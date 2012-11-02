@@ -1435,7 +1435,9 @@ Void TDecSbac::parseSaoOffset(SaoLcuParam* psSaoLcuParam, UInt compIdx)
   if (uiSymbol)
   {
     psSaoLcuParam->length = iTypeLength[psSaoLcuParam->typeIdx];
-    Int offsetTh = 1 << min(g_bitDepth - 5,5);
+
+    Int bitDepth = compIdx ? g_bitDepthC : g_bitDepthY;
+    Int offsetTh = 1 << min(bitDepth - 5,5);
 
     if( psSaoLcuParam->typeIdx == SAO_BO )
     {
