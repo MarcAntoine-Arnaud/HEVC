@@ -371,6 +371,9 @@ Void TAppEncTop::encode()
       outputAccessUnits.clear();
     }
   }
+
+  m_cTEncTop.printSummary();
+
   // delete original YUV buffer
   pcPicYuvOrg->destroy();
   delete pcPicYuvOrg;

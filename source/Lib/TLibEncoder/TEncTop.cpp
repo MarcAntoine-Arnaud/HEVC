@@ -364,11 +364,6 @@ Void TEncTop::encode( bool bEos, TComPicYuv* pcPicYuvOrg, TComList<TComPicYuv*>&
   iNumEncoded         = m_iNumPicRcvd;
   m_iNumPicRcvd       = 0;
   m_uiNumAllPicCoded += iNumEncoded;
-  
-  if (bEos)
-  {
-    m_cGOPEncoder.printOutSummary (m_uiNumAllPicCoded);
-  }
 }
 
 // ====================================================================================================================
