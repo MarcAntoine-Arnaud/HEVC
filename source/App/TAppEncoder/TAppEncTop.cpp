@@ -140,7 +140,7 @@ Void TAppEncTop::xInitLibCfg()
 #endif
 
   Int lowestQP;
-  lowestQP =  - 6*(g_bitDepth - 8);
+  lowestQP =  - 6*(g_bitDepthY - 8); // XXX: check
 
   if ((m_iMaxDeltaQP == 0 ) && (m_iQP == lowestQP) && (m_useLossless == true))
   {
