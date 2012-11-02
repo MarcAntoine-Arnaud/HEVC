@@ -902,7 +902,12 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
         }
       }
     }
+
+#if K0251
+    if (!rpcSlice->getIdrPicFlag())
+#else
     if (!rpcSlice->isIntra())
+#endif
     {
       if (rpcSlice->getSPS()->getTMVPFlagsPresent())
       {
@@ -913,6 +918,16 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
       {
         rpcSlice->setEnableTMVPFlag(false);
       }
+#if K0251
+    }
+    else
+    {
+        rpcSlice->setEnableTMVPFlag(false);
+    }
+
+    if (!rpcSlice->isIntra())
+    {
+#endif
       READ_FLAG( uiCode, "num_ref_idx_active_override_flag");
       if (uiCode)
       {

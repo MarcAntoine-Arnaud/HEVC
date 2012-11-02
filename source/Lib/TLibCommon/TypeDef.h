@@ -120,6 +120,8 @@
 
 #define NS_HAD                               0
 
+#define K0251                             1           ///< explicitly signal slice_temporal_mvp_enable_flag in non-IDR I Slices
+
 #define HHI_RQT_INTRA_SPEEDUP             1           ///< tests one best mode with full rqt
 #define HHI_RQT_INTRA_SPEEDUP_MOD         0           ///< tests two best modes with full rqt
 
