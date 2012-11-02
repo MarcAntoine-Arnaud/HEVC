@@ -112,13 +112,6 @@ Void TComPrediction::initTempBuff()
       m_pLumaRecBuffer = new Pel[ m_iLumaRecStride * m_iLumaRecStride ];
     }
   }
-
-  Int shift = g_bitDepth + 4;
-
-  for( Int i = 32; i < 64; i++ )
-  {
-    m_uiaShift[i-32] = ( ( 1 << shift ) + i/2 ) / i;
-  }
 }
 
 // ====================================================================================================================
