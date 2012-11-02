@@ -1454,7 +1454,7 @@ UInt64 TEncGOP::xFindDistortionFrame (TComPicYuv* pcPic0, TComPicYuv* pcPic1)
   Int     x, y;
   Pel*  pSrc0   = pcPic0 ->getLumaAddr();
   Pel*  pSrc1   = pcPic1 ->getLumaAddr();
-  UInt  uiShift = 2 * DISTORTION_PRECISION_ADJUSTMENT(g_bitDepth-8);
+  UInt  uiShift = 2 * DISTORTION_PRECISION_ADJUSTMENT(g_bitDepthY-8);
   Int   iTemp;
   
   Int   iStride = pcPic0->getStride();
@@ -1473,6 +1473,7 @@ UInt64 TEncGOP::xFindDistortionFrame (TComPicYuv* pcPic0, TComPicYuv* pcPic1)
     pSrc1 += iStride;
   }
   
+  uiShift = 2 * DISTORTION_PRECISION_ADJUSTMENT(g_bitDepthC-8);
   iHeight >>= 1;
   iWidth  >>= 1;
   iStride >>= 1;
@@ -1604,9 +1605,10 @@ Void TEncGOP::xCalculateAddPSNR( TComPic* pcPic, TComPicYuv* pcPicD, const Acces
     pRec += iStride;
   }
   
-  unsigned int maxval = 255 << (g_bitDepth-8);
-  Double fRefValueY = (double) maxval * maxval * iSize;
-  Double fRefValueC = fRefValueY / 4.0;
+  int maxvalY = 255 << (g_bitDepthY-8);
+  int maxvalC = 255 << (g_bitDepthC-8);
+  Double fRefValueY = (double) maxvalY * maxvalY * iSize;
+  Double fRefValueC = (double) maxvalC * maxvalC * iSize / 4.0;
   dYPSNR            = ( uiSSDY ? 10.0 * log10( fRefValueY / (Double)uiSSDY ) : 99.99 );
   dUPSNR            = ( uiSSDU ? 10.0 * log10( fRefValueC / (Double)uiSSDU ) : 99.99 );
   dVPSNR            = ( uiSSDV ? 10.0 * log10( fRefValueC / (Double)uiSSDV ) : 99.99 );
