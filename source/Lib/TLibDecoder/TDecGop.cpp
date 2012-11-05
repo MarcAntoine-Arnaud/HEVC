@@ -255,7 +255,7 @@ Void TDecGop::filterPicture(TComPic*& rpcPic)
 static void calcAndPrintHashStatus(TComPicYuv& pic, const SEImessages* seis)
 {
   /* calculate MD5sum for entire reconstructed picture */
-  unsigned char recon_digest[3][16];
+  UChar recon_digest[3][16];
   Int numChar=0;
   const char* hashType = "\0";
 

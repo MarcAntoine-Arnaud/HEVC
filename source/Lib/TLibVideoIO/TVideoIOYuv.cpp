@@ -248,7 +248,7 @@ static bool readPlane(Pel* dst, istream& fd, bool is16bit,
                       UInt pad_x, UInt pad_y)
 {
   Int read_len = width * (is16bit ? 2 : 1);
-  unsigned char *buf = new unsigned char[read_len];
+  UChar *buf = new UChar[read_len];
   for (Int y = 0; y < height; y++)
   {
     fd.read(reinterpret_cast<char*>(buf), read_len);
@@ -307,14 +307,14 @@ static bool writePlane(ostream& fd, Pel* src, bool is16bit,
                        UInt width, UInt height)
 {
   Int write_len = width * (is16bit ? 2 : 1);
-  unsigned char *buf = new unsigned char[write_len];
+  UChar *buf = new UChar[write_len];
   for (Int y = 0; y < height; y++)
   {
     if (!is16bit) 
     {
       for (Int x = 0; x < width; x++)
       {
-        buf[x] = (unsigned char) src[x];
+        buf[x] = (UChar) src[x];
       }
     }
     else 

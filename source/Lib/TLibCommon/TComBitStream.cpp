@@ -110,7 +110,7 @@ Void TComOutputBitstream::write   ( UInt uiBits, UInt uiNumberOfBits )
    * len(H)=7, len(V)=1: ... ---- HHHH HHHV . 0000 0000, next_num_held_bits=0
    * len(H)=7, len(V)=2: ... ---- HHHH HHHV . V000 0000, next_num_held_bits=1
    * if total_bits < 8, the value of v_ is not used */
-  unsigned char next_held_bits = uiBits << (8 - next_num_held_bits);
+  UChar next_held_bits = uiBits << (8 - next_num_held_bits);
 
   if (!(num_total_bits >> 3))
   {
@@ -191,7 +191,7 @@ Void TComOutputBitstream::writeByteAlignment()
 Void TComInputBitstream::pseudoRead ( UInt uiNumberOfBits, UInt& ruiBits )
 {
   UInt saved_num_held_bits = m_num_held_bits;
-  unsigned char saved_held_bits = m_held_bits;
+  UChar saved_held_bits = m_held_bits;
   UInt saved_fifo_idx = m_fifo_idx;
 
   unsigned num_bits_to_read = min(uiNumberOfBits, getNumBitsLeft());

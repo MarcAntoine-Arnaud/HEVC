@@ -45,7 +45,7 @@ template<unsigned OUTPUT_BITDEPTH_DIV8>
 static void md5_block(MD5& md5, const Pel* plane, unsigned n)
 {
   /* create a 64 byte buffer for packing Pel's into */
-  unsigned char buf[64/OUTPUT_BITDEPTH_DIV8][OUTPUT_BITDEPTH_DIV8];
+  UChar buf[64/OUTPUT_BITDEPTH_DIV8][OUTPUT_BITDEPTH_DIV8];
   for (unsigned i = 0; i < n; i++)
   {
     Pel pel = plane[i];
@@ -55,7 +55,7 @@ static void md5_block(MD5& md5, const Pel* plane, unsigned n)
       buf[i][d] = pel >> (d*8);
     }
   }
-  md5.update((unsigned char*)buf, n * OUTPUT_BITDEPTH_DIV8);
+  md5.update((UChar*)buf, n * OUTPUT_BITDEPTH_DIV8);
 }
 
 /**
@@ -83,7 +83,7 @@ static void md5_plane(MD5& md5, const Pel* plane, unsigned width, unsigned heigh
   }
 }
 
-static void compCRC(Int bitdepth, const Pel* plane, UInt width, UInt height, UInt stride, unsigned char digest[16])
+static void compCRC(Int bitdepth, const Pel* plane, UInt width, UInt height, UInt stride, UChar digest[16])
 {
   UInt dataMsbIdx = bitdepth - 1;
   UInt crcMsb;
@@ -112,7 +112,7 @@ static void compCRC(Int bitdepth, const Pel* plane, UInt width, UInt height, UIn
   digest[1] =  crcVal      & 0xff;
 }
 
-void calcCRC(TComPicYuv& pic, unsigned char digest[3][16])
+void calcCRC(TComPicYuv& pic, UChar digest[3][16])
 {
   unsigned width = pic.getWidth();
   unsigned height = pic.getHeight();
@@ -128,10 +128,10 @@ void calcCRC(TComPicYuv& pic, unsigned char digest[3][16])
   compCRC(g_bitDepthC, pic.getCrAddr(), width, height, stride, digest[2]);
 }
 
-static void compChecksum(Int bitdepth, const Pel* plane, UInt width, UInt height, UInt stride, unsigned char digest[16])
+static void compChecksum(Int bitdepth, const Pel* plane, UInt width, UInt height, UInt stride, UChar digest[16])
 {
   UInt checksum = 0;
-  unsigned char xor_mask;
+  UChar xor_mask;
 
   for (unsigned y = 0; y < height; y++)
   {
@@ -153,7 +153,7 @@ static void compChecksum(Int bitdepth, const Pel* plane, UInt width, UInt height
   digest[3] =  checksum      & 0xff;
 }
 
-void calcChecksum(TComPicYuv& pic, unsigned char digest[3][16])
+void calcChecksum(TComPicYuv& pic, UChar digest[3][16])
 {
   unsigned width = pic.getWidth();
   unsigned height = pic.getHeight();
@@ -175,7 +175,7 @@ void calcChecksum(TComPicYuv& pic, unsigned char digest[3][16])
  * using sufficient bytes to represent the picture bitdepth.  Eg, 10bit data
  * uses little-endian two byte words; 8bit data uses single byte words.
  */
-void calcMD5(TComPicYuv& pic, unsigned char digest[3][16])
+void calcMD5(TComPicYuv& pic, UChar digest[3][16])
 {
   /* choose an md5_plane packing function based on the system bitdepth */
   typedef void (*MD5PlaneFunc)(MD5&, const Pel*, unsigned, unsigned, unsigned);
