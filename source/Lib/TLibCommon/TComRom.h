@@ -225,7 +225,7 @@ enum ScalingListSize
   SCALING_LIST_32x32,
   SCALING_LIST_SIZE_NUM
 };
-static const char MatrixType[4][6][20] =
+static const Char MatrixType[4][6][20] =
 {
   {
   "INTRA4X4_LUMA",
@@ -256,7 +256,7 @@ static const char MatrixType[4][6][20] =
   "INTER32X32_LUMA",
   },
 };
-static const char MatrixType_DC[4][12][22] =
+static const Char MatrixType_DC[4][12][22] =
 {
   {
   },

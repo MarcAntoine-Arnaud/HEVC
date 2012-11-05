@@ -56,7 +56,7 @@ static std::vector<unsigned> writeAnnexB(std::ostream& out, const AccessUnit& au
     const NALUnitEBSP& nalu = **it;
     unsigned size = 0; /* size of annexB unit in bytes */
 
-    static const char start_code_prefix[] = {0,0,0,1};
+    static const Char start_code_prefix[] = {0,0,0,1};
     if (it == au.begin() || nalu.m_nalUnitType == NAL_UNIT_SPS || nalu.m_nalUnitType == NAL_UNIT_PPS)
     {
       /* From AVC, When any of the following conditions are fulfilled, the

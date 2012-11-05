@@ -1742,7 +1742,7 @@ Void TComScalingList::processRefMatrix( UInt sizeId, UInt listId , UInt refListI
  *  \param pchFile syntax infomation
  *  \returns false if successful
  */
-Bool TComScalingList::xParseScalingList(char* pchFile)
+Bool TComScalingList::xParseScalingList(Char* pchFile)
 {
   FILE *fp;
   Char line[1024];

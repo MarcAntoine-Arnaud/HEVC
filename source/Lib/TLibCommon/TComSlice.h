@@ -168,7 +168,7 @@ public:
   Int      getScalingListDC               (UInt sizeId, UInt listId)           { return m_scalingListDC[sizeId][listId]; }   //!< get DC value
   Void     checkDcOfMatrix                ();
   Void     processRefMatrix               (UInt sizeId, UInt listId , UInt refListId );
-  Bool     xParseScalingList              (char* pchFile);
+  Bool     xParseScalingList              (Char* pchFile);
 
 private:
   Void     init                    ();

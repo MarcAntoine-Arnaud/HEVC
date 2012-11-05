@@ -230,7 +230,7 @@ protected:
   UInt      m_log2ParallelMergeLevelMinus2;       ///< Parallel merge estimation region
   UInt      m_maxNumMergeCand;                    ///< Maximum number of merge candidates
   Int       m_useScalingListId;            ///< Using quantization matrix i.e. 0=off, 1=default, 2=file.
-  char*     m_scalingListFile;          ///< quantization matrix file name
+  Char*     m_scalingListFile;          ///< quantization matrix file name
   Int       m_TMVPModeId;
   Int       m_signHideFlag;
   Bool      m_enableRateCtrl;                                ///< Flag for using rate control algorithm
@@ -482,9 +482,9 @@ public:
   Int   getUniformSpacingIdr           ()                  { return m_iUniformSpacingIdr; }
   Void  setNumColumnsMinus1            ( Int i )           { m_iNumColumnsMinus1 = i; }
   Int   getNumColumnsMinus1            ()                  { return m_iNumColumnsMinus1; }
-  Void  setColumnWidth ( char* str )
+  Void  setColumnWidth ( Char* str )
   {
-    char *columnWidth;
+    Char *columnWidth;
     Int  i=0;
     Int  m_iWidthInCU = ( m_iSourceWidth%g_uiMaxCUWidth ) ? m_iSourceWidth/g_uiMaxCUWidth + 1 : m_iSourceWidth/g_uiMaxCUWidth;
 
@@ -515,9 +515,9 @@ public:
   UInt  getColumnWidth                 ( UInt columnidx )  { return *( m_puiColumnWidth + columnidx ); }
   Void  setNumRowsMinus1               ( Int i )           { m_iNumRowsMinus1 = i; }
   Int   getNumRowsMinus1               ()                  { return m_iNumRowsMinus1; }
-  Void  setRowHeight (char* str)
+  Void  setRowHeight (Char* str)
   {
-    char *rowHeight;
+    Char *rowHeight;
     Int  i=0;
     Int  m_iHeightInCU = ( m_iSourceHeight%g_uiMaxCUHeight ) ? m_iSourceHeight/g_uiMaxCUHeight + 1 : m_iSourceHeight/g_uiMaxCUHeight;
 
@@ -569,8 +569,8 @@ public:
   UInt      getMaxNumMergeCand                ()            { return m_maxNumMergeCand;   }
   Void      setUseScalingListId    ( Int  u )    { m_useScalingListId       = u;   }
   Int       getUseScalingListId    ()            { return m_useScalingListId;      }
-  Void      setScalingListFile     ( char*  pch ){ m_scalingListFile     = pch; }
-  char*     getScalingListFile     ()            { return m_scalingListFile;    }
+  Void      setScalingListFile     ( Char*  pch ){ m_scalingListFile     = pch; }
+  Char*     getScalingListFile     ()            { return m_scalingListFile;    }
   Void      setTMVPModeId ( Int  u ) { m_TMVPModeId = u;    }
   Int       getTMVPModeId ()         { return m_TMVPModeId; }
   Void      setSignHideFlag( Int signHideFlag ) { m_signHideFlag = signHideFlag; }

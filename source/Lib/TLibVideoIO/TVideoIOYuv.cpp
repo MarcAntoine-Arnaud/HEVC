@@ -151,7 +151,7 @@ static void scalePlane(Pel* img, UInt stride, UInt width, UInt height,
  * \param internalBitDepthY bit-depth to scale image data to/from when reading/writing (luma component).
  * \param internalBitDepthC bit-depth to scale image data to/from when reading/writing (chroma components).
  */
-Void TVideoIOYuv::open( char* pchFile, Bool bWriteMode, Int fileBitDepthY, Int fileBitDepthC, Int internalBitDepthY, Int internalBitDepthC)
+Void TVideoIOYuv::open( Char* pchFile, Bool bWriteMode, Int fileBitDepthY, Int fileBitDepthC, Int internalBitDepthY, Int internalBitDepthC)
 {
   m_bitDepthShiftY = internalBitDepthY - fileBitDepthY;
   m_bitDepthShiftC = internalBitDepthC - fileBitDepthC;
@@ -218,7 +218,7 @@ void TVideoIOYuv::skipFrames(UInt numFrames, UInt width, UInt height)
   m_cHandle.clear();
 
   /* fall back to consuming the input */
-  char buf[512];
+  Char buf[512];
   const unsigned offset_mod_bufsize = offset % sizeof(buf);
   for (streamoff i = 0; i < offset - offset_mod_bufsize; i += sizeof(buf))
   {
@@ -251,7 +251,7 @@ static bool readPlane(Pel* dst, istream& fd, bool is16bit,
   UChar *buf = new UChar[read_len];
   for (Int y = 0; y < height; y++)
   {
-    fd.read(reinterpret_cast<char*>(buf), read_len);
+    fd.read(reinterpret_cast<Char*>(buf), read_len);
     if (fd.eof() || fd.fail() )
     {
       delete[] buf;
@@ -326,7 +326,7 @@ static bool writePlane(ostream& fd, Pel* src, bool is16bit,
       }
     }
 
-    fd.write(reinterpret_cast<char*>(buf), write_len);
+    fd.write(reinterpret_cast<Char*>(buf), write_len);
     if (fd.eof() || fd.fail() )
     {
       delete[] buf;

@@ -1205,7 +1205,7 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
       //-- For time output for each slice
       Double dEncTime = (double)(clock()-iBeforeTime) / CLOCKS_PER_SEC;
 
-      const char* digestStr = NULL;
+      const Char* digestStr = NULL;
       if (m_pcCfg->getDecodedPictureHashSEIEnabled())
       {
         /* calculate MD5sum for entire reconstructed picture */
@@ -1508,7 +1508,7 @@ UInt64 TEncGOP::xFindDistortionFrame (TComPicYuv* pcPic0, TComPicYuv* pcPic1)
 }
 
 #if VERBOSE_RATE
-static const char* nalUnitTypeToString(NalUnitType type)
+static const Char* nalUnitTypeToString(NalUnitType type)
 {
   switch (type)
   {

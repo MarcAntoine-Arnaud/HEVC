@@ -56,8 +56,8 @@
 class TAppDecCfg
 {
 protected:
-  char*         m_pchBitstreamFile;                   ///< input bitstream file name
-  char*         m_pchReconFile;                       ///< output reconstruction file name
+  Char*         m_pchBitstreamFile;                   ///< input bitstream file name
+  Char*         m_pchReconFile;                       ///< output reconstruction file name
   Int           m_iSkipFrame;                         ///< counter for frames prior to the random access point to skip
   Int           m_outputBitDepthY;                     ///< bit depth used for writing output (luma)
   Int           m_outputBitDepthC;                     ///< bit depth used for writing output (chroma)t

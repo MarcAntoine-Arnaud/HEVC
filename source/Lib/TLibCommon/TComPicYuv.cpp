@@ -264,7 +264,7 @@ Void TComPicYuv::xExtendPicCompBorder  (Pel* piTxt, Int iStride, Int iWidth, Int
 }
 
 
-Void TComPicYuv::dump (char* pFileName, Bool bAdd)
+Void TComPicYuv::dump (Char* pFileName, Bool bAdd)
 {
   FILE* pFile;
   if (!bAdd)

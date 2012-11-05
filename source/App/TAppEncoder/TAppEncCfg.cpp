@@ -135,7 +135,7 @@ std::istringstream &operator>>(std::istringstream &in, GOPEntry &entry)     //in
 }
 
 static const struct MapStrToProfile {
-  const char* str;
+  const Char* str;
   Profile::Name value;
 } strToProfile[] = {
   {"none", Profile::NONE},
@@ -145,7 +145,7 @@ static const struct MapStrToProfile {
 };
 
 static const struct MapStrToTier {
-  const char* str;
+  const Char* str;
   Level::Tier value;
 } strToTier[] = {
   {"main", Level::MAIN},
@@ -153,7 +153,7 @@ static const struct MapStrToTier {
 };
 
 static const struct MapStrToLevel {
-  const char* str;
+  const Char* str;
   Level::Name value;
 } strToLevel[] = {
   {"none",Level::NONE},
@@ -429,9 +429,9 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
     opts.addOptions()(cOSS.str(), m_GOPList[i-1], GOPEntry());
   }
   po::setDefaults(opts);
-  const list<const char*>& argv_unhandled = po::scanArgv(opts, argc, (const char**) argv);
+  const list<const Char*>& argv_unhandled = po::scanArgv(opts, argc, (const Char**) argv);
 
-  for (list<const char*>::const_iterator it = argv_unhandled.begin(); it != argv_unhandled.end(); it++)
+  for (list<const Char*>::const_iterator it = argv_unhandled.begin(); it != argv_unhandled.end(); it++)
   {
     fprintf(stderr, "Unhandled argument ignored: `%s'\n", *it);
   }
@@ -576,7 +576,7 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
 // Private member functions
 // ====================================================================================================================
 
-Bool confirmPara(Bool bflag, const char* message);
+Bool confirmPara(Bool bflag, const Char* message);
 
 Void TAppEncCfg::xCheckParameter()
 {
@@ -1141,7 +1141,7 @@ Void TAppEncCfg::xPrintParameter()
   fflush(stdout);
 }
 
-Bool confirmPara(Bool bflag, const char* message)
+Bool confirmPara(Bool bflag, const Char* message)
 {
   if (!bflag)
     return false;
