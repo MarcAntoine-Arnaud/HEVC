@@ -500,6 +500,18 @@ Specifies the bit depth of the output locally reconstructed video file.
 Note: This option has no effect on the decoding process.
 \\
 
+\Option{InputBitDepthC}
+\Option{InternalBitDepthC}
+\Option{OutputBitDepthC} &
+\ShortOption{\None} &
+\Default{(InputBitDepth)}
+\Default{(InternalBitDepth)}
+\Default{(InternalBitDepthC)} &
+Specifies the various bit-depths for chroma components.  These only need
+to be specified if non-equal luma and chroma bit-depth processing is
+required.
+\\
+
 \Option{CroppingMode} &
 \ShortOption{\None} &
 \Default{0} &
@@ -554,6 +566,42 @@ Specifies a number of frames to skip at beginning of input video file.
 \ShortOption{-f} &
 \Default{0 \\ (all)} &
 Specifies the number of frames to be encoded.
+\\
+\end{OptionTable}
+
+%%
+%% profile, level and conformance options
+%%
+\begin{OptionTable}{Profile and level parameters}
+\Option{Profile} &
+\ShortOption{\None} &
+\Default{none} &
+Specifies the profile to which the encoded bitstream complies.
+Valid values are: none, main, main10, main-still-picture.
+
+Compatibility flags are automatically determined according to the profile.
+If --Profile=main, then main10 will always be signalled as compatible.
+If --Profile=main10, then main will be signalled as compatible if the bit-depth is 8-bit.
+
+NB: There is currently no validation that the encoder configuration complies with the profile and level constraints.
+\\
+
+\Option{Level} &
+\ShortOption{\None} &
+\Default{none} &
+Specifies the level to which the encoded bitstream complies.
+Valid values are: none, 1, 2, 2.1, 3, 3.1, 4, 4.1, 5, 5.1, 5.2, 6, 6.1, 6.2.
+
+NB: There is currently no validation that the encoder configuration complies with the profile and level constraints.
+\\
+
+\Option{Tier} &
+\ShortOption{\None} &
+\Default{main} &
+Specifies the level tier to which the encoded bitsream complies.
+Valid values are: main, high.
+
+NB: There is currently no validation that the encoder configuration complies with the profile and level constraints.
 \\
 \end{OptionTable}
 
@@ -804,6 +852,12 @@ MaxCuDQPDepth shall be greater than or equal to SliceGranularity.
 \ShortOption{\None} &
 \Default{true} &
 Enables or disables rate-distortion-optimized quantization.
+\\
+
+\Option{RDOQTS} &
+\ShortOption{\None} &
+\Default{true} &
+Enables or disables rate-distortion-optimized quantization for transform-skipped TUs.
 \\
 
 \Option{DeltaQpRD} &
@@ -1479,11 +1533,18 @@ Defines reconstructed YUV file name.
 Defines the number of pictures in decoding order to skip.
 \\
 
-\Option{} &
+\Option{OutputBitDepth} &
 \ShortOption{-d} &
 \Default{0 \\ (Native)} &
-Defines the bit depth of the reconstructed YUV file (a value 0 indicates
-that the native bit depth is used)
+Specifies the luma bit-depth of the reconstructed YUV file (the value 0 indicates
+that the native bit-depth is used)
+\\
+
+\Option{OutputBitDepthC} &
+\ShortOption{\None} &
+\Default{0 \\ (Native)} &
+Defines the chroma bit-depth of the reconstructed YUV file (the value 0 indicates
+that the native bit-depth is used)
 \\
 
 \Option{SEIPictureDigest} &
