@@ -136,9 +136,9 @@ public:
   /**
    * Return the number of bits that have been written since the last clear()
    */
-  unsigned getNumberOfWrittenBits() const { return unsigned(m_fifo->size()) * 8 + m_num_held_bits; }
+  UInt getNumberOfWrittenBits() const { return UInt(m_fifo->size()) * 8 + m_num_held_bits; }
 
-  void insertAt(const TComOutputBitstream& src, unsigned pos);
+  void insertAt(const TComOutputBitstream& src, UInt pos);
 
   /**
    * Return a reference to the internal fifo
@@ -194,13 +194,13 @@ public:
   UInt  getByteLocation              ( )                     { return m_fifo_idx                    ; }
 
   // Peek at bits in word-storage. Used in determining if we have completed reading of current bitstream and therefore slice in LCEC.
-  UInt        peekBits (UInt uiBits) { unsigned tmp; pseudoRead(uiBits, tmp); return tmp; }
+  UInt        peekBits (UInt uiBits) { UInt tmp; pseudoRead(uiBits, tmp); return tmp; }
 
   // utility functions
-  unsigned read(unsigned numberOfBits) { UInt tmp; read(numberOfBits, tmp); return tmp; }
+  UInt read(UInt numberOfBits) { UInt tmp; read(numberOfBits, tmp); return tmp; }
   UInt     readByte() { UInt tmp; readByte( tmp ); return tmp; }
-  unsigned getNumBitsUntilByteAligned() { return m_num_held_bits & (0x7); }
-  unsigned getNumBitsLeft() { return 8*((unsigned)m_fifo->size() - m_fifo_idx) + m_num_held_bits; }
+  UInt getNumBitsUntilByteAligned() { return m_num_held_bits & (0x7); }
+  UInt getNumBitsLeft() { return 8*((UInt)m_fifo->size() - m_fifo_idx) + m_num_held_bits; }
   TComInputBitstream *extractSubstream( UInt uiNumBits ); // Read the nominated number of bits, and return as a bitstream.
   Void                deleteFifo(); // Delete internal fifo of bitstream.
   UInt  getNumBitsRead() { return m_numBitsRead; }

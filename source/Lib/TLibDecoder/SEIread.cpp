@@ -191,7 +191,7 @@ Void SEIReader::xParseSEIDecodedPictureHash(SEIDecodedPictureHash& sei, UInt pay
   {
     if(SEIDecodedPictureHash::MD5 == sei.method)
     {
-      for (unsigned i = 0; i < 16; i++)
+      for (UInt i = 0; i < 16; i++)
       {
         READ_CODE(8, val, "picture_md5");
         sei.digest[yuvIdx][i] = val;

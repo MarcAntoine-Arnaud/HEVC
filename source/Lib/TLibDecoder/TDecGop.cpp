@@ -300,7 +300,7 @@ static void calcAndPrintHashStatus(TComPicYuv& pic, const SEImessages* seis)
     ok = "(OK)";
     for(Int yuvIdx = 0; yuvIdx < 3; yuvIdx++)
     {
-      for (unsigned i = 0; i < numChar; i++)
+      for (UInt i = 0; i < numChar; i++)
       {
         if (recon_digest[yuvIdx][i] != seis->picture_digest->digest[yuvIdx][i])
         {

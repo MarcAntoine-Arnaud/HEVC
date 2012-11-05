@@ -219,7 +219,7 @@ void TVideoIOYuv::skipFrames(UInt numFrames, UInt width, UInt height)
 
   /* fall back to consuming the input */
   Char buf[512];
-  const unsigned offset_mod_bufsize = offset % sizeof(buf);
+  const UInt offset_mod_bufsize = offset % sizeof(buf);
   for (streamoff i = 0; i < offset - offset_mod_bufsize; i += sizeof(buf))
   {
     m_cHandle.read(buf, sizeof(buf));

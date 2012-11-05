@@ -471,7 +471,7 @@ Void TAppEncTop::xWriteOutput(std::ostream& bitstreamFile, Int iNumEncoded, cons
     }
 
     const AccessUnit& au = *(iterBitstream++);
-    const vector<unsigned>& stats = writeAnnexB(bitstreamFile, au);
+    const vector<UInt>& stats = writeAnnexB(bitstreamFile, au);
     rateStatsAccum(au, stats);
   }
 }
@@ -479,10 +479,10 @@ Void TAppEncTop::xWriteOutput(std::ostream& bitstreamFile, Int iNumEncoded, cons
 /**
  *
  */
-void TAppEncTop::rateStatsAccum(const AccessUnit& au, const std::vector<unsigned>& annexBsizes)
+void TAppEncTop::rateStatsAccum(const AccessUnit& au, const std::vector<UInt>& annexBsizes)
 {
   AccessUnit::const_iterator it_au = au.begin();
-  vector<unsigned>::const_iterator it_stats = annexBsizes.begin();
+  vector<UInt>::const_iterator it_stats = annexBsizes.begin();
 
   for (; it_au != au.end(); it_au++, it_stats++)
   {

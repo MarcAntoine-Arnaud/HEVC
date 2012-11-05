@@ -51,7 +51,7 @@ using namespace std;
 //! \{
 static void convertPayloadToRBSP(vector<uint8_t>& nalUnitBuf, TComInputBitstream *pcBitstream)
 {
-  unsigned zeroCount = 0;
+  UInt zeroCount = 0;
   vector<uint8_t>::iterator it_read, it_write;
 
   for (it_read = it_write = nalUnitBuf.begin(); it_read != nalUnitBuf.end(); it_read++, it_write++)

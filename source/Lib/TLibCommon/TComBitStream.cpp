@@ -85,7 +85,7 @@ Char* TComOutputBitstream::getByteStream() const
 
 UInt TComOutputBitstream::getByteStreamLength()
 {
-  return unsigned(m_fifo->size());
+  return UInt(m_fifo->size());
 }
 
 void TComOutputBitstream::clear()
@@ -101,8 +101,8 @@ Void TComOutputBitstream::write   ( UInt uiBits, UInt uiNumberOfBits )
 
   /* any modulo 8 remainder of num_total_bits cannot be written this time,
    * and will be held until next time. */
-  unsigned num_total_bits = uiNumberOfBits + m_num_held_bits;
-  unsigned next_num_held_bits = num_total_bits % 8;
+  UInt num_total_bits = uiNumberOfBits + m_num_held_bits;
+  UInt next_num_held_bits = num_total_bits % 8;
 
   /* form a byte aligned word (write_bits), by concatenating any held bits
    * with the new bits, discarding the bits that will form the next_held_bits.
@@ -123,7 +123,7 @@ Void TComOutputBitstream::write   ( UInt uiBits, UInt uiNumberOfBits )
   }
 
   /* topword serves to justify held_bits to align with the msb of uiBits */
-  unsigned topword = (uiNumberOfBits - next_num_held_bits) & ~((1 << 3) -1);
+  UInt topword = (uiNumberOfBits - next_num_held_bits) & ~((1 << 3) -1);
   UInt write_bits = (m_held_bits << topword) | (uiBits >> next_num_held_bits);
 
   switch (num_total_bits >> 3)
@@ -194,7 +194,7 @@ Void TComInputBitstream::pseudoRead ( UInt uiNumberOfBits, UInt& ruiBits )
   UChar saved_held_bits = m_held_bits;
   UInt saved_fifo_idx = m_fifo_idx;
 
-  unsigned num_bits_to_read = min(uiNumberOfBits, getNumBitsLeft());
+  UInt num_bits_to_read = min(uiNumberOfBits, getNumBitsLeft());
   read(num_bits_to_read, ruiBits);
   ruiBits <<= (uiNumberOfBits - num_bits_to_read);
 
@@ -211,7 +211,7 @@ Void TComInputBitstream::read (UInt uiNumberOfBits, UInt& ruiBits)
   m_numBitsRead += uiNumberOfBits;
 
   /* NB, bits are extracted from the MSB of each byte. */
-  unsigned retval = 0;
+  UInt retval = 0;
   if (uiNumberOfBits <= m_num_held_bits)
   {
     /* n=1, len(H)=7:   -VHH HHHH, shift_down=6, mask=0xfe
@@ -241,8 +241,8 @@ Void TComInputBitstream::read (UInt uiNumberOfBits, UInt& ruiBits)
    * n=8,  len(H)=3, load 1byte,  shift_down=3
    * n=5,  len(H)=1, load 1byte,  shift_down=1+3
    */
-  unsigned aligned_word = 0;
-  unsigned num_bytes_to_load = (uiNumberOfBits - 1) >> 3;
+  UInt aligned_word = 0;
+  UInt num_bytes_to_load = (uiNumberOfBits - 1) >> 3;
   assert(m_fifo_idx + num_bytes_to_load < m_fifo->size());
 
   switch (num_bytes_to_load)
@@ -254,7 +254,7 @@ Void TComInputBitstream::read (UInt uiNumberOfBits, UInt& ruiBits)
   }
 
   /* resolve remainder bits */
-  unsigned next_num_held_bits = (32 - uiNumberOfBits) % 8;
+  UInt next_num_held_bits = (32 - uiNumberOfBits) % 8;
 
   /* copy required part of aligned_word into retval */
   retval |= aligned_word >> next_num_held_bits;
@@ -270,9 +270,9 @@ Void TComInputBitstream::read (UInt uiNumberOfBits, UInt& ruiBits)
  * insert the contents of the bytealigned (and flushed) bitstream src
  * into this at byte position pos.
  */
-void TComOutputBitstream::insertAt(const TComOutputBitstream& src, unsigned pos)
+void TComOutputBitstream::insertAt(const TComOutputBitstream& src, UInt pos)
 {
-  unsigned src_bits = src.getNumberOfWrittenBits();
+  UInt src_bits = src.getNumberOfWrittenBits();
   assert(0 == src_bits % 8);
 
   vector<uint8_t>::iterator at = this->m_fifo->begin() + pos;

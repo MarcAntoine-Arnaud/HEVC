@@ -74,7 +74,7 @@ public:
   }
 
   UChar uuid_iso_iec_11578[16];
-  unsigned userDataLength;
+  UInt userDataLength;
   UChar *userData;
 };
 

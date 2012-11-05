@@ -81,7 +81,7 @@ public:
    * returns true if an EOF will be encountered within the next
    * n bytes.
    */
-  Bool eofBeforeNBytes(unsigned n)
+  Bool eofBeforeNBytes(UInt n)
   {
     assert(n <= 4);
     if (m_NumFutureBytes >= n)
@@ -90,7 +90,7 @@ public:
     n -= m_NumFutureBytes;
     try
     {
-      for (unsigned i = 0; i < n; i++)
+      for (UInt i = 0; i < n; i++)
       {
         m_FutureBytes = (m_FutureBytes << 8) | m_Input.get();
         m_NumFutureBytes++;
@@ -115,7 +115,7 @@ public:
    * is undefined.
    *
    */
-  uint32_t peekBytes(unsigned n)
+  uint32_t peekBytes(UInt n)
   {
     eofBeforeNBytes(n);
     return m_FutureBytes >> 8*(m_NumFutureBytes - n);
@@ -145,16 +145,16 @@ public:
    * bytestream are interpreted as bigendian when assembling
    * the return value.
    */
-  uint32_t readBytes(unsigned n)
+  uint32_t readBytes(UInt n)
   {
     uint32_t val = 0;
-    for (unsigned i = 0; i < n; i++)
+    for (UInt i = 0; i < n; i++)
       val = (val << 8) | readByte();
     return val;
   }
 
 private:
-  unsigned m_NumFutureBytes; /* number of valid bytes in m_FutureBytes */
+  UInt m_NumFutureBytes; /* number of valid bytes in m_FutureBytes */
   uint32_t m_FutureBytes; /* bytes that have been peeked */
   std::istream& m_Input; /* Input stream to read from */
 };
@@ -164,11 +164,11 @@ private:
  */
 struct AnnexBStats
 {
-  unsigned m_numLeadingZero8BitsBytes;
-  unsigned m_numZeroByteBytes;
-  unsigned m_numStartCodePrefixBytes;
-  unsigned m_numBytesInNALUnit;
-  unsigned m_numTrailingZero8BitsBytes;
+  UInt m_numLeadingZero8BitsBytes;
+  UInt m_numZeroByteBytes;
+  UInt m_numStartCodePrefixBytes;
+  UInt m_numBytesInNALUnit;
+  UInt m_numTrailingZero8BitsBytes;
 
   AnnexBStats& operator+=(const AnnexBStats& rhs)
   {

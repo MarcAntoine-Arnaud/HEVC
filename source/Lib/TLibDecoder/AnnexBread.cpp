@@ -167,7 +167,7 @@ byteStreamNALUnit(
   {
     eof = true;
   }
-  stats.m_numBytesInNALUnit = unsigned(nalUnit.size());
+  stats.m_numBytesInNALUnit = UInt(nalUnit.size());
   return eof;
 }
 //! \}

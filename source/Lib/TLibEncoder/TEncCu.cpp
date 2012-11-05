@@ -1029,7 +1029,7 @@ Void TEncCu::finishCU( TComDataCU* pcCU, UInt uiAbsPartIdx, UInt uiDepth )
   }
   
   // Calculate slice end IF this CU puts us over slice bit size.
-  unsigned iGranularitySize = pcCU->getPic()->getNumPartInCU();
+  UInt iGranularitySize = pcCU->getPic()->getNumPartInCU();
   Int iGranularityEnd = ((pcCU->getSCUAddr()+uiAbsPartIdx)/iGranularitySize)*iGranularitySize;
   if(iGranularityEnd<=pcSlice->getDependentSliceCurStartCUAddr()) 
   {

@@ -55,8 +55,8 @@ struct OutputNALUnit : public NALUnit
    */
   OutputNALUnit(
     NalUnitType nalUnitType,
-    unsigned temporalID = 0,
-    unsigned reserved_zero_6bits = 0)
+    UInt temporalID = 0,
+    UInt reserved_zero_6bits = 0)
   : NALUnit(nalUnitType, temporalID, reserved_zero_6bits)
   , m_Bitstream()
   {}

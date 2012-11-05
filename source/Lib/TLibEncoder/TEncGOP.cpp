@@ -1259,7 +1259,7 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
       }
       if(m_pcCfg->getUseRateCtrl())
       {
-        unsigned  frameBits = m_vRVM_RP[m_vRVM_RP.size()-1];
+        UInt  frameBits = m_vRVM_RP[m_vRVM_RP.size()-1];
         m_pcRateCtrl->updataRCFrameStatus((Int)frameBits, pcSlice->getSliceType());
       }
       if( ( m_pcCfg->getPictureTimingSEIEnabled() ) &&
@@ -1617,10 +1617,10 @@ Void TEncGOP::xCalculateAddPSNR( TComPic* pcPic, TComPicYuv* pcPicD, const Acces
    *  - any AnnexB contributions (start_code_prefix, zero_byte, etc.,)
    *  - SEI NAL units
    */
-  unsigned numRBSPBytes = 0;
+  UInt numRBSPBytes = 0;
   for (AccessUnit::const_iterator it = accessUnit.begin(); it != accessUnit.end(); it++)
   {
-    unsigned numRBSPBytes_nal = unsigned((*it)->m_nalUnitData.str().size());
+    UInt numRBSPBytes_nal = UInt((*it)->m_nalUnitData.str().size());
 #if VERBOSE_RATE
     printf("*** %6s numBytesInNALunit: %u\n", nalUnitTypeToString((*it)->m_nalUnitType), numRBSPBytes_nal);
 #endif
@@ -1628,7 +1628,7 @@ Void TEncGOP::xCalculateAddPSNR( TComPic* pcPic, TComPicYuv* pcPicD, const Acces
       numRBSPBytes += numRBSPBytes_nal;
   }
 
-  unsigned uibits = numRBSPBytes * 8;
+  UInt uibits = numRBSPBytes * 8;
   m_vRVM_RP.push_back( uibits );
 
   //===== add PSNR =====
