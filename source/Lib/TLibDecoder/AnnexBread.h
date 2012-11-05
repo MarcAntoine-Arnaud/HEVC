@@ -81,7 +81,7 @@ public:
    * returns true if an EOF will be encountered within the next
    * n bytes.
    */
-  bool eofBeforeNBytes(unsigned n)
+  Bool eofBeforeNBytes(unsigned n)
   {
     assert(n <= 4);
     if (m_NumFutureBytes >= n)
@@ -181,6 +181,6 @@ struct AnnexBStats
   }
 };
 
-bool byteStreamNALUnit(InputByteStream& bs, std::vector<uint8_t>& nalUnit, AnnexBStats& stats);
+Bool byteStreamNALUnit(InputByteStream& bs, std::vector<uint8_t>& nalUnit, AnnexBStats& stats);
 
 //! \}

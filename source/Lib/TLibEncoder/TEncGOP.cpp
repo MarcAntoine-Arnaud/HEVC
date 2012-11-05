@@ -872,7 +872,7 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
     pcSlice = pcPic->getSlice(uiStartCUAddrSliceIdx);
 
     Int processingState = (pcSlice->getSPS()->getUseSAO())?(EXECUTE_INLOOPFILTER):(ENCODE_SLICE);
-    bool skippedSlice=false;
+    Bool skippedSlice=false;
     while (uiNextCUAddr < uiRealEndAddress) // Iterate over all slices
     {
       switch(processingState)

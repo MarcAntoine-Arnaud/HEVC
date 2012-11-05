@@ -152,13 +152,13 @@ _byteStreamNALUnit(
  * Returns false if EOF was reached (NB, nalunit data may be valid),
  *         otherwise true.
  */
-bool
+Bool
 byteStreamNALUnit(
   InputByteStream& bs,
   vector<uint8_t>& nalUnit,
   AnnexBStats& stats)
 {
-  bool eof = false;
+  Bool eof = false;
   try
   {
     _byteStreamNALUnit(bs, nalUnit, stats);

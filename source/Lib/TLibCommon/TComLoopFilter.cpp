@@ -170,7 +170,7 @@ Void TComLoopFilter::loopFilterPic( TComPic* pcPic )
     ::memset( m_aapucBS       [EDGE_VER], 0, sizeof( UChar ) * m_uiNumPartitions );
     for( Int iPlane = 0; iPlane < 3; iPlane++ )
     {
-      ::memset( m_aapbEdgeFilter[EDGE_VER][iPlane], 0, sizeof( bool  ) * m_uiNumPartitions );
+      ::memset( m_aapbEdgeFilter[EDGE_VER][iPlane], 0, sizeof( Bool  ) * m_uiNumPartitions );
     }
 
     // CU-based deblocking
@@ -186,7 +186,7 @@ Void TComLoopFilter::loopFilterPic( TComPic* pcPic )
     
     for( Int iPlane = 0; iPlane < 3; iPlane++ )
     {
-      ::memset( m_aapbEdgeFilter[EDGE_HOR][iPlane], 0, sizeof( bool  ) * m_uiNumPartitions );
+      ::memset( m_aapbEdgeFilter[EDGE_HOR][iPlane], 0, sizeof( Bool  ) * m_uiNumPartitions );
     }
 
     // CU-based deblocking

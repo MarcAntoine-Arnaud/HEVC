@@ -69,11 +69,11 @@ public:
 
   void skipFrames(UInt numFrames, UInt width, UInt height);
   
-  bool  read  ( TComPicYuv*   pPicYuv, Int aiPad[2] );     ///< read  one YUV frame with padding parameter
+  Bool  read  ( TComPicYuv*   pPicYuv, Int aiPad[2] );     ///< read  one YUV frame with padding parameter
   Bool  write( TComPicYuv*    pPicYuv, Int cropLeft=0, Int cropRight=0, Int cropTop=0, Int cropBottom=0 );
   
-  bool  isEof ();                                           ///< check for end-of-file
-  bool  isFail();                                           ///< check for failure
+  Bool  isEof ();                                           ///< check for end-of-file
+  Bool  isFail();                                           ///< check for failure
   
 };
 

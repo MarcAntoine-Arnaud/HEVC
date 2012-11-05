@@ -35,8 +35,6 @@
     \brief    GOP decoder class
 */
 
-extern bool g_md5_mismatch; ///< top level flag to signal when there is a decode problem
-
 #include "TDecGop.h"
 #include "TDecCAVLC.h"
 #include "TDecSbac.h"
@@ -46,6 +44,8 @@ extern bool g_md5_mismatch; ///< top level flag to signal when there is a decode
 #include "TLibCommon/SEI.h"
 
 #include <time.h>
+
+extern Bool g_md5_mismatch; ///< top level flag to signal when there is a decode problem
 
 //! \ingroup TLibDecoder
 //! \{
@@ -293,7 +293,7 @@ static void calcAndPrintHashStatus(TComPicYuv& pic, const SEImessages* seis)
 
   /* compare digest against received version */
   const Char* ok = "(unk)";
-  bool mismatch = false;
+  Bool mismatch = false;
 
   if (seis && seis->picture_digest)
   {

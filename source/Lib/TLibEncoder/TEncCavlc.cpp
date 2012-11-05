@@ -1364,7 +1364,7 @@ Void TEncCavlc::xCodeScalingList(TComScalingList* scalingList, UInt sizeId, UInt
 }
 Bool TEncCavlc::findMatchingLTRP ( TComSlice* pcSlice, UInt *ltrpsIndex, Int ltrpPOC, Bool usedFlag )
 {
-  // bool state = true, state2 = false;
+  // Bool state = true, state2 = false;
   Int lsb = ltrpPOC % (1<<pcSlice->getSPS()->getBitsForPOC());
   for (Int k = 0; k < pcSlice->getSPS()->getNumLongTermRefPicSPS(); k++)
   {

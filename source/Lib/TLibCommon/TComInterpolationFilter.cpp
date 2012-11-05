@@ -162,7 +162,7 @@ Void TComInterpolationFilter::filterCopy(Int bitDepth, const Pel *src, Int srcSt
  * \param  height     Height of block
  * \param  coeff      Pointer to filter taps
  */
-template<Int N, bool isVertical, bool isFirst, bool isLast>
+template<Int N, Bool isVertical, Bool isFirst, Bool isLast>
 Void TComInterpolationFilter::filter(Int bitDepth, Short const *src, Int srcStride, Short *dst, Int dstStride, Int width, Int height, Short const *coeff)
 {
   Int row, col;

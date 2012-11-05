@@ -60,7 +60,7 @@ class TComInterpolationFilter
   
   static Void filterCopy(Int bitDepth, const Pel *src, Int srcStride, Short *dst, Int dstStride, Int width, Int height, Bool isFirst, Bool isLast);
   
-  template<Int N, bool isVertical, bool isFirst, bool isLast>
+  template<Int N, Bool isVertical, Bool isFirst, Bool isLast>
   static Void filter(Int bitDepth, Pel const *src, Int srcStride, Short *dst, Int dstStride, Int width, Int height, Short const *coeff);
 
   template<Int N>

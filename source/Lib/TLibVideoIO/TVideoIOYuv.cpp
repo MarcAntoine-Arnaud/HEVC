@@ -242,7 +242,7 @@ void TVideoIOYuv::skipFrames(UInt numFrames, UInt width, UInt height)
  * @param pad_y   length of vertical padding.
  * @return true for success, false in case of error
  */
-static bool readPlane(Pel* dst, istream& fd, bool is16bit,
+static Bool readPlane(Pel* dst, istream& fd, Bool is16bit,
                       UInt stride,
                       UInt width, UInt height,
                       UInt pad_x, UInt pad_y)
@@ -302,7 +302,7 @@ static bool readPlane(Pel* dst, istream& fd, bool is16bit,
  * @param height  height of active area in src.
  * @return true for success, false in case of error
  */
-static bool writePlane(ostream& fd, Pel* src, bool is16bit,
+static Bool writePlane(ostream& fd, Pel* src, Bool is16bit,
                        UInt stride,
                        UInt width, UInt height)
 {
@@ -351,7 +351,7 @@ static bool writePlane(ostream& fd, Pel* src, bool is16bit,
  * @param aiPad        source padding size, aiPad[0] = horizontal, aiPad[1] = vertical
  * @return true for success, false in case of error
  */
-bool TVideoIOYuv::read ( TComPicYuv*  pPicYuv, Int aiPad[2] )
+Bool TVideoIOYuv::read ( TComPicYuv*  pPicYuv, Int aiPad[2] )
 {
   // check end-of-file
   if ( isEof() ) return false;
@@ -365,7 +365,7 @@ bool TVideoIOYuv::read ( TComPicYuv*  pPicYuv, Int aiPad[2] )
   UInt height_full = pPicYuv->getHeight();
   UInt width  = width_full - pad_h;
   UInt height = height_full - pad_v;
-  bool is16bit = m_fileBitDepthY > 8 || m_fileBitDepthC > 8;
+  Bool is16bit = m_fileBitDepthY > 8 || m_fileBitDepthC > 8;
 
   Int desired_bitdepthY = m_fileBitDepthY + m_bitDepthShiftY;
   Int desired_bitdepthC = m_fileBitDepthC + m_bitDepthShiftC;
@@ -425,9 +425,9 @@ Bool TVideoIOYuv::write( TComPicYuv* pPicYuv, Int cropLeft, Int cropRight, Int c
   Int   iStride = pPicYuv->getStride();
   UInt  width  = pPicYuv->getWidth()  - cropLeft - cropRight;
   UInt  height = pPicYuv->getHeight() - cropTop  - cropBottom;
-  bool is16bit = m_fileBitDepthY > 8 || m_fileBitDepthC > 8;
+  Bool is16bit = m_fileBitDepthY > 8 || m_fileBitDepthC > 8;
   TComPicYuv *dstPicYuv = NULL;
-  bool retval = true;
+  Bool retval = true;
 
   if (m_bitDepthShiftY != 0 || m_bitDepthShiftC != 0)
   {

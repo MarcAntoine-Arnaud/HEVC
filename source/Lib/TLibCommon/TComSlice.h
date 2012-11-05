@@ -965,8 +965,8 @@ class TComSlice
   
 private:
   //  Bitstream writing
-  bool       m_saoEnabledFlag;
-  bool       m_saoEnabledFlagChroma;      ///< SAO Cb&Cr enabled flag
+  Bool       m_saoEnabledFlag;
+  Bool       m_saoEnabledFlagChroma;      ///< SAO Cb&Cr enabled flag
   Int         m_iPPSId;               ///< picture parameter set ID
   Bool        m_PicOutputFlag;        ///< pic_output_flag 
   Int         m_iPOC;

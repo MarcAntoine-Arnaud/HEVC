@@ -218,7 +218,7 @@ istream& operator>>(istream &in, Level::Name &level)
  */
 Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
 {
-  bool do_help = false;
+  Bool do_help = false;
   
   string cfg_InputFile;
   string cfg_BitstreamFile;
@@ -589,7 +589,7 @@ Void TAppEncCfg::xCheckParameter()
     fprintf(stderr, "*************************************************************\n");
   }
 
-  bool check_failed = false; /* abort if there is a fatal configuration problem */
+  Bool check_failed = false; /* abort if there is a fatal configuration problem */
 #define xConfirmPara(a,b) check_failed |= confirmPara(a,b)
   // check range of parameters
   xConfirmPara( m_inputBitDepthY < 8,                                                     "InputBitDepth must be at least 8" );
@@ -667,7 +667,7 @@ Void TAppEncCfg::xCheckParameter()
     xConfirmPara( m_iDependentSliceArgument < 1 ,         "DependentSliceArgument should be larger than or equal to 1" );
   }
   
-  bool tileFlag = (m_iNumColumnsMinus1 > 0 || m_iNumRowsMinus1 > 0 );
+  Bool tileFlag = (m_iNumColumnsMinus1 > 0 || m_iNumRowsMinus1 > 0 );
   xConfirmPara( tileFlag && m_iWaveFrontSynchro,            "Tile and Wavefront can not be applied together");
 #if !DEPENDENT_SLICES
   xConfirmPara( m_iWaveFrontSynchro && m_iDependentSliceMode, "Wavefront and Dependent Slice can not be applied together");

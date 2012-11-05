@@ -363,7 +363,7 @@ Void TAppEncTop::encode()
     
     bEos = (m_iFrameRcvd == m_iFrameToBeEncoded);
 
-    bool flush = 0;
+    Bool flush = 0;
     // if end of file (which is only detected on a read failure) flush the encoder of any queued pictures
     if (m_cTVideoIOYuvInputFile.isEof())
     {

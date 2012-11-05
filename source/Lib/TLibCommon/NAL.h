@@ -62,7 +62,7 @@ struct NALUnit
   NALUnit() {}
 
   /** returns true if the NALunit is a slice NALunit */
-  bool isSlice()
+  Bool isSlice()
   {
     return m_nalUnitType == NAL_UNIT_CODED_SLICE_TRAIL_R
         || m_nalUnitType == NAL_UNIT_CODED_SLICE_TRAIL_N

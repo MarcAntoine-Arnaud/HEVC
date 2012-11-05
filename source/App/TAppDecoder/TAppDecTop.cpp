@@ -108,7 +108,7 @@ Void TAppDecTop::decode()
   m_iPOCLastDisplay += m_iSkipFrame;      // set the last displayed POC correctly for skip forward.
 
   // main decoder loop
-  bool recon_opened = false; // reconstruction file not yet opened. (must be performed after SPS is seen)
+  Bool recon_opened = false; // reconstruction file not yet opened. (must be performed after SPS is seen)
 
   while (!!bitstreamFile)
   {
@@ -118,14 +118,14 @@ Void TAppDecTop::decode()
      * nal unit. */
     streampos location = bitstreamFile.tellg();
     AnnexBStats stats = AnnexBStats();
-    bool bPreviousPictureDecoded = false;
+    Bool bPreviousPictureDecoded = false;
 
     vector<uint8_t> nalUnit;
     InputNALUnit nalu;
     byteStreamNALUnit(bytestream, nalUnit, stats);
 
     // call actual decoding function
-    bool bNewPicture = false;
+    Bool bNewPicture = false;
     if (nalUnit.empty())
     {
       /* this can happen if the following occur:
