@@ -107,10 +107,10 @@ extern       UInt g_auiPUOffset[8];
 
 extern Int g_quantScales[6];             // Q(QP%6)  
 extern Int g_invQuantScales[6];          // IQ(QP%6)
-extern const short g_aiT4[4][4];
-extern const short g_aiT8[8][8];
-extern const short g_aiT16[16][16];
-extern const short g_aiT32[32][32];
+extern const Short g_aiT4[4][4];
+extern const Short g_aiT8[8][8];
+extern const Short g_aiT16[16][16];
+extern const Short g_aiT32[32][32];
 
 // ====================================================================================================================
 // Luma QP to Chroma QP mapping
@@ -151,8 +151,8 @@ extern const UChar g_aucAngIntraModeOrder[NUM_INTRA_MODE];
 // Bit-depth
 // ====================================================================================================================
 
-extern        Int g_bitDepth;
-extern        Int g_maxLumaVal;
+extern        Int g_bitDepthY;
+extern        Int g_bitDepthC;
 extern       UInt g_uiPCMBitDepthLuma;
 extern       UInt g_uiPCMBitDepthChroma;
 
@@ -164,7 +164,7 @@ extern const UChar g_aucConvertTxtTypeToIdx[4];
 
 // ==========================================
 // Mode-Dependent DST Matrices
-extern const short g_as_DST_MAT_4 [4][4];
+extern const Short g_as_DST_MAT_4 [4][4];
 extern const UChar g_aucDCTDSTMode_Vert[NUM_INTRA_MODE];
 extern const UChar g_aucDCTDSTMode_Hor[NUM_INTRA_MODE];
 // ==========================================
@@ -225,7 +225,7 @@ enum ScalingListSize
   SCALING_LIST_32x32,
   SCALING_LIST_SIZE_NUM
 };
-static const char MatrixType[4][6][20] =
+static const Char MatrixType[4][6][20] =
 {
   {
   "INTRA4X4_LUMA",
@@ -256,7 +256,7 @@ static const char MatrixType[4][6][20] =
   "INTER32X32_LUMA",
   },
 };
-static const char MatrixType_DC[4][12][22] =
+static const Char MatrixType_DC[4][12][22] =
 {
   {
   },

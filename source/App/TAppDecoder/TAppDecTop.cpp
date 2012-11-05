@@ -108,7 +108,7 @@ Void TAppDecTop::decode()
   m_iPOCLastDisplay += m_iSkipFrame;      // set the last displayed POC correctly for skip forward.
 
   // main decoder loop
-  bool recon_opened = false; // reconstruction file not yet opened. (must be performed after SPS is seen)
+  Bool recon_opened = false; // reconstruction file not yet opened. (must be performed after SPS is seen)
 
   while (!!bitstreamFile)
   {
@@ -118,14 +118,14 @@ Void TAppDecTop::decode()
      * nal unit. */
     streampos location = bitstreamFile.tellg();
     AnnexBStats stats = AnnexBStats();
-    bool bPreviousPictureDecoded = false;
+    Bool bPreviousPictureDecoded = false;
 
     vector<uint8_t> nalUnit;
     InputNALUnit nalu;
     byteStreamNALUnit(bytestream, nalUnit, stats);
 
     // call actual decoding function
-    bool bNewPicture = false;
+    Bool bNewPicture = false;
     if (nalUnit.empty())
     {
       /* this can happen if the following occur:
@@ -175,12 +175,10 @@ Void TAppDecTop::decode()
     {
       if ( m_pchReconFile && !recon_opened )
       {
-        if ( m_outputBitDepth == 0 )
-        {
-          m_outputBitDepth = g_bitDepth;
-        }
+        if (!m_outputBitDepthY) m_outputBitDepthY = g_bitDepthY;
+        if (!m_outputBitDepthC) m_outputBitDepthC = g_bitDepthC;
 
-        m_cTVideoIOYuvReconFile.open( m_pchReconFile, true, m_outputBitDepth, g_bitDepth ); // write mode
+        m_cTVideoIOYuvReconFile.open( m_pchReconFile, true, m_outputBitDepthY, m_outputBitDepthC, g_bitDepthY, g_bitDepthC ); // write mode
         recon_opened = true;
       }
       if ( bNewPicture && 

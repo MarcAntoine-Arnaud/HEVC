@@ -168,7 +168,7 @@ public:
   Int      getScalingListDC               (UInt sizeId, UInt listId)           { return m_scalingListDC[sizeId][listId]; }   //!< get DC value
   Void     checkDcOfMatrix                ();
   Void     processRefMatrix               (UInt sizeId, UInt listId , UInt refListId );
-  Bool     xParseScalingList              (char* pchFile);
+  Bool     xParseScalingList              (Char* pchFile);
 
 private:
   Void     init                    ();
@@ -552,7 +552,8 @@ private:
   Bool        m_listsModificationPresentFlag;
 
   // Parameter
-  UInt        m_uiBitDepth;
+  Int         m_bitDepthY;
+  Int         m_bitDepthC;
   Int         m_qpBDOffsetY;
   Int         m_qpBDOffsetC;
 
@@ -686,8 +687,10 @@ public:
   Void      setAMPAcc   ( UInt uiDepth, Int iAccu ) { assert( uiDepth < g_uiMaxCUDepth);  m_iAMPAcc[uiDepth] = iAccu; }
 
   // Bit-depth
-  UInt      getBitDepth     ()         { return m_uiBitDepth;     }
-  Void      setBitDepth     ( UInt u ) { m_uiBitDepth = u;        }
+  Int      getBitDepthY() { return m_bitDepthY; }
+  Void     setBitDepthY(Int u) { m_bitDepthY = u; }
+  Int      getBitDepthC() { return m_bitDepthC; }
+  Void     setBitDepthC(Int u) { m_bitDepthC = u; }
   Int       getQpBDOffsetY  ()             { return m_qpBDOffsetY;   }
   Void      setQpBDOffsetY  ( Int value  ) { m_qpBDOffsetY = value;  }
   Int       getQpBDOffsetC  ()             { return m_qpBDOffsetC;   }
@@ -962,8 +965,8 @@ class TComSlice
   
 private:
   //  Bitstream writing
-  bool       m_saoEnabledFlag;
-  bool       m_saoEnabledFlagChroma;      ///< SAO Cb&Cr enabled flag
+  Bool       m_saoEnabledFlag;
+  Bool       m_saoEnabledFlagChroma;      ///< SAO Cb&Cr enabled flag
   Int         m_iPPSId;               ///< picture parameter set ID
   Bool        m_PicOutputFlag;        ///< pic_output_flag 
   Int         m_iPOC;

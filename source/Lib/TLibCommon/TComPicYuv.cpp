@@ -264,7 +264,7 @@ Void TComPicYuv::xExtendPicCompBorder  (Pel* piTxt, Int iStride, Int iWidth, Int
 }
 
 
-Void TComPicYuv::dump (char* pFileName, Bool bAdd)
+Void TComPicYuv::dump (Char* pFileName, Bool bAdd)
 {
   FILE* pFile;
   if (!bAdd)
@@ -276,7 +276,7 @@ Void TComPicYuv::dump (char* pFileName, Bool bAdd)
     pFile = fopen (pFileName, "ab");
   }
   
-  Int     shift = g_bitDepth-8;
+  Int     shift = g_bitDepthY-8;
   Int     offset = (shift>0)?(1<<(shift-1)):0;
   
   Int   x, y;
@@ -297,6 +297,9 @@ Void TComPicYuv::dump (char* pFileName, Bool bAdd)
     piY += getStride();
   }
   
+  shift = g_bitDepthC-8;
+  offset = (shift>0)?(1<<(shift-1)):0;
+
   for ( y = 0; y < m_iPicHeight >> 1; y++ )
   {
     for ( x = 0; x < m_iPicWidth >> 1; x++ )

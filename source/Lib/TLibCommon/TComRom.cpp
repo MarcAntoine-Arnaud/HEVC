@@ -229,7 +229,7 @@ Int g_invQuantScales[6] =
   40,45,51,57,64,72
 };
 
-const short g_aiT4[4][4] =
+const Short g_aiT4[4][4] =
 {
   { 64, 64, 64, 64},
   { 83, 36,-36,-83},
@@ -237,7 +237,7 @@ const short g_aiT4[4][4] =
   { 36,-83, 83,-36}
 };
 
-const short g_aiT8[8][8] =
+const Short g_aiT8[8][8] =
 {
   { 64, 64, 64, 64, 64, 64, 64, 64},
   { 89, 75, 50, 18,-18,-50,-75,-89},
@@ -249,7 +249,7 @@ const short g_aiT8[8][8] =
   { 18,-50, 75,-89, 89,-75, 50,-18}
 };
 
-const short g_aiT16[16][16] =
+const Short g_aiT16[16][16] =
 {
   { 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64},
   { 90, 87, 80, 70, 57, 43, 25,  9, -9,-25,-43,-57,-70,-80,-87,-90},
@@ -269,7 +269,7 @@ const short g_aiT16[16][16] =
   {  9,-25, 43,-57, 70,-80, 87,-90, 90,-87, 80,-70, 57,-43, 25, -9}
 };
 
-const short g_aiT32[32][32] =
+const Short g_aiT32[32][32] =
 {
   { 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64},
   { 90, 90, 88, 85, 82, 78, 73, 67, 61, 54, 46, 38, 31, 22, 13,  4, -4,-13,-22,-31,-38,-46,-54,-61,-67,-73,-78,-82,-85,-88,-90,-90},
@@ -315,7 +315,7 @@ const UChar g_aucChromaScale[58]=
 
 
 // Mode-Dependent DCT/DST 
-const short g_as_DST_MAT_4 [4][4]=
+const Short g_as_DST_MAT_4 [4][4]=
 {
   {29,   55,    74,   84},
   {74,   74,    0 ,  -74},
@@ -361,8 +361,8 @@ const UChar g_aucConvertTxtTypeToIdx[4] = { 0, 1, 1, 2 };
 // Bit-depth
 // ====================================================================================================================
 
-Int  g_bitDepth = 8;
-Int  g_maxLumaVal     = 255;  ///< Maximum Luma sample value
+Int  g_bitDepthY = 8;
+Int  g_bitDepthC = 8;
 
 UInt g_uiPCMBitDepthLuma     = 8;    // PCM bit-depth
 UInt g_uiPCMBitDepthChroma   = 8;    // PCM bit-depth
@@ -425,8 +425,8 @@ Void initSigLastScan(UInt* pBuffZ, UInt* pBuffH, UInt* pBuffV, UInt* pBuffD, Int
   }
   for( UInt uiScanLine = 0; uiNextScanPos < uiNumScanPos; uiScanLine++ )
   {
-    int    iPrimDim  = int( uiScanLine );
-    int    iScndDim  = 0;
+    Int    iPrimDim  = Int( uiScanLine );
+    Int    iScndDim  = 0;
     while( iPrimDim >= iWidth )
     {
       iScndDim++;
@@ -461,8 +461,8 @@ Void initSigLastScan(UInt* pBuffZ, UInt* pBuffH, UInt* pBuffV, UInt* pBuffD, Int
       UInt offsetScan = 16 * uiBlk;
       for( UInt uiScanLine = 0; uiNextScanPos < 16; uiScanLine++ )
       {
-        int    iPrimDim  = int( uiScanLine );
-        int    iScndDim  = 0;
+        Int    iPrimDim  = Int( uiScanLine );
+        Int    iScndDim  = 0;
         while( iPrimDim >= 4 )
         {
           iScndDim++;

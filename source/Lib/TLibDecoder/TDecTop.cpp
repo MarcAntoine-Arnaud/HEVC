@@ -590,7 +590,7 @@ Void TDecTop::xDecodePPS()
   if( pps->getDependentSliceEnabledFlag() && (!pps->getEntropySliceEnabledFlag()) )
 #endif
   {
-    int NumCtx = pps->getEntropyCodingSyncEnabledFlag()?2:1;
+    Int NumCtx = pps->getEntropyCodingSyncEnabledFlag()?2:1;
     m_cSliceDecoder.initCtxMem(NumCtx);
     for ( UInt st = 0; st < NumCtx; st++ )
     {
@@ -710,7 +710,7 @@ Bool TDecTop::isRandomAccessSkipPicture(Int& iSkipFrame,  Int& iPOCLastDisplay)
     }
     else 
     {
-      static bool warningMessage = false;
+      static Bool warningMessage = false;
       if(!warningMessage)
       {
         printf("\nWarning: this is not a valid random access point and the data is discarded until the first CRA picture");

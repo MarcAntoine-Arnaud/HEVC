@@ -704,7 +704,7 @@ Void TEncCu::xCompressCU( TComDataCU*& rpcBestCU, TComDataCU*& rpcTempCU, UInt u
         && rpcTempCU->getWidth(0) <= (1<<pcPic->getSlice(0)->getSPS()->getPCMLog2MaxSize())
         && rpcTempCU->getWidth(0) >= (1<<pcPic->getSlice(0)->getSPS()->getPCMLog2MinSize()) )
       {
-        UInt uiRawBits = g_bitDepth * rpcBestCU->getWidth(0) * rpcBestCU->getHeight(0) * 3 / 2;
+        UInt uiRawBits = (2 * g_bitDepthY + g_bitDepthC) * rpcBestCU->getWidth(0) * rpcBestCU->getHeight(0) / 2;
         UInt uiBestBits = rpcBestCU->getTotalBits();
         if((uiBestBits > uiRawBits) || (rpcBestCU->getTotalCost() > m_pcRdCost->calcRdCost(uiRawBits, 0)))
         {
@@ -1029,8 +1029,8 @@ Void TEncCu::finishCU( TComDataCU* pcCU, UInt uiAbsPartIdx, UInt uiDepth )
   }
   
   // Calculate slice end IF this CU puts us over slice bit size.
-  unsigned iGranularitySize = pcCU->getPic()->getNumPartInCU();
-  int iGranularityEnd = ((pcCU->getSCUAddr()+uiAbsPartIdx)/iGranularitySize)*iGranularitySize;
+  UInt iGranularitySize = pcCU->getPic()->getNumPartInCU();
+  Int iGranularityEnd = ((pcCU->getSCUAddr()+uiAbsPartIdx)/iGranularitySize)*iGranularitySize;
   if(iGranularityEnd<=pcSlice->getDependentSliceCurStartCUAddr()) 
   {
     iGranularityEnd+=max(iGranularitySize,(pcCU->getPic()->getNumPartInCU()>>(uiDepth<<1)));

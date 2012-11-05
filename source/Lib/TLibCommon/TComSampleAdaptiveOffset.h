@@ -67,6 +67,7 @@ protected:
   static const Int m_aiNumCulPartsLevel[5];
   static const UInt m_auiEoTable[9];
   Int *m_iOffsetBo;
+  Int *m_iChromaOffsetBo;
   Int m_iOffsetEo[LUMA_GROUP_NUM];
 
   Int  m_iPicWidth;
@@ -81,12 +82,16 @@ protected:
   SliceType  m_eSliceType;
   Int        m_iPicNalReferenceIdc;
 
-  UInt m_uiSaoBitIncrease;
+  UInt m_uiSaoBitIncreaseY;
+  UInt m_uiSaoBitIncreaseC;  //for chroma
   UInt m_uiQP;
 
   Pel   *m_pClipTable;
   Pel   *m_pClipTableBase;
   Pel   *m_lumaTableBo;
+  Pel   *m_pChromaClipTable;
+  Pel   *m_pChromaClipTableBase;
+  Pel   *m_chromaTableBo;
   Int   *m_iUpBuff1;
   Int   *m_iUpBuff2;
   Int   *m_iUpBufft;
@@ -115,7 +120,7 @@ public:
   Void create( UInt uiSourceWidth, UInt uiSourceHeight, UInt uiMaxCUWidth, UInt uiMaxCUHeight, UInt uiMaxCUDepth );
   Void destroy ();
 
-  Int  convertLevelRowCol2Idx(int level, int row, int col);
+  Int  convertLevelRowCol2Idx(Int level, Int row, Int col);
 
   Void initSAOParam   (SAOParam *pcSaoParam, Int iPartLevel, Int iPartRow, Int iPartCol, Int iParentPartIdx, Int StartCUX, Int EndCUX, Int StartCUY, Int EndCUY, Int iYCbCr);
   Void allocSaoParam  (SAOParam* pcSaoParam);
@@ -129,7 +134,7 @@ public:
   Void processSaoCuOrg(Int iAddr, Int iPartIdx, Int iYCbCr);  //!< LCU-basd SAO process without slice granularity 
   Void createPicSaoInfo(TComPic* pcPic, Int numSlicesInPic = 1);
   Void destroyPicSaoInfo();
-  Void processSaoBlock(Pel* pDec, Pel* pRest, Int stride, Int iSaoType, UInt xPos, UInt yPos, UInt width, UInt height, Bool* pbBorderAvail);
+  Void processSaoBlock(Pel* pDec, Pel* pRest, Int stride, Int iSaoType, UInt xPos, UInt yPos, UInt width, UInt height, Bool* pbBorderAvail, Int iYCbCr);
 
   Void resetLcuPart(SaoLcuParam* saoLcuParam);
   Void convertQT2SaoUnit(SAOParam* saoParam, UInt partIdx, Int yCbCr);

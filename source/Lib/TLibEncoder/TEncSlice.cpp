@@ -588,7 +588,7 @@ Void TEncSlice::precompressSlice( TComPic*& rpcPic )
 #if WEIGHTED_CHROMA_DISTORTION
     // for RDO
     // in RdCost there is only one lambda because the luma and chroma bits are not separated, instead we weight the distortion of chroma.
-    int iQP = m_piRdPicQp    [uiQpIdx];
+    Int iQP = m_piRdPicQp    [uiQpIdx];
     Double weight = 1.0;
     if(iQP >= 0)
     {
@@ -637,7 +637,7 @@ Void TEncSlice::precompressSlice( TComPic*& rpcPic )
   m_pcRdCost    ->setLambda              ( m_pdRdPicLambda[uiQpIdxBest] );
 #if WEIGHTED_CHROMA_DISTORTION
   // in RdCost there is only one lambda because the luma and chroma bits are not separated, instead we weight the distortion of chroma.
-  int iQP = m_piRdPicQp    [uiQpIdxBest];
+  Int iQP = m_piRdPicQp    [uiQpIdxBest];
   Double weight = 1.0;
   if(iQP >= 0)
   {
@@ -748,7 +748,7 @@ Void TEncSlice::compressSlice( TComPic*& rpcPic )
     delete[] m_pcBufferBinCoderCABACs;
     m_pcBufferSbacCoders     = new TEncSbac    [uiTilesAcross];
     m_pcBufferBinCoderCABACs = new TEncBinCABAC[uiTilesAcross];
-    for (int ui = 0; ui < uiTilesAcross; ui++)
+    for (Int ui = 0; ui < uiTilesAcross; ui++)
     {
       m_pcBufferSbacCoders[ui].init( &m_pcBufferBinCoderCABACs[ui] );
     }
@@ -768,7 +768,7 @@ Void TEncSlice::compressSlice( TComPic*& rpcPic )
     delete[] m_pcBufferLowLatBinCoderCABACs;
     m_pcBufferLowLatSbacCoders     = new TEncSbac    [uiTilesAcross];
     m_pcBufferLowLatBinCoderCABACs = new TEncBinCABAC[uiTilesAcross];
-    for (int ui = 0; ui < uiTilesAcross; ui++)
+    for (Int ui = 0; ui < uiTilesAcross; ui++)
     {
       m_pcBufferLowLatSbacCoders[ui].init( &m_pcBufferLowLatBinCoderCABACs[ui] );
     }

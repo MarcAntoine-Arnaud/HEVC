@@ -230,7 +230,7 @@ protected:
   UInt      m_log2ParallelMergeLevelMinus2;       ///< Parallel merge estimation region
   UInt      m_maxNumMergeCand;                    ///< Maximum number of merge candidates
   Int       m_useScalingListId;            ///< Using quantization matrix i.e. 0=off, 1=default, 2=file.
-  char*     m_scalingListFile;          ///< quantization matrix file name
+  Char*     m_scalingListFile;          ///< quantization matrix file name
   Int       m_TMVPModeId;
   Int       m_signHideFlag;
   Bool      m_enableRateCtrl;                                ///< Flag for using rate control algorithm
@@ -287,7 +287,7 @@ public:
   Void setLevel(Level::Tier tier, Level::Name level) { m_levelTier = tier; m_level = level; }
 
   Void      setFrameRate                    ( Int   i )      { m_iFrameRate = i; }
-  Void      setFrameSkip                    ( unsigned int i ) { m_FrameSkip = i; }
+  Void      setFrameSkip                    ( UInt i ) { m_FrameSkip = i; }
   Void      setSourceWidth                  ( Int   i )      { m_iSourceWidth = i; }
   Void      setSourceHeight                 ( Int   i )      { m_iSourceHeight = i; }
   Void      setCroppingMode                 ( Int   i )      { m_croppingMode = i; }
@@ -355,7 +355,7 @@ public:
   Void      setUseLossless                  (Bool    b  )        { m_useLossless = b;  }
   //====== Sequence ========
   Int       getFrameRate                    ()      { return  m_iFrameRate; }
-  unsigned int getFrameSkip                 ()      { return  m_FrameSkip; }
+  UInt      getFrameSkip                    ()      { return  m_FrameSkip; }
   Int       getSourceWidth                  ()      { return  m_iSourceWidth; }
   Int       getSourceHeight                 ()      { return  m_iSourceHeight; }
   Int       getCroppingMode                 ()      { return  m_croppingMode; }
@@ -482,10 +482,10 @@ public:
   Int   getUniformSpacingIdr           ()                  { return m_iUniformSpacingIdr; }
   Void  setNumColumnsMinus1            ( Int i )           { m_iNumColumnsMinus1 = i; }
   Int   getNumColumnsMinus1            ()                  { return m_iNumColumnsMinus1; }
-  Void  setColumnWidth ( char* str )
+  Void  setColumnWidth ( Char* str )
   {
-    char *columnWidth;
-    int  i=0;
+    Char *columnWidth;
+    Int  i=0;
     Int  m_iWidthInCU = ( m_iSourceWidth%g_uiMaxCUWidth ) ? m_iSourceWidth/g_uiMaxCUWidth + 1 : m_iSourceWidth/g_uiMaxCUWidth;
 
     if( m_iUniformSpacingIdr == 0 && m_iNumColumnsMinus1 > 0 )
@@ -515,10 +515,10 @@ public:
   UInt  getColumnWidth                 ( UInt columnidx )  { return *( m_puiColumnWidth + columnidx ); }
   Void  setNumRowsMinus1               ( Int i )           { m_iNumRowsMinus1 = i; }
   Int   getNumRowsMinus1               ()                  { return m_iNumRowsMinus1; }
-  Void  setRowHeight (char* str)
+  Void  setRowHeight (Char* str)
   {
-    char *rowHeight;
-    int  i=0;
+    Char *rowHeight;
+    Int  i=0;
     Int  m_iHeightInCU = ( m_iSourceHeight%g_uiMaxCUHeight ) ? m_iSourceHeight/g_uiMaxCUHeight + 1 : m_iSourceHeight/g_uiMaxCUHeight;
 
     if( m_iUniformSpacingIdr == 0 && m_iNumRowsMinus1 > 0 )
@@ -569,8 +569,8 @@ public:
   UInt      getMaxNumMergeCand                ()            { return m_maxNumMergeCand;   }
   Void      setUseScalingListId    ( Int  u )    { m_useScalingListId       = u;   }
   Int       getUseScalingListId    ()            { return m_useScalingListId;      }
-  Void      setScalingListFile     ( char*  pch ){ m_scalingListFile     = pch; }
-  char*     getScalingListFile     ()            { return m_scalingListFile;    }
+  Void      setScalingListFile     ( Char*  pch ){ m_scalingListFile     = pch; }
+  Char*     getScalingListFile     ()            { return m_scalingListFile;    }
   Void      setTMVPModeId ( Int  u ) { m_TMVPModeId = u;    }
   Int       getTMVPModeId ()         { return m_TMVPModeId; }
   Void      setSignHideFlag( Int signHideFlag ) { m_signHideFlag = signHideFlag; }

@@ -51,7 +51,7 @@ using namespace std;
 //! \{
 static void convertPayloadToRBSP(vector<uint8_t>& nalUnitBuf, TComInputBitstream *pcBitstream)
 {
-  unsigned zeroCount = 0;
+  UInt zeroCount = 0;
   vector<uint8_t>::iterator it_read, it_write;
 
   for (it_read = it_write = nalUnitBuf.begin(); it_read != nalUnitBuf.end(); it_read++, it_write++)
@@ -72,7 +72,7 @@ Void readNalUnitHeader(InputNALUnit& nalu)
 {
   TComInputBitstream& bs = *nalu.m_Bitstream;
 
-  bool forbidden_zero_bit = bs.read(1);           // forbidden_zero_bit
+  Bool forbidden_zero_bit = bs.read(1);           // forbidden_zero_bit
   assert(forbidden_zero_bit == 0);
   nalu.m_nalUnitType = (NalUnitType) bs.read(6);  // nal_unit_type
   nalu.m_reservedZero6Bits = bs.read(6);       // nuh_reserved_zero_6bits

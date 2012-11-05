@@ -60,7 +60,7 @@ namespace po = df::program_options_lite;
  */
 Bool TAppDecCfg::parseCfg( Int argc, Char* argv[] )
 {
-  bool do_help = false;
+  Bool do_help = false;
   string cfg_BitstreamFile;
   string cfg_ReconFile;
   string cfg_TargetDecLayerIdSetFile;
@@ -72,7 +72,8 @@ Bool TAppDecCfg::parseCfg( Int argc, Char* argv[] )
   ("ReconFile,o",     cfg_ReconFile,     string(""), "reconstructed YUV output file name\n"
                                                      "YUV writing is skipped if omitted")
   ("SkipFrames,s", m_iSkipFrame, 0, "number of frames to skip before random access")
-  ("OutputBitDepth,d", m_outputBitDepth, 0u, "bit depth of YUV output file (use 0 for native depth)")
+  ("OutputBitDepth,d", m_outputBitDepthY, 0, "bit depth of YUV output luma component (default: use 0 for native depth)")
+  ("OutputBitDepthC,d", m_outputBitDepthC, 0, "bit depth of YUV output chroma component (default: use 0 for native depth)")
   ("MaxTemporalLayer,t", m_iMaxTemporalLayer, -1, "Maximum Temporal Layer to be decoded. -1 to decode all layers")
   ("SEIpictureDigest", m_decodedPictureHashSEIEnabled, 1, "Control handling of decoded picture hash SEI messages\n"
                                               "\t3: checksum\n"
@@ -82,9 +83,9 @@ Bool TAppDecCfg::parseCfg( Int argc, Char* argv[] )
   ("TarDecLayerIdSetFile,l", cfg_TargetDecLayerIdSetFile, string(""), "targetDecLayerIdSet file name. The file should include white space separated LayerId values to be decoded. Omitting the option or a value of -1 in the file decodes all layers.")
   ;
   po::setDefaults(opts);
-  const list<const char*>& argv_unhandled = po::scanArgv(opts, argc, (const char**) argv);
+  const list<const Char*>& argv_unhandled = po::scanArgv(opts, argc, (const Char**) argv);
 
-  for (list<const char*>::const_iterator it = argv_unhandled.begin(); it != argv_unhandled.end(); it++)
+  for (list<const Char*>::const_iterator it = argv_unhandled.begin(); it != argv_unhandled.end(); it++)
   {
     fprintf(stderr, "Unhandled argument ignored: `%s'\n", *it);
   }

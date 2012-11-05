@@ -789,9 +789,9 @@ Void TComSlice::copySliceInfo(TComSlice *pSrc)
   m_uiDependentSliceCurEndCUAddr    = pSrc->m_uiDependentSliceCurEndCUAddr;
   m_bNextSlice                    = pSrc->m_bNextSlice;
   m_bNextDependentSlice             = pSrc->m_bNextDependentSlice;
-  for ( int e=0 ; e<2 ; e++ )
+  for ( Int e=0 ; e<2 ; e++ )
   {
-    for ( int n=0 ; n<MAX_NUM_REF ; n++ )
+    for ( Int n=0 ; n<MAX_NUM_REF ; n++ )
     {
       memcpy(m_weightPredTable[e][n], pSrc->m_weightPredTable[e][n], sizeof(wpScalingParam)*3 );
     }
@@ -806,7 +806,7 @@ Void TComSlice::copySliceInfo(TComSlice *pSrc)
   m_enableTMVPFlag                = pSrc->m_enableTMVPFlag;
 }
 
-int TComSlice::m_prevPOC = 0;
+Int TComSlice::m_prevPOC = 0;
 /** Function for setting the slice's temporal layer ID and corresponding temporal_layer_switching_point_flag.
  * \param uiTLayer Temporal layer ID of the current slice
  * The decoder calls this function to set temporal_layer_switching_point_flag for each temporal layer based on 
@@ -1192,11 +1192,11 @@ Void  TComSlice::getWpScaling( RefPicList e, Int iRefIdx, wpScalingParam *&wp )
  */
 Void  TComSlice::resetWpScaling(wpScalingParam  wp[2][MAX_NUM_REF][3])
 {
-  for ( int e=0 ; e<2 ; e++ ) 
+  for ( Int e=0 ; e<2 ; e++ )
   {
-    for ( int i=0 ; i<MAX_NUM_REF ; i++ )
+    for ( Int i=0 ; i<MAX_NUM_REF ; i++ )
     {
-      for ( int yuv=0 ; yuv<3 ; yuv++ ) 
+      for ( Int yuv=0 ; yuv<3 ; yuv++ )
       {
         wpScalingParam  *pwp = &(wp[e][i][yuv]);
         pwp->bPresentFlag      = false;
@@ -1223,11 +1223,11 @@ Void  TComSlice::initWpScaling()
  */
 Void  TComSlice::initWpScaling(wpScalingParam  wp[2][MAX_NUM_REF][3])
 {
-  for ( int e=0 ; e<2 ; e++ ) 
+  for ( Int e=0 ; e<2 ; e++ )
   {
-    for ( int i=0 ; i<MAX_NUM_REF ; i++ )
+    for ( Int i=0 ; i<MAX_NUM_REF ; i++ )
     {
-      for ( int yuv=0 ; yuv<3 ; yuv++ ) 
+      for ( Int yuv=0 ; yuv<3 ; yuv++ )
       {
         wpScalingParam  *pwp = &(wp[e][i][yuv]);
         if ( !pwp->bPresentFlag ) {
@@ -1237,7 +1237,8 @@ Void  TComSlice::initWpScaling(wpScalingParam  wp[2][MAX_NUM_REF][3])
         }
 
         pwp->w      = pwp->iWeight;
-        pwp->o      = pwp->iOffset << (g_bitDepth-8);
+        Int bitDepth = yuv ? g_bitDepthC : g_bitDepthY;
+        pwp->o      = pwp->iOffset << (bitDepth-8);
         pwp->shift  = pwp->uiLog2WeightDenom;
         pwp->round  = (pwp->uiLog2WeightDenom>=1) ? (1 << (pwp->uiLog2WeightDenom-1)) : (0);
       }
@@ -1303,7 +1304,8 @@ TComSPS::TComSPS()
 , m_bUseLComb                 (false)
 , m_restrictedRefPicListsFlag   (  1)
 , m_listsModificationPresentFlag(  0)
-, m_uiBitDepth                (  8)
+, m_bitDepthY                 (  8)
+, m_bitDepthC                 (  8)
 , m_qpBDOffsetY               (  0)
 , m_qpBDOffsetC               (  0)
 , m_useLossless               (false)
@@ -1740,7 +1742,7 @@ Void TComScalingList::processRefMatrix( UInt sizeId, UInt listId , UInt refListI
  *  \param pchFile syntax infomation
  *  \returns false if successful
  */
-Bool TComScalingList::xParseScalingList(char* pchFile)
+Bool TComScalingList::xParseScalingList(Char* pchFile)
 {
   FILE *fp;
   Char line[1024];

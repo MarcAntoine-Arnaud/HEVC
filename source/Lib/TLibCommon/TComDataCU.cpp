@@ -361,7 +361,7 @@ Void TComDataCU::initCU( TComPic* pcPic, UInt iCUAddr )
   m_numSucIPCM       = 0;
   m_lastCUSucIPCMFlag   = false;
 
-  for(int i=0; i<pcPic->getNumPartInCU(); i++) 
+  for(Int i=0; i<pcPic->getNumPartInCU(); i++)
   {
     if(pcPic->getPicSym()->getInverseCUOrderMap(iCUAddr)*pcPic->getNumPartInCU()+i>=getSlice()->getSliceCurStartCUAddr())
     {
@@ -372,7 +372,7 @@ Void TComDataCU::initCU( TComPic* pcPic, UInt iCUAddr )
       m_uiSliceStartCU[i]=pcPic->getCU(getAddr())->m_uiSliceStartCU[i];
     }
   }
-  for(int i=0; i<pcPic->getNumPartInCU(); i++) 
+  for(Int i=0; i<pcPic->getNumPartInCU(); i++)
   {
     if(pcPic->getPicSym()->getInverseCUOrderMap(iCUAddr)*pcPic->getNumPartInCU()+i>=getSlice()->getDependentSliceCurStartCUAddr())
     {
@@ -475,7 +475,7 @@ Void TComDataCU::initCU( TComPic* pcPic, UInt iCUAddr )
     TComDataCU * pcFrom = pcPic->getCU(getAddr());
     m_acCUMvField[0].copyFrom(&pcFrom->m_acCUMvField[0],m_uiNumPartition,0);
     m_acCUMvField[1].copyFrom(&pcFrom->m_acCUMvField[1],m_uiNumPartition,0);
-    for(int i=0; i<uiTmp; i++) 
+    for(Int i=0; i<uiTmp; i++)
     {
       m_pcTrCoeffY[i]=pcFrom->m_pcTrCoeffY[i];
 #if ADAPTIVE_QP_SELECTION
@@ -483,7 +483,7 @@ Void TComDataCU::initCU( TComPic* pcPic, UInt iCUAddr )
 #endif
       m_pcIPCMSampleY[i]=pcFrom->m_pcIPCMSampleY[i];
     }
-    for(int i=0; i<(uiTmp>>2); i++) 
+    for(Int i=0; i<(uiTmp>>2); i++)
     {
       m_pcTrCoeffCb[i]=pcFrom->m_pcTrCoeffCb[i];
       m_pcTrCoeffCr[i]=pcFrom->m_pcTrCoeffCr[i];
@@ -732,7 +732,7 @@ Void TComDataCU::initSubCU( TComDataCU* pcCU, UInt uiPartUnitIdx, UInt uiDepth, 
     pcCU->m_acCUMvField[1].copyTo(&m_acCUMvField[1],minui,uiPartOffset,m_uiNumPartition);
     UInt uiCoffOffset = uiMaxCuWidth*uiMaxCuHeight*m_uiAbsIdxInLCU/pcCU->getPic()->getNumPartInCU();
     uiTmp = uhWidth*uhHeight;
-    for(int i=0; i<uiTmp; i++) 
+    for(Int i=0; i<uiTmp; i++)
     {
       m_pcTrCoeffY[i]=bigCU->m_pcTrCoeffY[uiCoffOffset+i];
 #if ADAPTIVE_QP_SELECTION
@@ -742,7 +742,7 @@ Void TComDataCU::initSubCU( TComDataCU* pcCU, UInt uiPartUnitIdx, UInt uiDepth, 
     }
     uiTmp>>=2;
     uiCoffOffset>>=2;
-    for(int i=0; i<uiTmp; i++) 
+    for(Int i=0; i<uiTmp; i++)
     {
       m_pcTrCoeffCr[i]=bigCU->m_pcTrCoeffCr[uiCoffOffset+i];
       m_pcTrCoeffCb[i]=bigCU->m_pcTrCoeffCb[uiCoffOffset+i];
@@ -1955,7 +1955,7 @@ Void TComDataCU::setPartSizeSubParts( PartSize eMode, UInt uiAbsPartIdx, UInt ui
   memset( m_pePartSize + uiAbsPartIdx, eMode, m_pcPic->getNumPartInCU() >> ( 2 * uiDepth ) );
 }
 
-Void TComDataCU::setCUTransquantBypassSubParts( bool flag, UInt uiAbsPartIdx, UInt uiDepth )
+Void TComDataCU::setCUTransquantBypassSubParts( Bool flag, UInt uiAbsPartIdx, UInt uiDepth )
 {
   memset( m_CUTransquantBypass + uiAbsPartIdx, flag, m_pcPic->getNumPartInCU() >> ( 2 * uiDepth ) );
 }
@@ -2524,7 +2524,7 @@ Void TComDataCU::getInterMergeCandidates( UInt uiAbsPartIdx, UInt uiPUIdx, UInt 
 {
   UInt uiAbsPartAddr = m_uiAbsIdxInLCU + uiAbsPartIdx;
   UInt uiIdx = 1;
-  bool abCandIsInter[ MRG_MAX_NUM_CANDS ];
+  Bool abCandIsInter[ MRG_MAX_NUM_CANDS ];
   for( UInt ui = 0; ui < getSlice()->getMaxNumMergeCand(); ++ui )
   {
     abCandIsInter[ui] = false;
@@ -3120,12 +3120,12 @@ Void TComDataCU::fillMvpCand ( UInt uiPartIdx, UInt uiPartAddr, RefPicList eRefP
   if ( getSlice()->getEnableTMVPFlag() )
   {
     // Get Temporal Motion Predictor
-    int iRefIdx_Col = iRefIdx;
+    Int iRefIdx_Col = iRefIdx;
     TComMv cColMv;
     UInt uiPartIdxRB;
     UInt uiAbsPartIdx;  
     UInt uiAbsPartAddr;
-    int uiLCUIdx = getAddr();
+    Int uiLCUIdx = getAddr();
 
     deriveRightBottomIdx( eCUMode, uiPartIdx, uiPartIdxRB );
     uiAbsPartAddr = m_uiAbsIdxInLCU + uiPartAddr;
@@ -3653,7 +3653,7 @@ Void TComDataCU::xDeriveCenterIdx( PartSize eCUMode, UInt uiPartIdx, UInt& ruiPa
  * \param pcMv
  * \returns Bool
  */
-Bool TComDataCU::xGetCenterCol( UInt uiPartIdx, RefPicList eRefPicList, int iRefIdx, TComMv *pcMv )
+Bool TComDataCU::xGetCenterCol( UInt uiPartIdx, RefPicList eRefPicList, Int iRefIdx, TComMv *pcMv )
 {
   PartSize eCUMode = getPartitionSize( 0 );
   
@@ -3674,19 +3674,19 @@ Bool TComDataCU::xGetCenterCol( UInt uiPartIdx, RefPicList eRefPicList, int iRef
   
   // Prefer a vector crossing us.  Prefer shortest.
   RefPicList eColRefPicList = REF_PIC_LIST_0;
-  bool bFirstCrosses = false;
+  Bool bFirstCrosses = false;
   Int  iFirstColDist = -1;
   for (Int l = 0; l < 2; l++)
   {
-    bool bSaveIt = false;
-    int iColRefIdx = pColCU->getCUMvField(RefPicList(l))->getRefIdx(uiPartIdxCenter);
+    Bool bSaveIt = false;
+    Int iColRefIdx = pColCU->getCUMvField(RefPicList(l))->getRefIdx(uiPartIdxCenter);
     if (iColRefIdx < 0)
     {
       continue;
     }
-    int iColRefPOC = pColCU->getSlice()->getRefPOC(RefPicList(l), iColRefIdx);
-    int iColDist = abs(iColRefPOC - iColPOC);
-    bool bCrosses = iColPOC < iCurrPOC ? iColRefPOC > iCurrPOC : iColRefPOC < iCurrPOC;
+    Int iColRefPOC = pColCU->getSlice()->getRefPOC(RefPicList(l), iColRefIdx);
+    Int iColDist = abs(iColRefPOC - iColPOC);
+    Bool bCrosses = iColPOC < iCurrPOC ? iColRefPOC > iCurrPOC : iColRefPOC < iCurrPOC;
     if (iFirstColDist < 0)
     {
       bSaveIt = true;

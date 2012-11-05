@@ -1076,7 +1076,7 @@ Void TDecSbac::parseCoeffNxN( TComDataCU* pcCU, TCoeff* pcCoef, UInt uiAbsPartId
   const UInt  uiMaxNumCoeff     = uiWidth * uiHeight;
   const UInt  uiMaxNumCoeffM1   = uiMaxNumCoeff - 1;
   UInt uiScanIdx = pcCU->getCoefScanIdx(uiAbsPartIdx, uiWidth, eTType==TEXT_LUMA, pcCU->isIntra(uiAbsPartIdx));
-  int blockType = uiLog2BlockSize;
+  Int blockType = uiLog2BlockSize;
   if (uiWidth != uiHeight)
   {
     uiScanIdx = SCAN_DIAG;
@@ -1435,7 +1435,9 @@ Void TDecSbac::parseSaoOffset(SaoLcuParam* psSaoLcuParam, UInt compIdx)
   if (uiSymbol)
   {
     psSaoLcuParam->length = iTypeLength[psSaoLcuParam->typeIdx];
-    Int offsetTh = 1 << min(g_bitDepth - 5,5);
+
+    Int bitDepth = compIdx ? g_bitDepthC : g_bitDepthY;
+    Int offsetTh = 1 << min(bitDepth - 5,5);
 
     if( psSaoLcuParam->typeIdx == SAO_BO )
     {

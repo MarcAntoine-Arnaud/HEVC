@@ -163,7 +163,7 @@ Void TDecEntropy::decodePUWise( TComDataCU* pcCU, UInt uiAbsPartIdx, UInt uiDept
     uhInterDirNeighbours[ui] = 0;
   }
   Int numValidMergeCand = 0;
-  bool isMerged = false;
+  Bool isMerged = false;
 
   pcSubCU->copyInterPredInfoFrom( pcCU, uiAbsPartIdx, REF_PIC_LIST_0 );
   pcSubCU->copyInterPredInfoFrom( pcCU, uiAbsPartIdx, REF_PIC_LIST_1 );

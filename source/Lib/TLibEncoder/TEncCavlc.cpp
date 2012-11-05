@@ -103,7 +103,7 @@ Void TEncCavlc::codeShortTermRefPicSet( TComSPS* pcSPS, TComReferencePictureSet*
 #endif
 {
 #if PRINT_RPS_INFO
-  int lastBits = getNumberOfWrittenBits();
+  Int lastBits = getNumberOfWrittenBits();
 #endif
 #if SPS_INTER_REF_SET_PRED
   if (idx > 0)
@@ -388,8 +388,8 @@ Void TEncCavlc::codeSPS( TComSPS* pcSPS )
     WRITE_UVLC( pcSPS->getPicCropBottomOffset() / TComSPS::getCropUnitY(pcSPS->getChromaFormatIdc() ), "pic_crop_bottom_offset" );
   }
 
-  WRITE_UVLC( pcSPS->getBitDepth() - 8,             "bit_depth_luma_minus8" );
-  WRITE_UVLC( pcSPS->getBitDepth() - 8,             "bit_depth_chroma_minus8" );
+  WRITE_UVLC( pcSPS->getBitDepthY() - 8,             "bit_depth_luma_minus8" );
+  WRITE_UVLC( pcSPS->getBitDepthC() - 8,             "bit_depth_chroma_minus8" );
 
   WRITE_FLAG( pcSPS->getUsePCM() ? 1 : 0,                   "pcm_enabled_flag");
 
@@ -1284,7 +1284,7 @@ Void TEncCavlc::xCodePredWeightTable( TComSlice* pcSlice )
               Int iDeltaWeight = (wp[j].iWeight - (1<<wp[1].uiLog2WeightDenom));
               WRITE_SVLC( iDeltaWeight, "delta_chroma_weight_lX" );            // se(v): delta_chroma_weight_lX
 
-              Int shift = 1<<(g_bitDepth-1);
+              Int shift = 1<<(g_bitDepthC-1);
               Int pred = ( shift - ( ( shift*wp[j].iWeight)>>(wp[j].uiLog2WeightDenom) ) );
               Int iDeltaChroma = (wp[j].iOffset - pred);
               WRITE_SVLC( iDeltaChroma, "delta_chroma_offset_lX" );            // se(v): delta_chroma_offset_lX
@@ -1375,7 +1375,7 @@ Void TEncCavlc::xCodeScalingList(TComScalingList* scalingList, UInt sizeId, UInt
 }
 Bool TEncCavlc::findMatchingLTRP ( TComSlice* pcSlice, UInt *ltrpsIndex, Int ltrpPOC, Bool usedFlag )
 {
-  // bool state = true, state2 = false;
+  // Bool state = true, state2 = false;
   Int lsb = ltrpPOC % (1<<pcSlice->getSPS()->getBitsForPOC());
   for (Int k = 0; k < pcSlice->getSPS()->getNumLongTermRefPicSPS(); k++)
   {

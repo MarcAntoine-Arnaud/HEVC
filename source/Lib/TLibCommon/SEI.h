@@ -73,9 +73,9 @@ public:
     delete userData;
   }
 
-  unsigned char uuid_iso_iec_11578[16];
-  unsigned userDataLength;
-  unsigned char *userData;
+  UChar uuid_iso_iec_11578[16];
+  UInt userDataLength;
+  UChar *userData;
 };
 
 class SEIDecodedPictureHash : public SEI
@@ -94,7 +94,7 @@ public:
     RESERVED,
   } method;
 
-  unsigned char digest[3][16];
+  UChar digest[3][16];
 };
 
 class SEIActiveParameterSets : public SEI 

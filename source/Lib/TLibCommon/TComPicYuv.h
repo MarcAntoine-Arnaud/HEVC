@@ -153,15 +153,15 @@ public:
   Void  extendPicBorder      ();
   
   //  Dump picture
-  Void  dump (char* pFileName, Bool bAdd = false);
+  Void  dump (Char* pFileName, Bool bAdd = false);
   
   // Set border extension flag
   Void  setBorderExtension(Bool b) { m_bIsBorderExtended = b; }
 };// END CLASS DEFINITION TComPicYuv
 
-void calcChecksum(TComPicYuv& pic, unsigned char digest[3][16]);
-void calcCRC(TComPicYuv& pic, unsigned char digest[3][16]);
-void calcMD5(TComPicYuv& pic, unsigned char digest[3][16]);
+void calcChecksum(TComPicYuv& pic, UChar digest[3][16]);
+void calcCRC(TComPicYuv& pic, UChar digest[3][16]);
+void calcMD5(TComPicYuv& pic, UChar digest[3][16]);
 //! \}
 
 #endif // __TCOMPICYUV__

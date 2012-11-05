@@ -143,7 +143,7 @@ private:
   Int*          m_pcArlCoeffY;        ///< ARL coefficient buffer (Y)
   Int*          m_pcArlCoeffCb;       ///< ARL coefficient buffer (Cb)
   Int*          m_pcArlCoeffCr;       ///< ARL coefficient buffer (Cr)
-  bool          m_ArlCoeffIsAliasedAllocation; ///< ARL coefficient buffer is an alias of the global buffer and must not be free()'d
+  Bool          m_ArlCoeffIsAliasedAllocation; ///< ARL coefficient buffer is an alias of the global buffer and must not be free()'d
 
   static Int*   m_pcGlbArlCoeffY;     ///< ARL coefficient buffer (Y)
   static Int*   m_pcGlbArlCoeffCb;    ///< ARL coefficient buffer (Cb)
@@ -219,7 +219,7 @@ protected:
   Int           xGetDistScaleFactor   ( Int iCurrPOC, Int iCurrRefPOC, Int iColPOC, Int iColRefPOC );
   
   Void xDeriveCenterIdx( PartSize eCUMode, UInt uiPartIdx, UInt& ruiPartIdxCenter );
-  Bool xGetCenterCol( UInt uiPartIdx, RefPicList eRefPicList, int iRefIdx, TComMv *pcMv );
+  Bool xGetCenterCol( UInt uiPartIdx, RefPicList eRefPicList, Int iRefIdx, TComMv *pcMv );
 
 public:
   TComDataCU();
@@ -275,7 +275,7 @@ public:
   PartSize      getPartitionSize      ( UInt uiIdx )            { return static_cast<PartSize>( m_pePartSize[uiIdx] ); }
   Void          setPartitionSize      ( UInt uiIdx, PartSize uh){ m_pePartSize[uiIdx] = uh;   }
   Void          setPartSizeSubParts   ( PartSize eMode, UInt uiAbsPartIdx, UInt uiDepth );
-  Void          setCUTransquantBypassSubParts( bool flag, UInt uiAbsPartIdx, UInt uiDepth );
+  Void          setCUTransquantBypassSubParts( Bool flag, UInt uiAbsPartIdx, UInt uiDepth );
   
   Bool*        getSkipFlag            ()                        { return m_skipFlag;          }
   Bool         getSkipFlag            (UInt idx)                { return m_skipFlag[idx];     }

@@ -35,8 +35,6 @@
     \brief    GOP decoder class
 */
 
-extern bool g_md5_mismatch; ///< top level flag to signal when there is a decode problem
-
 #include "TDecGop.h"
 #include "TDecCAVLC.h"
 #include "TDecSbac.h"
@@ -46,6 +44,8 @@ extern bool g_md5_mismatch; ///< top level flag to signal when there is a decode
 #include "TLibCommon/SEI.h"
 
 #include <time.h>
+
+extern Bool g_md5_mismatch; ///< top level flag to signal when there is a decode problem
 
 //! \ingroup TLibDecoder
 //! \{
@@ -165,7 +165,7 @@ Void TDecGop::decompressSlice(TComInputBitstream* pcBitstream, TComPic*& rpcPic)
   delete[] m_pcSbacDecoders; m_pcSbacDecoders = NULL;
   delete[] m_pcBinCABACs; m_pcBinCABACs = NULL;
 
-  m_dDecTime += (double)(clock()-iBeforeTime) / CLOCKS_PER_SEC;
+  m_dDecTime += (Double)(clock()-iBeforeTime) / CLOCKS_PER_SEC;
 }
 
 Void TDecGop::filterPicture(TComPic*& rpcPic)
@@ -217,7 +217,7 @@ Void TDecGop::filterPicture(TComPic*& rpcPic)
                                                     c,
                                                     pcSlice->getSliceQp() );
 
-  m_dDecTime += (double)(clock()-iBeforeTime) / CLOCKS_PER_SEC;
+  m_dDecTime += (Double)(clock()-iBeforeTime) / CLOCKS_PER_SEC;
   printf ("[DT %6.3f] ", m_dDecTime );
   m_dDecTime  = 0;
 
@@ -255,9 +255,9 @@ Void TDecGop::filterPicture(TComPic*& rpcPic)
 static void calcAndPrintHashStatus(TComPicYuv& pic, const SEImessages* seis)
 {
   /* calculate MD5sum for entire reconstructed picture */
-  unsigned char recon_digest[3][16];
-  int numChar=0;
-  const char* hashType = "\0";
+  UChar recon_digest[3][16];
+  Int numChar=0;
+  const Char* hashType = "\0";
 
   if (seis && seis->picture_digest)
   {
@@ -292,15 +292,15 @@ static void calcAndPrintHashStatus(TComPicYuv& pic, const SEImessages* seis)
   }
 
   /* compare digest against received version */
-  const char* ok = "(unk)";
-  bool mismatch = false;
+  const Char* ok = "(unk)";
+  Bool mismatch = false;
 
   if (seis && seis->picture_digest)
   {
     ok = "(OK)";
-    for(int yuvIdx = 0; yuvIdx < 3; yuvIdx++)
+    for(Int yuvIdx = 0; yuvIdx < 3; yuvIdx++)
     {
-      for (unsigned i = 0; i < numChar; i++)
+      for (UInt i = 0; i < numChar; i++)
       {
         if (recon_digest[yuvIdx][i] != seis->picture_digest->digest[yuvIdx][i])
         {

@@ -488,13 +488,13 @@ Void TDecCavlc::parseSPS(TComSPS* pcSPS)
   }
 
   READ_UVLC(     uiCode, "bit_depth_luma_minus8" );
-  g_bitDepth = 8 + uiCode;
-  pcSPS->setBitDepth(g_bitDepth);
+  g_bitDepthY = 8 + uiCode;
+  pcSPS->setBitDepthY(g_bitDepthY);
   pcSPS->setQpBDOffsetY( (Int) (6*uiCode) );
 
-  g_maxLumaVal = (1<<g_bitDepth) - 1;
-
   READ_UVLC( uiCode,    "bit_depth_chroma_minus8" );
+  g_bitDepthC = 8 + uiCode;
+  pcSPS->setBitDepthC(g_bitDepthC);
   pcSPS->setQpBDOffsetC( (Int) (6*uiCode) );
 
   READ_FLAG( uiCode, "pcm_enabled_flag" ); pcSPS->setUsePCM( uiCode ? true : false );
@@ -1598,7 +1598,7 @@ Void TDecCavlc::xParsePredWeightTable( TComSlice* pcSlice )
 
               Int iDeltaChroma;
               READ_SVLC( iDeltaChroma, "delta_chroma_offset_lX" );  // se(v): delta_chroma_offset_l0[i][j]
-              Int shift = 1<<(g_bitDepth-1);
+              Int shift = 1<<(g_bitDepthC-1);
               Int pred = ( shift - ( ( shift*wp[j].iWeight)>>(wp[j].uiLog2WeightDenom) ) );
               wp[j].iOffset = Clip3(-128, 127, (iDeltaChroma + pred) );
             }

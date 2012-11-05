@@ -54,13 +54,13 @@ class TAppEncCfg
 {
 protected:
   // file I/O
-  char*     m_pchInputFile;                                   ///< source file name
-  char*     m_pchBitstreamFile;                               ///< output bitstream file
-  char*     m_pchReconFile;                                   ///< output reconstruction file
+  Char*     m_pchInputFile;                                   ///< source file name
+  Char*     m_pchBitstreamFile;                               ///< output bitstream file
+  Char*     m_pchReconFile;                                   ///< output reconstruction file
   Double    m_adLambdaModifier[ MAX_TLAYER ];                 ///< Lambda modifier array for each temporal layer
   // source specification
   Int       m_iFrameRate;                                     ///< source frame-rates (Hz)
-  unsigned int m_FrameSkip;                                   ///< number of skipped frames from the beginning
+  UInt      m_FrameSkip;                                      ///< number of skipped frames from the beginning
   Int       m_iSourceWidth;                                   ///< source width in pixel
   Int       m_iSourceHeight;                                  ///< source height in pixel
   Int       m_croppingMode;
@@ -91,7 +91,7 @@ protected:
   // coding quality
   Double    m_fQP;                                            ///< QP value of key-picture (floating point)
   Int       m_iQP;                                            ///< QP value of key-picture (integer)
-  char*     m_pchdQPFile;                                     ///< QP offset for each slice (initialized from external file)
+  Char*     m_pchdQPFile;                                     ///< QP offset for each slice (initialized from external file)
   Int*      m_aidQP;                                          ///< array of slice QP values
   Int       m_iMaxDeltaQP;                                    ///< max. |delta QP|
   UInt      m_uiDeltaQpRD;                                    ///< dQP range for multi-pass slice QP optimization
@@ -122,13 +122,15 @@ protected:
   UInt      m_uiQuadtreeTUMaxDepthIntra;
   
   // coding tools (bit-depth)
-  UInt      m_uiInputBitDepth;                                ///< bit-depth of input file
-  UInt      m_uiOutputBitDepth;                               ///< bit-depth of output file
-  UInt      m_uiInternalBitDepth;                             ///< bit-depth codec operates at (input/output files will be converted)
+  Int       m_inputBitDepthY;                               ///< bit-depth of input file (luma component)
+  Int       m_inputBitDepthC;                               ///< bit-depth of input file (chroma component)
+  Int       m_outputBitDepthY;                              ///< bit-depth of output file (luma component)
+  Int       m_outputBitDepthC;                              ///< bit-depth of output file (chroma component)
+  Int       m_internalBitDepthY;                            ///< bit-depth codec operates at in luma (input/output files will be converted)
+  Int       m_internalBitDepthC;                            ///< bit-depth codec operates at in chroma (input/output files will be converted)
 
   // coding tools (PCM bit-depth)
   Bool      m_bPCMInputBitDepthFlag;                          ///< 0: PCM bit-depth is internal bit-depth. 1: PCM bit-depth is input bit-depth.
-  UInt      m_uiPCMBitDepthLuma;                              ///< PCM bit-depth for luma
 
   // coding tool (lossless)
   Bool      m_useLossless;                                    ///< flag for using lossless coding
@@ -177,9 +179,9 @@ protected:
   Bool      m_bLFCrossTileBoundaryFlag;  //!< 1: Cross-tile-boundary in-loop filtering 0: non-cross-tile-boundary in-loop filtering
   Int       m_iUniformSpacingIdr;
   Int       m_iNumColumnsMinus1;
-  char*     m_pchColumnWidth;
+  Char*     m_pchColumnWidth;
   Int       m_iNumRowsMinus1;
-  char*     m_pchRowHeight;
+  Char*     m_pchRowHeight;
   Int       m_iWaveFrontSynchro; //< 0: no WPP. >= 1: WPP is enabled, the "Top right" from which inheritance occurs is this LCU offset in the line above the current.
   Int       m_iWaveFrontSubstreams; //< If iWaveFrontSynchro, this is the number of substreams per frame (dependent tiles) or per tile (independent tiles).
 
@@ -202,7 +204,7 @@ protected:
   Int       m_targetBitrate;                                 ///< target bitrate
   Int       m_numLCUInUnit;                                  ///< Total number of LCUs in a frame should be completely divided by the NumLCUInUnit
   Int       m_useScalingListId;                               ///< using quantization matrix
-  char*     m_scalingListFile;                                ///< quantization matrix file name
+  Char*     m_scalingListFile;                                ///< quantization matrix file name
 
   Bool      m_TransquantBypassEnableFlag;                     ///< transquant_bypass_enable_flag setting in PPS.
   Bool      m_CUTransquantBypassFlagValue;                    ///< if transquant_bypass_enable_flag, the fixed value to use for the per-CU cu_transquant_bypass_flag.

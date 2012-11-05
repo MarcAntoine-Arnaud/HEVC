@@ -83,17 +83,17 @@ TEncSampleAdaptiveOffset::~TEncSampleAdaptiveOffset()
 // Tables
 // ====================================================================================================================
 
-inline Double xRoundIbdi2(Double x)
+inline Double xRoundIbdi2(Int bitDepth, Double x)
 {
-  return ((x)>0) ? (Int)(((Int)(x)+(1<<(g_bitDepth-8-1)))/(1<<(g_bitDepth-8))) : ((Int)(((Int)(x)-(1<<(g_bitDepth-8-1)))/(1<<(g_bitDepth-8))));
+  return ((x)>0) ? (Int)(((Int)(x)+(1<<(bitDepth-8-1)))/(1<<(bitDepth-8))) : ((Int)(((Int)(x)-(1<<(bitDepth-8-1)))/(1<<(bitDepth-8))));
 }
 
 /** rounding with IBDI
  * \param  x
  */
-inline Double xRoundIbdi(Double x)
+inline Double xRoundIbdi(Int bitDepth, Double x)
 {
-  return (g_bitDepth > 8 ? xRoundIbdi2((x)) : ((x)>=0 ? ((Int)((x)+0.5)) : ((Int)((x)-0.5)))) ;
+  return (bitDepth > 8 ? xRoundIbdi2(bitDepth, (x)) : ((x)>=0 ? ((Int)((x)+0.5)) : ((Int)((x)-0.5)))) ;
 }
 
 
@@ -109,7 +109,7 @@ Void TEncSampleAdaptiveOffset::rdoSaoOnePart(SAOQTPart *psQTPart, Int iPartIdx, 
 
   Int64 iEstDist;
   Int iClassIdx;
-  Int uiShift = 2 * DISTORTION_PRECISION_ADJUSTMENT(g_bitDepth-8);
+  Int uiShift = 2 * DISTORTION_PRECISION_ADJUSTMENT((yCbCr == 0 ? g_bitDepthY : g_bitDepthC)-8);
   UInt uiDepth = pOnePart->PartLevel;
 
   m_iDistOrg [iPartIdx] =  0;
@@ -690,9 +690,9 @@ Void TEncSampleAdaptiveOffset::endSaoEnc()
   m_pcEntropyCoder = NULL;
 }
 
-inline int xSign(int x)
+inline Int xSign(Int x)
 {
-  return ((x >> 31) | ((int)( (((unsigned int) -x)) >> 31)));
+  return ((x >> 31) | ((Int)( (((UInt) -x)) >> 31)));
 }
 
 /** Calculate SAO statistics for non-cross-slice or non-cross-tile processing
@@ -705,13 +705,14 @@ inline int xSign(int x)
  * \param  height block height
  * \param  pbBorderAvail availabilities of block border pixels
  */
-Void TEncSampleAdaptiveOffset::calcSaoStatsBlock( Pel* pRecStart, Pel* pOrgStart, Int stride, Int64** ppStats, Int64** ppCount, UInt width, UInt height, Bool* pbBorderAvail)
+Void TEncSampleAdaptiveOffset::calcSaoStatsBlock( Pel* pRecStart, Pel* pOrgStart, Int stride, Int64** ppStats, Int64** ppCount, UInt width, UInt height, Bool* pbBorderAvail, Int iYCbCr)
 {
   Int64 *stats, *count;
   Int classIdx, posShift, startX, endX, startY, endY, signLeft,signRight,signDown,signDown1;
   Pel *pOrg, *pRec;
   UInt edgeType;
   Int x, y;
+  Pel *pTableBo = (iYCbCr==0)?m_lumaTableBo:m_chromaTableBo;
 
   //--------- Band offset-----------//
   stats = ppStats[SAO_BO];
@@ -722,7 +723,7 @@ Void TEncSampleAdaptiveOffset::calcSaoStatsBlock( Pel* pRecStart, Pel* pOrgStart
   {
     for (x=0; x< width; x++)
     {
-      classIdx = m_lumaTableBo[pRec[x]];
+      classIdx = pTableBo[pRec[x]];
       if (classIdx)
       {
         stats[classIdx] += (pOrg[x] - pRec[x]); 
@@ -984,7 +985,7 @@ Void TEncSampleAdaptiveOffset::calcSaoStatsCu(Int iAddr, Int iPartIdx, Int iYCbC
 
       posOffset = (yPos* stride) + xPos;
 
-      calcSaoStatsBlock(pPicRec+ posOffset, pPicOrg+ posOffset, stride, ppStats, ppCount,width, height, pbBorderAvail);
+      calcSaoStatsBlock(pPicRec+ posOffset, pPicOrg+ posOffset, stride, ppStats, ppCount,width, height, pbBorderAvail, iYCbCr);
     }
   }
 
@@ -1017,6 +1018,7 @@ Void TEncSampleAdaptiveOffset::calcSaoStatsCuOrg(Int iAddr, Int iPartIdx, Int iY
   Int iStartY;
   Int iEndX;
   Int iEndY;
+  Pel* pTableBo = (iYCbCr==0)?m_lumaTableBo:m_chromaTableBo;
 
   Int iIsChroma = (iYCbCr!=0)? 1:0;
   Int numSkipLine = iIsChroma? 2:4;
@@ -1074,7 +1076,7 @@ Void TEncSampleAdaptiveOffset::calcSaoStatsCuOrg(Int iAddr, Int iPartIdx, Int iY
       for (x=0; x<iLcuWidth; x++)
 #endif
       {
-        iClassIdx = m_lumaTableBo[pRec[x]];
+        iClassIdx = pTableBo[pRec[x]];
         if (iClassIdx)
         {
           iStats[iClassIdx] += (pOrg[x] - pRec[x]); 
@@ -1319,6 +1321,7 @@ Void TEncSampleAdaptiveOffset::calcSaoStatsCu_BeforeDblk( TComPic* pcPic )
 
   UInt lPelX, tPelY;
   TComDataCU *pTmpCu;
+  Pel* pTableBo;
 
   for (idxY = 0; idxY< frameHeightInCU; idxY++)
   {
@@ -1364,6 +1367,7 @@ Void TEncSampleAdaptiveOffset::calcSaoStatsCu_BeforeDblk( TComPic* pcPic )
         lcuHeight    = bPelY - tPelY;
 
         stride    =  (yCbCr == 0)? pcPic->getStride(): pcPic->getCStride();
+        pTableBo = (yCbCr==0)?m_lumaTableBo:m_chromaTableBo;
 
         //if(iSaoType == BO)
 
@@ -1386,7 +1390,7 @@ Void TEncSampleAdaptiveOffset::calcSaoStatsCu_BeforeDblk( TComPic* pcPic )
             if( x < startX && y < startY )
               continue;
 
-            classIdx = m_lumaTableBo[pRec[x]];
+            classIdx = pTableBo[pRec[x]];
             if (classIdx)
             {
               stats[classIdx] += (pOrg[x] - pRec[x]); 
@@ -1716,8 +1720,10 @@ Void TEncSampleAdaptiveOffset::SAOProcess(SAOParam *pcSaoParam, Double dLambda)
     m_pcPic->getPicYuvRec()->copyToPic(m_pcYuvTmp);
   }
 
-  m_uiSaoBitIncrease = max(g_bitDepth - 10, 0);
-  m_iOffsetTh = 1 << min(g_bitDepth - 5, 5);
+  m_uiSaoBitIncreaseY = max(g_bitDepthY - 10, 0);
+  m_uiSaoBitIncreaseC = max(g_bitDepthC - 10, 0);
+  m_iOffsetThY = 1 << min(g_bitDepthY - 5, 5);
+  m_iOffsetThC = 1 << min(g_bitDepthC - 5, 5);
   resetSAOParam(pcSaoParam);
   if( !m_saoLcuBasedOptimization || !m_saoLcuBoundary )
   {
@@ -2140,6 +2146,10 @@ inline Int64 TEncSampleAdaptiveOffset::estSaoTypeDist(Int compIdx, Int typeIdx, 
 {
   Int64 estDist = 0;
   Int classIdx;
+  Int bitDepth = (compIdx==0) ? g_bitDepthY : g_bitDepthC;
+  Int saoBitIncrease = (compIdx==0) ? m_uiSaoBitIncreaseY : m_uiSaoBitIncreaseC;
+  Int saoOffsetTh = (compIdx==0) ? m_iOffsetThY : m_iOffsetThC;
+
   for(classIdx=1; classIdx < ( (typeIdx < SAO_BO) ?  m_iNumClass[typeIdx]+1 : SAO_MAX_BO_CLASSES+1); classIdx++)
   {
     if( typeIdx == SAO_BO)
@@ -2149,8 +2159,8 @@ inline Int64 TEncSampleAdaptiveOffset::estSaoTypeDist(Int compIdx, Int typeIdx, 
     }
     if(m_iCount [compIdx][typeIdx][classIdx])
     {
-      m_iOffset[compIdx][typeIdx][classIdx] = (Int64) xRoundIbdi((Double)(m_iOffsetOrg[compIdx][typeIdx][classIdx]<<(g_bitDepth-8)) / (Double)(m_iCount [compIdx][typeIdx][classIdx]<<m_uiSaoBitIncrease));
-      m_iOffset[compIdx][typeIdx][classIdx] = Clip3(-m_iOffsetTh+1, m_iOffsetTh-1, (Int)m_iOffset[compIdx][typeIdx][classIdx]);
+      m_iOffset[compIdx][typeIdx][classIdx] = (Int64) xRoundIbdi(bitDepth, (Double)(m_iOffsetOrg[compIdx][typeIdx][classIdx]<<(bitDepth-8)) / (Double)(m_iCount [compIdx][typeIdx][classIdx]<<saoBitIncrease));
+      m_iOffset[compIdx][typeIdx][classIdx] = Clip3(-saoOffsetTh+1, saoOffsetTh-1, (Int)m_iOffset[compIdx][typeIdx][classIdx]);
       if (typeIdx < 4)
       {
         if ( m_iOffset[compIdx][typeIdx][classIdx]<0 && classIdx<3 )
@@ -2162,7 +2172,7 @@ inline Int64 TEncSampleAdaptiveOffset::estSaoTypeDist(Int compIdx, Int typeIdx, 
           m_iOffset[compIdx][typeIdx][classIdx] = 0;
         }
       }
-      m_iOffset[compIdx][typeIdx][classIdx] = estIterOffset( typeIdx, classIdx, lambda, m_iOffset[compIdx][typeIdx][classIdx], m_iCount [compIdx][typeIdx][classIdx], m_iOffsetOrg[compIdx][typeIdx][classIdx], shift, m_uiSaoBitIncrease, currentDistortionTableBo, currentRdCostTableBo );
+      m_iOffset[compIdx][typeIdx][classIdx] = estIterOffset( typeIdx, classIdx, lambda, m_iOffset[compIdx][typeIdx][classIdx], m_iCount [compIdx][typeIdx][classIdx], m_iOffsetOrg[compIdx][typeIdx][classIdx], shift, saoBitIncrease, currentDistortionTableBo, currentRdCostTableBo, saoOffsetTh );
     }
     else
     {
@@ -2171,7 +2181,7 @@ inline Int64 TEncSampleAdaptiveOffset::estSaoTypeDist(Int compIdx, Int typeIdx, 
     }
     if( typeIdx != SAO_BO )
     {
-      estDist   += estSaoDist( m_iCount [compIdx][typeIdx][classIdx], m_iOffset[compIdx][typeIdx][classIdx] << m_uiSaoBitIncrease, m_iOffsetOrg[compIdx][typeIdx][classIdx], shift);
+      estDist   += estSaoDist( m_iCount [compIdx][typeIdx][classIdx], m_iOffset[compIdx][typeIdx][classIdx] << saoBitIncrease, m_iOffsetOrg[compIdx][typeIdx][classIdx], shift);
     }
 
   }
@@ -2182,7 +2192,7 @@ inline Int64 TEncSampleAdaptiveOffset::estSaoDist(Int64 count, Int64 offset, Int
 {
   return (( count*offset*offset-offsetOrg*offset*2 ) >> shift);
 }
-inline Int64 TEncSampleAdaptiveOffset::estIterOffset(Int typeIdx, Int classIdx, double lambda, Int64 offsetInput, Int64 count, Int64 offsetOrg, Int shift, Int bitIncrease, Int *currentDistortionTableBo, Double *currentRdCostTableBo )
+inline Int64 TEncSampleAdaptiveOffset::estIterOffset(Int typeIdx, Int classIdx, Double lambda, Int64 offsetInput, Int64 count, Int64 offsetOrg, Int shift, Int bitIncrease, Int *currentDistortionTableBo, Double *currentRdCostTableBo, Int offsetTh )
 {
   //Clean up, best_q_offset.
   Int64 iterOffset, tempOffset;
@@ -2196,7 +2206,7 @@ inline Int64 TEncSampleAdaptiveOffset::estIterOffset(Int typeIdx, Int classIdx, 
   {
     // Calculate the bits required for signalling the offset
     tempRate = (typeIdx == SAO_BO) ? (abs((Int)iterOffset)+2) : (abs((Int)iterOffset)+1);
-    if (abs((Int)iterOffset)==m_iOffsetTh-1) 
+    if (abs((Int)iterOffset)==offsetTh-1) 
     {  
       tempRate --;
     }
@@ -2226,7 +2236,7 @@ Void TEncSampleAdaptiveOffset::saoComponentParamDist(Int allowMergeLeft, Int all
 
   Int64 estDist;
   Int classIdx;
-  Int shift = 2 * DISTORTION_PRECISION_ADJUSTMENT(g_bitDepth-8);
+  Int shift = 2 * DISTORTION_PRECISION_ADJUSTMENT(((yCbCr==0)?g_bitDepthY:g_bitDepthC)-8);
   Int64 bestDist;
 
   SaoLcuParam*  saoLcuParam = &(saoParam->saoLcuParam[yCbCr][addr]);
@@ -2368,7 +2378,7 @@ Void TEncSampleAdaptiveOffset::sao2ChromaParamDist(Int allowMergeLeft, Int allow
 
   Int64 estDist[2];
   Int classIdx;
-  Int shift = 2 * DISTORTION_PRECISION_ADJUSTMENT(g_bitDepth-8);
+  Int shift = 2 * DISTORTION_PRECISION_ADJUSTMENT(g_bitDepthC-8);
   Int64 bestDist = 0;
 
   SaoLcuParam*  saoLcuParam[2] = {&(saoParam->saoLcuParam[1][addr]), &(saoParam->saoLcuParam[2][addr])};

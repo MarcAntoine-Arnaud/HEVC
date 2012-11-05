@@ -135,7 +135,7 @@ std::istringstream &operator>>(std::istringstream &in, GOPEntry &entry)     //in
 }
 
 static const struct MapStrToProfile {
-  const char* str;
+  const Char* str;
   Profile::Name value;
 } strToProfile[] = {
   {"none", Profile::NONE},
@@ -145,7 +145,7 @@ static const struct MapStrToProfile {
 };
 
 static const struct MapStrToTier {
-  const char* str;
+  const Char* str;
   Level::Tier value;
 } strToTier[] = {
   {"main", Level::MAIN},
@@ -153,7 +153,7 @@ static const struct MapStrToTier {
 };
 
 static const struct MapStrToLevel {
-  const char* str;
+  const Char* str;
   Level::Name value;
 } strToLevel[] = {
   {"none",Level::NONE},
@@ -178,7 +178,7 @@ istream& readStrToEnum(P map[], unsigned long mapLen, istream &in, T &val)
   string str;
   in >> str;
 
-  for (int i = 0; i < mapLen; i++)
+  for (Int i = 0; i < mapLen; i++)
   {
     if (str == map[i].str)
     {
@@ -218,7 +218,7 @@ istream& operator>>(istream &in, Level::Name &level)
  */
 Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
 {
-  bool do_help = false;
+  Bool do_help = false;
   
   string cfg_InputFile;
   string cfg_BitstreamFile;
@@ -238,11 +238,13 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
   ("ReconFile,o",           cfg_ReconFile,     string(""), "Reconstructed YUV output file name")
   ("SourceWidth,-wdt",      m_iSourceWidth,        0, "Source picture width")
   ("SourceHeight,-hgt",     m_iSourceHeight,       0, "Source picture height")
-  ("InputBitDepth",         m_uiInputBitDepth,    8u, "Bit-depth of input file")
-  ("BitDepth",              m_uiInputBitDepth,    8u, "Deprecated alias of InputBitDepth")
-  ("OutputBitDepth",        m_uiOutputBitDepth,   0u, "Bit-depth of output file")
-  ("InternalBitDepth",      m_uiInternalBitDepth, 0u, "Bit-depth the codec operates at."
-                                                      "If different to InputBitDepth, source data will be converted")
+  ("InputBitDepth",         m_inputBitDepthY,    8, "Bit-depth of input file")
+  ("OutputBitDepth",        m_outputBitDepthY,   0, "Bit-depth of output file (default:InternalBitDepth)")
+  ("InternalBitDepth",      m_internalBitDepthY, 0, "Bit-depth the codec operates at. (default:InputBitDepth)"
+                                                       "If different to InputBitDepth, source data will be converted")
+  ("InputBitDepthC",        m_inputBitDepthC,    0, "As per InputBitDepth but for chroma component. (default:InputBitDepth)")
+  ("OutputBitDepthC",       m_outputBitDepthC,   0, "As per OutputBitDepth but for chroma component. (default:InternalBitDepthC)")
+  ("InternalBitDepthC",     m_internalBitDepthC, 0, "As per InternalBitDepth but for chroma component. (default:IntrenalBitDepth)")
   ("CroppingMode",          m_croppingMode,        0, "Cropping mode (0: no cropping, 1:automatic padding, 2: padding, 3:cropping")
   ("HorizontalPadding,-pdx",m_aiPad[0],            0, "Horizontal source padding for cropping mode 2")
   ("VerticalPadding,-pdy",  m_aiPad[1],            0, "Vertical source padding for cropping mode 2")
@@ -286,14 +288,14 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
   ("ASR",                     m_bUseASR,                false, "Adaptive motion search range")
 
   // Mode decision parameters
-  ("LambdaModifier0,-LM0", m_adLambdaModifier[ 0 ], ( double )1.0, "Lambda modifier for temporal layer 0")
-  ("LambdaModifier1,-LM1", m_adLambdaModifier[ 1 ], ( double )1.0, "Lambda modifier for temporal layer 1")
-  ("LambdaModifier2,-LM2", m_adLambdaModifier[ 2 ], ( double )1.0, "Lambda modifier for temporal layer 2")
-  ("LambdaModifier3,-LM3", m_adLambdaModifier[ 3 ], ( double )1.0, "Lambda modifier for temporal layer 3")
-  ("LambdaModifier4,-LM4", m_adLambdaModifier[ 4 ], ( double )1.0, "Lambda modifier for temporal layer 4")
-  ("LambdaModifier5,-LM5", m_adLambdaModifier[ 5 ], ( double )1.0, "Lambda modifier for temporal layer 5")
-  ("LambdaModifier6,-LM6", m_adLambdaModifier[ 6 ], ( double )1.0, "Lambda modifier for temporal layer 6")
-  ("LambdaModifier7,-LM7", m_adLambdaModifier[ 7 ], ( double )1.0, "Lambda modifier for temporal layer 7")
+  ("LambdaModifier0,-LM0", m_adLambdaModifier[ 0 ], ( Double )1.0, "Lambda modifier for temporal layer 0")
+  ("LambdaModifier1,-LM1", m_adLambdaModifier[ 1 ], ( Double )1.0, "Lambda modifier for temporal layer 1")
+  ("LambdaModifier2,-LM2", m_adLambdaModifier[ 2 ], ( Double )1.0, "Lambda modifier for temporal layer 2")
+  ("LambdaModifier3,-LM3", m_adLambdaModifier[ 3 ], ( Double )1.0, "Lambda modifier for temporal layer 3")
+  ("LambdaModifier4,-LM4", m_adLambdaModifier[ 4 ], ( Double )1.0, "Lambda modifier for temporal layer 4")
+  ("LambdaModifier5,-LM5", m_adLambdaModifier[ 5 ], ( Double )1.0, "Lambda modifier for temporal layer 5")
+  ("LambdaModifier6,-LM6", m_adLambdaModifier[ 6 ], ( Double )1.0, "Lambda modifier for temporal layer 6")
+  ("LambdaModifier7,-LM7", m_adLambdaModifier[ 7 ], ( Double )1.0, "Lambda modifier for temporal layer 7")
 
   /* Quantization parameters */
   ("QP,q",          m_fQP,             30.0, "Qp value, if value is float, QP is switched once during encoding")
@@ -427,9 +429,9 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
     opts.addOptions()(cOSS.str(), m_GOPList[i-1], GOPEntry());
   }
   po::setDefaults(opts);
-  const list<const char*>& argv_unhandled = po::scanArgv(opts, argc, (const char**) argv);
+  const list<const Char*>& argv_unhandled = po::scanArgv(opts, argc, (const Char**) argv);
 
-  for (list<const char*>::const_iterator it = argv_unhandled.begin(); it != argv_unhandled.end(); it++)
+  for (list<const Char*>::const_iterator it = argv_unhandled.begin(); it != argv_unhandled.end(); it++)
   {
     fprintf(stderr, "Unhandled argument ignored: `%s'\n", *it);
   }
@@ -454,6 +456,13 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
   m_pchRowHeight = cfg_RowHeight.empty() ? NULL : strdup(cfg_RowHeight.c_str());
   m_scalingListFile = cfg_ScalingListFile.empty() ? NULL : strdup(cfg_ScalingListFile.c_str());
   
+  /* rules for input, output and internal bitdepths as per help text */
+  if (!m_internalBitDepthY) { m_internalBitDepthY = m_inputBitDepthY; }
+  if (!m_internalBitDepthC) { m_internalBitDepthC = m_internalBitDepthY; }
+  if (!m_inputBitDepthC) { m_inputBitDepthC = m_inputBitDepthY; }
+  if (!m_outputBitDepthY) { m_outputBitDepthY = m_internalBitDepthY; }
+  if (!m_outputBitDepthC) { m_outputBitDepthC = m_internalBitDepthC; }
+
   // TODO:ChromaFmt assumes 4:2:0 below
   switch (m_croppingMode)
   {
@@ -567,7 +576,7 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
 // Private member functions
 // ====================================================================================================================
 
-Bool confirmPara(Bool bflag, const char* message);
+Bool confirmPara(Bool bflag, const Char* message);
 
 Void TAppEncCfg::xCheckParameter()
 {
@@ -580,17 +589,18 @@ Void TAppEncCfg::xCheckParameter()
     fprintf(stderr, "*************************************************************\n");
   }
 
-  bool check_failed = false; /* abort if there is a fatal configuration problem */
+  Bool check_failed = false; /* abort if there is a fatal configuration problem */
 #define xConfirmPara(a,b) check_failed |= confirmPara(a,b)
   // check range of parameters
-  xConfirmPara( m_uiInputBitDepth < 8,                                                      "InputBitDepth must be at least 8" );
+  xConfirmPara( m_inputBitDepthY < 8,                                                     "InputBitDepth must be at least 8" );
+  xConfirmPara( m_inputBitDepthC < 8,                                                     "InputBitDepthC must be at least 8" );
   xConfirmPara( m_iFrameRate <= 0,                                                          "Frame rate must be more than 1" );
   xConfirmPara( m_iFrameToBeEncoded <= 0,                                                   "Total Number Of Frames encoded must be more than 0" );
   xConfirmPara( m_iGOPSize < 1 ,                                                            "GOP Size must be greater or equal to 1" );
   xConfirmPara( m_iGOPSize > 1 &&  m_iGOPSize % 2,                                          "GOP Size must be a multiple of 2, if GOP Size is greater than 1" );
   xConfirmPara( (m_iIntraPeriod > 0 && m_iIntraPeriod < m_iGOPSize) || m_iIntraPeriod == 0, "Intra period must be more than GOP size, or -1 , not 0" );
   xConfirmPara( m_iDecodingRefreshType < 0 || m_iDecodingRefreshType > 2,                   "Decoding Refresh Type must be equal to 0, 1 or 2" );
-  xConfirmPara( m_iQP <  -6 * ((Int)m_uiInternalBitDepth - 8) || m_iQP > 51,                "QP exceeds supported range (-QpBDOffsety to 51)" );
+  xConfirmPara( m_iQP <  -6 * (m_internalBitDepthY - 8) || m_iQP > 51,                    "QP exceeds supported range (-QpBDOffsety to 51)" );
   xConfirmPara( m_loopFilterBetaOffsetDiv2 < -13 || m_loopFilterBetaOffsetDiv2 > 13,          "Loop Filter Beta Offset div. 2 exceeds supported range (-13 to 13)");
   xConfirmPara( m_loopFilterTcOffsetDiv2 < -13 || m_loopFilterTcOffsetDiv2 > 13,              "Loop Filter Tc Offset div. 2 exceeds supported range (-13 to 13)");
   xConfirmPara( m_iFastSearch < 0 || m_iFastSearch > 2,                                     "Fast Search Mode is not supported value (0:Full search  1:Diamond  2:PMVFAST)" );
@@ -657,7 +667,7 @@ Void TAppEncCfg::xCheckParameter()
     xConfirmPara( m_iDependentSliceArgument < 1 ,         "DependentSliceArgument should be larger than or equal to 1" );
   }
   
-  bool tileFlag = (m_iNumColumnsMinus1 > 0 || m_iNumRowsMinus1 > 0 );
+  Bool tileFlag = (m_iNumColumnsMinus1 > 0 || m_iNumRowsMinus1 > 0 );
   xConfirmPara( tileFlag && m_iWaveFrontSynchro,            "Tile and Wavefront can not be applied together");
 #if !DEPENDENT_SLICES
   xConfirmPara( m_iWaveFrontSynchro && m_iDependentSliceMode, "Wavefront and Dependent Slice can not be applied together");
@@ -1035,16 +1045,11 @@ Void TAppEncCfg::xSetGlobal()
   g_uiMaxCUDepth = m_uiMaxCUDepth;
   
   // set internal bit-depth and constants
-  g_bitDepth = m_uiInternalBitDepth;
-  g_maxLumaVal = (1 << g_bitDepth) - 1;
+  g_bitDepthY = m_internalBitDepthY;
+  g_bitDepthC = m_internalBitDepthC;
   
-  if (m_uiOutputBitDepth == 0)
-  {
-    m_uiOutputBitDepth = m_uiInternalBitDepth;
-  }
-
-  g_uiPCMBitDepthLuma = m_uiPCMBitDepthLuma = ((m_bPCMInputBitDepthFlag)? m_uiInputBitDepth : m_uiInternalBitDepth);
-  g_uiPCMBitDepthChroma = ((m_bPCMInputBitDepthFlag)? m_uiInputBitDepth : m_uiInternalBitDepth);
+  g_uiPCMBitDepthLuma = m_bPCMInputBitDepthFlag ? m_inputBitDepthY : m_internalBitDepthY;
+  g_uiPCMBitDepthChroma = m_bPCMInputBitDepthFlag ? m_inputBitDepthC : m_internalBitDepthC;
 }
 
 Void TAppEncCfg::xPrintParameter()
@@ -1072,8 +1077,8 @@ Void TAppEncCfg::xPrintParameter()
 
   printf("QP adaptation                : %d (range=%d)\n", m_bUseAdaptiveQP, (m_bUseAdaptiveQP ? m_iQPAdaptationRange : 0) );
   printf("GOP size                     : %d\n", m_iGOPSize );
-  printf("Internal bit depth           : %d\n", m_uiInternalBitDepth );
-  printf("PCM sample bit depth         : %d\n", m_uiPCMBitDepthLuma );
+  printf("Internal bit depth           : (Y:%d, C:%d)\n", m_internalBitDepthY, m_internalBitDepthC );
+  printf("PCM sample bit depth         : (Y:%d, C:%d)\n", g_uiPCMBitDepthLuma, g_uiPCMBitDepthChroma );
   printf("RateControl                  : %d\n", m_enableRateCtrl);
   if(m_enableRateCtrl)
   {
@@ -1084,7 +1089,7 @@ Void TAppEncCfg::xPrintParameter()
   printf("\n");
   
   printf("TOOL CFG: ");
-  printf("IBD:%d ", g_bitDepth > m_uiInputBitDepth);
+  printf("IBD:%d ", g_bitDepthY > m_inputBitDepthY || g_bitDepthC > m_inputBitDepthC);
   printf("HAD:%d ", m_bUseHADME           );
   printf("SRD:%d ", m_bUseSBACRD          );
   printf("RDQ:%d ", m_useRDOQ            );
@@ -1136,7 +1141,7 @@ Void TAppEncCfg::xPrintParameter()
   fflush(stdout);
 }
 
-Bool confirmPara(Bool bflag, const char* message)
+Bool confirmPara(Bool bflag, const Char* message)
 {
   if (!bflag)
     return false;

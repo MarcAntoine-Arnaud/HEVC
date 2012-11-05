@@ -599,7 +599,7 @@ Void  TEncRateCtrl::updateFrameData(UInt64 actualFrameBits)
 Void  TEncRateCtrl::updateLCUData(TComDataCU* pcCU, UInt64 actualLCUBits, Int qp)
 {
   Int     x, y;
-  double  costMAD = 0.0;
+  Double  costMAD = 0.0;
 
   Pel*  pOrg   = pcCU->getPic()->getPicYuvOrg()->getLumaAddr(pcCU->getAddr(), 0);
   Pel*  pRec   = pcCU->getPic()->getPicYuvRec()->getLumaAddr(pcCU->getAddr(), 0);

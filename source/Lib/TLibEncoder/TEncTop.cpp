@@ -341,7 +341,7 @@ Void TEncTop::deletePicBuffer()
  \retval  rcListBitstreamOut  list of output bitstreams
  \retval  iNumEncoded         number of encoded pictures
  */
-Void TEncTop::encode(bool flush, TComPicYuv* pcPicYuvOrg, TComList<TComPicYuv*>& rcListPicYuvRecOut, std::list<AccessUnit>& accessUnitsOut, Int& iNumEncoded )
+Void TEncTop::encode(Bool flush, TComPicYuv* pcPicYuvOrg, TComList<TComPicYuv*>& rcListPicYuvRecOut, std::list<AccessUnit>& accessUnitsOut, Int& iNumEncoded )
 {
   if (pcPicYuvOrg) {
     // get original YUV
@@ -434,7 +434,7 @@ Void TEncTop::xInitSPS()
   profileTierLevel.setTierFlag(m_levelTier);
   profileTierLevel.setProfileIdc(m_profile);
   profileTierLevel.setProfileCompatibilityFlag(m_profile, 1);
-  if (m_profile == Profile::MAIN10 && g_bitDepth == 8)
+  if (m_profile == Profile::MAIN10 && g_bitDepthY == 8 && g_bitDepthC == 8)
   {
     /* The above constraint is equal to Profile::MAIN */
     profileTierLevel.setProfileCompatibilityFlag(Profile::MAIN, 1);
@@ -495,9 +495,11 @@ Void TEncTop::xInitSPS()
     m_cSPS.setAMPAcc(i, 0);
   }
 
-  m_cSPS.setBitDepth    ( g_bitDepth );
-  m_cSPS.setQpBDOffsetY ( 6*(g_bitDepth - 8) );
-  m_cSPS.setQpBDOffsetC ( 6*(g_bitDepth - 8) );
+  m_cSPS.setBitDepthY( g_bitDepthY );
+  m_cSPS.setBitDepthC( g_bitDepthC );
+
+  m_cSPS.setQpBDOffsetY ( 6*(g_bitDepthY - 8) );
+  m_cSPS.setQpBDOffsetC ( 6*(g_bitDepthC - 8) );
 
   m_cSPS.setUseSAO( m_bUseSAO );
 
@@ -644,7 +646,7 @@ Void TEncTop::xInitPPS()
   if( m_cPPS.getDependentSliceEnabledFlag()&&(!m_cPPS.getEntropySliceEnabledFlag()) )
 #endif
   {
-    int NumCtx = m_cPPS.getEntropyCodingSyncEnabledFlag()?2:1;
+    Int NumCtx = m_cPPS.getEntropyCodingSyncEnabledFlag()?2:1;
     m_cSliceEncoder.initCtxMem( NumCtx );
     for ( UInt st = 0; st < NumCtx; st++ )
     {

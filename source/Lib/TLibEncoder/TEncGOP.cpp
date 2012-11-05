@@ -422,7 +422,7 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
       if ( pcSlice->getNumRefIdx(RefPicList( 0 ) ) == pcSlice->getNumRefIdx(RefPicList( 1 ) ) )
       {
         pcSlice->setNoBackPredFlag( true );
-        int i;
+        Int i;
         for ( i=0; i < pcSlice->getNumRefIdx(RefPicList( 1 ) ); i++ )
         {
           if ( pcSlice->getRefPOC(RefPicList(1), i) != pcSlice->getRefPOC(RefPicList(0), i) ) 
@@ -476,7 +476,7 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
       if ( pcSlice->getNumRefIdx(RefPicList( 0 ) ) == pcSlice->getNumRefIdx(RefPicList( 1 ) ) )
       {
         bGPBcheck=true;
-        int i;
+        Int i;
         for ( i=0; i < pcSlice->getNumRefIdx(RefPicList( 1 ) ); i++ )
         {
           if ( pcSlice->getRefPOC(RefPicList(1), i) != pcSlice->getRefPOC(RefPicList(0), i) ) 
@@ -872,7 +872,7 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
     pcSlice = pcPic->getSlice(uiStartCUAddrSliceIdx);
 
     Int processingState = (pcSlice->getSPS()->getUseSAO())?(EXECUTE_INLOOPFILTER):(ENCODE_SLICE);
-    bool skippedSlice=false;
+    Bool skippedSlice=false;
     while (uiNextCUAddr < uiRealEndAddress) // Iterate over all slices
     {
       switch(processingState)
@@ -1203,9 +1203,9 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
       pcPic->compressMotion(); 
       
       //-- For time output for each slice
-      Double dEncTime = (double)(clock()-iBeforeTime) / CLOCKS_PER_SEC;
+      Double dEncTime = (Double)(clock()-iBeforeTime) / CLOCKS_PER_SEC;
 
-      const char* digestStr = NULL;
+      const Char* digestStr = NULL;
       if (m_pcCfg->getDecodedPictureHashSEIEnabled())
       {
         /* calculate MD5sum for entire reconstructed picture */
@@ -1259,7 +1259,7 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
       }
       if(m_pcCfg->getUseRateCtrl())
       {
-        unsigned  frameBits = m_vRVM_RP[m_vRVM_RP.size()-1];
+        UInt  frameBits = m_vRVM_RP[m_vRVM_RP.size()-1];
         m_pcRateCtrl->updataRCFrameStatus((Int)frameBits, pcSlice->getSliceType());
       }
       if( ( m_pcCfg->getPictureTimingSEIEnabled() ) &&
@@ -1454,7 +1454,7 @@ UInt64 TEncGOP::xFindDistortionFrame (TComPicYuv* pcPic0, TComPicYuv* pcPic1)
   Int     x, y;
   Pel*  pSrc0   = pcPic0 ->getLumaAddr();
   Pel*  pSrc1   = pcPic1 ->getLumaAddr();
-  UInt  uiShift = 2 * DISTORTION_PRECISION_ADJUSTMENT(g_bitDepth-8);
+  UInt  uiShift = 2 * DISTORTION_PRECISION_ADJUSTMENT(g_bitDepthY-8);
   Int   iTemp;
   
   Int   iStride = pcPic0->getStride();
@@ -1473,6 +1473,7 @@ UInt64 TEncGOP::xFindDistortionFrame (TComPicYuv* pcPic0, TComPicYuv* pcPic1)
     pSrc1 += iStride;
   }
   
+  uiShift = 2 * DISTORTION_PRECISION_ADJUSTMENT(g_bitDepthC-8);
   iHeight >>= 1;
   iWidth  >>= 1;
   iStride >>= 1;
@@ -1507,7 +1508,7 @@ UInt64 TEncGOP::xFindDistortionFrame (TComPicYuv* pcPic0, TComPicYuv* pcPic1)
 }
 
 #if VERBOSE_RATE
-static const char* nalUnitTypeToString(NalUnitType type)
+static const Char* nalUnitTypeToString(NalUnitType type)
 {
   switch (type)
   {
@@ -1604,9 +1605,10 @@ Void TEncGOP::xCalculateAddPSNR( TComPic* pcPic, TComPicYuv* pcPicD, const Acces
     pRec += iStride;
   }
   
-  unsigned int maxval = 255 << (g_bitDepth-8);
-  Double fRefValueY = (double) maxval * maxval * iSize;
-  Double fRefValueC = fRefValueY / 4.0;
+  Int maxvalY = 255 << (g_bitDepthY-8);
+  Int maxvalC = 255 << (g_bitDepthC-8);
+  Double fRefValueY = (Double) maxvalY * maxvalY * iSize;
+  Double fRefValueC = (Double) maxvalC * maxvalC * iSize / 4.0;
   dYPSNR            = ( uiSSDY ? 10.0 * log10( fRefValueY / (Double)uiSSDY ) : 99.99 );
   dUPSNR            = ( uiSSDU ? 10.0 * log10( fRefValueC / (Double)uiSSDU ) : 99.99 );
   dVPSNR            = ( uiSSDV ? 10.0 * log10( fRefValueC / (Double)uiSSDV ) : 99.99 );
@@ -1615,10 +1617,10 @@ Void TEncGOP::xCalculateAddPSNR( TComPic* pcPic, TComPicYuv* pcPicD, const Acces
    *  - any AnnexB contributions (start_code_prefix, zero_byte, etc.,)
    *  - SEI NAL units
    */
-  unsigned numRBSPBytes = 0;
+  UInt numRBSPBytes = 0;
   for (AccessUnit::const_iterator it = accessUnit.begin(); it != accessUnit.end(); it++)
   {
-    unsigned numRBSPBytes_nal = unsigned((*it)->m_nalUnitData.str().size());
+    UInt numRBSPBytes_nal = UInt((*it)->m_nalUnitData.str().size());
 #if VERBOSE_RATE
     printf("*** %6s numBytesInNALunit: %u\n", nalUnitTypeToString((*it)->m_nalUnitType), numRBSPBytes_nal);
 #endif
@@ -1626,7 +1628,7 @@ Void TEncGOP::xCalculateAddPSNR( TComPic* pcPic, TComPicYuv* pcPicD, const Acces
       numRBSPBytes += numRBSPBytes_nal;
   }
 
-  unsigned uibits = numRBSPBytes * 8;
+  UInt uibits = numRBSPBytes * 8;
   m_vRVM_RP.push_back( uibits );
 
   //===== add PSNR =====
@@ -1745,7 +1747,7 @@ Double TEncGOP::xCalculateRVM()
     dRavg /= ( N - 2 * RVM_VCEGAM10_M );
     dBavg /= ( N - 2 * RVM_VCEGAM10_M );
     
-    double dSigamB = 0;
+    Double dSigamB = 0;
     for( i = RVM_VCEGAM10_M + 1 ; i < N - RVM_VCEGAM10_M + 1 ; i++ )
     {
       Double tmp = vB[i] - dBavg;
@@ -1753,7 +1755,7 @@ Double TEncGOP::xCalculateRVM()
     }
     dSigamB = sqrt( dSigamB / ( N - 2 * RVM_VCEGAM10_M ) );
     
-    double f = sqrt( 12.0 * ( RVM_VCEGAM10_M - 1 ) / ( RVM_VCEGAM10_M + 1 ) );
+    Double f = sqrt( 12.0 * ( RVM_VCEGAM10_M - 1 ) / ( RVM_VCEGAM10_M + 1 ) );
     
     dRVM = dSigamB / dRavg * f;
   }
