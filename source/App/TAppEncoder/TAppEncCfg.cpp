@@ -457,11 +457,11 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
   m_scalingListFile = cfg_ScalingListFile.empty() ? NULL : strdup(cfg_ScalingListFile.c_str());
   
   /* rules for input, output and internal bitdepths as per help text */
-  if (!m_internalBitDepthY) m_internalBitDepthY = m_inputBitDepthY;
-  if (!m_internalBitDepthC) m_internalBitDepthC = m_internalBitDepthY;
-  if (!m_inputBitDepthC) m_inputBitDepthC = m_inputBitDepthY;
-  if (!m_outputBitDepthY) m_outputBitDepthY = m_internalBitDepthY;
-  if (!m_outputBitDepthC) m_outputBitDepthC = m_internalBitDepthC;
+  if (!m_internalBitDepthY) { m_internalBitDepthY = m_inputBitDepthY; }
+  if (!m_internalBitDepthC) { m_internalBitDepthC = m_internalBitDepthY; }
+  if (!m_inputBitDepthC) { m_inputBitDepthC = m_inputBitDepthY; }
+  if (!m_outputBitDepthY) { m_outputBitDepthY = m_internalBitDepthY; }
+  if (!m_outputBitDepthC) { m_outputBitDepthC = m_internalBitDepthC; }
 
   // TODO:ChromaFmt assumes 4:2:0 below
   switch (m_croppingMode)
