@@ -89,7 +89,7 @@ const Short TComInterpolationFilter::m_chromaFilter[8][NTAPS_CHROMA] =
  * \param isFirst    Flag indicating whether it is the first filtering operation
  * \param isLast     Flag indicating whether it is the last filtering operation
  */
-Void TComInterpolationFilter::filterCopy(int bitDepth, const Pel *src, Int srcStride, Short *dst, Int dstStride, Int width, Int height, Bool isFirst, Bool isLast)
+Void TComInterpolationFilter::filterCopy(Int bitDepth, const Pel *src, Int srcStride, Short *dst, Int dstStride, Int width, Int height, Bool isFirst, Bool isLast)
 {
   Int row, col;
   
@@ -162,8 +162,8 @@ Void TComInterpolationFilter::filterCopy(int bitDepth, const Pel *src, Int srcSt
  * \param  height     Height of block
  * \param  coeff      Pointer to filter taps
  */
-template<int N, bool isVertical, bool isFirst, bool isLast>
-Void TComInterpolationFilter::filter(int bitDepth, Short const *src, Int srcStride, Short *dst, Int dstStride, Int width, Int height, Short const *coeff)
+template<Int N, bool isVertical, bool isFirst, bool isLast>
+Void TComInterpolationFilter::filter(Int bitDepth, Short const *src, Int srcStride, Short *dst, Int dstStride, Int width, Int height, Short const *coeff)
 {
   Int row, col;
   
@@ -259,8 +259,8 @@ Void TComInterpolationFilter::filter(int bitDepth, Short const *src, Int srcStri
  * \param  isLast     Flag indicating whether it is the last filtering operation
  * \param  coeff      Pointer to filter taps
  */
-template<int N>
-Void TComInterpolationFilter::filterHor(int bitDepth, Pel *src, Int srcStride, Short *dst, Int dstStride, Int width, Int height, Bool isLast, Short const *coeff)
+template<Int N>
+Void TComInterpolationFilter::filterHor(Int bitDepth, Pel *src, Int srcStride, Short *dst, Int dstStride, Int width, Int height, Bool isLast, Short const *coeff)
 {
   if ( isLast )
   {
@@ -287,8 +287,8 @@ Void TComInterpolationFilter::filterHor(int bitDepth, Pel *src, Int srcStride, S
  * \param  isLast     Flag indicating whether it is the last filtering operation
  * \param  coeff      Pointer to filter taps
  */
-template<int N>
-Void TComInterpolationFilter::filterVer(int bitDepth, Pel *src, Int srcStride, Short *dst, Int dstStride, Int width, Int height, Bool isFirst, Bool isLast, Short const *coeff)
+template<Int N>
+Void TComInterpolationFilter::filterVer(Int bitDepth, Pel *src, Int srcStride, Short *dst, Int dstStride, Int width, Int height, Bool isFirst, Bool isLast, Short const *coeff)
 {
   if ( isFirst && isLast )
   {

@@ -82,7 +82,7 @@ class TComOutputBitstream : public TComBitIf
    */
   std::vector<uint8_t> *m_fifo;
 
-  unsigned int m_num_held_bits; /// number of bits not flushed to bytestream.
+  UInt m_num_held_bits; /// number of bits not flushed to bytestream.
   unsigned char m_held_bits; /// the bits held and not flushed to bytestream.
                              /// this value is always msb-aligned, bigendian.
 
@@ -120,7 +120,7 @@ public:
   /**
    * Return the number of valid bytes available from  getByteStream()
    */
-  unsigned int getByteStreamLength();
+  UInt getByteStreamLength();
 
   /**
    * Reset all internal state.
@@ -164,9 +164,9 @@ class TComInputBitstream
   std::vector<uint8_t> *m_fifo; /// FIFO for storage of complete bytes
 
 protected:
-  unsigned int m_fifo_idx; /// Read index into m_fifo
+  UInt m_fifo_idx; /// Read index into m_fifo
 
-  unsigned int m_num_held_bits;
+  UInt m_num_held_bits;
   unsigned char m_held_bits;
   UInt  m_numBitsRead;
 

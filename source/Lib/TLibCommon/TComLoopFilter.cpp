@@ -896,7 +896,7 @@ __inline Void TComLoopFilter::xPelFilterLuma( Pel* piSrc, Int iOffset, Int d, In
  */
 __inline Void TComLoopFilter::xPelFilterChroma( Pel* piSrc, Int iOffset, Int tc, Bool bPartPNoFilter, Bool bPartQNoFilter)
 {
-  int delta;
+  Int delta;
   
   Pel m4  = piSrc[0];
   Pel m3  = piSrc[-iOffset];

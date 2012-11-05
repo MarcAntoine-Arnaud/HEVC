@@ -94,7 +94,7 @@ private:
   Double                  m_dPicRdCost;                         ///< picture-level RD cost
   Double*                 m_pdRdPicLambda;                      ///< array of lambda candidates
   Double*                 m_pdRdPicQp;                          ///< array of picture QP candidates (double-type for lambda)
-  Int*                    m_piRdPicQp;                          ///< array of picture QP candidates (int-type)
+  Int*                    m_piRdPicQp;                          ///< array of picture QP candidates (Int-type)
   TEncBinCABAC*           m_pcBufferBinCoderCABACs;       ///< line of bin coder CABAC
   TEncSbac*               m_pcBufferSbacCoders;                 ///< line to store temporary contexts
   TEncBinCABAC*           m_pcBufferLowLatBinCoderCABACs;       ///< dependent tiles: line of bin coder CABAC
@@ -131,7 +131,7 @@ public:
   Void    setSliceIdx(UInt i)   { m_uiSliceIdx = i;                       }
 #if DEPENDENT_SLICES
   Void      initCtxMem( UInt i );
-  Void      setCtxMem( TEncSbac* sb, int b )   { CTXMem[b] = sb; }
+  Void      setCtxMem( TEncSbac* sb, Int b )   { CTXMem[b] = sb; }
 #endif
 
 private:

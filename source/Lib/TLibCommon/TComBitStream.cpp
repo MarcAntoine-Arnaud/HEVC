@@ -83,7 +83,7 @@ char* TComOutputBitstream::getByteStream() const
   return (char*) &m_fifo->front();
 }
 
-unsigned int TComOutputBitstream::getByteStreamLength()
+UInt TComOutputBitstream::getByteStreamLength()
 {
   return unsigned(m_fifo->size());
 }
@@ -124,7 +124,7 @@ Void TComOutputBitstream::write   ( UInt uiBits, UInt uiNumberOfBits )
 
   /* topword serves to justify held_bits to align with the msb of uiBits */
   unsigned topword = (uiNumberOfBits - next_num_held_bits) & ~((1 << 3) -1);
-  unsigned int write_bits = (m_held_bits << topword) | (uiBits >> next_num_held_bits);
+  UInt write_bits = (m_held_bits << topword) | (uiBits >> next_num_held_bits);
 
   switch (num_total_bits >> 3)
   {
@@ -140,7 +140,7 @@ Void TComOutputBitstream::write   ( UInt uiBits, UInt uiNumberOfBits )
 
 Void TComOutputBitstream::writeAlignOne()
 {
-  unsigned int num_bits = getNumBitsUntilByteAligned();
+  UInt num_bits = getNumBitsUntilByteAligned();
   write((1 << num_bits) - 1, num_bits);
   return;
 }
@@ -190,9 +190,9 @@ Void TComOutputBitstream::writeByteAlignment()
  */
 Void TComInputBitstream::pseudoRead ( UInt uiNumberOfBits, UInt& ruiBits )
 {
-  unsigned int saved_num_held_bits = m_num_held_bits;
+  UInt saved_num_held_bits = m_num_held_bits;
   unsigned char saved_held_bits = m_held_bits;
-  unsigned int saved_fifo_idx = m_fifo_idx;
+  UInt saved_fifo_idx = m_fifo_idx;
 
   unsigned num_bits_to_read = min(uiNumberOfBits, getNumBitsLeft());
   read(num_bits_to_read, ruiBits);

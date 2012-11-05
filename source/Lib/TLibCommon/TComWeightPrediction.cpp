@@ -304,9 +304,9 @@ Void TComWeightPrediction::getWpScaling( TComDataCU* pcCU, Int iRefIdx0, Int iRe
 
   if ( bBiDir )
   { // Bi-Dir case
-    for ( int yuv=0 ; yuv<3 ; yuv++ )
+    for ( Int yuv=0 ; yuv<3 ; yuv++ )
     {
-      int bitDepth = yuv ? g_bitDepthC : g_bitDepthY;
+      Int bitDepth = yuv ? g_bitDepthC : g_bitDepthY;
       wp0[yuv].w      = wp0[yuv].iWeight;
       wp0[yuv].o      = wp0[yuv].iOffset * (1 << (bitDepth-8));
       wp1[yuv].w      = wp1[yuv].iWeight;
@@ -322,9 +322,9 @@ Void TComWeightPrediction::getWpScaling( TComDataCU* pcCU, Int iRefIdx0, Int iRe
   else
   {  // Unidir
     pwp = (iRefIdx0>=0) ? wp0 : wp1 ;
-    for ( int yuv=0 ; yuv<3 ; yuv++ )
+    for ( Int yuv=0 ; yuv<3 ; yuv++ )
     {
-      int bitDepth = yuv ? g_bitDepthC : g_bitDepthY;
+      Int bitDepth = yuv ? g_bitDepthC : g_bitDepthY;
       pwp[yuv].w      = pwp[yuv].iWeight;
       pwp[yuv].offset = pwp[yuv].iOffset * (1 << (bitDepth-8));
       pwp[yuv].shift  = pwp[yuv].uiLog2WeightDenom;

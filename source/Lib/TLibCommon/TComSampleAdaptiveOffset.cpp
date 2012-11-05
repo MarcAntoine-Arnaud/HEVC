@@ -123,7 +123,7 @@ const UInt TComSampleAdaptiveOffset::m_uiMaxDepth = SAO_MAX_DEPTH;
 /** convert Level Row Col to Idx
  * \param   level,  row,  col
  */
-Int  TComSampleAdaptiveOffset::convertLevelRowCol2Idx(int level, int row, int col)
+Int  TComSampleAdaptiveOffset::convertLevelRowCol2Idx(Int level, Int row, Int col)
 {
   Int idx;
   if (level == 0)
@@ -514,9 +514,9 @@ if (c<2)
 /** get the sign of input variable
  * \param   x
  */
-inline int xSign(int x)
+inline Int xSign(Int x)
 {
-  return ((x >> 31) | ((int)( (((unsigned int) -x)) >> 31)));
+  return ((x >> 31) | ((Int)( (((UInt) -x)) >> 31)));
 }
 
 /** initialize variables for SAO process
@@ -1117,7 +1117,7 @@ Void TComSampleAdaptiveOffset::processSaoUnitAll(SaoLcuParam* saoLcuParam, Bool 
 
   memcpy(m_pTmpU1, pRec, sizeof(Pel)*picWidthTmp);
 
-  int  i;
+  Int  i;
   UInt edgeType;
   Pel* ppLumaTable = NULL;
   Pel* pClipTable = NULL;
@@ -1204,7 +1204,7 @@ Void TComSampleAdaptiveOffset::processSaoUnitAll(SaoLcuParam* saoLcuParam, Bool 
             ppLumaTable = (yCbCr==0)?m_lumaTableBo:m_chromaTableBo;
             pClipTable = (yCbCr==0)?m_pClipTable:m_pChromaClipTable;
 
-            int bitDepth = (yCbCr==0) ? g_bitDepthY : g_bitDepthC;
+            Int bitDepth = (yCbCr==0) ? g_bitDepthY : g_bitDepthC;
             for (i=0;i<(1<<bitDepth);i++)
             {
               pOffsetBo[i] = pClipTable[i + offset[ppLumaTable[i]]];

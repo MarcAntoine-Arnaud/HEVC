@@ -83,7 +83,7 @@ TEncSampleAdaptiveOffset::~TEncSampleAdaptiveOffset()
 // Tables
 // ====================================================================================================================
 
-inline Double xRoundIbdi2(int bitDepth, Double x)
+inline Double xRoundIbdi2(Int bitDepth, Double x)
 {
   return ((x)>0) ? (Int)(((Int)(x)+(1<<(bitDepth-8-1)))/(1<<(bitDepth-8))) : ((Int)(((Int)(x)-(1<<(bitDepth-8-1)))/(1<<(bitDepth-8))));
 }
@@ -91,7 +91,7 @@ inline Double xRoundIbdi2(int bitDepth, Double x)
 /** rounding with IBDI
  * \param  x
  */
-inline Double xRoundIbdi(int bitDepth, Double x)
+inline Double xRoundIbdi(Int bitDepth, Double x)
 {
   return (bitDepth > 8 ? xRoundIbdi2(bitDepth, (x)) : ((x)>=0 ? ((Int)((x)+0.5)) : ((Int)((x)-0.5)))) ;
 }
@@ -690,9 +690,9 @@ Void TEncSampleAdaptiveOffset::endSaoEnc()
   m_pcEntropyCoder = NULL;
 }
 
-inline int xSign(int x)
+inline Int xSign(Int x)
 {
-  return ((x >> 31) | ((int)( (((unsigned int) -x)) >> 31)));
+  return ((x >> 31) | ((Int)( (((UInt) -x)) >> 31)));
 }
 
 /** Calculate SAO statistics for non-cross-slice or non-cross-tile processing

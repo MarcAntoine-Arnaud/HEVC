@@ -103,7 +103,7 @@ Void TEncCavlc::codeShortTermRefPicSet( TComSPS* pcSPS, TComReferencePictureSet*
 #endif
 {
 #if PRINT_RPS_INFO
-  int lastBits = getNumberOfWrittenBits();
+  Int lastBits = getNumberOfWrittenBits();
 #endif
 #if SPS_INTER_REF_SET_PRED
   if (idx > 0)

@@ -178,7 +178,7 @@ istream& readStrToEnum(P map[], unsigned long mapLen, istream &in, T &val)
   string str;
   in >> str;
 
-  for (int i = 0; i < mapLen; i++)
+  for (Int i = 0; i < mapLen; i++)
   {
     if (str == map[i].str)
     {

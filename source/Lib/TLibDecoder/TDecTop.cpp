@@ -590,7 +590,7 @@ Void TDecTop::xDecodePPS()
   if( pps->getDependentSliceEnabledFlag() && (!pps->getEntropySliceEnabledFlag()) )
 #endif
   {
-    int NumCtx = pps->getEntropyCodingSyncEnabledFlag()?2:1;
+    Int NumCtx = pps->getEntropyCodingSyncEnabledFlag()?2:1;
     m_cSliceDecoder.initCtxMem(NumCtx);
     for ( UInt st = 0; st < NumCtx; st++ )
     {

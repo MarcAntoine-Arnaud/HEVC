@@ -52,7 +52,7 @@ WeightPredAnalysis::WeightPredAnalysis()
   {
     for ( Int iRefIdx=0 ; iRefIdx<MAX_NUM_REF ; iRefIdx++ ) 
     {
-      for ( int comp=0 ; comp<3 ;comp++ ) 
+      for ( Int comp=0 ; comp<3 ;comp++ )
       {
         wpScalingParam  *pwp   = &(m_wp[iList][iRefIdx][comp]);
         pwp->bPresentFlag      = false;
@@ -453,7 +453,7 @@ Int64 WeightPredAnalysis::xCalcACValue(Pel *pPel, Int iWidth, Int iHeight, Int i
  * \param Int iOffset
  * \returns Int64
  */
-Int64 WeightPredAnalysis::xCalcSADvalueWP(int bitDepth, Pel *pOrgPel, Pel *pRefPel, Int iWidth, Int iHeight, Int iOrgStride, Int iRefStride, Int iDenom, Int iWeight, Int iOffset)
+Int64 WeightPredAnalysis::xCalcSADvalueWP(Int bitDepth, Pel *pOrgPel, Pel *pRefPel, Int iWidth, Int iHeight, Int iOrgStride, Int iRefStride, Int iDenom, Int iWeight, Int iOffset)
 {
   Int x, y;
   Int64 iSAD = 0;

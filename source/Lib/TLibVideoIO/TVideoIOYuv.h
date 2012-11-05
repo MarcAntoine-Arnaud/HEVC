@@ -55,19 +55,19 @@ class TVideoIOYuv
 {
 private:
   fstream   m_cHandle;                                      ///< file handle
-  int m_fileBitDepthY; ///< bitdepth of input/output video file luma component
-  int m_fileBitDepthC; ///< bitdepth of input/output video file chroma component
-  int m_bitDepthShiftY;  ///< number of bits to increase or decrease luma by before/after write/read
-  int m_bitDepthShiftC;  ///< number of bits to increase or decrease chroma by before/after write/read
+  Int m_fileBitDepthY; ///< bitdepth of input/output video file luma component
+  Int m_fileBitDepthC; ///< bitdepth of input/output video file chroma component
+  Int m_bitDepthShiftY;  ///< number of bits to increase or decrease luma by before/after write/read
+  Int m_bitDepthShiftC;  ///< number of bits to increase or decrease chroma by before/after write/read
   
 public:
   TVideoIOYuv()           {}
   virtual ~TVideoIOYuv()  {}
   
-  Void  open  ( char* pchFile, Bool bWriteMode, int fileBitDepthY, int fileBitDepthC, int internalBitDepthY, int internalBitDepthC ); ///< open or create file
+  Void  open  ( char* pchFile, Bool bWriteMode, Int fileBitDepthY, Int fileBitDepthC, Int internalBitDepthY, Int internalBitDepthC ); ///< open or create file
   Void  close ();                                           ///< close file
 
-  void skipFrames(unsigned int numFrames, unsigned int width, unsigned int height);
+  void skipFrames(UInt numFrames, UInt width, UInt height);
   
   bool  read  ( TComPicYuv*   pPicYuv, Int aiPad[2] );     ///< read  one YUV frame with padding parameter
   Bool  write( TComPicYuv*    pPicYuv, Int cropLeft=0, Int cropRight=0, Int cropTop=0, Int cropBottom=0 );

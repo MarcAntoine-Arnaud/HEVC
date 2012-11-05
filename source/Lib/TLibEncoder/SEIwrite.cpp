@@ -170,7 +170,7 @@ Void SEIWriter::xWriteSEIDecodedPictureHash(const SEIDecodedPictureHash& sei)
 
   WRITE_CODE(sei.method, 8, "hash_type");
 
-  for(int yuvIdx = 0; yuvIdx < 3; yuvIdx++)
+  for(Int yuvIdx = 0; yuvIdx < 3; yuvIdx++)
   {
     if(sei.method == SEIDecodedPictureHash::MD5)
     {

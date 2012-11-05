@@ -425,8 +425,8 @@ Void initSigLastScan(UInt* pBuffZ, UInt* pBuffH, UInt* pBuffV, UInt* pBuffD, Int
   }
   for( UInt uiScanLine = 0; uiNextScanPos < uiNumScanPos; uiScanLine++ )
   {
-    int    iPrimDim  = int( uiScanLine );
-    int    iScndDim  = 0;
+    Int    iPrimDim  = Int( uiScanLine );
+    Int    iScndDim  = 0;
     while( iPrimDim >= iWidth )
     {
       iScndDim++;
@@ -461,8 +461,8 @@ Void initSigLastScan(UInt* pBuffZ, UInt* pBuffH, UInt* pBuffV, UInt* pBuffD, Int
       UInt offsetScan = 16 * uiBlk;
       for( UInt uiScanLine = 0; uiNextScanPos < 16; uiScanLine++ )
       {
-        int    iPrimDim  = int( uiScanLine );
-        int    iScndDim  = 0;
+        Int    iPrimDim  = Int( uiScanLine );
+        Int    iScndDim  = 0;
         while( iPrimDim >= 4 )
         {
           iScndDim++;

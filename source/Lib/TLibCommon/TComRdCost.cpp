@@ -384,7 +384,7 @@ Void
 #if NS_HAD
 TComRdCost::setDistParam( DistParam& rcDP, Pel* p1, Int iStride1, Pel* p2, Int iStride2, Int iWidth, Int iHeight, Bool bHadamard, Bool bUseNSHAD )
 #else
-TComRdCost::setDistParam( DistParam& rcDP, int bitDepth, Pel* p1, Int iStride1, Pel* p2, Int iStride2, Int iWidth, Int iHeight, Bool bHadamard )
+TComRdCost::setDistParam( DistParam& rcDP, Int bitDepth, Pel* p1, Int iStride1, Pel* p2, Int iStride2, Int iWidth, Int iHeight, Bool bHadamard )
 #endif
 {
   rcDP.pOrg       = p1;
@@ -402,7 +402,7 @@ TComRdCost::setDistParam( DistParam& rcDP, int bitDepth, Pel* p1, Int iStride1, 
 #endif
 }
 
-UInt TComRdCost::calcHAD(int bitDepth, Pel* pi0, Int iStride0, Pel* pi1, Int iStride1, Int iWidth, Int iHeight )
+UInt TComRdCost::calcHAD(Int bitDepth, Pel* pi0, Int iStride0, Pel* pi1, Int iStride1, Int iWidth, Int iHeight )
 {
   UInt uiSum = 0;
   Int x, y;
@@ -449,9 +449,9 @@ UInt TComRdCost::calcHAD(int bitDepth, Pel* pi0, Int iStride0, Pel* pi1, Int iSt
 }
 
 #if WEIGHTED_CHROMA_DISTORTION
-UInt TComRdCost::getDistPart(int bitDepth, Pel* piCur, Int iCurStride,  Pel* piOrg, Int iOrgStride, UInt uiBlkWidth, UInt uiBlkHeight, Bool bWeighted, DFunc eDFunc )
+UInt TComRdCost::getDistPart(Int bitDepth, Pel* piCur, Int iCurStride,  Pel* piOrg, Int iOrgStride, UInt uiBlkWidth, UInt uiBlkHeight, Bool bWeighted, DFunc eDFunc )
 #else
-UInt TComRdCost::getDistPart(int bitDepth, Pel* piCur, Int iCurStride,  Pel* piOrg, Int iOrgStride, UInt uiBlkWidth, UInt uiBlkHeight, DFunc eDFunc )
+UInt TComRdCost::getDistPart(Int bitDepth, Pel* piCur, Int iCurStride,  Pel* piOrg, Int iOrgStride, UInt uiBlkWidth, UInt uiBlkHeight, DFunc eDFunc )
 #endif
 {
   DistParam cDtParam;
@@ -469,7 +469,7 @@ UInt TComRdCost::getDistPart(int bitDepth, Pel* piCur, Int iCurStride,  Pel* piO
 #if WEIGHTED_CHROMA_DISTORTION
   if (bWeighted)
   {
-    return ((int) (m_chromaDistortionWeight * cDtParam.DistFunc( &cDtParam )));
+    return ((Int) (m_chromaDistortionWeight * cDtParam.DistFunc( &cDtParam )));
   }
   else
   {

@@ -187,7 +187,7 @@ Void SEIReader::xParseSEIDecodedPictureHash(SEIDecodedPictureHash& sei, UInt pay
   UInt val;
   READ_CODE (8, val, "hash_type");
   sei.method = static_cast<SEIDecodedPictureHash::Method>(val);
-  for(int yuvIdx = 0; yuvIdx < 3; yuvIdx++)
+  for(Int yuvIdx = 0; yuvIdx < 3; yuvIdx++)
   {
     if(SEIDecodedPictureHash::MD5 == sei.method)
     {

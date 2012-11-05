@@ -83,13 +83,13 @@ static void md5_plane(MD5& md5, const Pel* plane, unsigned width, unsigned heigh
   }
 }
 
-static void compCRC(int bitdepth, const Pel* plane, unsigned int width, unsigned int height, unsigned int stride, unsigned char digest[16])
+static void compCRC(Int bitdepth, const Pel* plane, UInt width, UInt height, UInt stride, unsigned char digest[16])
 {
-  unsigned int dataMsbIdx = bitdepth - 1;
-  unsigned int crcMsb;
-  unsigned int bitVal;
-  unsigned int crcVal = 0xffff;
-  unsigned int bitIdx;
+  UInt dataMsbIdx = bitdepth - 1;
+  UInt crcMsb;
+  UInt bitVal;
+  UInt crcVal = 0xffff;
+  UInt bitIdx;
   for (unsigned y = 0; y < height; y++)
   {
     for (unsigned x = 0; x < width; x++)
@@ -128,9 +128,9 @@ void calcCRC(TComPicYuv& pic, unsigned char digest[3][16])
   compCRC(g_bitDepthC, pic.getCrAddr(), width, height, stride, digest[2]);
 }
 
-static void compChecksum(int bitdepth, const Pel* plane, unsigned int width, unsigned int height, unsigned int stride, unsigned char digest[16])
+static void compChecksum(Int bitdepth, const Pel* plane, UInt width, UInt height, UInt stride, unsigned char digest[16])
 {
-  unsigned int checksum = 0;
+  UInt checksum = 0;
   unsigned char xor_mask;
 
   for (unsigned y = 0; y < height; y++)

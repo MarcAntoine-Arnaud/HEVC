@@ -640,7 +640,7 @@ Void TEncTop::xInitPPS()
   if( m_cPPS.getDependentSliceEnabledFlag()&&(!m_cPPS.getEntropySliceEnabledFlag()) )
 #endif
   {
-    int NumCtx = m_cPPS.getEntropyCodingSyncEnabledFlag()?2:1;
+    Int NumCtx = m_cPPS.getEntropyCodingSyncEnabledFlag()?2:1;
     m_cSliceEncoder.initCtxMem( NumCtx );
     for ( UInt st = 0; st < NumCtx; st++ )
     {

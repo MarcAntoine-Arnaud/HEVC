@@ -59,13 +59,13 @@ using namespace std;
  * @param minval     minimum clipping value
  * @param maxval     maximum clipping value
  */
-static void invScalePlane(Pel* img, unsigned int stride, unsigned int width, unsigned int height,
-                       unsigned int shiftbits, Pel minval, Pel maxval)
+static void invScalePlane(Pel* img, UInt stride, UInt width, UInt height,
+                       UInt shiftbits, Pel minval, Pel maxval)
 {
   Pel offset = 1 << (shiftbits-1);
-  for (unsigned int y = 0; y < height; y++)
+  for (UInt y = 0; y < height; y++)
   {
-    for (unsigned int x = 0; x < width; x++)
+    for (UInt x = 0; x < width; x++)
     {
       Pel val = (img[x] + offset) >> shiftbits;
       img[x] = Clip3(minval, maxval, val);
@@ -83,12 +83,12 @@ static void invScalePlane(Pel* img, unsigned int stride, unsigned int width, uns
  * @param height     height of active area in img.
  * @param shiftbits  number of bits to shift
  */
-static void scalePlane(Pel* img, unsigned int stride, unsigned int width, unsigned int height,
-                       unsigned int shiftbits)
+static void scalePlane(Pel* img, UInt stride, UInt width, UInt height,
+                       UInt shiftbits)
 {
-  for (unsigned int y = 0; y < height; y++)
+  for (UInt y = 0; y < height; y++)
   {
-    for (unsigned int x = 0; x < width; x++)
+    for (UInt x = 0; x < width; x++)
     {
       img[x] <<= shiftbits;
     }
@@ -111,8 +111,8 @@ static void scalePlane(Pel* img, unsigned int stride, unsigned int width, unsign
  * @param minval  minimum clipping value when dividing.
  * @param maxval  maximum clipping value when dividing.
  */
-static void scalePlane(Pel* img, unsigned int stride, unsigned int width, unsigned int height,
-                       int shiftbits, Pel minval, Pel maxval)
+static void scalePlane(Pel* img, UInt stride, UInt width, UInt height,
+                       Int shiftbits, Pel minval, Pel maxval)
 {
   if (shiftbits == 0)
   {
@@ -151,7 +151,7 @@ static void scalePlane(Pel* img, unsigned int stride, unsigned int width, unsign
  * \param internalBitDepthY bit-depth to scale image data to/from when reading/writing (luma component).
  * \param internalBitDepthC bit-depth to scale image data to/from when reading/writing (chroma components).
  */
-Void TVideoIOYuv::open( char* pchFile, Bool bWriteMode, int fileBitDepthY, int fileBitDepthC, int internalBitDepthY, int internalBitDepthC)
+Void TVideoIOYuv::open( char* pchFile, Bool bWriteMode, Int fileBitDepthY, Int fileBitDepthC, Int internalBitDepthY, Int internalBitDepthC)
 {
   m_bitDepthShiftY = internalBitDepthY - fileBitDepthY;
   m_bitDepthShiftC = internalBitDepthC - fileBitDepthC;
@@ -203,12 +203,12 @@ Bool TVideoIOYuv::isFail()
  * This function correctly handles cases where the input file is not
  * seekable, by consuming bytes.
  */
-void TVideoIOYuv::skipFrames(unsigned int numFrames, unsigned int width, unsigned int height)
+void TVideoIOYuv::skipFrames(UInt numFrames, UInt width, UInt height)
 {
   if (!numFrames)
     return;
 
-  const unsigned int wordsize = (m_fileBitDepthY > 8 || m_fileBitDepthC > 8) ? 2 : 1;
+  const UInt wordsize = (m_fileBitDepthY > 8 || m_fileBitDepthC > 8) ? 2 : 1;
   const streamoff framesize = wordsize * width * height * 3 / 2;
   const streamoff offset = framesize * numFrames;
 
@@ -243,13 +243,13 @@ void TVideoIOYuv::skipFrames(unsigned int numFrames, unsigned int width, unsigne
  * @return true for success, false in case of error
  */
 static bool readPlane(Pel* dst, istream& fd, bool is16bit,
-                      unsigned int stride,
-                      unsigned int width, unsigned int height,
-                      unsigned int pad_x, unsigned int pad_y)
+                      UInt stride,
+                      UInt width, UInt height,
+                      UInt pad_x, UInt pad_y)
 {
-  int read_len = width * (is16bit ? 2 : 1);
+  Int read_len = width * (is16bit ? 2 : 1);
   unsigned char *buf = new unsigned char[read_len];
-  for (int y = 0; y < height; y++)
+  for (Int y = 0; y < height; y++)
   {
     fd.read(reinterpret_cast<char*>(buf), read_len);
     if (fd.eof() || fd.fail() )
@@ -260,28 +260,28 @@ static bool readPlane(Pel* dst, istream& fd, bool is16bit,
 
     if (!is16bit)
     {
-      for (int x = 0; x < width; x++)
+      for (Int x = 0; x < width; x++)
       {
         dst[x] = buf[x];
       }
     }
     else
     {
-      for (int x = 0; x < width; x++)
+      for (Int x = 0; x < width; x++)
       {
         dst[x] = (buf[2*x+1] << 8) | buf[2*x];
       }
     }
 
-    for (int x = width; x < width + pad_x; x++)
+    for (Int x = width; x < width + pad_x; x++)
     {
       dst[x] = dst[width - 1];
     }
     dst += stride;
   }
-  for (int y = height; y < height + pad_y; y++)
+  for (Int y = height; y < height + pad_y; y++)
   {
-    for (int x = 0; x < width + pad_x; x++)
+    for (Int x = 0; x < width + pad_x; x++)
     {
       dst[x] = (dst - stride)[x];
     }
@@ -303,23 +303,23 @@ static bool readPlane(Pel* dst, istream& fd, bool is16bit,
  * @return true for success, false in case of error
  */
 static bool writePlane(ostream& fd, Pel* src, bool is16bit,
-                       unsigned int stride,
-                       unsigned int width, unsigned int height)
+                       UInt stride,
+                       UInt width, UInt height)
 {
-  int write_len = width * (is16bit ? 2 : 1);
+  Int write_len = width * (is16bit ? 2 : 1);
   unsigned char *buf = new unsigned char[write_len];
-  for (int y = 0; y < height; y++)
+  for (Int y = 0; y < height; y++)
   {
     if (!is16bit) 
     {
-      for (int x = 0; x < width; x++) 
+      for (Int x = 0; x < width; x++)
       {
         buf[x] = (unsigned char) src[x];
       }
     }
     else 
     {
-      for (int x = 0; x < width; x++) 
+      for (Int x = 0; x < width; x++)
       {
         buf[2*x] = src[x] & 0xff;
         buf[2*x+1] = (src[x] >> 8) & 0xff;
@@ -359,16 +359,16 @@ bool TVideoIOYuv::read ( TComPicYuv*  pPicYuv, Int aiPad[2] )
   Int   iStride = pPicYuv->getStride();
   
   // compute actual YUV width & height excluding padding size
-  unsigned int pad_h = aiPad[0];
-  unsigned int pad_v = aiPad[1];
-  unsigned int width_full = pPicYuv->getWidth();
-  unsigned int height_full = pPicYuv->getHeight();
-  unsigned int width  = width_full - pad_h;
-  unsigned int height = height_full - pad_v;
+  UInt pad_h = aiPad[0];
+  UInt pad_v = aiPad[1];
+  UInt width_full = pPicYuv->getWidth();
+  UInt height_full = pPicYuv->getHeight();
+  UInt width  = width_full - pad_h;
+  UInt height = height_full - pad_v;
   bool is16bit = m_fileBitDepthY > 8 || m_fileBitDepthC > 8;
 
-  int desired_bitdepthY = m_fileBitDepthY + m_bitDepthShiftY;
-  int desired_bitdepthC = m_fileBitDepthC + m_bitDepthShiftC;
+  Int desired_bitdepthY = m_fileBitDepthY + m_bitDepthShiftY;
+  Int desired_bitdepthC = m_fileBitDepthC + m_bitDepthShiftC;
   Pel minvalY = 0;
   Pel minvalC = 0;
   Pel maxvalY = (1 << desired_bitdepthY) - 1;

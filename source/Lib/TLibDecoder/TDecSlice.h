@@ -85,7 +85,7 @@ public:
   Void  decompressSlice   ( TComInputBitstream* pcBitstream, TComInputBitstream** ppcSubstreams,   TComPic*& rpcPic, TDecSbac* pcSbacDecoder, TDecSbac* pcSbacDecoders );
 #if DEPENDENT_SLICES
   Void      initCtxMem(  UInt i );
-  Void      setCtxMem( TDecSbac* sb, int b )   { CTXMem[b] = sb; }
+  Void      setCtxMem( TDecSbac* sb, Int b )   { CTXMem[b] = sb; }
 #endif
 };
 

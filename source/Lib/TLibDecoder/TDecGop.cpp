@@ -256,7 +256,7 @@ static void calcAndPrintHashStatus(TComPicYuv& pic, const SEImessages* seis)
 {
   /* calculate MD5sum for entire reconstructed picture */
   unsigned char recon_digest[3][16];
-  int numChar=0;
+  Int numChar=0;
   const char* hashType = "\0";
 
   if (seis && seis->picture_digest)
@@ -298,7 +298,7 @@ static void calcAndPrintHashStatus(TComPicYuv& pic, const SEImessages* seis)
   if (seis && seis->picture_digest)
   {
     ok = "(OK)";
-    for(int yuvIdx = 0; yuvIdx < 3; yuvIdx++)
+    for(Int yuvIdx = 0; yuvIdx < 3; yuvIdx++)
     {
       for (unsigned i = 0; i < numChar; i++)
       {
