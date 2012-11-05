@@ -222,6 +222,7 @@ typedef       unsigned short      UShort;
 typedef       int                 Int;
 typedef       unsigned int        UInt;
 typedef       double              Double;
+typedef       float               Float;
 
 // ====================================================================================================================
 // 64-bit integer type

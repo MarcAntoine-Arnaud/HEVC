@@ -166,8 +166,8 @@ Void TComSampleAdaptiveOffset::create( UInt uiSourceWidth, UInt uiSourceHeight, 
   m_iNumCuInHeight  = m_iPicHeight / m_uiMaxCUHeight;
   m_iNumCuInHeight += ( m_iPicHeight % m_uiMaxCUHeight ) ? 1 : 0;
 
-  Int iMaxSplitLevelHeight = (Int)(logf((float)m_iNumCuInHeight)/logf(2.0));
-  Int iMaxSplitLevelWidth  = (Int)(logf((float)m_iNumCuInWidth )/logf(2.0));
+  Int iMaxSplitLevelHeight = (Int)(logf((Float)m_iNumCuInHeight)/logf(2.0));
+  Int iMaxSplitLevelWidth  = (Int)(logf((Float)m_iNumCuInWidth )/logf(2.0));
 
   m_uiMaxSplitLevel = (iMaxSplitLevelHeight < iMaxSplitLevelWidth)?(iMaxSplitLevelHeight):(iMaxSplitLevelWidth);
   m_uiMaxSplitLevel = (m_uiMaxSplitLevel< m_uiMaxDepth)?(m_uiMaxSplitLevel):(m_uiMaxDepth);
