@@ -117,7 +117,7 @@ public:
   TComSampleAdaptiveOffset         ();
   virtual ~TComSampleAdaptiveOffset();
 
-  Void create( UInt uiSourceWidth, UInt uiSourceHeight, UInt uiMaxCUWidth, UInt uiMaxCUHeight, UInt uiMaxCUDepth );
+  Void create( UInt uiSourceWidth, UInt uiSourceHeight, UInt uiMaxCUWidth, UInt uiMaxCUHeight );
   Void destroy ();
 
   Int  convertLevelRowCol2Idx(Int level, Int row, Int col);
@@ -127,14 +127,14 @@ public:
   Void resetSAOParam  (SAOParam *pcSaoParam);
   static Void freeSaoParam   (SAOParam *pcSaoParam);
   
-  Void SAOProcess(TComPic* pcPic, SAOParam* pcSaoParam);
+  Void SAOProcess(SAOParam* pcSaoParam);
   Void processSaoCu(Int iAddr, Int iSaoType, Int iYCbCr);
   Pel* getPicYuvAddr(TComPicYuv* pcPicYuv, Int iYCbCr,Int iAddr = 0);
 
   Void processSaoCuOrg(Int iAddr, Int iPartIdx, Int iYCbCr);  //!< LCU-basd SAO process without slice granularity 
   Void createPicSaoInfo(TComPic* pcPic, Int numSlicesInPic = 1);
   Void destroyPicSaoInfo();
-  Void processSaoBlock(Pel* pDec, Pel* pRest, Int stride, Int iSaoType, UInt xPos, UInt yPos, UInt width, UInt height, Bool* pbBorderAvail, Int iYCbCr);
+  Void processSaoBlock(Pel* pDec, Pel* pRest, Int stride, Int iSaoType, UInt width, UInt height, Bool* pbBorderAvail, Int iYCbCr);
 
   Void resetLcuPart(SaoLcuParam* saoLcuParam);
   Void convertQT2SaoUnit(SAOParam* saoParam, UInt partIdx, Int yCbCr);

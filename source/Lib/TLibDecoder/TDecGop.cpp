@@ -196,7 +196,7 @@ Void TDecGop::filterPicture(TComPic*& rpcPic)
       saoParam->bSaoFlag[1] = pcSlice->getSaoEnabledFlagChroma();
       m_pcSAO->setSaoLcuBasedOptimization(1);
       m_pcSAO->createPicSaoInfo(rpcPic, (Int) m_sliceStartCUAddress.size() - 1);
-      m_pcSAO->SAOProcess(rpcPic, saoParam);
+      m_pcSAO->SAOProcess(saoParam);
       m_pcSAO->PCMLFDisableProcess(rpcPic);
       m_pcSAO->destroyPicSaoInfo();
     }
