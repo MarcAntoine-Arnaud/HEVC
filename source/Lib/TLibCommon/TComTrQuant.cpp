@@ -225,7 +225,7 @@ void xTr(Int bitDepth, Pel *block, Int *coeff, UInt uiStride, UInt uiTrSize, UIn
 {
   Int i,j,k,iSum;
   Int tmp[32*32];
-  const short *iT;
+  const Short *iT;
   UInt uiLog2TrSize = g_aucConvertToBit[ uiTrSize ] + 2;
 
   if (uiTrSize==4)
@@ -313,7 +313,7 @@ void xITr(Int *coeff, Pel *block, UInt uiStride, UInt uiTrSize, UInt uiMode)
 {
   Int i,j,k,iSum;
   Int tmp[32*32];
-  const short *iT;
+  const Short *iT;
   
   if (uiTrSize==4)
   {
@@ -397,7 +397,7 @@ void xITr(Int *coeff, Pel *block, UInt uiStride, UInt uiTrSize, UInt uiMode)
  *  \param shift specifies right shift after 1D transform
  */
 
-void partialButterfly4(short *src,short *dst,Int shift, Int line)
+void partialButterfly4(Short *src,Short *dst,Int shift, Int line)
 {
   Int j;
   Int E[2],O[2];
@@ -423,7 +423,7 @@ void partialButterfly4(short *src,short *dst,Int shift, Int line)
 
 // Fast DST Algorithm. Full matrix multiplication for DST and Fast DST algorithm 
 // give identical results
-void fastForwardDst(short *block,short *coeff,Int shift)  // input block, output coeff
+void fastForwardDst(Short *block,Short *coeff,Int shift)  // input block, output coeff
 {
   Int i, c[4];
   Int rnd_factor = 1<<(shift-1);
@@ -442,7 +442,7 @@ void fastForwardDst(short *block,short *coeff,Int shift)  // input block, output
   }
 }
 
-void fastInverseDst(short *tmp,short *block,Int shift)  // input tmp, output block
+void fastInverseDst(Short *tmp,Short *block,Int shift)  // input tmp, output block
 {
   Int i, c[4];
   Int rnd_factor = 1<<(shift-1);
@@ -461,7 +461,7 @@ void fastInverseDst(short *tmp,short *block,Int shift)  // input tmp, output blo
   }
 }
 
-void partialButterflyInverse4(short *src,short *dst,Int shift, Int line)
+void partialButterflyInverse4(Short *src,Short *dst,Int shift, Int line)
 {
   Int j;
   Int E[2],O[2];
@@ -487,7 +487,7 @@ void partialButterflyInverse4(short *src,short *dst,Int shift, Int line)
 }
 
 
-void partialButterfly8(short *src,short *dst,Int shift, Int line)
+void partialButterfly8(Short *src,Short *dst,Int shift, Int line)
 {
   Int j,k;
   Int E[4],O[4];
@@ -524,7 +524,7 @@ void partialButterfly8(short *src,short *dst,Int shift, Int line)
 }
 
 
-void partialButterflyInverse8(short *src,short *dst,Int shift, Int line)
+void partialButterflyInverse8(Short *src,Short *dst,Int shift, Int line)
 {
   Int j,k;
   Int E[4],O[4];
@@ -560,7 +560,7 @@ void partialButterflyInverse8(short *src,short *dst,Int shift, Int line)
 }
 
 
-void partialButterfly16(short *src,short *dst,Int shift, Int line)
+void partialButterfly16(Short *src,Short *dst,Int shift, Int line)
 {
   Int j,k;
   Int E[8],O[8];
@@ -611,7 +611,7 @@ void partialButterfly16(short *src,short *dst,Int shift, Int line)
 }
 
 
-void partialButterflyInverse16(short *src,short *dst,Int shift, Int line)
+void partialButterflyInverse16(Short *src,Short *dst,Int shift, Int line)
 {
   Int j,k;
   Int E[8],O[8];
@@ -658,7 +658,7 @@ void partialButterflyInverse16(short *src,short *dst,Int shift, Int line)
 }
 
 
-void partialButterfly32(short *src,short *dst,Int shift, Int line)
+void partialButterfly32(Short *src,Short *dst,Int shift, Int line)
 {
   Int j,k;
   Int E[16],O[16];
@@ -719,7 +719,7 @@ void partialButterfly32(short *src,short *dst,Int shift, Int line)
 }
 
 
-void partialButterflyInverse32(short *src,short *dst,Int shift, Int line)
+void partialButterflyInverse32(Short *src,Short *dst,Int shift, Int line)
 {
   Int j,k;
   Int E[16],O[16];
@@ -783,12 +783,12 @@ void partialButterflyInverse32(short *src,short *dst,Int shift, Int line)
 *  \param iWidth input data (width of transform)
 *  \param iHeight input data (height of transform)
 */
-void xTrMxN(Int bitDepth, short *block,short *coeff, Int iWidth, Int iHeight, UInt uiMode)
+void xTrMxN(Int bitDepth, Short *block,Short *coeff, Int iWidth, Int iHeight, UInt uiMode)
 {
   Int shift_1st = g_aucConvertToBit[iWidth]  + 1 + bitDepth-8; // log2(iWidth) - 1 + g_bitDepth - 8
   Int shift_2nd = g_aucConvertToBit[iHeight]  + 8;                   // log2(iHeight) + 6
 
-  short tmp[ 64 * 64 ];
+  Short tmp[ 64 * 64 ];
 
   if( iWidth == 4 && iHeight == 4)
   {
@@ -826,12 +826,12 @@ void xTrMxN(Int bitDepth, short *block,short *coeff, Int iWidth, Int iHeight, UI
 *  \param iWidth input data (width of transform)
 *  \param iHeight input data (height of transform)
 */
-void xITrMxN(Int bitDepth, short *coeff,short *block, Int iWidth, Int iHeight, UInt uiMode)
+void xITrMxN(Int bitDepth, Short *coeff,Short *block, Int iWidth, Int iHeight, UInt uiMode)
 {
   Int shift_1st = SHIFT_INV_1ST;
   Int shift_2nd = SHIFT_INV_2ND - (bitDepth-8);
 
-  short tmp[ 64*64];
+  Short tmp[ 64*64];
   if( iWidth == 4 && iHeight == 4)
   {
     if (uiMode != REG_DCT)
@@ -1361,12 +1361,12 @@ Void TComTrQuant::xT(Int bitDepth, UInt uiMode, Pel* piBlkResi, UInt uiStride, I
 #else
   Int j;
   {
-    short block[ 64 * 64 ];
-    short coeff[ 64 * 64 ];
+    Short block[ 64 * 64 ];
+    Short coeff[ 64 * 64 ];
     {
       for (j = 0; j < iHeight; j++)
       {    
-        memcpy( block + j * iWidth, piBlkResi + j * uiStride, iWidth * sizeof( short ) );      
+        memcpy( block + j * iWidth, piBlkResi + j * uiStride, iWidth * sizeof( Short ) );
       }
     }
     xTrMxN(bitDepth, block, coeff, iWidth, iHeight, uiMode );
@@ -1395,17 +1395,17 @@ Void TComTrQuant::xIT(Int bitDepth, UInt uiMode, Int* plCoef, Pel* pResidual, UI
 #else
   Int j;
   {
-    short block[ 64 * 64 ];
-    short coeff[ 64 * 64 ];
+    Short block[ 64 * 64 ];
+    Short coeff[ 64 * 64 ];
     for ( j = 0; j < iHeight * iWidth; j++ )
     {    
-      coeff[j] = (short)plCoef[j];
+      coeff[j] = (Short)plCoef[j];
     }
     xITrMxN(bitDepth, coeff, block, iWidth, iHeight, uiMode );
     {
       for ( j = 0; j < iHeight; j++ )
       {    
-        memcpy( pResidual + j * uiStride, block + j * iWidth, iWidth * sizeof(short) );      
+        memcpy( pResidual + j * uiStride, block + j * iWidth, iWidth * sizeof(Short) );
       }
     }
     return ;
