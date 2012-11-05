@@ -165,7 +165,7 @@ Void TDecGop::decompressSlice(TComInputBitstream* pcBitstream, TComPic*& rpcPic)
   delete[] m_pcSbacDecoders; m_pcSbacDecoders = NULL;
   delete[] m_pcBinCABACs; m_pcBinCABACs = NULL;
 
-  m_dDecTime += (double)(clock()-iBeforeTime) / CLOCKS_PER_SEC;
+  m_dDecTime += (Double)(clock()-iBeforeTime) / CLOCKS_PER_SEC;
 }
 
 Void TDecGop::filterPicture(TComPic*& rpcPic)
@@ -217,7 +217,7 @@ Void TDecGop::filterPicture(TComPic*& rpcPic)
                                                     c,
                                                     pcSlice->getSliceQp() );
 
-  m_dDecTime += (double)(clock()-iBeforeTime) / CLOCKS_PER_SEC;
+  m_dDecTime += (Double)(clock()-iBeforeTime) / CLOCKS_PER_SEC;
   printf ("[DT %6.3f] ", m_dDecTime );
   m_dDecTime  = 0;
 

@@ -1533,11 +1533,11 @@ Void TComTrQuant::xRateDistOptQuant                 ( TComDataCU*               
   assert(scalingListType < 6);
   
   iQBits = QUANT_SHIFT + m_cQP.m_iPer + iTransformShift;                   // Right shift of non-RDOQ quantizer;  level = (coeff*uiQ + offset)>>q_bits
-  double dErrScale   = 0;
-  double *pdErrScaleOrg = getErrScaleCoeff(scalingListType,uiLog2TrSize-2,m_cQP.m_iRem);
+  Double dErrScale   = 0;
+  Double *pdErrScaleOrg = getErrScaleCoeff(scalingListType,uiLog2TrSize-2,m_cQP.m_iRem);
   Int *piQCoefOrg = getQuantCoeff(scalingListType,m_cQP.m_iRem,uiLog2TrSize-2);
   Int *piQCoef = piQCoefOrg;
-  double *pdErrScale = pdErrScaleOrg;
+  Double *pdErrScale = pdErrScaleOrg;
 #if ADAPTIVE_QP_SELECTION
   Int iQBitsC = iQBits - ARL_C_PRECISION;
   Int iAddC =  1 << (iQBitsC-1);
@@ -2462,11 +2462,11 @@ Void TComTrQuant::setErrScaleCoeff(UInt list,UInt size, UInt qp)
 
   UInt i,uiMaxNumCoeff = g_scalingListSize[size];
   Int *piQuantcoeff;
-  double *pdErrScale;
+  Double *pdErrScale;
   piQuantcoeff   = getQuantCoeff(list, qp,size);
   pdErrScale     = getErrScaleCoeff(list, size, qp);
 
-  double dErrScale = (double)(1<<SCALE_BITS);                              // Compensate for scaling of bitcount in Lagrange cost function
+  Double dErrScale = (Double)(1<<SCALE_BITS);                              // Compensate for scaling of bitcount in Lagrange cost function
   dErrScale = dErrScale*pow(2.0,-2.0*iTransformShift);                     // Compensate for scaling through forward transform
   for(i=0;i<uiMaxNumCoeff;i++)
   {
@@ -2615,7 +2615,7 @@ Void TComTrQuant::initScalingList()
       {
         m_quantCoef   [sizeId][listId][qp] = new Int [g_scalingListSize[sizeId]];
         m_dequantCoef [sizeId][listId][qp] = new Int [g_scalingListSize[sizeId]];
-        m_errScale    [sizeId][listId][qp] = new double [g_scalingListSize[sizeId]];
+        m_errScale    [sizeId][listId][qp] = new Double [g_scalingListSize[sizeId]];
       }
     }
   }

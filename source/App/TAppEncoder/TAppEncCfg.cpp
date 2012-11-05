@@ -288,14 +288,14 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
   ("ASR",                     m_bUseASR,                false, "Adaptive motion search range")
 
   // Mode decision parameters
-  ("LambdaModifier0,-LM0", m_adLambdaModifier[ 0 ], ( double )1.0, "Lambda modifier for temporal layer 0")
-  ("LambdaModifier1,-LM1", m_adLambdaModifier[ 1 ], ( double )1.0, "Lambda modifier for temporal layer 1")
-  ("LambdaModifier2,-LM2", m_adLambdaModifier[ 2 ], ( double )1.0, "Lambda modifier for temporal layer 2")
-  ("LambdaModifier3,-LM3", m_adLambdaModifier[ 3 ], ( double )1.0, "Lambda modifier for temporal layer 3")
-  ("LambdaModifier4,-LM4", m_adLambdaModifier[ 4 ], ( double )1.0, "Lambda modifier for temporal layer 4")
-  ("LambdaModifier5,-LM5", m_adLambdaModifier[ 5 ], ( double )1.0, "Lambda modifier for temporal layer 5")
-  ("LambdaModifier6,-LM6", m_adLambdaModifier[ 6 ], ( double )1.0, "Lambda modifier for temporal layer 6")
-  ("LambdaModifier7,-LM7", m_adLambdaModifier[ 7 ], ( double )1.0, "Lambda modifier for temporal layer 7")
+  ("LambdaModifier0,-LM0", m_adLambdaModifier[ 0 ], ( Double )1.0, "Lambda modifier for temporal layer 0")
+  ("LambdaModifier1,-LM1", m_adLambdaModifier[ 1 ], ( Double )1.0, "Lambda modifier for temporal layer 1")
+  ("LambdaModifier2,-LM2", m_adLambdaModifier[ 2 ], ( Double )1.0, "Lambda modifier for temporal layer 2")
+  ("LambdaModifier3,-LM3", m_adLambdaModifier[ 3 ], ( Double )1.0, "Lambda modifier for temporal layer 3")
+  ("LambdaModifier4,-LM4", m_adLambdaModifier[ 4 ], ( Double )1.0, "Lambda modifier for temporal layer 4")
+  ("LambdaModifier5,-LM5", m_adLambdaModifier[ 5 ], ( Double )1.0, "Lambda modifier for temporal layer 5")
+  ("LambdaModifier6,-LM6", m_adLambdaModifier[ 6 ], ( Double )1.0, "Lambda modifier for temporal layer 6")
+  ("LambdaModifier7,-LM7", m_adLambdaModifier[ 7 ], ( Double )1.0, "Lambda modifier for temporal layer 7")
 
   /* Quantization parameters */
   ("QP,q",          m_fQP,             30.0, "Qp value, if value is float, QP is switched once during encoding")

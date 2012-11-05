@@ -1203,7 +1203,7 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
       pcPic->compressMotion(); 
       
       //-- For time output for each slice
-      Double dEncTime = (double)(clock()-iBeforeTime) / CLOCKS_PER_SEC;
+      Double dEncTime = (Double)(clock()-iBeforeTime) / CLOCKS_PER_SEC;
 
       const Char* digestStr = NULL;
       if (m_pcCfg->getDecodedPictureHashSEIEnabled())
@@ -1607,8 +1607,8 @@ Void TEncGOP::xCalculateAddPSNR( TComPic* pcPic, TComPicYuv* pcPicD, const Acces
   
   Int maxvalY = 255 << (g_bitDepthY-8);
   Int maxvalC = 255 << (g_bitDepthC-8);
-  Double fRefValueY = (double) maxvalY * maxvalY * iSize;
-  Double fRefValueC = (double) maxvalC * maxvalC * iSize / 4.0;
+  Double fRefValueY = (Double) maxvalY * maxvalY * iSize;
+  Double fRefValueC = (Double) maxvalC * maxvalC * iSize / 4.0;
   dYPSNR            = ( uiSSDY ? 10.0 * log10( fRefValueY / (Double)uiSSDY ) : 99.99 );
   dUPSNR            = ( uiSSDU ? 10.0 * log10( fRefValueC / (Double)uiSSDU ) : 99.99 );
   dVPSNR            = ( uiSSDV ? 10.0 * log10( fRefValueC / (Double)uiSSDV ) : 99.99 );
@@ -1747,7 +1747,7 @@ Double TEncGOP::xCalculateRVM()
     dRavg /= ( N - 2 * RVM_VCEGAM10_M );
     dBavg /= ( N - 2 * RVM_VCEGAM10_M );
     
-    double dSigamB = 0;
+    Double dSigamB = 0;
     for( i = RVM_VCEGAM10_M + 1 ; i < N - RVM_VCEGAM10_M + 1 ; i++ )
     {
       Double tmp = vB[i] - dBavg;
@@ -1755,7 +1755,7 @@ Double TEncGOP::xCalculateRVM()
     }
     dSigamB = sqrt( dSigamB / ( N - 2 * RVM_VCEGAM10_M ) );
     
-    double f = sqrt( 12.0 * ( RVM_VCEGAM10_M - 1 ) / ( RVM_VCEGAM10_M + 1 ) );
+    Double f = sqrt( 12.0 * ( RVM_VCEGAM10_M - 1 ) / ( RVM_VCEGAM10_M + 1 ) );
     
     dRVM = dSigamB / dRavg * f;
   }
