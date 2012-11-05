@@ -175,8 +175,8 @@ Void TAppDecTop::decode()
     {
       if ( m_pchReconFile && !recon_opened )
       {
-        if (!m_outputBitDepthY) m_outputBitDepthY = g_bitDepthY;
-        if (!m_outputBitDepthC) m_outputBitDepthC = g_bitDepthC;
+        if (!m_outputBitDepthY) { m_outputBitDepthY = g_bitDepthY; }
+        if (!m_outputBitDepthC) { m_outputBitDepthC = g_bitDepthC; }
 
         m_cTVideoIOYuvReconFile.open( m_pchReconFile, true, m_outputBitDepthY, m_outputBitDepthC, g_bitDepthY, g_bitDepthC ); // write mode
         recon_opened = true;
