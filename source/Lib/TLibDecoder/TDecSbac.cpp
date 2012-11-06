@@ -909,7 +909,7 @@ Void TDecSbac::parseDeltaQP( TComDataCU* pcCU, UInt uiAbsPartIdx, UInt uiDepth )
 Void TDecSbac::parseQtCbf( TComDataCU* pcCU, UInt uiAbsPartIdx, TextType eType, UInt uiTrDepth, UInt uiDepth )
 {
   UInt uiSymbol;
-  const UInt uiCtx = pcCU->getCtxQtCbf( uiAbsPartIdx, eType, uiTrDepth );
+  const UInt uiCtx = pcCU->getCtxQtCbf( eType, uiTrDepth );
   m_pcTDecBinIf->decodeBin( uiSymbol , m_cCUQtCbfSCModel.get( 0, eType ? TEXT_CHROMA: eType, uiCtx ) );
   
   DTRACE_CABAC_VL( g_nSymbolCounter++ )

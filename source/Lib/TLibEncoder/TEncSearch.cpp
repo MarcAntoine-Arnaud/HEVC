@@ -3019,13 +3019,13 @@ Void TEncSearch::xMergeEstimation( TComDataCU* pcCU, TComYuv* pcYuvOrg, Int iPUI
     pcCU->setPartSizeSubParts( SIZE_2Nx2N, 0, uiDepth );
     if ( iPUIdx == 0 )
     {
-      pcCU->getInterMergeCandidates( 0, 0, uiDepth, cMvFieldNeighbours,uhInterDirNeighbours, numValidMergeCand );
+      pcCU->getInterMergeCandidates( 0, 0, cMvFieldNeighbours,uhInterDirNeighbours, numValidMergeCand );
     }
     pcCU->setPartSizeSubParts( partSize, 0, uiDepth );
   }
   else
   {
-    pcCU->getInterMergeCandidates( uiAbsPartIdx, iPUIdx, uiDepth, cMvFieldNeighbours, uhInterDirNeighbours, numValidMergeCand );
+    pcCU->getInterMergeCandidates( uiAbsPartIdx, iPUIdx, cMvFieldNeighbours, uhInterDirNeighbours, numValidMergeCand );
   }
   xRestrictBipredMergeCand( pcCU, iPUIdx, cMvFieldNeighbours, uhInterDirNeighbours, numValidMergeCand );
 
