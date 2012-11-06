@@ -316,6 +316,12 @@ Void TEncCavlc::codeVUI( TComVUI *pcVUI, TComSPS* pcSPS )
       }
       WRITE_CODE(pcVUI->getBitRateScale(), 4,                   "bit_rate_scale");
       WRITE_CODE(pcVUI->getCpbSizeScale(), 4,                   "cpb_size_scale");
+#if HRD_BUFFER
+      if( pcVUI->getSubPicCpbParamsPresentFlag() )
+      {
+        WRITE_CODE(pcVUI->getDuCpbSizeScale(), 4,           "du_cpb_size_scale"); 
+      }
+#endif
       WRITE_CODE(pcVUI->getInitialCpbRemovalDelayLengthMinus1(), 5, "initial_cpb_removal_delay_length_minus1");
       WRITE_CODE(pcVUI->getCpbRemovalDelayLengthMinus1(),        5, "cpb_removal_delay_length_minus1");
       WRITE_CODE(pcVUI->getDpbOutputDelayLengthMinus1(),         5, "dpb_output_delay_length_minus1");
@@ -340,6 +346,13 @@ Void TEncCavlc::codeVUI( TComVUI *pcVUI, TComSPS* pcSPS )
           {
             WRITE_UVLC(pcVUI->getBitRateValueMinus1(i, j, nalOrVcl), "bit_size_value_minus1");
             WRITE_UVLC(pcVUI->getCpbSizeValueMinus1(i, j, nalOrVcl), "cpb_size_value_minus1");
+#if HRD_BUFFER
+            if( pcVUI->getSubPicCpbParamsPresentFlag() )
+            {
+              WRITE_UVLC(pcVUI->getDuCpbSizeValueMinus1(i, j, nalOrVcl), "du_cpb_size_value_minus1");  
+            }
+#endif
+
             WRITE_FLAG(pcVUI->getCbrFlag(i, j, nalOrVcl),            "cbr_flag");
           }
         }

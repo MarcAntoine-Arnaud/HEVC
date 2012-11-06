@@ -275,6 +275,9 @@ struct HrdSubLayerInfo
   UInt cpbCntMinus1;
   UInt bitRateValueMinus1[MAX_CPB_CNT][2];
   UInt cpbSizeValue      [MAX_CPB_CNT][2];
+#if HRD_BUFFER
+  UInt ducpbSizeValue    [MAX_CPB_CNT][2];
+#endif
   UInt cbrFlag           [MAX_CPB_CNT][2];
 };
 class TComVUI
@@ -316,6 +319,9 @@ private:
   UInt m_duCpbRemovalDelayLengthMinus1;
   UInt m_bitRateScale;
   UInt m_cpbSizeScale;
+#if HRD_BUFFER
+  UInt m_ducpbSizeScale;
+#endif
   UInt m_initialCpbRemovalDelayLengthMinus1;
   UInt m_cpbRemovalDelayLengthMinus1;
   UInt m_dpbOutputDelayLengthMinus1;
@@ -473,6 +479,10 @@ public:
 
   Void setCpbSizeScale                      ( UInt value ) { m_cpbSizeScale = value;                       }
   UInt getCpbSizeScale                      ( )            { return m_cpbSizeScale;                        }
+#if HRD_BUFFER
+  Void setDuCpbSizeScale                    ( UInt value ) { m_ducpbSizeScale = value;                     }
+  UInt getDuCpbSizeScale                    ( )            { return m_ducpbSizeScale;                      }
+#endif
 
   Void setInitialCpbRemovalDelayLengthMinus1( UInt value ) { m_initialCpbRemovalDelayLengthMinus1 = value; }
   UInt getInitialCpbRemovalDelayLengthMinus1( )            { return m_initialCpbRemovalDelayLengthMinus1;  }
@@ -500,6 +510,11 @@ public:
 
   Void setCpbSizeValueMinus1     ( Int layer, Int cpbcnt, Int nalOrVcl, UInt value ) { m_HRD[layer].cpbSizeValue[cpbcnt][nalOrVcl] = value;       }
   UInt getCpbSizeValueMinus1     ( Int layer, Int cpbcnt, Int nalOrVcl            )  { return m_HRD[layer].cpbSizeValue[cpbcnt][nalOrVcl];        }
+#if HRD_BUFFER
+  Void setDuCpbSizeValueMinus1     ( Int layer, Int cpbcnt, Int nalOrVcl, UInt value ) { m_HRD[layer].ducpbSizeValue[cpbcnt][nalOrVcl] = value;       }
+  UInt getDuCpbSizeValueMinus1     ( Int layer, Int cpbcnt, Int nalOrVcl            )  { return m_HRD[layer].ducpbSizeValue[cpbcnt][nalOrVcl];        }
+#endif
+
 
   Void setCbrFlag                ( Int layer, Int cpbcnt, Int nalOrVcl, UInt value ) { m_HRD[layer].cbrFlag[cpbcnt][nalOrVcl] = value;            }
   Bool getCbrFlag                ( Int layer, Int cpbcnt, Int nalOrVcl             ) { return m_HRD[layer].cbrFlag[cpbcnt][nalOrVcl];             }

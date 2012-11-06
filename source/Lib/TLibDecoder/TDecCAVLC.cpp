@@ -414,6 +414,12 @@ Void  TDecCavlc::parseVUI(TComVUI* pcVUI, TComSPS *pcSPS)
       }
       READ_CODE( 4, uiCode, "bit_rate_scale" );                       pcVUI->setBitRateScale( uiCode );
       READ_CODE( 4, uiCode, "cpb_size_scale" );                       pcVUI->setCpbSizeScale( uiCode );
+#if HRD_BUFFER
+      if( pcVUI->getSubPicCpbParamsPresentFlag() )
+      {
+        READ_CODE( 4, uiCode, "du_cpb_size_scale" );                  pcVUI->setDuCpbSizeScale( uiCode );
+      }
+#endif
       READ_CODE( 5, uiCode, "initial_cpb_removal_delay_length_minus1" ); pcVUI->setInitialCpbRemovalDelayLengthMinus1( uiCode );
       READ_CODE( 5, uiCode, "cpb_removal_delay_length_minus1" );      pcVUI->setCpbRemovalDelayLengthMinus1( uiCode );
       READ_CODE( 5, uiCode, "dpb_output_delay_length_minus1" );       pcVUI->setDpbOutputDelayLengthMinus1( uiCode );
@@ -438,6 +444,12 @@ Void  TDecCavlc::parseVUI(TComVUI* pcVUI, TComSPS *pcSPS)
           {
             READ_UVLC( uiCode, "bit_size_value_minus1" );             pcVUI->setBitRateValueMinus1( i, j, nalOrVcl, uiCode );
             READ_UVLC( uiCode, "cpb_size_value_minus1" );             pcVUI->setCpbSizeValueMinus1( i, j, nalOrVcl, uiCode );
+#if HRD_BUFFER
+            if( pcVUI->getSubPicCpbParamsPresentFlag() )
+            {
+              READ_UVLC( uiCode, "du_cpb_size_value_minus1" );       pcVUI->setDuCpbSizeValueMinus1( i, j, nalOrVcl, uiCode );
+            }
+#endif
             READ_FLAG( uiCode, "cbr_flag" );                          pcVUI->setCbrFlag( i, j, nalOrVcl, uiCode );
           }
         }
