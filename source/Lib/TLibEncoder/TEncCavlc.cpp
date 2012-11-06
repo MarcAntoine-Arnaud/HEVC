@@ -497,11 +497,21 @@ Void TEncCavlc::codeVPS( TComVPS* pcVPS )
 {
   WRITE_CODE( pcVPS->getVPSId(),                    4,        "video_parameter_set_id" );
   WRITE_FLAG( pcVPS->getTemporalNestingFlag(),                "vps_temporal_id_nesting_flag" );
+#if VPS_REARRANGE
+  WRITE_CODE( 3,                                    2,        "vps_reserved_three_2bits" );
+#else
   WRITE_CODE( 0,                                    2,        "vps_reserved_zero_2bits" );
+#endif
   WRITE_CODE( 0,                                    6,        "vps_reserved_zero_6bits" );
   WRITE_CODE( pcVPS->getMaxTLayers() - 1,           3,        "vps_max_sub_layers_minus1" );
+#if VPS_REARRANGE
+  WRITE_CODE( 0xffff,                              16,        "vps_reserved_ffff_16bits" );
+  codePTL( pcVPS->getPTL(), true, pcVPS->getMaxTLayers() - 1 );
+#else
   codePTL( pcVPS->getPTL(), true, pcVPS->getMaxTLayers() - 1 );
   WRITE_CODE( 0,                                   12,        "vps_reserved_zero_12bits" );
+#endif
+
   for(UInt i=0; i <= pcVPS->getMaxTLayers()-1; i++)
   {
     WRITE_UVLC( pcVPS->getMaxDecPicBuffering(i),           "vps_max_dec_pic_buffering[i]" );

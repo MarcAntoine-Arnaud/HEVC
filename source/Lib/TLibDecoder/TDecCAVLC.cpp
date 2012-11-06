@@ -626,11 +626,20 @@ Void TDecCavlc::parseVPS(TComVPS* pcVPS)
   
   READ_CODE( 4,  uiCode,  "video_parameter_set_id" );             pcVPS->setVPSId( uiCode );
   READ_FLAG(     uiCode,  "vps_temporal_id_nesting_flag" );       pcVPS->setTemporalNestingFlag( uiCode ? true:false );
+#if VPS_REARRANGE
+  READ_CODE( 2,  uiCode,  "vps_reserved_three_2bits" );           assert(uiCode == 3);
+#else
   READ_CODE( 2,  uiCode,  "vps_reserved_zero_2bits" );            assert(uiCode == 0);
+#endif
   READ_CODE( 6,  uiCode,  "vps_reserved_zero_6bits" );            assert(uiCode == 0);
   READ_CODE( 3,  uiCode,  "vps_max_sub_layers_minus1" );          pcVPS->setMaxTLayers( uiCode + 1 );
+#if VPS_REARRANGE
+  READ_CODE( 16, uiCode,  "vps_reserved_ffff_16bits" );           assert(uiCode == 0xffff);
+  parsePTL ( pcVPS->getPTL(), true, pcVPS->getMaxTLayers()-1);
+#else
   parsePTL ( pcVPS->getPTL(), true, pcVPS->getMaxTLayers()-1);
   READ_CODE( 12, uiCode,  "vps_reserved_zero_12bits" );           assert(uiCode == 0);
+#endif
   for(UInt i = 0; i <= pcVPS->getMaxTLayers()-1; i++)
   {
     READ_UVLC( uiCode,  "vps_max_dec_pic_buffering[i]" );     pcVPS->setMaxDecPicBuffering( uiCode, i );
