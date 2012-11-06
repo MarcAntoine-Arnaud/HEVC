@@ -2778,7 +2778,6 @@ Void TComDataCU::getInterMergeCandidates( UInt uiAbsPartIdx, UInt uiPUIdx, TComM
     //>> MTK colocated-RightBottom
     UInt uiPartIdxRB;
     Int uiLCUIdx = getAddr();
-    PartSize eCUMode = getPartitionSize( 0 );
 
     deriveRightBottomIdx( uiPUIdx, uiPartIdxRB );  
 
@@ -3035,8 +3034,6 @@ Void TComDataCU::getPartPosition( UInt partIdx, Int& xP, Int& yP, Int& nPSW, Int
  */
 Void TComDataCU::fillMvpCand ( UInt uiPartIdx, UInt uiPartAddr, RefPicList eRefPicList, Int iRefIdx, AMVPInfo* pInfo )
 {
-  PartSize eCUMode = getPartitionSize( 0 );
-  
   TComMv cMvPred;
   Bool bAddedSmvp = false;
 
@@ -3655,8 +3652,6 @@ Void TComDataCU::xDeriveCenterIdx( UInt uiPartIdx, UInt& ruiPartIdxCenter )
  */
 Bool TComDataCU::xGetCenterCol( UInt uiPartIdx, RefPicList eRefPicList, Int iRefIdx, TComMv *pcMv )
 {
-  PartSize eCUMode = getPartitionSize( 0 );
-  
   Int iCurrPOC = m_pcSlice->getPOC();
   
   // use coldir.
