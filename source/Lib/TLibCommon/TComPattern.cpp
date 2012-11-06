@@ -752,7 +752,6 @@ Int TComPattern::isLeftAvailable( TComDataCU* pcCU, UInt uiPartIdxLT, UInt uiPar
 Int TComPattern::isAboveRightAvailable( TComDataCU* pcCU, UInt uiPartIdxLT, UInt uiPartIdxRT, Bool *bValidFlags )
 {
   const UInt uiNumUnitsInPU = g_auiZscanToRaster[uiPartIdxRT] - g_auiZscanToRaster[uiPartIdxLT] + 1;
-  const UInt uiPuWidth = uiNumUnitsInPU * pcCU->getPic()->getMinCUWidth();
   Bool *pbValidFlags = bValidFlags;
   Int iNumIntra = 0;
 
@@ -793,7 +792,6 @@ Int TComPattern::isAboveRightAvailable( TComDataCU* pcCU, UInt uiPartIdxLT, UInt
 Int TComPattern::isBelowLeftAvailable( TComDataCU* pcCU, UInt uiPartIdxLT, UInt uiPartIdxLB, Bool *bValidFlags )
 {
   const UInt uiNumUnitsInPU = (g_auiZscanToRaster[uiPartIdxLB] - g_auiZscanToRaster[uiPartIdxLT]) / pcCU->getPic()->getNumPartInWidth() + 1;
-  const UInt uiPuHeight = uiNumUnitsInPU * pcCU->getPic()->getMinCUHeight();
   Bool *pbValidFlags = bValidFlags;
   Int iNumIntra = 0;
 
