@@ -1299,13 +1299,10 @@ Void TComTrQuant::invRecurTransformNxN( TComDataCU* pcCU, UInt uiAbsPartIdx, Tex
   if( !pcCU->getCbf(uiAbsPartIdx, eTxt, uiTrMode) )
   {
     return;
-  }
+  }  
+  const UInt stopTrMode = pcCU->getTransformIdx( uiAbsPartIdx );
   
-  UInt uiLumaTrMode, uiChromaTrMode;
-  pcCU->convertTransIdx( uiAbsPartIdx, pcCU->getTransformIdx( uiAbsPartIdx ), uiLumaTrMode, uiChromaTrMode );
-  const UInt uiStopTrMode = eTxt == TEXT_LUMA ? uiLumaTrMode : uiChromaTrMode;
-  
-  if( uiTrMode == uiStopTrMode )
+  if( uiTrMode == stopTrMode )
   {
     UInt uiDepth      = pcCU->getDepth( uiAbsPartIdx ) + uiTrMode;
     UInt uiLog2TrSize = g_aucConvertToBit[ pcCU->getSlice()->getSPS()->getMaxCUWidth() >> uiDepth ] + 2;
