@@ -41,6 +41,12 @@
 //! \ingroup TLibCommon
 //! \{
 
+#define VPS_OPERATING_POINT                         1  ///< K0204 - Operation point added to VPS
+#if VPS_OPERATING_POINT
+  #define MAX_VPS_NUM_HRD_PARAMETERS                1
+  #define MAX_VPS_NUM_HRD_PARAMETERS_ALLOWED_PLUS1  1024
+  #define MAX_VPS_NUH_RESERVED_ZERO_LAYER_ID_PLUS1  1
+#endif
 #define SEI_DISPLAY_ORIENTATION                     1  ///< Display orientation SEI message
 #define SEI_TEMPORAL_LEVEL0_INDEX                   1  ///< K0205 - Temporal level zero index SEI message
 

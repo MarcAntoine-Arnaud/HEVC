@@ -658,8 +658,28 @@ Void TDecCavlc::parseVPS(TComVPS* pcVPS)
     READ_UVLC( uiCode,  "vps_num_reorder_pics[i]" );          pcVPS->setNumReorderPics( uiCode, i );
     READ_UVLC( uiCode,  "vps_max_latency_increase[i]" );      pcVPS->setMaxLatencyIncrease( uiCode, i );
   }
+
+#if VPS_OPERATING_POINT
+  READ_UVLC(    uiCode, "vps_num_hrd_parameters" );               pcVPS->setNumHrdParameters( uiCode );
+  READ_CODE( 6, uiCode, "vps_max_nuh_reserved_zero_layer_id" );   pcVPS->setMaxNuhReservedZeroLayerId( uiCode );
+  assert( pcVPS->getNumHrdParameters() < MAX_VPS_NUM_HRD_PARAMETERS_ALLOWED_PLUS1 );
+  assert( pcVPS->getMaxNuhReservedZeroLayerId() < MAX_VPS_NUH_RESERVED_ZERO_LAYER_ID_PLUS1 );
+  for( UInt opIdx = 0; opIdx < pcVPS->getNumHrdParameters(); opIdx++ )
+  {
+    if( opIdx > 0 )
+    {
+      // operation_point_layer_id_flag( opIdx )
+      for( UInt i = 0; i <= pcVPS->getMaxNuhReservedZeroLayerId(); i++ )
+      {
+        READ_FLAG( uiCode, "op_layer_id_included_flag[opIdx][i]" ); pcVPS->setOpLayerIdIncludedFlag( uiCode, opIdx, i );
+      }
+    }
+    // TODO: add hrd_parameters()
+  }
+#else
   READ_UVLC( uiCode,    "vps_num_hrd_parameters" );           assert(uiCode == 0);
   // hrd_parameters
+#endif
   READ_FLAG( uiCode,  "vps_extension_flag" );          assert(!uiCode);
   //future extensions go here..
   

@@ -1254,6 +1254,10 @@ TComVPS::TComVPS()
 , m_uiMaxTLayers              (  1)
 , m_uiMaxLayers               (  1)
 , m_bTemporalIdNestingFlag    (false)
+#if VPS_OPERATING_POINT
+, m_numHrdParameters          (  0)
+, m_maxNuhReservedZeroLayerId (  0)
+#endif
 {
 
   for( Int i = 0; i < MAX_TLAYER; i++)

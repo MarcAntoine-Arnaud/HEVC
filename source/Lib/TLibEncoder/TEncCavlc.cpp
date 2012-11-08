@@ -531,8 +531,28 @@ Void TEncCavlc::codeVPS( TComVPS* pcVPS )
     WRITE_UVLC( pcVPS->getNumReorderPics(i),               "vps_num_reorder_pics[i]" );
     WRITE_UVLC( pcVPS->getMaxLatencyIncrease(i),           "vps_max_latency_increase[i]" );
   }
+
+#if VPS_OPERATING_POINT
+  assert( pcVPS->getNumHrdParameters() <= MAX_VPS_NUM_HRD_PARAMETERS );
+  assert( pcVPS->getMaxNuhReservedZeroLayerId() < MAX_VPS_NUH_RESERVED_ZERO_LAYER_ID_PLUS1 );
+  WRITE_UVLC( pcVPS->getNumHrdParameters(),                 "vps_num_hrd_parameters" );
+  WRITE_CODE( pcVPS->getMaxNuhReservedZeroLayerId(), 6,     "vps_max_nuh_reserved_zero_layer_id" );
+  for( UInt opIdx = 0; opIdx < pcVPS->getNumHrdParameters(); opIdx++ )
+  {
+    if( opIdx > 0 )
+    {
+      // operation_point_layer_id_flag( opIdx )
+      for( UInt i = 0; i <= pcVPS->getMaxNuhReservedZeroLayerId(); i++ )
+      {
+        WRITE_FLAG( pcVPS->getOpLayerIdIncludedFlag( opIdx, i ), "op_layer_id_included_flag[opIdx][i]" );
+      }
+    }
+    // TODO: add hrd_parameters()
+  }
+#else
   WRITE_UVLC( 0,                                           "vps_num_hrd_parameters" );
   // hrd_parameters
+#endif
   WRITE_FLAG( 0,                     "vps_extension_flag" );
   
   //future extensions here..
