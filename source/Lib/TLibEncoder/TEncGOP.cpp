@@ -1316,6 +1316,34 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
         AccessUnit::iterator it = find_if(accessUnit.begin(), accessUnit.end(), mem_fun(&NALUnit::isSlice));
         accessUnit.insert(it, new NALUnitEBSP(nalu));
       }
+#if SEI_TEMPORAL_LEVEL0_INDEX
+      if (m_pcCfg->getTemporalLevel0IndexSEIEnabled())
+      {
+        SEITemporalLevel0Index sei_temporal_level0_index;
+        if (pcSlice->getRapPicFlag())
+        {
+          m_tl0Idx = 0;
+          m_rapIdx = (m_rapIdx + 1) & 0xFF;
+        }
+        else
+        {
+          m_tl0Idx = (m_tl0Idx + (pcSlice->getTLayer() ? 0 : 1)) & 0xFF;
+        }
+        sei_temporal_level0_index.tl0Idx = m_tl0Idx;
+        sei_temporal_level0_index.rapIdx = m_rapIdx;
+
+        OutputNALUnit nalu(NAL_UNIT_SEI); 
+
+        /* write the SEI messages */
+        m_pcEntropyCoder->setEntropyCoder(m_pcCavlcCoder, pcSlice);
+        m_seiWriter.writeSEImessage(nalu.m_Bitstream, sei_temporal_level0_index);
+        writeRBSPTrailingBits(nalu.m_Bitstream);
+
+        /* insert the SEI message NALUnit before any Slice NALUnits */
+        AccessUnit::iterator it = find_if(accessUnit.begin(), accessUnit.end(), mem_fun(&NALUnit::isSlice));
+        accessUnit.insert(it, new NALUnitEBSP(nalu));
+      }
+#endif
 
       xCalculateAddPSNR( pcPic, pcPic->getPicYuvRec(), accessUnit, dEncTime );
 

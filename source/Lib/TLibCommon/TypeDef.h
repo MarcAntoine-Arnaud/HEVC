@@ -40,6 +40,9 @@
 
 //! \ingroup TLibCommon
 //! \{
+
+#define SEI_TEMPORAL_LEVEL0_INDEX                   1  ///< K0205 - Temporal level zero index SEI message
+
 #define RATE_CONTROL_LAMBDA_DOMAIN                  1  ///< JCTVC-K0103, rate control by R-lambda model
 
 #define SAVE_BITS_REFPICLIST_MOD_FLAG               1  ///< K0224 Proposal#1: Send ref_pic_list_modification_flag_lX only when NumPocTotalCurr is greater than 1.

@@ -50,6 +50,9 @@ public:
     USER_DATA_UNREGISTERED = 5,
     RECOVERY_POINT         = 6,
     ACTIVE_PARAMETER_SETS = 131, 
+#if SEI_TEMPORAL_LEVEL0_INDEX
+    TEMPORAL_LEVEL0_INDEX  = 132,
+#endif
     DECODED_PICTURE_HASH   = 256,
   };
   
@@ -175,6 +178,23 @@ public:
   Bool m_exactMatchingFlag;
   Bool m_brokenLinkFlag;
 };
+#if SEI_TEMPORAL_LEVEL0_INDEX
+class SEITemporalLevel0Index : public SEI
+{
+public:
+  PayloadType payloadType() const { return TEMPORAL_LEVEL0_INDEX; }
+
+  SEITemporalLevel0Index()
+    : tl0Idx(0)
+    , rapIdx(0)
+    {}
+  virtual ~SEITemporalLevel0Index() {}
+
+  UInt tl0Idx;
+  UInt rapIdx;
+};
+#endif
+
 /**
  * A structure to collate all SEI messages.  This ought to be replaced
  * with a list of std::list<SEI*>.  However, since there is only one
@@ -189,6 +209,9 @@ public:
     , buffering_period(0)
     , picture_timing(0)
     , recovery_point(0)
+#if SEI_TEMPORAL_LEVEL0_INDEX
+    , temporal_level0_index(0)
+#endif
     {}
 
   ~SEImessages()
@@ -199,6 +222,9 @@ public:
     delete buffering_period;
     delete picture_timing;
     delete recovery_point;
+#if SEI_TEMPORAL_LEVEL0_INDEX
+    delete temporal_level0_index;
+#endif
   }
 
   SEIuserDataUnregistered* user_data_unregistered;
@@ -208,6 +234,9 @@ public:
   SEIPictureTiming* picture_timing;
   TComSPS* m_pSPS;
   SEIRecoveryPoint* recovery_point;
+#if SEI_TEMPORAL_LEVEL0_INDEX
+  SEITemporalLevel0Index* temporal_level0_index;
+#endif
 };
 
 //! \}

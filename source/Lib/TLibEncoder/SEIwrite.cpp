@@ -59,6 +59,11 @@ Void  xTraceSEIMessageType(SEI::PayloadType payloadType)
   case SEI::ACTIVE_PARAMETER_SETS:
     fprintf( g_hTrace, "=========== Active Parameter sets SEI message ===========\n");
     break;
+#if SEI_TEMPORAL_LEVEL0_INDEX
+  case SEI::TEMPORAL_LEVEL0_INDEX:
+    fprintf( g_hTrace, "=========== Temporal Level Zero Index SEI message ===========\n");
+    break;
+#endif
   default:
     fprintf( g_hTrace, "=========== Unknown SEI message ===========\n");
     break;
@@ -88,6 +93,11 @@ void SEIWriter::xWriteSEIpayloadData(const SEI& sei)
   case SEI::RECOVERY_POINT:
     xWriteSEIRecoveryPoint(*static_cast<const SEIRecoveryPoint*>(&sei));
     break;
+#if SEI_TEMPORAL_LEVEL0_INDEX
+  case SEI::TEMPORAL_LEVEL0_INDEX:
+    xWriteSEITemporalLevel0Index(*static_cast<const SEITemporalLevel0Index*>(&sei));
+    break;
+#endif
   default:
     assert(!"Unhandled SEI message");
   }
@@ -281,6 +291,14 @@ Void SEIWriter::xWriteSEIRecoveryPoint(const SEIRecoveryPoint& sei)
   WRITE_FLAG( sei.m_brokenLinkFlag,    "broken_link_flag"    );
   xWriteByteAlign();
 }
+#if SEI_TEMPORAL_LEVEL0_INDEX
+Void SEIWriter::xWriteSEITemporalLevel0Index(const SEITemporalLevel0Index &sei)
+{
+  WRITE_CODE( sei.tl0Idx, 8 , "tl0_idx" );
+  WRITE_CODE( sei.rapIdx, 8 , "rap_idx" );
+  xWriteByteAlign();
+}
+#endif
 
 Void SEIWriter::xWriteByteAlign()
 {

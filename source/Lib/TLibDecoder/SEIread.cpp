@@ -65,6 +65,11 @@ Void  xTraceSEIMessageType(SEI::PayloadType payloadType)
   case SEI::USER_DATA_UNREGISTERED:
     fprintf( g_hTrace, "=========== User Data Unregistered SEI message ===========\n");
     break;
+#if SEI_TEMPORAL_LEVEL0_INDEX
+  case SEI::TEMPORAL_LEVEL0_INDEX:
+    fprintf( g_hTrace, "=========== Temporal Level Zero Index SEI message ===========\n");
+    break;
+#endif
   default:
     fprintf( g_hTrace, "=========== Unknown SEI message ===========\n");
     break;
@@ -143,6 +148,12 @@ Void SEIReader::xReadSEImessage(SEImessages& seis)
     seis.recovery_point = new SEIRecoveryPoint;
     xParseSEIRecoveryPoint(*seis.recovery_point, payloadSize);
     break;
+#if SEI_TEMPORAL_LEVEL0_INDEX
+  case SEI::TEMPORAL_LEVEL0_INDEX:
+    seis.temporal_level0_index = new SEITemporalLevel0Index;
+    xParseSEITemporalLevel0Index(*seis.temporal_level0_index, payloadSize);
+    break;
+#endif
   default:
     for (UInt i = 0; i < payloadSize; i++)
     {
@@ -341,6 +352,15 @@ Void SEIReader::xParseSEIRecoveryPoint(SEIRecoveryPoint& sei, UInt payloadSize)
   READ_FLAG( uiCode, "broken_link_flag" );      sei.m_brokenLinkFlag     = uiCode;
   xParseByteAlign();
 }
+#if SEI_TEMPORAL_LEVEL0_INDEX
+Void SEIReader::xParseSEITemporalLevel0Index(SEITemporalLevel0Index& sei, UInt payloadSize)
+{
+  UInt val;
+  READ_CODE ( 8, val, "tl0_idx" );  sei.tl0Idx = val;
+  READ_CODE ( 8, val, "rap_idx" );  sei.rapIdx = val;
+  xParseByteAlign();
+}
+#endif
 
 Void SEIReader::xParseByteAlign()
 {
