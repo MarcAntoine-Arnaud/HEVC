@@ -65,6 +65,11 @@ Void  xTraceSEIMessageType(SEI::PayloadType payloadType)
   case SEI::USER_DATA_UNREGISTERED:
     fprintf( g_hTrace, "=========== User Data Unregistered SEI message ===========\n");
     break;
+#if SEI_DISPLAY_ORIENTATION
+  case SEI::DISPLAY_ORIENTATION:
+    fprintf( g_hTrace, "=========== Display Orientation message ===========\n");
+    break;
+#endif
 #if SEI_TEMPORAL_LEVEL0_INDEX
   case SEI::TEMPORAL_LEVEL0_INDEX:
     fprintf( g_hTrace, "=========== Temporal Level Zero Index SEI message ===========\n");
@@ -148,6 +153,12 @@ Void SEIReader::xReadSEImessage(SEImessages& seis)
     seis.recovery_point = new SEIRecoveryPoint;
     xParseSEIRecoveryPoint(*seis.recovery_point, payloadSize);
     break;
+#if SEI_DISPLAY_ORIENTATION
+  case SEI::DISPLAY_ORIENTATION:
+    seis.display_orientation = new SEIDisplayOrientation;
+    xParseSEIDisplayOrientation(*seis.display_orientation, payloadSize);
+    break;
+#endif
 #if SEI_TEMPORAL_LEVEL0_INDEX
   case SEI::TEMPORAL_LEVEL0_INDEX:
     seis.temporal_level0_index = new SEITemporalLevel0Index;
@@ -352,6 +363,23 @@ Void SEIReader::xParseSEIRecoveryPoint(SEIRecoveryPoint& sei, UInt payloadSize)
   READ_FLAG( uiCode, "broken_link_flag" );      sei.m_brokenLinkFlag     = uiCode;
   xParseByteAlign();
 }
+#if SEI_DISPLAY_ORIENTATION
+Void SEIReader::xParseSEIDisplayOrientation(SEIDisplayOrientation& sei, UInt payloadSize)
+{
+  UInt val;
+  READ_FLAG( val,       "display_orientation_cancel_flag" );       sei.cancelFlag            = val;
+  if( !sei.cancelFlag ) 
+  {
+    READ_FLAG( val,     "hor_flip" );                              sei.horFlip               = val;
+    READ_FLAG( val,     "ver_flip" );                              sei.verFlip               = val;
+    READ_CODE( 16, val, "anticlockwise_rotation" );                sei.anticlockwiseRotation = val;
+    READ_UVLC( val,     "display_orientation_repetition_period" ); sei.repetitionPeriod      = val;
+    READ_FLAG( val,     "display_orientation_extension_flag" );    sei.extensionFlag         = val;
+    assert( !sei.extensionFlag );
+  }
+  xParseByteAlign();
+}
+#endif
 #if SEI_TEMPORAL_LEVEL0_INDEX
 Void SEIReader::xParseSEITemporalLevel0Index(SEITemporalLevel0Index& sei, UInt payloadSize)
 {

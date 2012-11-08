@@ -191,6 +191,9 @@ protected:
   Int       m_recoveryPointSEIEnabled;
   Int       m_bufferingPeriodSEIEnabled;
   Int       m_pictureTimingSEIEnabled;
+#if SEI_DISPLAY_ORIENTATION
+  Int       m_displayOrientationSEIEnabled;
+#endif
 #if SEI_TEMPORAL_LEVEL0_INDEX
   Int       m_temporalLevel0IndexSEIEnabled;
 #endif

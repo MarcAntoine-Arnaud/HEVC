@@ -59,6 +59,11 @@ Void  xTraceSEIMessageType(SEI::PayloadType payloadType)
   case SEI::ACTIVE_PARAMETER_SETS:
     fprintf( g_hTrace, "=========== Active Parameter sets SEI message ===========\n");
     break;
+#if SEI_DISPLAY_ORIENTATION
+  case SEI::DISPLAY_ORIENTATION:
+    fprintf( g_hTrace, "=========== Display Orientation SEI message ===========\n");
+    break;
+#endif
 #if SEI_TEMPORAL_LEVEL0_INDEX
   case SEI::TEMPORAL_LEVEL0_INDEX:
     fprintf( g_hTrace, "=========== Temporal Level Zero Index SEI message ===========\n");
@@ -93,6 +98,11 @@ void SEIWriter::xWriteSEIpayloadData(const SEI& sei)
   case SEI::RECOVERY_POINT:
     xWriteSEIRecoveryPoint(*static_cast<const SEIRecoveryPoint*>(&sei));
     break;
+#if SEI_DISPLAY_ORIENTATION
+  case SEI::DISPLAY_ORIENTATION:
+    xWriteSEIDisplayOrientation(*static_cast<const SEIDisplayOrientation*>(&sei));
+    break;
+#endif
 #if SEI_TEMPORAL_LEVEL0_INDEX
   case SEI::TEMPORAL_LEVEL0_INDEX:
     xWriteSEITemporalLevel0Index(*static_cast<const SEITemporalLevel0Index*>(&sei));
@@ -291,6 +301,22 @@ Void SEIWriter::xWriteSEIRecoveryPoint(const SEIRecoveryPoint& sei)
   WRITE_FLAG( sei.m_brokenLinkFlag,    "broken_link_flag"    );
   xWriteByteAlign();
 }
+#if SEI_DISPLAY_ORIENTATION
+Void SEIWriter::xWriteSEIDisplayOrientation(const SEIDisplayOrientation &sei)
+{
+  WRITE_FLAG( sei.cancelFlag,           "display_orientation_cancel_flag" );
+  if( !sei.cancelFlag )
+  {
+    WRITE_FLAG( sei.horFlip,                   "hor_flip" );
+    WRITE_FLAG( sei.verFlip,                   "ver_flip" );
+    WRITE_CODE( sei.anticlockwiseRotation, 16, "anticlockwise_rotation" );
+    WRITE_UVLC( sei.repetitionPeriod,          "display_orientation_repetition_period" );
+    WRITE_FLAG( sei.extensionFlag,             "display_orientation_extension_flag" );
+    assert( !sei.extensionFlag );
+  }
+  xWriteByteAlign();
+}
+#endif
 #if SEI_TEMPORAL_LEVEL0_INDEX
 Void SEIWriter::xWriteSEITemporalLevel0Index(const SEITemporalLevel0Index &sei)
 {

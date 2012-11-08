@@ -49,7 +49,10 @@ public:
     PICTURE_TIMING         = 1,
     USER_DATA_UNREGISTERED = 5,
     RECOVERY_POINT         = 6,
-    ACTIVE_PARAMETER_SETS = 131, 
+#if SEI_DISPLAY_ORIENTATION
+    DISPLAY_ORIENTATION    = 47,
+#endif
+    ACTIVE_PARAMETER_SETS  = 131, 
 #if SEI_TEMPORAL_LEVEL0_INDEX
     TEMPORAL_LEVEL0_INDEX  = 132,
 #endif
@@ -178,6 +181,28 @@ public:
   Bool m_exactMatchingFlag;
   Bool m_brokenLinkFlag;
 };
+#if SEI_DISPLAY_ORIENTATION
+class SEIDisplayOrientation : public SEI
+{
+public:
+  PayloadType payloadType() const { return DISPLAY_ORIENTATION; }
+
+  SEIDisplayOrientation()
+    : cancelFlag(true)
+    , repetitionPeriod(1)
+    , extensionFlag(false)
+    {}
+  virtual ~SEIDisplayOrientation() {}
+
+  Bool cancelFlag;
+  Bool horFlip;
+  Bool verFlip;
+
+  UInt anticlockwiseRotation;
+  UInt repetitionPeriod;
+  Bool extensionFlag;
+};
+#endif
 #if SEI_TEMPORAL_LEVEL0_INDEX
 class SEITemporalLevel0Index : public SEI
 {
@@ -209,6 +234,9 @@ public:
     , buffering_period(0)
     , picture_timing(0)
     , recovery_point(0)
+#if SEI_DISPLAY_ORIENTATION
+    , display_orientation(0)
+#endif
 #if SEI_TEMPORAL_LEVEL0_INDEX
     , temporal_level0_index(0)
 #endif
@@ -222,6 +250,9 @@ public:
     delete buffering_period;
     delete picture_timing;
     delete recovery_point;
+#if SEI_DISPLAY_ORIENTATION
+    delete display_orientation;
+#endif
 #if SEI_TEMPORAL_LEVEL0_INDEX
     delete temporal_level0_index;
 #endif
@@ -234,6 +265,9 @@ public:
   SEIPictureTiming* picture_timing;
   TComSPS* m_pSPS;
   SEIRecoveryPoint* recovery_point;
+#if SEI_DISPLAY_ORIENTATION
+  SEIDisplayOrientation* display_orientation;
+#endif
 #if SEI_TEMPORAL_LEVEL0_INDEX
   SEITemporalLevel0Index* temporal_level0_index;
 #endif

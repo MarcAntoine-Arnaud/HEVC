@@ -41,6 +41,7 @@
 //! \ingroup TLibCommon
 //! \{
 
+#define SEI_DISPLAY_ORIENTATION                     1  ///< Display orientation SEI message
 #define SEI_TEMPORAL_LEVEL0_INDEX                   1  ///< K0205 - Temporal level zero index SEI message
 
 #define RATE_CONTROL_LAMBDA_DOMAIN                  1  ///< JCTVC-K0103, rate control by R-lambda model

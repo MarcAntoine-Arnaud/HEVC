@@ -224,6 +224,9 @@ protected:
   Int       m_bufferingPeriodSEIEnabled;
   Int       m_pictureTimingSEIEnabled;
   Int       m_recoveryPointSEIEnabled;
+#if SEI_DISPLAY_ORIENTATION
+  Int       m_displayOrientationSEIEnabled;
+#endif
 #if SEI_TEMPORAL_LEVEL0_INDEX
   Int       m_temporalLevel0IndexSEIEnabled;
 #endif
@@ -572,6 +575,10 @@ public:
   Int   getPictureTimingSEIEnabled()                     { return m_pictureTimingSEIEnabled; }
   Void  setRecoveryPointSEIEnabled(Int b)                { m_recoveryPointSEIEnabled = b; }
   Int   getRecoveryPointSEIEnabled()                     { return m_recoveryPointSEIEnabled; }
+#if SEI_DISPLAY_ORIENTATION
+  Void  setDisplayOrientationSEIEnabled(Int b)           { m_displayOrientationSEIEnabled = b; }
+  Int   getDisplayOrientationSEIEnabled()                { return m_displayOrientationSEIEnabled; }
+#endif
 #if SEI_TEMPORAL_LEVEL0_INDEX
   Void  setTemporalLevel0IndexSEIEnabled(Int b)          { m_temporalLevel0IndexSEIEnabled = b; }
   Int   getTemporalLevel0IndexSEIEnabled()               { return m_temporalLevel0IndexSEIEnabled; }

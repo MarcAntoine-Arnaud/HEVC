@@ -841,6 +841,22 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
         writeRBSPTrailingBits(nalu.m_Bitstream);
         accessUnit.push_back(new NALUnitEBSP(nalu));
       }
+#if SEI_DISPLAY_ORIENTATION
+      if (m_pcCfg->getDisplayOrientationSEIEnabled())
+      {
+        SEIDisplayOrientation sei_display_orientation;
+        sei_display_orientation.cancelFlag = false;
+        sei_display_orientation.horFlip = false;
+        sei_display_orientation.verFlip = false;
+        sei_display_orientation.anticlockwiseRotation = m_pcCfg->getDisplayOrientationSEIEnabled();
+
+        nalu = NALUnit(NAL_UNIT_SEI); 
+        m_pcEntropyCoder->setBitstream(&nalu.m_Bitstream);
+        m_seiWriter.writeSEImessage(nalu.m_Bitstream, sei_display_orientation); 
+        writeRBSPTrailingBits(nalu.m_Bitstream);
+        accessUnit.push_back(new NALUnitEBSP(nalu));
+      }
+#endif
 
       m_bSeqFirst = false;
     }
