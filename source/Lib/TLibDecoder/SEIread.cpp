@@ -144,7 +144,12 @@ Void SEIReader::xReadSEImessage(SEImessages& seis)
     xParseSEIRecoveryPoint(*seis.recovery_point, payloadSize);
     break;
   default:
-    assert(!"Unhandled SEI message");
+    for (UInt i = 0; i < payloadSize; i++)
+    {
+      UInt seiByte;
+      READ_CODE (8, seiByte, "unknown SEI payload byte");
+    }
+    printf ("Unknown SEI message (payloadType = %d) was found!\n", payloadType);
   }
 }
 
