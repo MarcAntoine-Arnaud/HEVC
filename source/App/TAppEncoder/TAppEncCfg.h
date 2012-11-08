@@ -200,9 +200,19 @@ protected:
 
   Int       m_TMVPModeId;
   Int       m_signHideFlag;
+#if RATE_CONTROL_LAMBDA_DOMAIN
+  Bool      m_RCEnableRateControl;                ///< enable rate control or not
+  Int       m_RCTargetBitrate;                    ///< target bitrate when rate control is enabled
+  Bool      m_RCKeepHierarchicalBit;              ///< whether keeping hierarchical bit allocation structure or not
+  Bool      m_RCLCULevelRC;                       ///< true: LCU level rate control; false: picture level rate control
+  Bool      m_RCUseLCUSeparateModel;              ///< use separate R-lambda model at LCU level
+  Int       m_RCInitialQP;                        ///< inital QP for rate control
+  Bool      m_RCForceIntraQP;                     ///< force all intra picture to use initial QP or not
+#else
   Bool      m_enableRateCtrl;                                   ///< Flag for using rate control algorithm
   Int       m_targetBitrate;                                 ///< target bitrate
   Int       m_numLCUInUnit;                                  ///< Total number of LCUs in a frame should be completely divided by the NumLCUInUnit
+#endif
   Int       m_useScalingListId;                               ///< using quantization matrix
   Char*     m_scalingListFile;                                ///< quantization matrix file name
 

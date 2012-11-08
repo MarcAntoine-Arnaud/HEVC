@@ -497,6 +497,65 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
     }
     pcPic->getSlice(pcSlice->getSliceIdx())->setMvdL1ZeroFlag(pcSlice->getMvdL1ZeroFlag());
 
+#if RATE_CONTROL_LAMBDA_DOMAIN
+    Int sliceQP              = pcSlice->getSliceQp();
+    Double lambda            = 0.0;
+    Int actualHeadBits       = 0;
+    Int actualTotalBits      = 0;
+    Int estimatedBits        = 0;
+    Int tmpBitsBeforeWriting = 0;
+    if ( m_pcCfg->getUseRateCtrl() )
+    {
+      Int frameLevel = m_pcRateCtrl->getRCSeq()->getGOPID2Level( iGOPid );
+      if ( pcPic->getSlice(0)->getSliceType() == I_SLICE )
+      {
+        frameLevel = 0;
+      }
+      m_pcRateCtrl->initRCPic( frameLevel );
+      estimatedBits = m_pcRateCtrl->getRCPic()->getTargetBits();
+
+      if ( ( pcSlice->getPOC() == 0 && m_pcCfg->getInitialQP() > 0 ) || ( frameLevel == 0 && m_pcCfg->getForceIntraQP() ) ) // QP is specified
+      {
+        sliceQP              = m_pcCfg->getInitialQP();
+        Int    NumberBFrames = ( m_pcCfg->getGOPSize() - 1 );
+        Double dLambda_scale = 1.0 - Clip3( 0.0, 0.5, 0.05*(Double)NumberBFrames );
+        Double dQPFactor     = 0.57*dLambda_scale;
+        Int    SHIFT_QP      = 12;
+        Int    bitdepth_luma_qp_scale = 0;
+        Double qp_temp = (Double) sliceQP + bitdepth_luma_qp_scale - SHIFT_QP;
+        lambda = dQPFactor*pow( 2.0, qp_temp/3.0 );
+      }
+      else if ( frameLevel == 0 )   // intra case, but use the model
+      {
+        if ( m_pcCfg->getIntraPeriod() != 1 )   // do not refine allocated bits for all intra case
+        {
+          Int bits = m_pcRateCtrl->getRCSeq()->getLeftAverageBits();
+          bits = m_pcRateCtrl->getRCSeq()->getRefineBitsForIntra( bits );
+          if ( bits < 200 )
+          {
+            bits = 200;
+          }
+          m_pcRateCtrl->getRCPic()->setTargetBits( bits );
+        }
+
+        list<TEncRCPic*> listPreviousPicture = m_pcRateCtrl->getPicList();
+        lambda  = m_pcRateCtrl->getRCPic()->estimatePicLambda( listPreviousPicture );
+        sliceQP = m_pcRateCtrl->getRCPic()->estimatePicQP( lambda, listPreviousPicture );
+      }
+      else    // normal case
+      {
+        list<TEncRCPic*> listPreviousPicture = m_pcRateCtrl->getPicList();
+        lambda  = m_pcRateCtrl->getRCPic()->estimatePicLambda( listPreviousPicture );
+        sliceQP = m_pcRateCtrl->getRCPic()->estimatePicQP( lambda, listPreviousPicture );
+      }
+
+      sliceQP = Clip3( -pcSlice->getSPS()->getQpBDOffsetY(), MAX_QP, sliceQP );
+      m_pcRateCtrl->getRCPic()->setPicEstQP( sliceQP );
+
+      m_pcSliceEncoder->resetQP( pcPic, sliceQP, lambda );
+    }
+#endif
+
     UInt uiNumSlices = 1;
 
     UInt uiInternalAddress = pcPic->getNumPartInCU()-4;
@@ -719,6 +778,9 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
       m_pcEntropyCoder->encodeVPS(m_pcEncTop->getVPS());
       writeRBSPTrailingBits(nalu.m_Bitstream);
       accessUnit.push_back(new NALUnitEBSP(nalu));
+#if RATE_CONTROL_LAMBDA_DOMAIN
+      actualTotalBits += unsigned(accessUnit.back()->m_nalUnitData.str().size()) * 8;
+#endif
 
       nalu = NALUnit(NAL_UNIT_SPS);
       m_pcEntropyCoder->setBitstream(&nalu.m_Bitstream);
@@ -749,12 +811,18 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
       m_pcEntropyCoder->encodeSPS(pcSlice->getSPS());
       writeRBSPTrailingBits(nalu.m_Bitstream);
       accessUnit.push_back(new NALUnitEBSP(nalu));
+#if RATE_CONTROL_LAMBDA_DOMAIN
+      actualTotalBits += unsigned(accessUnit.back()->m_nalUnitData.str().size()) * 8;
+#endif
 
       nalu = NALUnit(NAL_UNIT_PPS);
       m_pcEntropyCoder->setBitstream(&nalu.m_Bitstream);
       m_pcEntropyCoder->encodePPS(pcSlice->getPPS());
       writeRBSPTrailingBits(nalu.m_Bitstream);
       accessUnit.push_back(new NALUnitEBSP(nalu));
+#if RATE_CONTROL_LAMBDA_DOMAIN
+      actualTotalBits += unsigned(accessUnit.back()->m_nalUnitData.str().size()) * 8;
+#endif
 
       if(m_pcCfg->getActiveParameterSetsSEIEnabled())
       {
@@ -972,7 +1040,13 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
             uiOneBitstreamPerSliceLength = 0; // start of a new slice
           }
           m_pcEntropyCoder->setBitstream(&nalu.m_Bitstream);
+#if RATE_CONTROL_LAMBDA_DOMAIN
+          tmpBitsBeforeWriting = m_pcEntropyCoder->getNumberOfWrittenBits();
+#endif
           m_pcEntropyCoder->encodeSliceHeader(pcSlice);
+#if RATE_CONTROL_LAMBDA_DOMAIN
+          actualHeadBits += ( m_pcEntropyCoder->getNumberOfWrittenBits() - tmpBitsBeforeWriting );
+#endif
 
           // is it needed?
           {
@@ -1113,6 +1187,9 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
           Bool bNALUAlignedWrittenToList    = false; // used to ensure current NALU is not written more than once to the NALU list.
           xWriteTileLocationToSliceHeader(nalu, pcBitstreamRedirect, pcSlice);
           accessUnit.push_back(new NALUnitEBSP(nalu));
+#if RATE_CONTROL_LAMBDA_DOMAIN
+          actualTotalBits += unsigned(accessUnit.back()->m_nalUnitData.str().size()) * 8;
+#endif
           bNALUAlignedWrittenToList = true; 
           uiOneBitstreamPerSliceLength += nalu.m_Bitstream.getNumberOfWrittenBits(); // length of bitstream after byte-alignment
 
@@ -1257,11 +1334,36 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
           printf(" [Checksum:%s]", digestStr);
         }
       }
+#if RATE_CONTROL_LAMBDA_DOMAIN
+      if ( m_pcCfg->getUseRateCtrl() )
+      {
+        Double effectivePercentage = m_pcRateCtrl->getRCPic()->getEffectivePercentage();
+        Double avgQP     = m_pcRateCtrl->getRCPic()->calAverageQP();
+        Double avgLambda = m_pcRateCtrl->getRCPic()->calAverageLambda();
+        if ( avgLambda < 0.0 )
+        {
+          avgLambda = lambda;
+        }
+        m_pcRateCtrl->getRCPic()->updateAfterPicture( actualHeadBits, actualTotalBits, avgQP, avgLambda, effectivePercentage );
+        m_pcRateCtrl->getRCPic()->addToPictureLsit( m_pcRateCtrl->getPicList() );
+
+        m_pcRateCtrl->getRCSeq()->updateAfterPic( actualTotalBits );
+        if ( pcSlice->getSliceType() != I_SLICE )
+        {
+          m_pcRateCtrl->getRCGOP()->updateAfterPicture( actualTotalBits );
+        }
+        else    // for intra picture, the estimated bits are used to update the current status in the GOP
+        {
+          m_pcRateCtrl->getRCGOP()->updateAfterPicture( estimatedBits );
+        }
+      }
+#else
       if(m_pcCfg->getUseRateCtrl())
       {
         UInt  frameBits = m_vRVM_RP[m_vRVM_RP.size()-1];
         m_pcRateCtrl->updataRCFrameStatus((Int)frameBits, pcSlice->getSliceType());
       }
+#endif
       if( ( m_pcCfg->getPictureTimingSEIEnabled() ) &&
           ( pcSlice->getSPS()->getVuiParametersPresentFlag() ) && 
           ( ( pcSlice->getSPS()->getVuiParameters()->getNalHrdParametersPresentFlag() ) || ( pcSlice->getSPS()->getVuiParameters()->getVclHrdParametersPresentFlag() ) ) )
@@ -1313,10 +1415,12 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
 
       delete[] pcSubstreamsOut;
   }
+#if !RATE_CONTROL_LAMBDA_DOMAIN
   if(m_pcCfg->getUseRateCtrl())
   {
     m_pcRateCtrl->updateRCGOPStatus();
   }
+#endif
   delete pcBitstreamRedirect;
 
   if( accumBitsDU != NULL) delete accumBitsDU;
