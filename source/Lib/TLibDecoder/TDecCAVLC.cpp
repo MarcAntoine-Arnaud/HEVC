@@ -1280,7 +1280,14 @@ Void TDecCavlc::parsePTL( TComPTL *rpcPTL, Bool profilePresentFlag, Int maxNumSu
 
   for(Int i = 0; i < maxNumSubLayersMinus1; i++)
   {
+#if CONDITION_SUBLAYERPROFILEPRESENTFLAG
+    if(profilePresentFlag)
+    {
+      READ_FLAG( uiCode, "sub_layer_profile_present_flag[i]" ); rpcPTL->setSubLayerProfilePresentFlag(i, uiCode);
+    }
+#else
     READ_FLAG( uiCode, "sub_layer_profile_present_flag[i]" ); rpcPTL->setSubLayerProfilePresentFlag(i, uiCode);
+#endif
     READ_FLAG( uiCode, "sub_layer_level_present_flag[i]"   ); rpcPTL->setSubLayerLevelPresentFlag  (i, uiCode);
     if( profilePresentFlag && rpcPTL->getSubLayerProfilePresentFlag(i) )
     {

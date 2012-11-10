@@ -40,6 +40,7 @@
 
 //! \ingroup TLibCommon
 //! \{
+#define CONDITION_SUBLAYERPROFILEPRESENTFLAG        1  ///< K0125: Condition signalling of sub_layer_profile_present_flag
 
 #define VPS_OPERATING_POINT                         1  ///< K0204 - Operation point added to VPS
 #if VPS_OPERATING_POINT

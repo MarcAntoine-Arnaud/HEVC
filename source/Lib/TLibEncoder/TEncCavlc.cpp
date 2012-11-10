@@ -920,7 +920,15 @@ Void TEncCavlc::codePTL( TComPTL* pcPTL, Bool profilePresentFlag, Int maxNumSubL
 
   for(Int i = 0; i < maxNumSubLayersMinus1; i++)
   {
+#if CONDITION_SUBLAYERPROFILEPRESENTFLAG
+    if(profilePresentFlag)
+    {
+      WRITE_FLAG( pcPTL->getSubLayerProfilePresentFlag(i), "sub_layer_profile_present_flag[i]" );
+    }
+#else
     WRITE_FLAG( pcPTL->getSubLayerProfilePresentFlag(i), "sub_layer_profile_present_flag[i]" );
+#endif
+
     WRITE_FLAG( pcPTL->getSubLayerLevelPresentFlag(i),   "sub_layer_level_present_flag[i]" );
     if( profilePresentFlag && pcPTL->getSubLayerProfilePresentFlag(i) )
     {
