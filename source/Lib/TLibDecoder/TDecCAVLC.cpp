@@ -658,6 +658,9 @@ Void TDecCavlc::parseVPS(TComVPS* pcVPS)
   parsePTL ( pcVPS->getPTL(), true, pcVPS->getMaxTLayers()-1);
   READ_CODE( 12, uiCode,  "vps_reserved_zero_12bits" );           assert(uiCode == 0);
 #endif
+#if SIGNAL_BITRATE_PICRATE_IN_VPS
+  parseBitratePicRateInfo( pcVPS->getBitratePicrateInfo(), 0, pcVPS->getMaxTLayers() - 1);
+#endif
   for(UInt i = 0; i <= pcVPS->getMaxTLayers()-1; i++)
   {
     READ_UVLC( uiCode,  "vps_max_dec_pic_buffering[i]" );     pcVPS->setMaxDecPicBuffering( uiCode, i );
@@ -1317,6 +1320,27 @@ Void TDecCavlc::parseProfileTier(ProfileTierLevel *ptl)
   }
   READ_CODE(16, uiCode, "XXX_reserved_zero_16bits[]");  assert( uiCode == 0 );  
 }
+#if SIGNAL_BITRATE_PICRATE_IN_VPS
+Void TDecCavlc::parseBitratePicRateInfo(TComBitratePicrateInfo *info, Int tempLevelLow, Int tempLevelHigh)
+{
+  UInt uiCode;
+  for(Int i = tempLevelLow; i <= tempLevelHigh; i++)
+  {
+    READ_FLAG( uiCode, "bit_rate_info_present_flag[i]" ); info->setBitrateInfoPresentFlag(i, uiCode ? true : false);
+    READ_FLAG( uiCode, "pic_rate_info_present_flag[i]" ); info->setPicrateInfoPresentFlag(i, uiCode ? true : false);
+    if(info->getBitrateInfoPresentFlag(i))
+    {
+      READ_CODE( 16, uiCode, "avg_bit_rate[i]" ); info->setAvgBitrate(i, uiCode);
+      READ_CODE( 16, uiCode, "max_bit_rate[i]" ); info->setMaxBitrate(i, uiCode);
+    }
+    if(info->getPicrateInfoPresentFlag(i))
+    {
+      READ_CODE(  2, uiCode,  "constant_pic_rate_idc[i]" ); info->setConstantPicRateIdc(i, uiCode);
+      READ_CODE( 16, uiCode,  "avg_pic_rate[i]"          ); info->setAvgPicrate(i, uiCode);
+    }
+  }
+}
+#endif  
 Void TDecCavlc::parseTerminatingBit( UInt& ruiBit )
 {
   ruiBit = false;

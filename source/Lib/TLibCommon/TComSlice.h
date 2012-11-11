@@ -228,6 +228,35 @@ public:
 };
 /// VPS class
 
+#if SIGNAL_BITRATE_PICRATE_IN_VPS
+class TComBitratePicrateInfo{
+  Bool        m_bitrateInfoPresentFlag[MAX_TLAYER];
+  Bool        m_picrateInfoPresentFlag[MAX_TLAYER];
+  Int         m_avgBitrate[MAX_TLAYER];
+  Int         m_maxBitrate[MAX_TLAYER];
+  Int         m_constantPicRateIdc[MAX_TLAYER];
+  Int         m_avgPicrate[MAX_TLAYER];
+public:
+  TComBitratePicrateInfo();
+  Bool        getBitrateInfoPresentFlag(Int i) {return m_bitrateInfoPresentFlag[i];}
+  Void        setBitrateInfoPresentFlag(Int i, Bool x) {m_bitrateInfoPresentFlag[i] = x;}
+
+  Bool        getPicrateInfoPresentFlag(Int i) {return m_picrateInfoPresentFlag[i];}
+  Void        setPicrateInfoPresentFlag(Int i, Bool x) {m_picrateInfoPresentFlag[i] = x;}
+
+  Int         getAvgBitrate(Int i) {return m_avgBitrate[i];}
+  Void        setAvgBitrate(Int i, Int x) {m_avgBitrate[i] = x;}
+
+  Int         getMaxBitrate(Int i) {return m_maxBitrate[i];}
+  Void        setMaxBitrate(Int i, Int x) {m_maxBitrate[i] = x;}
+
+  Int         getConstantPicRateIdc(Int i) {return m_constantPicRateIdc[i];}
+  Void        setConstantPicRateIdc(Int i, Int x) {m_constantPicRateIdc[i] = x;}
+
+  Int         getAvgPicrate(Int i) {return m_avgPicrate[i];}
+  Void        setAvgPicrate(Int i, Int x) {m_avgPicrate[i] = x;}
+};
+#endif
 class TComVPS
 {
 private:
@@ -247,6 +276,10 @@ private:
 #endif
 
   TComPTL     m_pcPTL;
+#if SIGNAL_BITRATE_PICRATE_IN_VPS
+  TComBitratePicrateInfo    m_bitratePicrateInfo;
+#endif
+
 public:
   TComVPS();
   virtual ~TComVPS();
@@ -284,6 +317,9 @@ public:
 #endif
 
   TComPTL* getPTL() { return &m_pcPTL; }
+#if SIGNAL_BITRATE_PICRATE_IN_VPS
+  TComBitratePicrateInfo *getBitratePicrateInfo() { return &m_bitratePicrateInfo; }
+#endif
 };
 
 struct HrdSubLayerInfo

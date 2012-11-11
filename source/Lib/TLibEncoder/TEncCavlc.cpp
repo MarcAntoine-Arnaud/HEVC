@@ -529,7 +529,9 @@ Void TEncCavlc::codeVPS( TComVPS* pcVPS )
   codePTL( pcVPS->getPTL(), true, pcVPS->getMaxTLayers() - 1 );
   WRITE_CODE( 0,                                   12,        "vps_reserved_zero_12bits" );
 #endif
-
+#if SIGNAL_BITRATE_PICRATE_IN_VPS
+  codeBitratePicRateInfo(pcVPS->getBitratePicrateInfo(), 0, pcVPS->getMaxTLayers() - 1);
+#endif  
   for(UInt i=0; i <= pcVPS->getMaxTLayers()-1; i++)
   {
     WRITE_UVLC( pcVPS->getMaxDecPicBuffering(i),           "vps_max_dec_pic_buffering[i]" );
@@ -956,7 +958,26 @@ Void TEncCavlc::codeProfileTier( ProfileTierLevel* ptl )
   }
   WRITE_CODE(0 , 16, "XXX_reserved_zero_16bits[]");  
 }
-
+#if SIGNAL_BITRATE_PICRATE_IN_VPS
+Void TEncCavlc::codeBitratePicRateInfo(TComBitratePicrateInfo *info, Int tempLevelLow, Int tempLevelHigh)
+{
+  for(Int i = tempLevelLow; i <= tempLevelHigh; i++)
+  {
+    WRITE_FLAG( info->getBitrateInfoPresentFlag(i),  "bit_rate_info_present_flag[i]" );
+    WRITE_FLAG( info->getPicrateInfoPresentFlag(i),  "pic_rate_info_present_flag[i]" );
+    if(info->getBitrateInfoPresentFlag(i))
+    {
+      WRITE_CODE( info->getAvgBitrate(i), 16, "avg_bit_rate[i]" );
+      WRITE_CODE( info->getMaxBitrate(i), 16, "max_bit_rate[i]" );
+    }
+    if(info->getPicrateInfoPresentFlag(i))
+    {
+      WRITE_CODE( info->getConstantPicRateIdc(i),  2, "constant_pic_rate_idc[i]" );
+      WRITE_CODE( info->getAvgPicrate(i),         16, "avg_pic_rate[i]"          );
+    }
+  }
+}
+#endif  
 /**
  - write wavefront substreams sizes for the slice header.
  .

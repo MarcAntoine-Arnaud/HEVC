@@ -40,6 +40,7 @@
 
 //! \ingroup TLibCommon
 //! \{
+#define SIGNAL_BITRATE_PICRATE_IN_VPS               1  ///< K0125: Signal bit_rate and pic_rate in VPS
 #define MOVE_SPS_TEMPORAL_ID_NESTING_FLAG           1  ///< K0120: Move sps_temporal_id_nesting_flag and replace sps_reserved_zero_bit
 #define CONDITION_SUBLAYERPROFILEPRESENTFLAG        1  ///< K0125: Condition signalling of sub_layer_profile_present_flag
 
