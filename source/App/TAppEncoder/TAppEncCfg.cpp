@@ -62,8 +62,13 @@ TAppEncCfg::TAppEncCfg()
 , m_pchBitstreamFile()
 , m_pchReconFile()
 , m_pchdQPFile()
+#if MIN_SPATIAL_SEGMENTATION
+, m_pColumnWidth()
+, m_pRowHeight()
+#else
 , m_pchColumnWidth()
 , m_pchRowHeight()
+#endif
 , m_scalingListFile()
 {
   m_aidQP = NULL;
@@ -79,8 +84,13 @@ TAppEncCfg::~TAppEncCfg()
   free(m_pchBitstreamFile);
   free(m_pchReconFile);
   free(m_pchdQPFile);
+#if MIN_SPATIAL_SEGMENTATION
+  free(m_pColumnWidth);
+  free(m_pRowHeight);
+#else
   free(m_pchColumnWidth);
   free(m_pchRowHeight);
+#endif
   free(m_scalingListFile);
 }
 
@@ -470,8 +480,68 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
   m_pchReconFile = cfg_ReconFile.empty() ? NULL : strdup(cfg_ReconFile.c_str());
   m_pchdQPFile = cfg_dQPFile.empty() ? NULL : strdup(cfg_dQPFile.c_str());
   
+#if MIN_SPATIAL_SEGMENTATION
+  Char* pColumnWidth = cfg_ColumnWidth.empty() ? NULL: strdup(cfg_ColumnWidth.c_str());
+  Char* pRowHeight = cfg_RowHeight.empty() ? NULL : strdup(cfg_RowHeight.c_str());
+  if( m_iUniformSpacingIdr == 0 && m_iNumColumnsMinus1 > 0 )
+  {
+    char *columnWidth;
+    int  i=0;
+    m_pColumnWidth = new UInt[m_iNumColumnsMinus1];
+    columnWidth = strtok(pColumnWidth, " ,-");
+    while(columnWidth!=NULL)
+    {
+      if( i>=m_iNumColumnsMinus1 )
+      {
+        printf( "The number of columns whose width are defined is larger than the allowed number of columns.\n" );
+        exit( EXIT_FAILURE );
+      }
+      *( m_pColumnWidth + i ) = atoi( columnWidth );
+      columnWidth = strtok(NULL, " ,-");
+      i++;
+    }
+    if( i<m_iNumColumnsMinus1 )
+    {
+      printf( "The width of some columns is not defined.\n" );
+      exit( EXIT_FAILURE );
+    }
+  }
+  else
+  {
+    m_pColumnWidth = NULL;
+  }
+
+  if( m_iUniformSpacingIdr == 0 && m_iNumRowsMinus1 > 0 )
+  {
+    char *rowHeight;
+    int  i=0;
+    m_pRowHeight = new UInt[m_iNumRowsMinus1];
+    rowHeight = strtok(pRowHeight, " ,-");
+    while(rowHeight!=NULL)
+    {
+      if( i>=m_iNumRowsMinus1 )
+      {
+        printf( "The number of rows whose height are defined is larger than the allowed number of rows.\n" );
+        exit( EXIT_FAILURE );
+      }
+      *( m_pRowHeight + i ) = atoi( rowHeight );
+      rowHeight = strtok(NULL, " ,-");
+      i++;
+    }
+    if( i<m_iNumRowsMinus1 )
+    {
+      printf( "The height of some rows is not defined.\n" );
+      exit( EXIT_FAILURE );
+   }
+  }
+  else
+  {
+    m_pRowHeight = NULL;
+  }
+#else
   m_pchColumnWidth = cfg_ColumnWidth.empty() ? NULL: strdup(cfg_ColumnWidth.c_str());
   m_pchRowHeight = cfg_RowHeight.empty() ? NULL : strdup(cfg_RowHeight.c_str());
+#endif
   m_scalingListFile = cfg_ScalingListFile.empty() ? NULL : strdup(cfg_ScalingListFile.c_str());
   
   /* rules for input, output and internal bitdepths as per help text */
@@ -1015,6 +1085,81 @@ Void TAppEncCfg::xCheckParameter()
     m_maxDecPicBuffering[MAX_TLAYER-1] = m_numReorderPics[MAX_TLAYER-1];
   }
 
+#if MIN_SPATIAL_SEGMENTATION
+  if(m_vuiParametersPresentFlag && m_bitstreamRestrictionFlag)
+  { 
+    Int PicSizeInSamplesY =  m_iSourceWidth * m_iSourceHeight;
+    if(tileFlag)
+    {
+      Int maxTileWidth = 0;
+      Int maxTileHeight = 0;
+      Int widthInCU = (m_iSourceWidth % m_uiMaxCUWidth) ? m_iSourceWidth/m_uiMaxCUWidth + 1: m_iSourceWidth/m_uiMaxCUWidth;
+      Int heightInCU = (m_iSourceHeight % m_uiMaxCUHeight) ? m_iSourceHeight/m_uiMaxCUHeight + 1: m_iSourceHeight/m_uiMaxCUHeight;
+      if(m_iUniformSpacingIdr)
+      {
+        maxTileWidth = m_uiMaxCUWidth*((widthInCU+m_iNumColumnsMinus1)/(m_iNumColumnsMinus1+1));
+        maxTileHeight = m_uiMaxCUHeight*((heightInCU+m_iNumRowsMinus1)/(m_iNumRowsMinus1+1));
+        // if only the last tile-row is one treeblock higher than the others 
+        // the maxTileHeight becomes smaller if the last row of treeblocks has lower height than the others
+        if(!((heightInCU-1)%(m_iNumRowsMinus1+1)))
+        {
+          maxTileHeight = maxTileHeight - m_uiMaxCUHeight + (m_iSourceHeight % m_uiMaxCUHeight);
+        }     
+        // if only the last tile-column is one treeblock wider than the others 
+        // the maxTileWidth becomes smaller if the last column of treeblocks has lower width than the others   
+        if(!((widthInCU-1)%(m_iNumColumnsMinus1+1)))
+        {
+          maxTileWidth = maxTileWidth - m_uiMaxCUWidth + (m_iSourceWidth % m_uiMaxCUWidth);
+        }
+      }
+      else // not uniform spacing
+      {
+        if(m_iNumColumnsMinus1<1)
+        {
+          maxTileWidth = m_iSourceWidth;
+        }
+        else
+        {
+          Int accColumnWidth = 0;
+          for(Int col=0; col<(m_iNumColumnsMinus1); col++)
+          {
+            maxTileWidth = m_pColumnWidth[col]>maxTileWidth ? m_pColumnWidth[col]:maxTileWidth;
+            accColumnWidth += m_pColumnWidth[col];
+          }
+          maxTileWidth = (widthInCU-accColumnWidth)>maxTileWidth ? m_uiMaxCUWidth*(widthInCU-accColumnWidth):m_uiMaxCUWidth*maxTileWidth;
+        }
+        if(m_iNumRowsMinus1<1)
+        {
+          maxTileHeight = m_iSourceHeight;
+        }
+        else
+        {
+          Int accRowHeight = 0;
+          for(Int row=0; row<(m_iNumRowsMinus1); row++)
+          {
+            maxTileHeight = m_pRowHeight[row]>maxTileHeight ? m_pRowHeight[row]:maxTileHeight;
+            accRowHeight += m_pRowHeight[row];
+          }
+          maxTileHeight = (heightInCU-accRowHeight)>maxTileHeight ? m_uiMaxCUHeight*(heightInCU-accRowHeight):m_uiMaxCUHeight*maxTileHeight;
+        }
+      }
+      Int maxSizeInSamplesY = maxTileWidth*maxTileHeight;
+      m_minSpatialSegmentationIdc = 4*PicSizeInSamplesY/maxSizeInSamplesY-4;
+    }
+    else if(m_iWaveFrontSynchro)
+    {
+      m_minSpatialSegmentationIdc = 4*PicSizeInSamplesY/((2*m_iSourceHeight+m_iSourceWidth)*m_uiMaxCUHeight)-4;
+    }
+    else if(m_iSliceMode == 1)
+    {
+      m_minSpatialSegmentationIdc = 4*PicSizeInSamplesY/(m_iSliceArgument*m_uiMaxCUWidth*m_uiMaxCUHeight)-4;
+    }
+    else
+    {
+      m_minSpatialSegmentationIdc = 0;
+    }
+  }
+#endif
   xConfirmPara( m_bUseLComb==false && m_numReorderPics[MAX_TLAYER-1]!=0, "ListCombination can only be 0 in low delay coding (more precisely when L0 and L1 are identical)" );  // Note however this is not the full necessary condition as ref_pic_list_combination_flag can only be 0 if L0 == L1.
   xConfirmPara( m_iWaveFrontSynchro < 0, "WaveFrontSynchro cannot be negative" );
   xConfirmPara( m_iWaveFrontSubstreams <= 0, "WaveFrontSubstreams must be positive" );

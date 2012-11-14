@@ -567,6 +567,9 @@ Void TEncTop::xInitSPS()
       pcVUI->setBitstreamRestrictionFlag(getBitstreamRestrictionFlag());
       pcVUI->setTilesFixedStructureFlag(getTilesFixedStructureFlag());
       pcVUI->setMotionVectorsOverPicBoundariesFlag(getMotionVectorsOverPicBoundariesFlag());
+#if MIN_SPATIAL_SEGMENTATION
+      pcVUI->setMinSpatialSegmentationIdc(getMinSpatialSegmentationIdc());
+#endif
       pcVUI->setMaxBytesPerPicDenom(getMaxBytesPerPicDenom());
       pcVUI->setMaxBitsPerMinCuDenom(getMaxBitsPerMinCuDenom());
       pcVUI->setLog2MaxMvLengthHorizontal(getLog2MaxMvLengthHorizontal());

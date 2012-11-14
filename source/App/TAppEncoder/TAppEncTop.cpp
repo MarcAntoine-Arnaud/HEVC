@@ -238,8 +238,13 @@ Void TAppEncTop::xInitLibCfg()
   m_cTEncTop.setNumRowsMinus1              ( m_iNumRowsMinus1 );
   if(m_iUniformSpacingIdr==0)
   {
+#if MIN_SPATIAL_SEGMENTATION
+    m_cTEncTop.setColumnWidth              ( m_pColumnWidth );
+    m_cTEncTop.setRowHeight                ( m_pRowHeight );
+#else
     m_cTEncTop.setColumnWidth              ( m_pchColumnWidth );
     m_cTEncTop.setRowHeight                ( m_pchRowHeight );
+#endif
   }
   m_cTEncTop.xCheckGSParameters();
   Int uiTilesCount          = (m_iNumRowsMinus1+1) * (m_iNumColumnsMinus1+1);
@@ -294,6 +299,9 @@ Void TAppEncTop::xInitLibCfg()
   m_cTEncTop.setBitstreamRestrictionFlag( m_bitstreamRestrictionFlag );
   m_cTEncTop.setTilesFixedStructureFlag( m_tilesFixedStructureFlag );
   m_cTEncTop.setMotionVectorsOverPicBoundariesFlag( m_motionVectorsOverPicBoundariesFlag );
+#if MIN_SPATIAL_SEGMENTATION
+  m_cTEncTop.setMinSpatialSegmentationIdc( m_minSpatialSegmentationIdc );
+#endif
   m_cTEncTop.setMaxBytesPerPicDenom( m_maxBytesPerPicDenom );
   m_cTEncTop.setMaxBitsPerMinCuDenom( m_maxBitsPerMinCuDenom );
   m_cTEncTop.setLog2MaxMvLengthHorizontal( m_log2MaxMvLengthHorizontal );

@@ -55,6 +55,7 @@
 
 #define RATE_CONTROL_LAMBDA_DOMAIN                  1  ///< JCTVC-K0103, rate control by R-lambda model
 
+#define MIN_SPATIAL_SEGMENTATION                    1  ///< JCTVC-K0236
 #define SAVE_BITS_REFPICLIST_MOD_FLAG               1  ///< K0224 Proposal#1: Send ref_pic_list_modification_flag_lX only when NumPocTotalCurr is greater than 1.
 
 #define VPS_REARRANGE                               1  ///< JCTVC-K0254

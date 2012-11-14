@@ -182,6 +182,10 @@ protected:
   Char*     m_pchColumnWidth;
   Int       m_iNumRowsMinus1;
   Char*     m_pchRowHeight;
+#if MIN_SPATIAL_SEGMENTATION
+  UInt*     m_pColumnWidth;
+  UInt*     m_pRowHeight;
+#endif
   Int       m_iWaveFrontSynchro; //< 0: no WPP. >= 1: WPP is enabled, the "Top right" from which inheritance occurs is this LCU offset in the line above the current.
   Int       m_iWaveFrontSubstreams; //< If iWaveFrontSynchro, this is the number of substreams per frame (dependent tiles) or per tile (independent tiles).
 
@@ -252,6 +256,9 @@ protected:
   Bool      m_bitstreamRestrictionFlag;                       ///< Signals whether bitstream restriction parameters are present
   Bool      m_tilesFixedStructureFlag;                        ///< Indicates that each active picture parameter set has the same values of the syntax elements related to tiles
   Bool      m_motionVectorsOverPicBoundariesFlag;             ///< Indicates that no samples outside the picture boundaries are used for inter prediction
+#if MIN_SPATIAL_SEGMENTATION
+  Int       m_minSpatialSegmentationIdc;                      ///< Indicates the maximum size of the spatial segments in the pictures in the coded video sequence
+#endif
   Int       m_maxBytesPerPicDenom;                            ///< Indicates a number of bytes not exceeded by the sum of the sizes of the VCL NAL units associated with any coded picture
   Int       m_maxBitsPerMinCuDenom;                           ///< Indicates an upper bound for the number of bits of coding_unit() data
   Int       m_log2MaxMvLengthHorizontal;                      ///< Indicate the maximum absolute value of a decoded horizontal MV component in quarter-pel luma units
