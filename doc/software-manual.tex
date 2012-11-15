@@ -1218,6 +1218,59 @@ This option has no effect if TransformSkip is disabled.
 \end{OptionTable}
 
 %%
+%% Rate control parameters
+%%
+\begin{OptionTable}{Rate control parameters}
+
+\Option{RateControl} &
+\ShortOption{\None} &
+\Default{false} &
+Rate control: enables rate control or not.
+\\
+
+\Option{TargetBitrate} &
+\ShortOption{\None} &
+\Default{0} &
+Rate control: target bitrate, in bps.
+\\
+
+\Option{KeepHierarchicalBit} &
+\ShortOption{\None} &
+\Default{false} &
+Rate control: keep hierarchical bit allocation in rate control algorithm.
+It is suggested to enable hierarchical bit allocation for hierarchical-B coding structure.
+\\
+
+\Option{LCULevelRateControl} &
+\ShortOption{\None} &
+\Default{true} &
+Rate control: true: LCU level RC; false: picture level RC.
+\\
+
+\Option{RCLCUSeparateModel} &
+\ShortOption{\None} &
+\Default{true} &
+Rate control: use LCU level separate R-lambda model or not.
+When LCULevelRateControl is equal to false, this parameter is meaningless.
+\\
+
+\Option{InitialQP} &
+\ShortOption{\None} &
+\Default{0} &
+Rate control: initial QP value for the first picture.
+0 to auto determine the initial QP value.
+\\
+
+\Option{RCForceIntraQP} &
+\ShortOption{\None} &
+\Default{false} &
+Rate control: force intra QP to be equal to initial QP or not.
+\\
+
+\\
+\end{OptionTable}
+
+%%
 %% VUI parameters
 %%
 \begin{OptionTable}{VUI parameters}
