@@ -262,7 +262,7 @@ public:
 #endif
 
 #if RATE_CONTROL_LAMBDA_DOMAIN
-  UInt   getSADPart ( Int bitDepth, Pel* piCur, Int iCurStride,  Pel* piOrg, Int iOrgStride, UInt uiWidth, UInt uiHeight );
+  UInt   getSADPart ( Int bitDepth, Pel* pelCur, Int curStride,  Pel* pelOrg, Int orgStride, UInt width, UInt height );
 #endif
 };// END CLASS DEFINITION TComRdCost
 

@@ -481,20 +481,20 @@ UInt TComRdCost::getDistPart(Int bitDepth, Pel* piCur, Int iCurStride,  Pel* piO
 }
 
 #if RATE_CONTROL_LAMBDA_DOMAIN
-UInt TComRdCost::getSADPart ( Int bitDepth, Pel* piCur, Int iCurStride,  Pel* piOrg, Int iOrgStride, UInt uiWidth, UInt uiHeight )
+UInt TComRdCost::getSADPart ( Int bitDepth, Pel* pelCur, Int curStride,  Pel* pelOrg, Int orgStride, UInt width, UInt height )
 {
-  UInt uiSAD = 0;
-  Int ishift = DISTORTION_PRECISION_ADJUSTMENT(bitDepth-8);
-  for ( Int i=0; i<uiHeight; i++ )
+  UInt SAD = 0;
+  Int shift = DISTORTION_PRECISION_ADJUSTMENT(bitDepth-8);
+  for ( Int i=0; i<height; i++ )
   {
-    for( Int j=0; j<uiWidth; j++ )
+    for( Int j=0; j<width; j++ )
     {
-      uiSAD += abs((piCur[j] - piOrg[j])) >> ishift;
+      SAD += abs((pelCur[j] - pelOrg[j])) >> shift;
     }
-    piCur = piCur + iCurStride;
-    piOrg = piOrg + iOrgStride;
+    pelCur = pelCur + curStride;
+    pelOrg = pelOrg + orgStride;
   }
-  return uiSAD;
+  return SAD;
 }
 #endif
 

@@ -779,7 +779,7 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
       writeRBSPTrailingBits(nalu.m_Bitstream);
       accessUnit.push_back(new NALUnitEBSP(nalu));
 #if RATE_CONTROL_LAMBDA_DOMAIN
-      actualTotalBits += unsigned(accessUnit.back()->m_nalUnitData.str().size()) * 8;
+      actualTotalBits += UInt(accessUnit.back()->m_nalUnitData.str().size()) * 8;
 #endif
 
       nalu = NALUnit(NAL_UNIT_SPS);
@@ -812,7 +812,7 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
       writeRBSPTrailingBits(nalu.m_Bitstream);
       accessUnit.push_back(new NALUnitEBSP(nalu));
 #if RATE_CONTROL_LAMBDA_DOMAIN
-      actualTotalBits += unsigned(accessUnit.back()->m_nalUnitData.str().size()) * 8;
+      actualTotalBits += UInt(accessUnit.back()->m_nalUnitData.str().size()) * 8;
 #endif
 
       nalu = NALUnit(NAL_UNIT_PPS);
@@ -821,7 +821,7 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
       writeRBSPTrailingBits(nalu.m_Bitstream);
       accessUnit.push_back(new NALUnitEBSP(nalu));
 #if RATE_CONTROL_LAMBDA_DOMAIN
-      actualTotalBits += unsigned(accessUnit.back()->m_nalUnitData.str().size()) * 8;
+      actualTotalBits += UInt(accessUnit.back()->m_nalUnitData.str().size()) * 8;
 #endif
 
       if(m_pcCfg->getActiveParameterSetsSEIEnabled())
@@ -1204,7 +1204,7 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
           xWriteTileLocationToSliceHeader(nalu, pcBitstreamRedirect, pcSlice);
           accessUnit.push_back(new NALUnitEBSP(nalu));
 #if RATE_CONTROL_LAMBDA_DOMAIN
-          actualTotalBits += unsigned(accessUnit.back()->m_nalUnitData.str().size()) * 8;
+          actualTotalBits += UInt(accessUnit.back()->m_nalUnitData.str().size()) * 8;
 #endif
           bNALUAlignedWrittenToList = true; 
           uiOneBitstreamPerSliceLength += nalu.m_Bitstream.getNumberOfWrittenBits(); // length of bitstream after byte-alignment

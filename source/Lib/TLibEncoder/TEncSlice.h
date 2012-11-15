@@ -116,7 +116,7 @@ public:
   Void    initEncSlice        ( TComPic*  pcPic, Int pocLast, Int pocCurr, Int iNumPicRcvd,
                                 Int iGOPid,   TComSlice*& rpcSlice, TComSPS* pSPS, TComPPS *pPPS );
 #if RATE_CONTROL_LAMBDA_DOMAIN
-  Void    resetQP             ( TComPic* pcPic, Int sliceQP, Double lambda );
+  Void    resetQP             ( TComPic* pic, Int sliceQP, Double lambda );
 #else
   Void    xLamdaRecalculation ( Int changeQP, Int idGOP, Int depth, SliceType eSliceType, TComSPS* pcSPS, TComSlice* pcSlice);
 #endif

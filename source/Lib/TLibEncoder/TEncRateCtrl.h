@@ -168,24 +168,24 @@ public:
   ~TEncRCGOP();
 
 public:
-  Void create( TEncRCSeq* pEncRCSeq, Int numPic );
+  Void create( TEncRCSeq* encRCSeq, Int numPic );
   Void destroy();
   Void updateAfterPicture( Int bitsCost );
 
 private:
-  Int  xEstGOPTargetBits( TEncRCSeq* pEncRCSeq, Int GOPSize );
+  Int  xEstGOPTargetBits( TEncRCSeq* encRCSeq, Int GOPSize );
 
 public:
-  TEncRCSeq* getEncRCSeq()        { return m_pEncRCSeq; }
+  TEncRCSeq* getEncRCSeq()        { return m_encRCSeq; }
   Int  getNumPic()                { return m_numPic;}
   Int  getTargetBits()            { return m_targetBits; }
   Int  getPicLeft()               { return m_picLeft; }
   Int  getBitsLeft()              { return m_bitsLeft; }
-  Int  getTargetBitInGOP( Int i ) { return m_pPicTargetBitInGOP[i]; }
+  Int  getTargetBitInGOP( Int i ) { return m_picTargetBitInGOP[i]; }
 
 private:
-  TEncRCSeq* m_pEncRCSeq;
-  Int* m_pPicTargetBitInGOP;
+  TEncRCSeq* m_encRCSeq;
+  Int* m_picTargetBitInGOP;
   Int m_numPic;
   Int m_targetBits;
   Int m_picLeft;
@@ -199,7 +199,7 @@ public:
   ~TEncRCPic();
 
 public:
-  Void create( TEncRCSeq* pEncRCSeq, TEncRCGOP* pEncRCGOP, Int frameLevel, list<TEncRCPic*>& listPreviousPictures );
+  Void create( TEncRCSeq* encRCSeq, TEncRCGOP* encRCGOP, Int frameLevel, list<TEncRCPic*>& listPreviousPictures );
   Void destroy();
 
   Double estimatePicLambda( list<TEncRCPic*>& listPreviousPictures );
@@ -217,12 +217,12 @@ public:
   Double calAverageLambda();
 
 private:
-  Int xEstPicTargetBits( TEncRCSeq* pEncRCSeq, TEncRCGOP* pEncRCGOP, list<TEncRCPic*>& listPreviousPictures, Int frameLevel );
-  Int xEstPicHeaderBits( TEncRCSeq* pEncRCSeq, TEncRCGOP* pEncRCGOP, list<TEncRCPic*>& listPreviousPictures, Int frameLevel );
+  Int xEstPicTargetBits( TEncRCSeq* encRCSeq, TEncRCGOP* encRCGOP, list<TEncRCPic*>& listPreviousPictures, Int frameLevel );
+  Int xEstPicHeaderBits( TEncRCSeq* encRCSeq, TEncRCGOP* encRCGOP, list<TEncRCPic*>& listPreviousPictures, Int frameLevel );
 
 public:
-  TEncRCSeq*      getRCSequence()                         { return m_pEncRCSeq; }
-  TEncRCGOP*      getRCGOP()                              { return m_pEncRCGOP; }
+  TEncRCSeq*      getRCSequence()                         { return m_encRCSeq; }
+  TEncRCGOP*      getRCGOP()                              { return m_encRCGOP; }
 
   Int  getFrameLevel()                                    { return m_frameLevel; }
   Int  getNumberOfPixel()                                 { return m_numberOfPixel; }
@@ -235,8 +235,8 @@ public:
   Int  getPixelsLeft()                                    { return m_pixelsLeft; }
   Int  getBitsCoded()                                     { return m_targetBits - m_estHeaderBits - m_bitsLeft; }
   Int  getLCUCoded()                                      { return m_numberOfLCU - m_LCULeft; }
-  TRCLCU* getLCU()                                        { return m_pLCUs; }
-  TRCLCU& getLCU( Int LCUIdx )                            { return m_pLCUs[LCUIdx]; }
+  TRCLCU* getLCU()                                        { return m_LCUs; }
+  TRCLCU& getLCU( Int LCUIdx )                            { return m_LCUs[LCUIdx]; }
   Int  getPicActualHeaderBits()                           { return m_picActualHeaderBits; }
   Double getTotalMAD()                                    { return m_totalMAD; }
   Void   setTotalMAD( Double MAD )                        { m_totalMAD = MAD; }
@@ -246,11 +246,11 @@ public:
   Int  getPicEstQP()                                      { return m_estPicQP; }
   Void setPicEstQP( Int QP )                              { m_estPicQP = QP; }
   Double getPicEstLambda()                                { return m_estPicLambda; }
-  Void setPicEstLambda( Double Lambda )                   { m_picLambda = Lambda; }
+  Void setPicEstLambda( Double lambda )                   { m_picLambda = lambda; }
 
 private:
-  TEncRCSeq* m_pEncRCSeq;
-  TEncRCGOP* m_pEncRCGOP;
+  TEncRCSeq* m_encRCSeq;
+  TEncRCGOP* m_encRCGOP;
 
   Int m_frameLevel;
   Int m_numberOfPixel;
@@ -264,13 +264,13 @@ private:
   Int m_bitsLeft;
   Int m_pixelsLeft;
 
-  TRCLCU* m_pLCUs;
+  TRCLCU* m_LCUs;
   Int m_picActualHeaderBits;    // only SH and potential APS
   Double m_totalMAD;
   Int m_picActualBits;          // the whole picture, including header
   Int m_picQP;                  // in integer form
   Double m_picLambda;
-  TEncRCPic* m_pLastPicture;
+  TEncRCPic* m_lastPicture;
 };
 
 class TEncRateCtrl
@@ -280,7 +280,7 @@ public:
   ~TEncRateCtrl();
 
 public:
-  Void init( Int totalFrames, Int targetBitrate, Int frameRate, Int GOPSize, Int picWidth, Int picHeight, Int LCUWidth, Int LCUHeight, Bool keepHierBits, Bool useLCUSeparateModel, GOPEntry  GOPList[MAX_GOP] );
+  Void init( Int totalFrames, Int targetBitrate, Int frameRate, Int GOPSize, Int picWidth, Int picHeight, Int LCUWidth, Int LCUHeight, Bool keepHierBits, Bool useLCUSeparateModel, GOPEntry GOPList[MAX_GOP] );
   Void destroy();
   Void initRCPic( Int frameLevel );
   Void initRCGOP( Int numberOfPictures );
@@ -289,15 +289,15 @@ public:
 public:
   Void       setRCQP ( Int QP ) { m_RCQP = QP;   }
   Int        getRCQP ()         { return m_RCQP; }
-  TEncRCSeq* getRCSeq()          { assert ( m_pEncRCSeq != NULL ); return m_pEncRCSeq; }
-  TEncRCGOP* getRCGOP()          { assert ( m_pEncRCGOP != NULL ); return m_pEncRCGOP; }
-  TEncRCPic* getRCPic()          { assert ( m_pEncRCPic != NULL ); return m_pEncRCPic; }
+  TEncRCSeq* getRCSeq()          { assert ( m_encRCSeq != NULL ); return m_encRCSeq; }
+  TEncRCGOP* getRCGOP()          { assert ( m_encRCGOP != NULL ); return m_encRCGOP; }
+  TEncRCPic* getRCPic()          { assert ( m_encRCPic != NULL ); return m_encRCPic; }
   list<TEncRCPic*>& getPicList() { return m_listRCPictures; }
 
 private:
-  TEncRCSeq* m_pEncRCSeq;
-  TEncRCGOP* m_pEncRCGOP;
-  TEncRCPic* m_pEncRCPic;
+  TEncRCSeq* m_encRCSeq;
+  TEncRCGOP* m_encRCGOP;
+  TEncRCPic* m_encRCPic;
   list<TEncRCPic*> m_listRCPictures;
   Int        m_RCQP;
 };
