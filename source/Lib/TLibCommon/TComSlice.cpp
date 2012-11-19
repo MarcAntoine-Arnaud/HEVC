@@ -804,6 +804,7 @@ Void TComSlice::copySliceInfo(TComSlice *pSrc)
   m_bLMvdL1Zero = pSrc->m_bLMvdL1Zero;
   m_LFCrossSliceBoundaryFlag = pSrc->m_LFCrossSliceBoundaryFlag;
   m_enableTMVPFlag                = pSrc->m_enableTMVPFlag;
+  m_maxNumMergeCand               = pSrc->m_maxNumMergeCand;
 }
 
 Int TComSlice::m_prevPOC = 0;
