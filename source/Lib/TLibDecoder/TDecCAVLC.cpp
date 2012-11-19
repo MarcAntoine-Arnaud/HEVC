@@ -1198,6 +1198,13 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
         rpcSlice->setDeblockingFilterTcOffsetDiv2  ( rpcSlice->getPPS()->getDeblockingFilterTcOffsetDiv2() );
       }
     }
+    else
+    {  
+      rpcSlice->setDeblockingFilterDisable       ( 0 );
+      rpcSlice->setDeblockingFilterBetaOffsetDiv2( 0 );
+      rpcSlice->setDeblockingFilterTcOffsetDiv2  ( 0 );
+    }
+
     Bool isSAOEnabled = (!rpcSlice->getSPS()->getUseSAO())?(false):(rpcSlice->getSaoEnabledFlag()||rpcSlice->getSaoEnabledFlagChroma());
     Bool isDBFEnabled = (!rpcSlice->getDeblockingFilterDisable());
 
