@@ -385,6 +385,11 @@ private:
   UInt m_dpbOutputDelayLengthMinus1;
   UInt m_numDU;
   HrdSubLayerInfo m_HRD[MAX_TLAYER];
+#if POC_TEMPORAL_RELATIONSHIP
+  Bool m_pocProportionalToTimingFlag;
+  Int  m_numTicksPocDiffOneMinus1;
+#endif
+
 public:
   TComVUI()
     :m_aspectRatioInfoPresentFlag(false)
@@ -429,6 +434,10 @@ public:
     ,m_initialCpbRemovalDelayLengthMinus1(0)
     ,m_cpbRemovalDelayLengthMinus1(0)
     ,m_dpbOutputDelayLengthMinus1(0)
+#if POC_TEMPORAL_RELATIONSHIP
+    ,m_pocProportionalToTimingFlag(false)
+    ,m_numTicksPocDiffOneMinus1(0)
+#endif
   {}
 
   virtual ~TComVUI() {}
@@ -586,6 +595,12 @@ public:
 
   Void setNumDU                              ( UInt value ) { m_numDU = value;                            }
   UInt getNumDU                              ( )            { return m_numDU;          }
+#if POC_TEMPORAL_RELATIONSHIP
+  Bool getPocProportionalToTimingFlag() {return m_pocProportionalToTimingFlag; }
+  Void setPocProportionalToTimingFlag(Bool x) {m_pocProportionalToTimingFlag = x;}
+  Int  getNumTicksPocDiffOneMinus1() {return m_numTicksPocDiffOneMinus1;}
+  Void setNumTicksPocDiffOneMinus1(Int x) { m_numTicksPocDiffOneMinus1 = x;}
+#endif
 };
 
 /// SPS class
