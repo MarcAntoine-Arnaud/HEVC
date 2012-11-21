@@ -40,6 +40,7 @@
 
 //! \ingroup TLibCommon
 //! \{
+#define DISALLOW_LTRP_REPETITIONS                   1  ///< K0123: Disallow duplicate LTRP entries in RPS
 #define REMOVE_LTRP_LSB_RESTRICTIONS                1  ///< K0123: Remove restrictions that LTRP LSBs have to be increasing/decreasing
 #define POC_TEMPORAL_RELATIONSHIP                   1  ///< K0120: Add syntax in SPS/VUI to indicate POC temporal relationship
 #define SIGNAL_BITRATE_PICRATE_IN_VPS               1  ///< K0125: Signal bit_rate and pic_rate in VPS

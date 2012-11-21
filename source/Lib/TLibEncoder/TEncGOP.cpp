@@ -2096,5 +2096,16 @@ Void TEncGOP::arrangeLongtermPicturesInRPS(TComSlice *pcSlice, TComList<TComPic*
 
     assert(rps->getDeltaPocMSBCycleLT(i) >= 0);   // Non-negative value
   }
+#if DISALLOW_LTRP_REPETITIONS
+  for(i = rps->getNumberOfPictures() - 1, ctr = 1; i >= offset; i--, ctr++)
+  {
+    for(Int j = rps->getNumberOfPictures() - 1 - ctr; j >= offset; j--)
+    {
+      // Here at the encoder we know that we have set the full POC value for the LTRPs, hence we 
+      // don't have to check the MSB present flag values for this constraint.
+      assert( rps->getPOC(i) != rps->getPOC(j) ); // If assert fails, LTRP entry repeated in RPS!!!
+    }
+  }
+#endif
 }
 //! \}
