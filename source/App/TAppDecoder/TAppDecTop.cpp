@@ -53,9 +53,9 @@
 // ====================================================================================================================
 
 TAppDecTop::TAppDecTop()
+: m_iPOCLastDisplay(-MAX_INT)
 {
   ::memset (m_abDecFlag, 0, sizeof (m_abDecFlag));
-  m_iPOCLastDisplay  = -MAX_INT;
 }
 
 Void TAppDecTop::create()

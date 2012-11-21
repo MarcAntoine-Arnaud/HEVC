@@ -68,7 +68,15 @@ protected:
   std::vector<Int> m_targetDecLayerIdSet;             ///< set of LayerIds to be included in the sub-bitstream extraction process.
   
 public:
-  TAppDecCfg()          {}
+  TAppDecCfg()
+  : m_pchBitstreamFile(NULL)
+  , m_pchReconFile(NULL) 
+  , m_iSkipFrame(0)
+  , m_outputBitDepthY(0)
+  , m_outputBitDepthC(0)
+  , m_iMaxTemporalLayer(-1)
+  , m_decodedPictureHashSEIEnabled(0)
+  {}
   virtual ~TAppDecCfg() {}
   
   Bool  parseCfg        ( Int argc, Char* argv[] );   ///< initialize option class from configuration
