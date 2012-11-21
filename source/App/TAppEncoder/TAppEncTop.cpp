@@ -85,11 +85,7 @@ Void TAppEncTop::xInitLibCfg()
   m_cTEncTop.setFrameSkip                    ( m_FrameSkip );
   m_cTEncTop.setSourceWidth                  ( m_iSourceWidth );
   m_cTEncTop.setSourceHeight                 ( m_iSourceHeight );
-  m_cTEncTop.setCroppingMode                 ( m_croppingMode );
-  m_cTEncTop.setCropLeft                     ( m_cropLeft );
-  m_cTEncTop.setCropRight                    ( m_cropRight );
-  m_cTEncTop.setCropTop                      ( m_cropTop );
-  m_cTEncTop.setCropBottom                   ( m_cropBottom );
+  m_cTEncTop.setPicCroppingWindow            ( m_cropLeft, m_cropRight, m_cropTop, m_cropBottom );
   m_cTEncTop.setFrameToBeEncoded             ( m_iFrameToBeEncoded );
   
   //====== Coding Structure ========

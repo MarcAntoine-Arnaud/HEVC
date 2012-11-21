@@ -603,6 +603,45 @@ public:
 #endif
 };
 
+class CroppingWindow
+{
+private:
+  Bool          m_picCroppingFlag;
+  Int           m_picCropLeftOffset;
+  Int           m_picCropRightOffset;
+  Int           m_picCropTopOffset;
+  Int           m_picCropBottomOffset;
+public:
+  CroppingWindow()
+  : m_picCroppingFlag     (false)
+  , m_picCropLeftOffset   (0)
+  , m_picCropRightOffset  (0)
+  , m_picCropTopOffset    (0)
+  , m_picCropBottomOffset (0)
+  { }
+
+  Bool          getPicCroppingFlag() const            { return m_picCroppingFlag; }
+  Void          resetCropping()                       { m_picCroppingFlag = false; m_picCropLeftOffset = m_picCropRightOffset = m_picCropTopOffset = m_picCropBottomOffset = 0; }
+  Int           getPicCropLeftOffset() const          { return m_picCroppingFlag ? m_picCropLeftOffset : 0; }
+  Void          setPicCropLeftOffset(Int val)         { m_picCropLeftOffset = val; m_picCroppingFlag = true; }
+  Int           getPicCropRightOffset() const         { return m_picCroppingFlag ? m_picCropRightOffset : 0; }
+  Void          setPicCropRightOffset(Int val)        { m_picCropRightOffset = val; m_picCroppingFlag = true; }
+  Int           getPicCropTopOffset() const           { return m_picCroppingFlag ? m_picCropTopOffset : 0; }
+  Void          setPicCropTopOffset(Int val)          { m_picCropTopOffset = val; m_picCroppingFlag = true; }
+  Int           getPicCropBottomOffset() const        { return m_picCroppingFlag ? m_picCropBottomOffset : 0; }
+  Void          setPicCropBottomOffset(Int val)       { m_picCropBottomOffset = val; m_picCroppingFlag = true; }
+
+  Void          setPicCropping(Int cropLeft, Int cropRight, Int cropTop, Int cropBottom)
+  {
+    m_picCroppingFlag     = true;
+    m_picCropLeftOffset   = cropLeft;
+    m_picCropRightOffset  = cropRight;
+    m_picCropTopOffset    = cropTop;
+    m_picCropBottomOffset = cropBottom;
+  }
+};
+
+
 /// SPS class
 class TComSPS
 {
@@ -616,11 +655,9 @@ private:
   // Structure
   UInt        m_picWidthInLumaSamples;
   UInt        m_picHeightInLumaSamples;
-  Bool        m_picCroppingFlag;
-  Int         m_picCropLeftOffset;
-  Int         m_picCropRightOffset;
-  Int         m_picCropTopOffset;
-  Int         m_picCropBottomOffset;
+  
+  CroppingWindow m_picCroppingWindow;
+
   UInt        m_uiMaxCUWidth;
   UInt        m_uiMaxCUHeight;
   UInt        m_uiMaxCUDepth;
@@ -707,16 +744,9 @@ public:
   Void setPicHeightInLumaSamples      ( UInt u ) { m_picHeightInLumaSamples = u;       }
   UInt getPicHeightInLumaSamples      ()         { return  m_picHeightInLumaSamples;   }
 
-  Bool getPicCroppingFlag() const          { return m_picCroppingFlag; }
-  Void setPicCroppingFlag(Bool val)        { m_picCroppingFlag = val; }
-  Int  getPicCropLeftOffset() const        { return m_picCropLeftOffset; }
-  Void setPicCropLeftOffset(Int val)       { m_picCropLeftOffset = val; }
-  Int  getPicCropRightOffset() const       { return m_picCropRightOffset; }
-  Void setPicCropRightOffset(Int val)      { m_picCropRightOffset = val; }
-  Int  getPicCropTopOffset() const         { return m_picCropTopOffset; }
-  Void setPicCropTopOffset(Int val)        { m_picCropTopOffset = val; }
-  Int  getPicCropBottomOffset() const      { return m_picCropBottomOffset; }
-  Void setPicCropBottomOffset(Int val)     { m_picCropBottomOffset = val; }
+  CroppingWindow& getPicCroppingWindow()                                { return  m_picCroppingWindow;          }
+  Void            setPicCroppingWindow(CroppingWindow& croppingWindow ) { m_picCroppingWindow = croppingWindow; }
+
   UInt  getNumLongTermRefPicSPS()             { return m_numLongTermRefPicSPS; }
   Void  setNumLongTermRefPicSPS(UInt val)     { m_numLongTermRefPicSPS = val; }
 

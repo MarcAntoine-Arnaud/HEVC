@@ -103,10 +103,7 @@ protected:
   Int       m_iSourceWidth;
   Int       m_iSourceHeight;
   Int       m_croppingMode;
-  Int       m_cropLeft;
-  Int       m_cropRight;
-  Int       m_cropTop;
-  Int       m_cropBottom;
+  CroppingWindow m_picCroppingWindow;
   Int       m_iFrameToBeEncoded;
   Double    m_adLambdaModifier[ MAX_TLAYER ];
 
@@ -309,11 +306,10 @@ public:
   Void      setFrameSkip                    ( UInt i ) { m_FrameSkip = i; }
   Void      setSourceWidth                  ( Int   i )      { m_iSourceWidth = i; }
   Void      setSourceHeight                 ( Int   i )      { m_iSourceHeight = i; }
-  Void      setCroppingMode                 ( Int   i )      { m_croppingMode = i; }
-  Void      setCropLeft                     ( Int   i )      { m_cropLeft = i; }
-  Void      setCropRight                    ( Int   i )      { m_cropRight = i; }
-  Void      setCropTop                      ( Int   i )      { m_cropTop = i; }
-  Void      setCropBottom                   ( Int   i )      { m_cropBottom = i; }
+
+  CroppingWindow &getPicCroppingWindow()                                                     { return m_picCroppingWindow; }
+  Void      setPicCroppingWindow (Int cropLeft, Int cropRight, Int cropTop, Int cropBottom ) { m_picCroppingWindow.setPicCropping (cropLeft, cropRight, cropTop, cropBottom); }
+
   Void      setFrameToBeEncoded             ( Int   i )      { m_iFrameToBeEncoded = i; }
   
   //====== Coding Structure ========
@@ -377,11 +373,6 @@ public:
   UInt      getFrameSkip                    ()      { return  m_FrameSkip; }
   Int       getSourceWidth                  ()      { return  m_iSourceWidth; }
   Int       getSourceHeight                 ()      { return  m_iSourceHeight; }
-  Int       getCroppingMode                 ()      { return  m_croppingMode; }
-  Int       getCropLeft                     ()      { return  m_cropLeft; }
-  Int       getCropRight                    ()      { return  m_cropRight; }
-  Int       getCropTop                      ()      { return  m_cropTop; }
-  Int       getCropBottom                   ()      { return  m_cropBottom; }
   Int       getFrameToBeEncoded             ()      { return  m_iFrameToBeEncoded; }
   void setLambdaModifier                    ( UInt uiIndex, Double dValue ) { m_adLambdaModifier[ uiIndex ] = dValue; }
   Double getLambdaModifier                  ( UInt uiIndex ) const { return m_adLambdaModifier[ uiIndex ]; }
