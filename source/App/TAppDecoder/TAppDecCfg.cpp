@@ -76,10 +76,8 @@ Bool TAppDecCfg::parseCfg( Int argc, Char* argv[] )
   ("OutputBitDepthC,d", m_outputBitDepthC, 0, "bit depth of YUV output chroma component (default: use 0 for native depth)")
   ("MaxTemporalLayer,t", m_iMaxTemporalLayer, -1, "Maximum Temporal Layer to be decoded. -1 to decode all layers")
   ("SEIpictureDigest", m_decodedPictureHashSEIEnabled, 1, "Control handling of decoded picture hash SEI messages\n"
-                                              "\t3: checksum\n"
-                                              "\t2: CRC\n"
-                                              "\t1: MD5\n"
-                                              "\t0: ignore")
+                                              "\t1: check hash in SEI messages if available in the bitstream\n"
+                                              "\t0: ignore SEI message")
   ("TarDecLayerIdSetFile,l", cfg_TargetDecLayerIdSetFile, string(""), "targetDecLayerIdSet file name. The file should include white space separated LayerId values to be decoded. Omitting the option or a value of -1 in the file decodes all layers.")
   ;
   po::setDefaults(opts);

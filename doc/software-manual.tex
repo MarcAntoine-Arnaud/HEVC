@@ -1603,16 +1603,17 @@ that the native bit-depth is used)
 \Option{SEIPictureDigest} &
 \ShortOption{\None} &
 \Default{1} &
-Enable or disable verification of any picture_digest SEI messages. When
+Enable or disable verification of any Picture hash SEI messages. When
 this parameter is set to 0, the feature is disabled and all messages are
 ignored. When set to 1 (default), the feature is enabled and the decoder
 has the following behaviour:
 \begin{itemize}
 \item
-  For each decoded picture, the MD5 is calculated and written to the
-  log.  If the input bitstream has a picture_digest SEI message for the
-  corresponding decoded picture, the two MD5s are compared. Decoding
-  will continue even if there is a mismatch.
+  If Picture hash SEI messages are included in the bitstream, the same type
+  of hash is calculated for each decoded picture and written to the
+  log together with an indication whether the calculted value matches
+  the value in the SEI message. 
+  Decoding will continue even if there is a mismatch.
 
 \item
   After decoding is complete, if any MD5sum comparison failed, a warning
