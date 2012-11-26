@@ -1186,6 +1186,16 @@ bitstream, but may be inferred from the parity of the sum of all nonzero
 coefficients in the current coefficient group.
 \\
 
+\Option{StrongIntraSmoothing} &
+\ShortOption{-sis} &
+\Default{true} &
+If enabled specifies that for 32x32 intra prediction block, the intra smoothing
+when applied is either the 1:2:1 smoothing filter or a stronger bi-linear 
+interpolation filter.  Key reference sample values are tested and if the criteria 
+is satisfied, the stronger intra smoothing filter is applied.
+If disabled, the intra smoothing filter when applied is the 1:2:1 smoothing filter.
+\\
+
 \Option{TMVPMode} &
 \ShortOption{\None} &
 \Default{1} &
