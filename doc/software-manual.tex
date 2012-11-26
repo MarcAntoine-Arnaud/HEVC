@@ -240,6 +240,16 @@ optimization. Higher values mean lower quality and less bits. Typical
 range is between
 0.3 and 1.
 
+\item[]\textbf{tcOffsetDiv2}: In-loop deblocking filter parameter tcOffsetDiv2 
+is added to the base parameter LoopFilterTcOffset_div2 to set the final tc_offset_div2 
+parameter for this picture signalled in the slice segment header. The final 
+value of tc_offset_div2 shall be an integer number in the range $-6..6$.
+
+\item[]\textbf{betaOffsetDiv2}: In-loop deblocking filter parameter betaOffsetDiv2 
+is added to the base parameter LoopFilterBetaOffset_div2 to set the final beta_offset_div2 
+parameter for this picture signalled in the slice segment header. The final 
+value of beta_offset_div2 shall be an integer number in the range $-6..6$.
+
 \item[]\textbf{temporal_id}: Temporal layer of the frame. A frame cannot
 predict from a frame with a higher temporal id. If a frame with higher
 temporal IDs is listed among a frame's reference pictures, it is
@@ -356,6 +366,8 @@ Type                &   P  &    B   &      B   &       B \\
 POC                 &   4  &    2   &      1   &       3 \\
 QPoffset            &   1  &    2   &      3   &       3 \\
 QPfactor            & 0.5  &  0.5   &    0.5   &     0.5 \\
+tcOffsetDiv2        &   0  &    1   &      2   &       2 \\  
+betaOffsetDiv2      &   0  &    0   &      0   &       0 \\
 temporal_id         &   0  &    1   &      2   &       2 \\
 num_ref_pics_active &   1  &    1   &      1   &       1 \\
 num_ref_pics        &   1  &    2   &      3   &       2 \\
@@ -377,10 +389,10 @@ line should contain information for one frame, so this
 configuration would be specified as:
 
 \begin{verbatim}
-Frame1: P 4 1 0.5 0 1 1 -4 0
-Frame2: B 2 2 0.5 1 1 2 -2 2 1 0 2 2 1 1
-Frame3: B 1 3 0.5 2 1 3 -1 1 3 1 0 1 3 1 1 1
-Frame4: B 3 3 0.5 2 1 2 -1 1 1 0 -2 4 0 1 1 0
+Frame1: P 4 1 0.5 0 0 0 1 1 -4 0
+Frame2: B 2 2 0.5 1 0 1 1 2 -2 2 1 0 2 2 1 1
+Frame3: B 1 3 0.5 2 0 2 1 3 -1 1 3 1 0 1 3 1 1 1
+Frame4: B 3 3 0.5 2 0 2 1 2 -1 1 1 0 -2 4 0 1 1 0
 \end{verbatim}
 
 The values of deltaRIdx$-1$, deltaRPS, num_ref_idcs and reference
@@ -1033,9 +1045,37 @@ boundaries.
 \ShortOption{\None}&
 \Default{false}&
 Enables or disables the presence of the deblocking filter control
-parameters in the picture parameter set and in the slice header.
+parameters in the picture parameter set and in the slice segment header.
 When disabled, the default deblocking filter parameters are used.
 \\
+
+\Option{LoopFilterOffsetInPPS}&
+\ShortOption{\None}&
+\Default{false}&
+If enabled, the in-loop deblocking filter control parameters are sent in PPS. 
+Otherwise, the in-loop deblocking filter control parameters are sent in the slice segment header.
+If deblocking filter parameters are sent in PPS, the same values of deblocking filter parameters 
+are used for all pictures in the sequence (i.e. deblocking parameter = base parameter value).  
+If deblocking filter parameters are sent in the slice segment header, varying deblocking filter 
+parameters can be specified by setting parameters tcOffsetDiv2 and betaOffsetDiv2 in the GOP structure table. 
+In this case, the final value of the deblocking filter parameter sent for a certain GOP picture is equal to 
+(base parameter + GOP parameter for this picture). Intra-pictures use the base parameters values.
+\\
+
+\Option{LoopFilterTcOffset_div2}&
+\ShortOption{\None}&
+\Default{0}&
+Specifies the base value for the in-loop deblocking filter parameter tc_offset_div2. The final value of tc_offset_div2 
+shall be an integer number in the range $-6..6$.
+\\
+
+\Option{LoopFilterBetaOffset_div2}&
+\ShortOption{\None}&
+\Default{0}&
+Specifies the base value for the in-loop deblocking filter parameter beta_offset_div2. The final value of beta_offset_div2 
+shall be an integer number in the range $-6..6$.
+\\
+
 \end{OptionTable}
 
 
