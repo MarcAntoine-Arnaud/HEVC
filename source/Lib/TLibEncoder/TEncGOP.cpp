@@ -842,13 +842,13 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
         accessUnit.push_back(new NALUnitEBSP(nalu));
       }
 #if SEI_DISPLAY_ORIENTATION
-      if (m_pcCfg->getDisplayOrientationSEIEnabled())
+      if (m_pcCfg->getDisplayOrientationSEIAngle())
       {
         SEIDisplayOrientation sei_display_orientation;
         sei_display_orientation.cancelFlag = false;
         sei_display_orientation.horFlip = false;
         sei_display_orientation.verFlip = false;
-        sei_display_orientation.anticlockwiseRotation = m_pcCfg->getDisplayOrientationSEIEnabled();
+        sei_display_orientation.anticlockwiseRotation = m_pcCfg->getDisplayOrientationSEIAngle();
 
         nalu = NALUnit(NAL_UNIT_SEI); 
         m_pcEntropyCoder->setBitstream(&nalu.m_Bitstream);

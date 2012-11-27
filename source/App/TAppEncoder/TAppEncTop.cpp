@@ -224,7 +224,7 @@ Void TAppEncTop::xInitLibCfg()
   m_cTEncTop.setBufferingPeriodSEIEnabled( m_bufferingPeriodSEIEnabled );
   m_cTEncTop.setPictureTimingSEIEnabled( m_pictureTimingSEIEnabled );
 #if SEI_DISPLAY_ORIENTATION
-  m_cTEncTop.setDisplayOrientationSEIEnabled( m_displayOrientationSEIEnabled );
+  m_cTEncTop.setDisplayOrientationSEIAngle( m_displayOrientationSEIAngle );
 #endif
 #if SEI_TEMPORAL_LEVEL0_INDEX
   m_cTEncTop.setTemporalLevel0IndexSEIEnabled( m_temporalLevel0IndexSEIEnabled );
