@@ -970,6 +970,10 @@ private:
   Bool m_listsModificationPresentFlag;
 #endif /* HLS_MOVE_SPS_PICLIST_FLAGS */
   UInt m_log2ParallelMergeLevelMinus2;
+#if HLS_EXTRA_SLICE_HEADER_BITS
+  Int m_numExtraSliceHeaderBits;
+#endif /* HLS_EXTRA_SLICE_HEADER_BITS */
+
 public:
   TComPPS();
   virtual ~TComPPS();
@@ -1091,6 +1095,10 @@ public:
 #endif /* HLS_MOVE_SPS_PICLIST_FLAGS */
   UInt getLog2ParallelMergeLevelMinus2      ()                    { return m_log2ParallelMergeLevelMinus2; }
   Void setLog2ParallelMergeLevelMinus2      (UInt mrgLevel)       { m_log2ParallelMergeLevelMinus2 = mrgLevel; }
+#if HLS_EXTRA_SLICE_HEADER_BITS
+  Int getNumExtraSliceHeaderBits() { return m_numExtraSliceHeaderBits; }
+  Void setNumExtraSliceHeaderBits(Int i) { m_numExtraSliceHeaderBits = i; }
+#endif /* HLS_EXTRA_SLICE_HEADER_BITS */
   Void      setLoopFilterAcrossSlicesEnabledFlag ( Bool   bValue  )    { m_loopFilterAcrossSlicesEnabledFlag = bValue; }
   Bool      getLoopFilterAcrossSlicesEnabledFlag ()                    { return m_loopFilterAcrossSlicesEnabledFlag;   } 
   Bool getSliceHeaderExtensionPresentFlag   ()                    { return m_sliceHeaderExtensionPresentFlag; }

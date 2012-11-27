@@ -1489,6 +1489,9 @@ TComPPS::TComPPS()
 #if HLS_MOVE_SPS_PICLIST_FLAGS
 , m_listsModificationPresentFlag(  0)
 #endif /* HLS_MOVE_SPS_PICLIST_FLAGS */
+#if HLS_EXTRA_SLICE_HEADER_BITS
+, m_numExtraSliceHeaderBits(0)
+#endif /* HLS_EXTRA_SLICE_HEADER_BITS */
 {
   m_scalingList = new TComScalingList;
 }
