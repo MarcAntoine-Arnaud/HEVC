@@ -327,6 +327,12 @@ Void TDecCavlc::parsePPS(TComPPS* pcPPS)
   {
     parseScalingList( pcPPS->getScalingList() );
   }
+
+#if HLS_MOVE_SPS_PICLIST_FLAGS
+  READ_FLAG( uiCode, "lists_modification_present_flag");
+  pcPPS->setListsModificationPresentFlag(uiCode);
+#endif /* HLS_MOVE_SPS_PICLIST_FLAGS */
+
   READ_UVLC( uiCode, "log2_parallel_merge_level_minus2");
   pcPPS->setLog2ParallelMergeLevelMinus2 (uiCode);
 
@@ -472,6 +478,9 @@ Void  TDecCavlc::parseVUI(TComVUI* pcVUI, TComSPS *pcSPS)
   {
     READ_FLAG(   uiCode, "tiles_fixed_structure_flag");               pcVUI->setTilesFixedStructureFlag(uiCode);
     READ_FLAG(   uiCode, "motion_vectors_over_pic_boundaries_flag");  pcVUI->setMotionVectorsOverPicBoundariesFlag(uiCode);
+#if HLS_MOVE_SPS_PICLIST_FLAGS
+    READ_FLAG(   uiCode, "restricted_ref_pic_lists_flag");            pcVUI->setRestrictedRefPicListsFlag(uiCode);
+#endif /* HLS_MOVE_SPS_PICLIST_FLAGS */
 #if MIN_SPATIAL_SEGMENTATION
     READ_CODE( 8, uiCode, "min_spatial_segmentation_idc");            pcVUI->setMinSpatialSegmentationIdc(uiCode);
 #endif
@@ -547,6 +556,7 @@ Void TDecCavlc::parseSPS(TComSPS* pcSPS)
     pcSPS->setMaxLatencyIncrease( uiCode, i );
   }
 
+#if !HLS_MOVE_SPS_PICLIST_FLAGS
   READ_FLAG( uiCode, "restricted_ref_pic_lists_flag" );
   pcSPS->setRestrictedRefPicListsFlag( uiCode );
   if( pcSPS->getRestrictedRefPicListsFlag() )
@@ -558,6 +568,7 @@ Void TDecCavlc::parseSPS(TComSPS* pcSPS)
   {
     pcSPS->setListsModificationPresentFlag(true);
   }
+#endif /* !HLS_MOVE_SPS_PICLIST_FLAGS */
   READ_UVLC( uiCode, "log2_min_coding_block_size_minus3" );
   UInt log2MinCUSize = uiCode + 3;
   READ_UVLC( uiCode, "log2_diff_max_min_coding_block_size" );
@@ -1024,9 +1035,17 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
     if(!rpcSlice->isIntra())
     {
 #if SAVE_BITS_REFPICLIST_MOD_FLAG
+#if !HLS_MOVE_SPS_PICLIST_FLAGS
       if( !rpcSlice->getSPS()->getListsModificationPresentFlag() || rpcSlice->getNumRpsCurrTempList() <= 1 )
+#else /* HLS_MOVE_SPS_PICLIST_FLAGS */
+      if( !rpcSlice->getPPS()->getListsModificationPresentFlag() || rpcSlice->getNumRpsCurrTempList() <= 1 )
+#endif /* HLS_MOVE_SPS_PICLIST_FLAGS */
 #else
+#if !HLS_MOVE_SPS_PICLIST_FLAGS
       if( !rpcSlice->getSPS()->getListsModificationPresentFlag() )
+#else /* HLS_MOVE_SPS_PICLIST_FLAGS */
+      if( !rpcSlice->getPPS()->getListsModificationPresentFlag() )
+#endif /* HLS_MOVE_SPS_PICLIST_FLAGS */
 #endif
       {
         refPicListModification->setRefPicListModificationFlagL0( 0 );
@@ -1071,9 +1090,17 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
     if(rpcSlice->isInterB())
     {
 #if SAVE_BITS_REFPICLIST_MOD_FLAG
+#if !HLS_MOVE_SPS_PICLIST_FLAGS
       if( !rpcSlice->getSPS()->getListsModificationPresentFlag() || rpcSlice->getNumRpsCurrTempList() <= 1 )
+#else /* HLS_MOVE_SPS_PICLIST_FLAGS */
+      if( !rpcSlice->getPPS()->getListsModificationPresentFlag() || rpcSlice->getNumRpsCurrTempList() <= 1 )
+#endif /* HLS_MOVE_SPS_PICLIST_FLAGS */
 #else
+#if !HLS_MOVE_SPS_PICLIST_FLAGS
       if( !rpcSlice->getSPS()->getListsModificationPresentFlag() )
+#else /* HLS_MOVE_SPS_PICLIST_FLAGS */
+      if( !rpcSlice->getPPS()->getListsModificationPresentFlag() )
+#endif /* HLS_MOVE_SPS_PICLIST_FLAGS */
 #endif
       {
         refPicListModification->setRefPicListModificationFlagL1( 0 );

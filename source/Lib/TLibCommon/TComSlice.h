@@ -363,6 +363,9 @@ private:
   Bool m_bitstreamRestrictionFlag;
   Bool m_tilesFixedStructureFlag;
   Bool m_motionVectorsOverPicBoundariesFlag;
+#if HLS_MOVE_SPS_PICLIST_FLAGS
+  Bool m_restrictedRefPicListsFlag;
+#endif /* HLS_MOVE_SPS_PICLIST_FLAGS */
 #if MIN_SPATIAL_SEGMENTATION
   Int  m_minSpatialSegmentationIdc;
 #endif
@@ -417,6 +420,9 @@ public:
     ,m_bitstreamRestrictionFlag(false)
     ,m_tilesFixedStructureFlag(false)
     ,m_motionVectorsOverPicBoundariesFlag(true)
+#if HLS_MOVE_SPS_PICLIST_FLAGS
+    ,m_restrictedRefPicListsFlag(1)
+#endif /* HLS_MOVE_SPS_PICLIST_FLAGS */
 #if MIN_SPATIAL_SEGMENTATION
     ,m_minSpatialSegmentationIdc(0)
 #endif
@@ -515,6 +521,11 @@ public:
 
   Bool getMotionVectorsOverPicBoundariesFlag() { return m_motionVectorsOverPicBoundariesFlag; }
   Void setMotionVectorsOverPicBoundariesFlag(Bool i) { m_motionVectorsOverPicBoundariesFlag = i; }
+
+#if HLS_MOVE_SPS_PICLIST_FLAGS
+  Bool getRestrictedRefPicListsFlag() { return m_restrictedRefPicListsFlag; }
+  Void setRestrictedRefPicListsFlag(Bool b) { m_restrictedRefPicListsFlag = b; }
+#endif /* HLS_MOVE_SPS_PICLIST_FLAGS */
 
 #if MIN_SPATIAL_SEGMENTATION
   Int getMinSpatialSegmentationIdc() { return m_minSpatialSegmentationIdc; }
@@ -688,9 +699,11 @@ private:
 
   Bool        m_bUseLComb;
   
+#if !HLS_MOVE_SPS_PICLIST_FLAGS
   Bool        m_restrictedRefPicListsFlag;
   Bool        m_listsModificationPresentFlag;
 
+#endif /* !HLS_MOVE_SPS_PICLIST_FLAGS */
   // Parameter
   Int         m_bitDepthY;
   Int         m_bitDepthC;
@@ -810,11 +823,13 @@ public:
   Bool getUseLossless ()         { return m_useLossless; }
   Void setUseLossless ( Bool b ) { m_useLossless  = b; }
   
+#if !HLS_MOVE_SPS_PICLIST_FLAGS
   Bool getRestrictedRefPicListsFlag    ()          { return m_restrictedRefPicListsFlag;   }
   Void setRestrictedRefPicListsFlag    ( Bool b )  { m_restrictedRefPicListsFlag = b;      }
   Bool getListsModificationPresentFlag ()          { return m_listsModificationPresentFlag; }
   Void setListsModificationPresentFlag ( Bool b )  { m_listsModificationPresentFlag = b;    }
 
+#endif /* !HLS_MOVE_SPS_PICLIST_FLAGS */
   // AMP accuracy
   Int       getAMPAcc   ( UInt uiDepth ) { return m_iAMPAcc[uiDepth]; }
   Void      setAMPAcc   ( UInt uiDepth, Int iAccu ) { assert( uiDepth < g_uiMaxCUDepth);  m_iAMPAcc[uiDepth] = iAccu; }
@@ -951,6 +966,9 @@ private:
   Int      m_deblockingFilterTcOffsetDiv2;      //< tc offset for deblocking filter
   Bool     m_scalingListPresentFlag;
   TComScalingList*     m_scalingList;   //!< ScalingList class pointer
+#if HLS_MOVE_SPS_PICLIST_FLAGS
+  Bool m_listsModificationPresentFlag;
+#endif /* HLS_MOVE_SPS_PICLIST_FLAGS */
   UInt m_log2ParallelMergeLevelMinus2;
 public:
   TComPPS();
@@ -1067,6 +1085,10 @@ public:
   Void     setScalingListPresentFlag( Bool b ) { m_scalingListPresentFlag  = b;       }
   Void     setScalingList      ( TComScalingList *scalingList);
   TComScalingList* getScalingList ()          { return m_scalingList; }         //!< get ScalingList class pointer in PPS
+#if HLS_MOVE_SPS_PICLIST_FLAGS
+  Bool getListsModificationPresentFlag ()          { return m_listsModificationPresentFlag; }
+  Void setListsModificationPresentFlag ( Bool b )  { m_listsModificationPresentFlag = b;    }
+#endif /* HLS_MOVE_SPS_PICLIST_FLAGS */
   UInt getLog2ParallelMergeLevelMinus2      ()                    { return m_log2ParallelMergeLevelMinus2; }
   Void setLog2ParallelMergeLevelMinus2      (UInt mrgLevel)       { m_log2ParallelMergeLevelMinus2 = mrgLevel; }
   Void      setLoopFilterAcrossSlicesEnabledFlag ( Bool   bValue  )    { m_loopFilterAcrossSlicesEnabledFlag = bValue; }

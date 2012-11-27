@@ -246,6 +246,9 @@ Void TEncCavlc::codePPS( TComPPS* pcPPS )
 #endif
     codeScalingList( m_pcSlice->getScalingList() );
   }
+#if HLS_MOVE_SPS_PICLIST_FLAGS
+  WRITE_FLAG( pcPPS->getListsModificationPresentFlag(), "lists_modification_present_flag");
+#endif /* HLS_MOVE_SPS_PICLIST_FLAGS */
   WRITE_UVLC( pcPPS->getLog2ParallelMergeLevelMinus2(), "log2_parallel_merge_level_minus2");
   WRITE_FLAG( pcPPS->getSliceHeaderExtensionPresentFlag(), "slice_header_extension_present_flag");
   WRITE_FLAG( 0, "pps_extension_flag" );
@@ -375,6 +378,9 @@ Void TEncCavlc::codeVUI( TComVUI *pcVUI, TComSPS* pcSPS )
   {
     WRITE_FLAG(pcVUI->getTilesFixedStructureFlag(),             "tiles_fixed_structure_flag");
     WRITE_FLAG(pcVUI->getMotionVectorsOverPicBoundariesFlag(),  "motion_vectors_over_pic_boundaries_flag");
+#if HLS_MOVE_SPS_PICLIST_FLAGS
+    WRITE_FLAG(pcVUI->getRestrictedRefPicListsFlag(),           "restricted_ref_pic_lists_flag");
+#endif /* HLS_MOVE_SPS_PICLIST_FLAGS */
 #if MIN_SPATIAL_SEGMENTATION
     WRITE_CODE(pcVUI->getMinSpatialSegmentationIdc(),        8, "min_spatial_segmentation_idc");
 #endif
@@ -448,11 +454,13 @@ Void TEncCavlc::codeSPS( TComSPS* pcSPS )
     log2MinCUSize++;
   }
 
+#if !HLS_MOVE_SPS_PICLIST_FLAGS
   WRITE_FLAG( pcSPS->getRestrictedRefPicListsFlag(),                                 "restricted_ref_pic_lists_flag" );
   if( pcSPS->getRestrictedRefPicListsFlag() )
   {
     WRITE_FLAG( pcSPS->getListsModificationPresentFlag(),                            "lists_modification_present_flag" );
   }
+#endif /* !HLS_MOVE_SPS_PICLIST_FLAGS */
   WRITE_UVLC( log2MinCUSize - 3,                                                     "log2_min_coding_block_size_minus3" );
   WRITE_UVLC( pcSPS->getMaxCUDepth()-g_uiAddCUDepth,                                 "log2_diff_max_min_coding_block_size" );
   WRITE_UVLC( pcSPS->getQuadtreeTULog2MinSize() - 2,                                 "log2_min_transform_block_size_minus2" );
@@ -802,9 +810,17 @@ Void TEncCavlc::codeSliceHeader         ( TComSlice* pcSlice )
     }
 
 #if SAVE_BITS_REFPICLIST_MOD_FLAG
+#if !HLS_MOVE_SPS_PICLIST_FLAGS
     if( pcSlice->getSPS()->getListsModificationPresentFlag() && pcSlice->getNumRpsCurrTempList() > 1)
+#else /* HLS_MOVE_SPS_PICLIST_FLAGS */
+    if( pcSlice->getPPS()->getListsModificationPresentFlag() && pcSlice->getNumRpsCurrTempList() > 1)
+#endif /* HLS_MOVE_SPS_PICLIST_FLAGS */
 #else
+#if !HLS_MOVE_SPS_PICLIST_FLAGS
     if( pcSlice->getSPS()->getListsModificationPresentFlag() )
+#else /* HLS_MOVE_SPS_PICLIST_FLAGS */
+    if( pcSlice->getPPS()->getListsModificationPresentFlag() )
+#endif /* HLS_MOVE_SPS_PICLIST_FLAGS */
 #endif
     {
       TComRefPicListModification* refPicListModification = pcSlice->getRefPicListModification();
