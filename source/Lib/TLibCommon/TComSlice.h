@@ -356,6 +356,9 @@ private:
   Int  m_chromaSampleLocTypeBottomField;
   Bool m_neutralChromaIndicationFlag;
   Bool m_fieldSeqFlag;
+#if HLS_ADD_VUI_PICSTRUCT_PRESENT_FLAG
+  Bool m_picStructPresentFlag;
+#endif /* HLS_ADD_VUI_PICSTRUCT_PRESENT_FLAG */
   Bool m_hrdParametersPresentFlag;
   Bool m_bitstreamRestrictionFlag;
   Bool m_tilesFixedStructureFlag;
@@ -495,6 +498,11 @@ public:
 
   Bool getFieldSeqFlag() { return m_fieldSeqFlag; }
   Void setFieldSeqFlag(Bool i) { m_fieldSeqFlag = i; }
+
+#if HLS_ADD_VUI_PICSTRUCT_PRESENT_FLAG
+  Bool getPicStructPresentFlag() { return m_picStructPresentFlag; }
+  Void setPicStructPresentFlag(Bool i) { m_picStructPresentFlag = i; }
+#endif /* HLS_ADD_VUI_PICSTRUCT_PRESENT_FLAG */
 
   Bool getHrdParametersPresentFlag() { return m_hrdParametersPresentFlag; }
   Void setHrdParametersPresentFlag(Bool i) { m_hrdParametersPresentFlag = i; }

@@ -40,6 +40,8 @@
 
 //! \ingroup TLibCommon
 //! \{
+#define HLS_ADD_VUI_PICSTRUCT_PRESENT_FLAG          1  ///< add pic_struct_present_flag to VUI
+
 #define VARYING_DBL_PARAMS                          1  ///< K0289: Specifying varying deblocking parameters in GOP
 
 #define DISALLOW_LTRP_REPETITIONS                   1  ///< K0123: Disallow duplicate LTRP entries in RPS
