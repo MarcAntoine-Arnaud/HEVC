@@ -553,6 +553,11 @@ Void TDecCavlc::parseSPS(TComSPS* pcSPS)
 
 #endif /* !HLS_GROUP_SPS_PCM_FLAGS */
   READ_UVLC( uiCode,    "log2_max_pic_order_cnt_lsb_minus4" );   pcSPS->setBitsForPOC( 4 + uiCode );
+
+#if HLS_ADD_SUBLAYER_ORDERING_INFO_PRESENT_FLAG
+  UInt subLayerOrderingInfoPresentFlag;
+  READ_FLAG(subLayerOrderingInfoPresentFlag, "sps_sub_layer_ordering_info_present_flag");
+#endif /* HLS_ADD_SUBLAYER_ORDERING_INFO_PRESENT_FLAG */
   for(UInt i=0; i <= pcSPS->getMaxTLayers()-1; i++)
   {
     READ_UVLC ( uiCode, "max_dec_pic_buffering");
@@ -561,6 +566,19 @@ Void TDecCavlc::parseSPS(TComSPS* pcSPS)
     pcSPS->setNumReorderPics(uiCode, i);
     READ_UVLC ( uiCode, "max_latency_increase");
     pcSPS->setMaxLatencyIncrease( uiCode, i );
+
+#if HLS_ADD_SUBLAYER_ORDERING_INFO_PRESENT_FLAG
+    if (!subLayerOrderingInfoPresentFlag)
+    {
+      for (i++; i <= pcSPS->getMaxTLayers()-1; i++)
+      {
+        pcSPS->setMaxDecPicBuffering(pcSPS->getMaxDecPicBuffering(0), i);
+        pcSPS->setNumReorderPics(pcSPS->getNumReorderPics(0), i);
+        pcSPS->setMaxLatencyIncrease(pcSPS->getMaxLatencyIncrease(0), i);
+      }
+      break;
+    }
+#endif /* HLS_ADD_SUBLAYER_ORDERING_INFO_PRESENT_FLAG */
   }
 
 #if !HLS_MOVE_SPS_PICLIST_FLAGS
@@ -708,11 +726,28 @@ Void TDecCavlc::parseVPS(TComVPS* pcVPS)
 #if SIGNAL_BITRATE_PICRATE_IN_VPS
   parseBitratePicRateInfo( pcVPS->getBitratePicrateInfo(), 0, pcVPS->getMaxTLayers() - 1);
 #endif
+#if HLS_ADD_SUBLAYER_ORDERING_INFO_PRESENT_FLAG
+  UInt subLayerOrderingInfoPresentFlag;
+  READ_FLAG(subLayerOrderingInfoPresentFlag, "vps_sub_layer_ordering_info_present_flag");
+#endif /* HLS_ADD_SUBLAYER_ORDERING_INFO_PRESENT_FLAG */
   for(UInt i = 0; i <= pcVPS->getMaxTLayers()-1; i++)
   {
     READ_UVLC( uiCode,  "vps_max_dec_pic_buffering[i]" );     pcVPS->setMaxDecPicBuffering( uiCode, i );
     READ_UVLC( uiCode,  "vps_num_reorder_pics[i]" );          pcVPS->setNumReorderPics( uiCode, i );
     READ_UVLC( uiCode,  "vps_max_latency_increase[i]" );      pcVPS->setMaxLatencyIncrease( uiCode, i );
+
+#if HLS_ADD_SUBLAYER_ORDERING_INFO_PRESENT_FLAG
+    if (!subLayerOrderingInfoPresentFlag)
+    {
+      for (i++; i <= pcVPS->getMaxTLayers()-1; i++)
+      {
+        pcVPS->setMaxDecPicBuffering(pcVPS->getMaxDecPicBuffering(0), i);
+        pcVPS->setNumReorderPics(pcVPS->getNumReorderPics(0), i);
+        pcVPS->setMaxLatencyIncrease(pcVPS->getMaxLatencyIncrease(0), i);
+      }
+      break;
+    }
+#endif /* HLS_ADD_SUBLAYER_ORDERING_INFO_PRESENT_FLAG */
   }
 
 #if VPS_OPERATING_POINT

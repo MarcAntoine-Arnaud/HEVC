@@ -443,11 +443,22 @@ Void TEncCavlc::codeSPS( TComSPS* pcSPS )
 
 #endif /* !HLS_GROUP_SPS_PCM_FLAGS */
   WRITE_UVLC( pcSPS->getBitsForPOC()-4,                 "log2_max_pic_order_cnt_lsb_minus4" );
+
+#if HLS_ADD_SUBLAYER_ORDERING_INFO_PRESENT_FLAG
+  const Bool subLayerOrderingInfoPresentFlag = 1;
+  WRITE_FLAG(subLayerOrderingInfoPresentFlag,       "sps_sub_layer_ordering_info_present_flag");
+#endif /* HLS_ADD_SUBLAYER_ORDERING_INFO_PRESENT_FLAG */
   for(UInt i=0; i <= pcSPS->getMaxTLayers()-1; i++)
   {
     WRITE_UVLC( pcSPS->getMaxDecPicBuffering(i),           "max_dec_pic_buffering[i]" );
     WRITE_UVLC( pcSPS->getNumReorderPics(i),               "num_reorder_pics[i]" );
     WRITE_UVLC( pcSPS->getMaxLatencyIncrease(i),           "max_latency_increase[i]" );
+#if HLS_ADD_SUBLAYER_ORDERING_INFO_PRESENT_FLAG
+    if (!subLayerOrderingInfoPresentFlag)
+    {
+      break;
+    }
+#endif /* HLS_ADD_SUBLAYER_ORDERING_INFO_PRESENT_FLAG */
   }
   assert( pcSPS->getMaxCUWidth() == pcSPS->getMaxCUHeight() );
   
@@ -574,11 +585,21 @@ Void TEncCavlc::codeVPS( TComVPS* pcVPS )
 #if SIGNAL_BITRATE_PICRATE_IN_VPS
   codeBitratePicRateInfo(pcVPS->getBitratePicrateInfo(), 0, pcVPS->getMaxTLayers() - 1);
 #endif  
+#if HLS_ADD_SUBLAYER_ORDERING_INFO_PRESENT_FLAG
+  const Bool subLayerOrderingInfoPresentFlag = 1;
+  WRITE_FLAG(subLayerOrderingInfoPresentFlag,              "vps_sub_layer_ordering_info_present_flag");
+#endif /* HLS_ADD_SUBLAYER_ORDERING_INFO_PRESENT_FLAG */
   for(UInt i=0; i <= pcVPS->getMaxTLayers()-1; i++)
   {
     WRITE_UVLC( pcVPS->getMaxDecPicBuffering(i),           "vps_max_dec_pic_buffering[i]" );
     WRITE_UVLC( pcVPS->getNumReorderPics(i),               "vps_num_reorder_pics[i]" );
     WRITE_UVLC( pcVPS->getMaxLatencyIncrease(i),           "vps_max_latency_increase[i]" );
+#if HLS_ADD_SUBLAYER_ORDERING_INFO_PRESENT_FLAG
+    if (!subLayerOrderingInfoPresentFlag)
+    {
+      break;
+    }
+#endif /* HLS_ADD_SUBLAYER_ORDERING_INFO_PRESENT_FLAG */
   }
 
 #if VPS_OPERATING_POINT
