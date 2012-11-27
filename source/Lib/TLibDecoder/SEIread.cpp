@@ -67,7 +67,7 @@ Void  xTraceSEIMessageType(SEI::PayloadType payloadType)
     break;
 #if SEI_DISPLAY_ORIENTATION
   case SEI::DISPLAY_ORIENTATION:
-    fprintf( g_hTrace, "=========== Display Orientation message ===========\n");
+    fprintf( g_hTrace, "=========== Display Orientation SEI message ===========\n");
     break;
 #endif
 #if SEI_TEMPORAL_LEVEL0_INDEX
