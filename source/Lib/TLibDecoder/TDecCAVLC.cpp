@@ -1433,22 +1433,22 @@ Void TDecCavlc::parseProfileTier(ProfileTierLevel *ptl)
   READ_CODE(16, uiCode, "XXX_reserved_zero_16bits[]");  assert( uiCode == 0 );  
 }
 #if SIGNAL_BITRATE_PICRATE_IN_VPS
-Void TDecCavlc::parseBitratePicRateInfo(TComBitratePicrateInfo *info, Int tempLevelLow, Int tempLevelHigh)
+Void TDecCavlc::parseBitratePicRateInfo(TComBitRatePicRateInfo *info, Int tempLevelLow, Int tempLevelHigh)
 {
   UInt uiCode;
   for(Int i = tempLevelLow; i <= tempLevelHigh; i++)
   {
-    READ_FLAG( uiCode, "bit_rate_info_present_flag[i]" ); info->setBitrateInfoPresentFlag(i, uiCode ? true : false);
-    READ_FLAG( uiCode, "pic_rate_info_present_flag[i]" ); info->setPicrateInfoPresentFlag(i, uiCode ? true : false);
-    if(info->getBitrateInfoPresentFlag(i))
+    READ_FLAG( uiCode, "bit_rate_info_present_flag[i]" ); info->setBitRateInfoPresentFlag(i, uiCode ? true : false);
+    READ_FLAG( uiCode, "pic_rate_info_present_flag[i]" ); info->setPicRateInfoPresentFlag(i, uiCode ? true : false);
+    if(info->getBitRateInfoPresentFlag(i))
     {
-      READ_CODE( 16, uiCode, "avg_bit_rate[i]" ); info->setAvgBitrate(i, uiCode);
-      READ_CODE( 16, uiCode, "max_bit_rate[i]" ); info->setMaxBitrate(i, uiCode);
+      READ_CODE( 16, uiCode, "avg_bit_rate[i]" ); info->setAvgBitRate(i, uiCode);
+      READ_CODE( 16, uiCode, "max_bit_rate[i]" ); info->setMaxBitRate(i, uiCode);
     }
-    if(info->getPicrateInfoPresentFlag(i))
+    if(info->getPicRateInfoPresentFlag(i))
     {
       READ_CODE(  2, uiCode,  "constant_pic_rate_idc[i]" ); info->setConstantPicRateIdc(i, uiCode);
-      READ_CODE( 16, uiCode,  "avg_pic_rate[i]"          ); info->setAvgPicrate(i, uiCode);
+      READ_CODE( 16, uiCode,  "avg_pic_rate[i]"          ); info->setAvgPicRate(i, uiCode);
     }
   }
 }

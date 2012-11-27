@@ -89,7 +89,7 @@ public:
   Void  parsePTL            ( TComPTL *rpcPTL, Bool profilePresentFlag, Int maxNumSubLayersMinus1 );
   Void  parseProfileTier    (ProfileTierLevel *ptl);
 #if SIGNAL_BITRATE_PICRATE_IN_VPS
-  Void  parseBitratePicRateInfo(TComBitratePicrateInfo *info, Int tempLevelLow, Int tempLevelHigh);
+  Void  parseBitratePicRateInfo(TComBitRatePicRateInfo *info, Int tempLevelLow, Int tempLevelHigh);
 #endif
   Void  parseSliceHeader    ( TComSlice*& rpcSlice, ParameterSetManagerDecoder *parameterSetManager);
   Void  parseTerminatingBit ( UInt& ruiBit );

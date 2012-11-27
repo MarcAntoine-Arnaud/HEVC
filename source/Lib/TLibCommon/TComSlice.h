@@ -229,32 +229,32 @@ public:
 /// VPS class
 
 #if SIGNAL_BITRATE_PICRATE_IN_VPS
-class TComBitratePicrateInfo{
-  Bool        m_bitrateInfoPresentFlag[MAX_TLAYER];
-  Bool        m_picrateInfoPresentFlag[MAX_TLAYER];
-  Int         m_avgBitrate[MAX_TLAYER];
-  Int         m_maxBitrate[MAX_TLAYER];
+class TComBitRatePicRateInfo{
+  Bool        m_bitRateInfoPresentFlag[MAX_TLAYER];
+  Bool        m_picRateInfoPresentFlag[MAX_TLAYER];
+  Int         m_avgBitRate[MAX_TLAYER];
+  Int         m_maxBitRate[MAX_TLAYER];
   Int         m_constantPicRateIdc[MAX_TLAYER];
-  Int         m_avgPicrate[MAX_TLAYER];
+  Int         m_avgPicRate[MAX_TLAYER];
 public:
-  TComBitratePicrateInfo();
-  Bool        getBitrateInfoPresentFlag(Int i) {return m_bitrateInfoPresentFlag[i];}
-  Void        setBitrateInfoPresentFlag(Int i, Bool x) {m_bitrateInfoPresentFlag[i] = x;}
+  TComBitRatePicRateInfo();
+  Bool        getBitRateInfoPresentFlag(Int i) {return m_bitRateInfoPresentFlag[i];}
+  Void        setBitRateInfoPresentFlag(Int i, Bool x) {m_bitRateInfoPresentFlag[i] = x;}
 
-  Bool        getPicrateInfoPresentFlag(Int i) {return m_picrateInfoPresentFlag[i];}
-  Void        setPicrateInfoPresentFlag(Int i, Bool x) {m_picrateInfoPresentFlag[i] = x;}
+  Bool        getPicRateInfoPresentFlag(Int i) {return m_picRateInfoPresentFlag[i];}
+  Void        setPicRateInfoPresentFlag(Int i, Bool x) {m_picRateInfoPresentFlag[i] = x;}
 
-  Int         getAvgBitrate(Int i) {return m_avgBitrate[i];}
-  Void        setAvgBitrate(Int i, Int x) {m_avgBitrate[i] = x;}
+  Int         getAvgBitRate(Int i) {return m_avgBitRate[i];}
+  Void        setAvgBitRate(Int i, Int x) {m_avgBitRate[i] = x;}
 
-  Int         getMaxBitrate(Int i) {return m_maxBitrate[i];}
-  Void        setMaxBitrate(Int i, Int x) {m_maxBitrate[i] = x;}
+  Int         getMaxBitRate(Int i) {return m_maxBitRate[i];}
+  Void        setMaxBitRate(Int i, Int x) {m_maxBitRate[i] = x;}
 
   Int         getConstantPicRateIdc(Int i) {return m_constantPicRateIdc[i];}
   Void        setConstantPicRateIdc(Int i, Int x) {m_constantPicRateIdc[i] = x;}
 
-  Int         getAvgPicrate(Int i) {return m_avgPicrate[i];}
-  Void        setAvgPicrate(Int i, Int x) {m_avgPicrate[i] = x;}
+  Int         getAvgPicRate(Int i) {return m_avgPicRate[i];}
+  Void        setAvgPicRate(Int i, Int x) {m_avgPicRate[i] = x;}
 };
 #endif
 class TComVPS
@@ -277,7 +277,7 @@ private:
 
   TComPTL     m_pcPTL;
 #if SIGNAL_BITRATE_PICRATE_IN_VPS
-  TComBitratePicrateInfo    m_bitratePicrateInfo;
+  TComBitRatePicRateInfo    m_bitRatePicRateInfo;
 #endif
 
 public:
@@ -318,7 +318,7 @@ public:
 
   TComPTL* getPTL() { return &m_pcPTL; }
 #if SIGNAL_BITRATE_PICRATE_IN_VPS
-  TComBitratePicrateInfo *getBitratePicrateInfo() { return &m_bitratePicrateInfo; }
+  TComBitRatePicRateInfo *getBitratePicrateInfo() { return &m_bitRatePicRateInfo; }
 #endif
 };
 
