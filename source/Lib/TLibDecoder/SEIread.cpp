@@ -220,6 +220,44 @@ Void SEIReader::xReadSEImessage(SEImessages& seis)
   }
 #endif
 
+#if HLS_SEI_GENERIC_EXTENSION
+  /* By definition the underlying bitstream terminates in a byte-aligned manner.
+   * 1. Extract all bar the last MIN(bitsremaining,nine) bits as reserved_payload_extension_data
+   * 2. Examine the final 8 bits to determine the payload_bit_equal_to_one marker
+   * 3. Extract the remainingreserved_payload_extension_data bits.
+   *
+   * If there are fewer than 9 bits available, extract them.
+   */
+  Int payloadBitsRemaining = getBitstream()->getNumBitsLeft();
+  if (payloadBitsRemaining) /* more_data_in_payload() */
+  {
+    for (; payloadBitsRemaining > 9; payloadBitsRemaining--)
+    {
+      UInt reservedPayloadExtensionData;
+      READ_CODE (1, reservedPayloadExtensionData, "reserved_payload_extension_data");
+    }
+
+    /* 2 */
+    Int finalBits = getBitstream()->peekBits(payloadBitsRemaining);
+    Int finalPayloadBits = 0;
+    for (Int mask = 0xff; finalBits & (mask >> finalPayloadBits); finalPayloadBits++)
+    {
+      continue;
+    }
+
+    /* 3 */
+    for (; payloadBitsRemaining > 9 - finalPayloadBits; payloadBitsRemaining--)
+    {
+      UInt reservedPayloadExtensionData;
+      READ_CODE (1, reservedPayloadExtensionData, "reserved_payload_extension_data");
+    }
+
+    UInt dummy;
+    READ_CODE (1, dummy, "payload_bit_equal_to_one");
+    READ_CODE (payloadBitsRemaining-1, dummy, "payload_bit_equal_to_zero");
+  }
+#endif
+
   /* restore primary bitstream for sei_message */
   delete getBitstream();
   setBitstream(bs);
