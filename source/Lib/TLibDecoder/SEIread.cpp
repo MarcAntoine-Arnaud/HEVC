@@ -104,8 +104,11 @@ void SEIReader::parseSEImessage(TComInputBitstream* bs, SEImessages& seis)
     /* SEI messages are an integer number of bytes, something has failed
     * in the parsing if bitstream not byte-aligned */
     assert(!m_pcBitstream->getNumBitsUntilByteAligned());
-  } while (0x80 != m_pcBitstream->peekBits(8));
-  assert(m_pcBitstream->getNumBitsLeft() == 8); /* rsbp_trailing_bits */
+  } while (m_pcBitstream->getNumBitsLeft() > 8);
+
+  UInt rbspTrailingBits;
+  READ_CODE(8, rbspTrailingBits, "rbsp_trailing_bits");
+  assert(rbspTrailingBits == 0x80);
 }
 #if SUFFIX_SEI_NUT_DECODED_HASH_SEI
 Void SEIReader::xReadSEImessage(SEImessages& seis, const NalUnitType nalUnitType)
