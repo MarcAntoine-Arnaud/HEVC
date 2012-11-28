@@ -1678,6 +1678,11 @@ Void TEncSlice::xDetermineStartAndBoundingCUAddr  ( UInt& uiStartCUAddr, UInt& u
       uiBoundingCUAddrDependentSlice    = uiNumberOfCUsInFrame*rpcPic->getNumPartInCU();
       break;
     } 
+    // WPP: if a slice segment does not start at the beginning of a CTB row, it must end within the same CTB row
+    if (pcSlice->getPPS()->getNumSubstreams() > 1 && (uiStartCUAddrDependentSlice % (rpcPic->getFrameWidthInCU()*rpcPic->getNumPartInCU()) != 0))
+    {
+      uiBoundingCUAddrDependentSlice = min(uiBoundingCUAddrDependentSlice, uiStartCUAddrDependentSlice - (uiStartCUAddrDependentSlice % (rpcPic->getFrameWidthInCU()*rpcPic->getNumPartInCU())) + (rpcPic->getFrameWidthInCU()*rpcPic->getNumPartInCU()));
+    }
     pcSlice->setDependentSliceCurEndCUAddr( uiBoundingCUAddrDependentSlice );
   }
   else
@@ -1714,6 +1719,11 @@ Void TEncSlice::xDetermineStartAndBoundingCUAddr  ( UInt& uiStartCUAddr, UInt& u
       uiBoundingCUAddrDependentSlice    = uiNumberOfCUsInFrame*rpcPic->getNumPartInCU();
       break;
     } 
+    // WPP: if a slice segment does not start at the beginning of a CTB row, it must end within the same CTB row
+    if (pcSlice->getPPS()->getNumSubstreams() > 1 && (uiStartCUAddrDependentSlice % (rpcPic->getFrameWidthInCU()*rpcPic->getNumPartInCU()) != 0))
+    {
+      uiBoundingCUAddrDependentSlice = min(uiBoundingCUAddrDependentSlice, uiStartCUAddrDependentSlice - (uiStartCUAddrDependentSlice % (rpcPic->getFrameWidthInCU()*rpcPic->getNumPartInCU())) + (rpcPic->getFrameWidthInCU()*rpcPic->getNumPartInCU()));
+    }
     pcSlice->setDependentSliceCurEndCUAddr( uiBoundingCUAddrDependentSlice );
   }
   if(uiBoundingCUAddrDependentSlice>uiBoundingCUAddrSlice)
