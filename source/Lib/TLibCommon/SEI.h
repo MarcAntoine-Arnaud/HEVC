@@ -56,7 +56,11 @@ public:
 #if SEI_TEMPORAL_LEVEL0_INDEX
     TEMPORAL_LEVEL0_INDEX  = 132,
 #endif
+#if SUFFIX_SEI_NUT_DECODED_HASH_SEI
+    DECODED_PICTURE_HASH   = 133,
+#else
     DECODED_PICTURE_HASH   = 256,
+#endif
   };
   
   SEI() {}

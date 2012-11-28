@@ -85,22 +85,33 @@ Void  xTraceSEIMessageType(SEI::PayloadType payloadType)
 /**
  * unmarshal a single SEI message from bitstream bs
  */
+#if SUFFIX_SEI_NUT_DECODED_HASH_SEI
+void SEIReader::parseSEImessage(TComInputBitstream* bs, SEImessages& seis, const NalUnitType nalUnitType)
+#else
 void SEIReader::parseSEImessage(TComInputBitstream* bs, SEImessages& seis)
+#endif
 {
   setBitstream(bs);
 
   assert(!m_pcBitstream->getNumBitsUntilByteAligned());
   do
   {
+#if SUFFIX_SEI_NUT_DECODED_HASH_SEI
+    xReadSEImessage(seis, nalUnitType);
+#else
     xReadSEImessage(seis);
+#endif
     /* SEI messages are an integer number of bytes, something has failed
     * in the parsing if bitstream not byte-aligned */
     assert(!m_pcBitstream->getNumBitsUntilByteAligned());
   } while (0x80 != m_pcBitstream->peekBits(8));
   assert(m_pcBitstream->getNumBitsLeft() == 8); /* rsbp_trailing_bits */
 }
-
+#if SUFFIX_SEI_NUT_DECODED_HASH_SEI
+Void SEIReader::xReadSEImessage(SEImessages& seis, const NalUnitType nalUnitType)
+#else
 Void SEIReader::xReadSEImessage(SEImessages& seis)
+#endif
 {
 #if ENC_DEC_TRACE
   xTraceSEIHeader();
@@ -125,6 +136,10 @@ Void SEIReader::xReadSEImessage(SEImessages& seis)
   xTraceSEIMessageType((SEI::PayloadType)payloadType);
 #endif
 
+#if SUFFIX_SEI_NUT_DECODED_HASH_SEI
+  if(nalUnitType == NAL_UNIT_SEI)
+  {
+#endif
   switch (payloadType)
   {
   case SEI::USER_DATA_UNREGISTERED:
@@ -135,10 +150,12 @@ Void SEIReader::xReadSEImessage(SEImessages& seis)
     seis.active_parameter_sets = new SEIActiveParameterSets; 
     xParseSEIActiveParameterSets(*seis.active_parameter_sets, payloadSize); 
     break; 
+#if !SUFFIX_SEI_NUT_DECODED_HASH_SEI
   case SEI::DECODED_PICTURE_HASH:
     seis.picture_digest = new SEIDecodedPictureHash;
     xParseSEIDecodedPictureHash(*seis.picture_digest, payloadSize);
     break;
+#endif
   case SEI::BUFFERING_PERIOD:
     seis.buffering_period = new SEIBufferingPeriod;
     seis.buffering_period->m_sps = seis.m_pSPS;
@@ -173,6 +190,26 @@ Void SEIReader::xReadSEImessage(SEImessages& seis)
     }
     printf ("Unknown SEI message (payloadType = %d) was found!\n", payloadType);
   }
+#if SUFFIX_SEI_NUT_DECODED_HASH_SEI
+  }
+  else
+  {
+    switch (payloadType)
+    {
+      case SEI::DECODED_PICTURE_HASH:
+        seis.picture_digest = new SEIDecodedPictureHash;
+        xParseSEIDecodedPictureHash(*seis.picture_digest, payloadSize);
+        break;
+      default:
+        for (UInt i = 0; i < payloadSize; i++)
+        {
+          UInt seiByte;
+          READ_CODE (8, seiByte, "unknown SEI payload byte");
+        }
+        printf ("Unknown SEI message (payloadType = %d) was found!\n", payloadType);
+    }
+  }
+#endif
 }
 
 /**

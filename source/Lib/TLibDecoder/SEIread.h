@@ -56,9 +56,17 @@ class SEIReader: public SyntaxElementParser
 public:
   SEIReader() {};
   virtual ~SEIReader() {};
+#if SUFFIX_SEI_NUT_DECODED_HASH_SEI
+  Void parseSEImessage(TComInputBitstream* bs, SEImessages& seis, const NalUnitType nalUnitType);
+#else
   Void parseSEImessage(TComInputBitstream* bs, SEImessages& seis);
+#endif
 protected:
+#if SUFFIX_SEI_NUT_DECODED_HASH_SEI
+  Void xReadSEImessage                (SEImessages& seis, const NalUnitType nalUnitType);
+#else
   Void xReadSEImessage                (SEImessages& seis);
+#endif
   Void xParseSEIuserDataUnregistered  (SEIuserDataUnregistered &sei, UInt payloadSize);
   Void xParseSEIActiveParameterSets   (SEIActiveParameterSets  &sei, UInt payloadSize);
   Void xParseSEIDecodedPictureHash    (SEIDecodedPictureHash& sei, UInt payloadSize);
