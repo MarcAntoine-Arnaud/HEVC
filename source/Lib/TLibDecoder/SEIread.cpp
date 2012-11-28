@@ -195,9 +195,9 @@ Void SEIReader::xReadSEImessage(SEImessages& seis)
     for (UInt i = 0; i < payloadSize; i++)
     {
       UInt seiByte;
-      READ_CODE (8, seiByte, "unknown SEI payload byte");
+      READ_CODE (8, seiByte, "unknown prefix SEI payload byte");
     }
-    printf ("Unknown SEI message (payloadType = %d) was found!\n", payloadType);
+    printf ("Unknown prefix SEI message (payloadType = %d) was found!\n", payloadType);
   }
 #if SUFFIX_SEI_NUT_DECODED_HASH_SEI
   }
@@ -213,9 +213,9 @@ Void SEIReader::xReadSEImessage(SEImessages& seis)
         for (UInt i = 0; i < payloadSize; i++)
         {
           UInt seiByte;
-          READ_CODE (8, seiByte, "unknown SEI payload byte");
+          READ_CODE (8, seiByte, "unknown suffix SEI payload byte");
         }
-        printf ("Unknown SEI message (payloadType = %d) was found!\n", payloadType);
+        printf ("Unknown suffix SEI message (payloadType = %d) was found!\n", payloadType);
     }
   }
 #endif

@@ -1334,9 +1334,13 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
         m_seiWriter.writeSEImessage(nalu.m_Bitstream, sei_recon_picture_digest);
         writeRBSPTrailingBits(nalu.m_Bitstream);
 
+#if SUFFIX_SEI_NUT_DECODED_HASH_SEI
+        accessUnit.insert(accessUnit.end(), new NALUnitEBSP(nalu));
+#else
         /* insert the SEI message NALUnit before any Slice NALUnits */
         AccessUnit::iterator it = find_if(accessUnit.begin(), accessUnit.end(), mem_fun(&NALUnit::isSlice));
         accessUnit.insert(it, new NALUnitEBSP(nalu));
+#endif
       }
 #if SEI_TEMPORAL_LEVEL0_INDEX
       if (m_pcCfg->getTemporalLevel0IndexSEIEnabled())

@@ -619,10 +619,33 @@ Void TDecTop::xDecodeSEI( TComInputBitstream* bs )
 #endif
 {
   if ( m_SEIs == NULL )
-  m_SEIs = new SEImessages;
+#if SUFFIX_SEI_NUT_DECODED_HASH_SEI
+  {
+    if(nalUnitType == NAL_UNIT_SEI_SUFFIX)
+    {
+      m_SEIs = m_pcPic->getSEIs();          // If suffix SEI, use already existing SEI structure
+    }
+    else
+    {
+      m_SEIs = new SEImessages;
+    }
+  }
+  else
+  {
+    assert(nalUnitType != NAL_UNIT_SEI_SUFFIX);   
+  }
+#else
+  {
+    m_SEIs = new SEImessages;
+  }
+#endif
   m_SEIs->m_pSPS = m_parameterSetManagerDecoder.getSPS(0);
 #if SUFFIX_SEI_NUT_DECODED_HASH_SEI
   m_seiReader.parseSEImessage( bs, *m_SEIs, nalUnitType );
+  if(nalUnitType == NAL_UNIT_SEI_SUFFIX)
+  {
+    m_SEIs = NULL;  // The actual SEI structure is updated, this pointer is not required now.
+  }
 #else
   m_seiReader.parseSEImessage( bs, *m_SEIs );
 #endif
