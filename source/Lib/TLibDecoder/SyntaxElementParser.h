@@ -89,6 +89,7 @@ protected:
 #endif
 public:
   Void  setBitstream ( TComInputBitstream* p )   { m_pcBitstream = p; }
+  TComInputBitstream* getBitstream() { return m_pcBitstream; }
 };
 
 //! \}

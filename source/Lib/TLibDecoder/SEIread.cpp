@@ -136,6 +136,15 @@ Void SEIReader::xReadSEImessage(SEImessages& seis)
   xTraceSEIMessageType((SEI::PayloadType)payloadType);
 #endif
 
+  /* extract the payload for this single SEI message.
+   * This allows greater safety in erroneous parsing of an SEI message
+   * from affecting subsequent messages.
+   * After parsing the payload, bs needs to be restored as the primary
+   * bitstream.
+   */
+  TComInputBitstream *bs = getBitstream();
+  setBitstream(bs->extractSubstream(payloadSize * 8));
+
 #if SUFFIX_SEI_NUT_DECODED_HASH_SEI
   if(nalUnitType == NAL_UNIT_SEI)
   {
@@ -210,6 +219,10 @@ Void SEIReader::xReadSEImessage(SEImessages& seis)
     }
   }
 #endif
+
+  /* restore primary bitstream for sei_message */
+  delete getBitstream();
+  setBitstream(bs);
 }
 
 /**
