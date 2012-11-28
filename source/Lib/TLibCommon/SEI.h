@@ -114,14 +114,18 @@ public:
 
   SEIActiveParameterSets() 
     :activeSPSIdPresentFlag(1)
+#if !HLS_REMOVE_ACTIVE_PARAM_SET_SEI_EXT_FLAG
     ,activeParamSetSEIExtensionFlag(0)
+#endif /* HLS_REMOVE_ACTIVE_PARAM_SET_SEI_EXT_FLAG */
   {}
   virtual ~SEIActiveParameterSets() {}
 
   Int activeVPSId; 
   Int activeSPSIdPresentFlag;
   Int activeSeqParamSetId; 
+#if !HLS_REMOVE_ACTIVE_PARAM_SET_SEI_EXT_FLAG
   Int activeParamSetSEIExtensionFlag; 
+#endif /* HLS_REMOVE_ACTIVE_PARAM_SET_SEI_EXT_FLAG */
 };
 
 class SEIBufferingPeriod : public SEI

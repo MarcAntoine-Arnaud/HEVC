@@ -222,8 +222,10 @@ Void SEIWriter::xWriteSEIActiveParameterSets(const SEIActiveParameterSets& sei)
     WRITE_UVLC(sei.activeSeqParamSetId, "active_seq_param_set_id"); 
   }
 
+#if !HLS_REMOVE_ACTIVE_PARAM_SET_SEI_EXT_FLAG
   WRITE_CODE(sei.activeParamSetSEIExtensionFlag, 1, "active_param_set_sei_extension_flag"); 
 
+#endif /* !HLS_REMOVE_ACTIVE_PARAM_SET_SEI_EXT_FLAG */
   UInt uiBits = m_pcBitIf->getNumberOfWrittenBits();
   UInt uiAlignedBits = ( 8 - (uiBits&7) ) % 8;  
   if(uiAlignedBits) 
