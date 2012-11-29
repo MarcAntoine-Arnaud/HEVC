@@ -41,6 +41,11 @@
 #include <string>
 #include "TLibCommon/TComRom.h"
 #include "TAppEncCfg.h"
+
+static istream& operator>>(istream &, Level::Name &);
+static istream& operator>>(istream &, Level::Tier &);
+static istream& operator>>(istream &, Profile::Name &);
+
 #include "TAppCommon/program_options_lite.h"
 #include "TLibEncoder/TEncRateCtrl.h"
 #ifdef WIN32
@@ -187,7 +192,7 @@ static const struct MapStrToLevel {
 };
 
 template<typename T, typename P>
-istream& readStrToEnum(P map[], unsigned long mapLen, istream &in, T &val)
+static istream& readStrToEnum(P map[], unsigned long mapLen, istream &in, T &val)
 {
   string str;
   in >> str;
@@ -206,17 +211,17 @@ found:
   return in;
 }
 
-istream& operator>>(istream &in, Profile::Name &profile)
+static istream& operator>>(istream &in, Profile::Name &profile)
 {
   return readStrToEnum(strToProfile, sizeof(strToProfile)/sizeof(*strToProfile), in, profile);
 }
 
-istream& operator>>(istream &in, Level::Tier &tier)
+static istream& operator>>(istream &in, Level::Tier &tier)
 {
   return readStrToEnum(strToTier, sizeof(strToTier)/sizeof(*strToTier), in, tier);
 }
 
-istream& operator>>(istream &in, Level::Name &level)
+static istream& operator>>(istream &in, Level::Name &level)
 {
   return readStrToEnum(strToLevel, sizeof(strToLevel)/sizeof(*strToLevel), in, level);
 }
