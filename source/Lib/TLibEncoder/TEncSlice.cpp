@@ -412,6 +412,13 @@ Void TEncSlice::initEncSlice( TComPic* pcPic, Int pocLast, Int pocCurr, Int iNum
 #endif
     }
   }
+  else
+  {
+    rpcSlice->setDeblockingFilterOverrideFlag( false );
+    rpcSlice->setDeblockingFilterDisable( false );
+    rpcSlice->setDeblockingFilterBetaOffsetDiv2( 0 );
+    rpcSlice->setDeblockingFilterTcOffsetDiv2( 0 );
+  }
 
   rpcSlice->setDepth            ( depth );
   

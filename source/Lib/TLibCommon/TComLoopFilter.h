@@ -110,7 +110,7 @@ public:
   Void  destroy                   ();
   
   /// set configuration
-  Void setCfg( Bool deblockingFilterControlPresentFlag, Bool disableDeblockingFilterFlag, Int betaOffsetDiv2, Int tcOffsetDiv2, Bool bLFCrossTileBoundary );
+  Void setCfg( Bool bLFCrossTileBoundary );
   
   /// picture-level deblocking filter
   Void loopFilterPic( TComPic* pcPic );

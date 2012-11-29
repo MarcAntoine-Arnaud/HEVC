@@ -75,10 +75,7 @@ const UChar betatable_8x8[52] =
 // ====================================================================================================================
 
 TComLoopFilter::TComLoopFilter()
-: m_disableDeblockingFilterFlag(false)
-, m_betaOffsetDiv2(0)
-, m_tcOffsetDiv2(0)
-, m_uiNumPartitions(0)
+: m_uiNumPartitions(0)
 , m_bLFCrossTileBoundary(true)
 {
   for( UInt uiDir = 0; uiDir < 2; uiDir++ )
@@ -98,22 +95,9 @@ TComLoopFilter::~TComLoopFilter()
 // ====================================================================================================================
 // Public member functions
 // ====================================================================================================================
-Void TComLoopFilter::setCfg( Bool deblockingFilterControlPresentFlag, Bool disableDeblockingFilterFlag, Int betaOffsetDiv2, Int tcOffsetDiv2, Bool bLFCrossTileBoundary )
+Void TComLoopFilter::setCfg( Bool bLFCrossTileBoundary )
 {
   m_bLFCrossTileBoundary = bLFCrossTileBoundary;
-
-  if (deblockingFilterControlPresentFlag)
-  {
-    m_disableDeblockingFilterFlag  = disableDeblockingFilterFlag;
-    m_betaOffsetDiv2 = betaOffsetDiv2;
-    m_tcOffsetDiv2 = tcOffsetDiv2;
-  } 
-  else // use default values
-  {
-    m_disableDeblockingFilterFlag = false;
-    m_betaOffsetDiv2 = 0;
-    m_tcOffsetDiv2 = 0;
-  }
 }
 
 Void TComLoopFilter::create( UInt uiMaxCUDepth )
@@ -157,11 +141,6 @@ Void TComLoopFilter::destroy()
  */
 Void TComLoopFilter::loopFilterPic( TComPic* pcPic )
 {
-  if ( m_disableDeblockingFilterFlag )
-  {
-    return;
-  }
-  
   // Horizontal filtering
   for ( UInt uiCUAddr = 0; uiCUAddr < pcPic->getNumCUsInFrame(); uiCUAddr++ )
   {
@@ -389,9 +368,9 @@ Void TComLoopFilter::xSetLoopfilterParam( TComDataCU* pcCU, UInt uiAbsZorderIdx 
   TComDataCU* pcTempCU;
   UInt        uiTempPartIdx;
 
-  m_stLFCUParam.bInternalEdge = !m_disableDeblockingFilterFlag;
+  m_stLFCUParam.bInternalEdge = ! pcCU->getSlice()->getDeblockingFilterDisable();
   
-  if ( (uiX == 0) || m_disableDeblockingFilterFlag )
+  if ( (uiX == 0) || pcCU->getSlice()->getDeblockingFilterDisable() )
   {
     m_stLFCUParam.bLeftEdge = false;
   }
@@ -412,7 +391,7 @@ Void TComLoopFilter::xSetLoopfilterParam( TComDataCU* pcCU, UInt uiAbsZorderIdx 
     }
   }
   
-  if ( (uiY == 0 ) || m_disableDeblockingFilterFlag )
+  if ( (uiY == 0 ) || pcCU->getSlice()->getDeblockingFilterDisable() )
   {
     m_stLFCUParam.bTopEdge = false;
   }
@@ -587,7 +566,9 @@ Void TComLoopFilter::xEdgeFilterLuma( TComDataCU* pcCU, UInt uiAbsZorderIdx, UIn
   UInt  uiPartQIdx = 0;
   TComDataCU* pcCUP = pcCU; 
   TComDataCU* pcCUQ = pcCU;
-  
+  Int  betaOffsetDiv2 = pcCUQ->getSlice()->getDeblockingFilterBetaOffsetDiv2();
+  Int  tcOffsetDiv2 = pcCUQ->getSlice()->getDeblockingFilterTcOffsetDiv2();
+
   if (iDir == EDGE_VER)
   {
     iOffset = 1;
@@ -627,8 +608,8 @@ Void TComLoopFilter::xEdgeFilterLuma( TComDataCU* pcCU, UInt uiAbsZorderIdx, UIn
       iQP = (iQP_P + iQP_Q + 1) >> 1;
       Int iBitdepthScale = 1 << (g_bitDepthY-8);
       
-      Int iIndexTC = Clip3(0, MAX_QP+DEFAULT_INTRA_TC_OFFSET, Int(iQP + DEFAULT_INTRA_TC_OFFSET*(uiBs-1) + (m_tcOffsetDiv2 << 1)));
-      Int iIndexB = Clip3(0, MAX_QP, iQP + (m_betaOffsetDiv2 << 1));
+      Int iIndexTC = Clip3(0, MAX_QP+DEFAULT_INTRA_TC_OFFSET, Int(iQP + DEFAULT_INTRA_TC_OFFSET*(uiBs-1) + (tcOffsetDiv2 << 1)));
+      Int iIndexB = Clip3(0, MAX_QP, iQP + (betaOffsetDiv2 << 1));
       
       Int iTc =  tctable_8x8[iIndexTC]*iBitdepthScale;
       Int iBeta = betatable_8x8[iIndexB]*iBitdepthScale;
@@ -702,6 +683,7 @@ Void TComLoopFilter::xEdgeFilterChroma( TComDataCU* pcCU, UInt uiAbsZorderIdx, U
   UInt  uiPartQIdx;
   TComDataCU* pcCUP; 
   TComDataCU* pcCUQ = pcCU;
+  Int tcOffsetDiv2 = pcCU->getSlice()->getDeblockingFilterTcOffsetDiv2();
   
   // Vertical Position
   UInt uiEdgeNumInLCUVert = g_auiZscanToRaster[uiAbsZorderIdx]%uiLCUWidthInBaseUnits + iEdge;
@@ -766,7 +748,7 @@ Void TComLoopFilter::xEdgeFilterChroma( TComDataCU* pcCU, UInt uiAbsZorderIdx, U
       iQP = QpUV((iQP_P + iQP_Q + 1) >> 1);
       Int iBitdepthScale = 1 << (g_bitDepth-8);
       
-      Int iIndexTC = Clip3(0, MAX_QP+DEFAULT_INTRA_TC_OFFSET, iQP + DEFAULT_INTRA_TC_OFFSET*(ucBs - 1) + (m_tcOffsetDiv2 << 1));
+      Int iIndexTC = Clip3(0, MAX_QP+DEFAULT_INTRA_TC_OFFSET, iQP + DEFAULT_INTRA_TC_OFFSET*(ucBs - 1) + (tcOffsetDiv2 << 1));
       Int iTc =  tctable_8x8[iIndexTC]*iBitdepthScale;
 #endif
       
@@ -790,7 +772,7 @@ Void TComLoopFilter::xEdgeFilterChroma( TComDataCU* pcCU, UInt uiAbsZorderIdx, U
         iQP = QpUV( ((iQP_P + iQP_Q + 1) >> 1) + chromaQPOffset );
         Int iBitdepthScale = 1 << (g_bitDepthC-8);
 
-        Int iIndexTC = Clip3(0, MAX_QP+DEFAULT_INTRA_TC_OFFSET, iQP + DEFAULT_INTRA_TC_OFFSET*(ucBs - 1) + (m_tcOffsetDiv2 << 1));
+        Int iIndexTC = Clip3(0, MAX_QP+DEFAULT_INTRA_TC_OFFSET, iQP + DEFAULT_INTRA_TC_OFFSET*(ucBs - 1) + (tcOffsetDiv2 << 1));
         Int iTc =  tctable_8x8[iIndexTC]*iBitdepthScale;
 
         for ( UInt uiStep = 0; uiStep < uiPelsInPartChroma; uiStep++ )

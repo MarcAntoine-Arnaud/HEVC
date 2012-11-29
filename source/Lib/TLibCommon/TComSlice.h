@@ -958,7 +958,7 @@ private:
   UInt     m_encCABACTableIdx;           // Used to transmit table selection across slices
 
   Bool     m_sliceHeaderExtensionPresentFlag;
-  Bool        m_loopFilterAcrossSlicesEnabledFlag;
+  Bool     m_loopFilterAcrossSlicesEnabledFlag;
   Bool     m_deblockingFilterControlPresentFlag;
   Bool     m_deblockingFilterOverrideEnabledFlag;
   Bool     m_picDisableDeblockingFilterFlag;
