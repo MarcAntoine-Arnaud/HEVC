@@ -621,9 +621,9 @@ Void TDecTop::xDecodeSEI( TComInputBitstream* bs )
   if ( m_SEIs == NULL )
 #if SUFFIX_SEI_NUT_DECODED_HASH_SEI
   {
-    if(nalUnitType == NAL_UNIT_SEI_SUFFIX)
+    if( (nalUnitType == NAL_UNIT_SEI_SUFFIX) && (m_pcPic->getSEIs()) )
     {
-      m_SEIs = m_pcPic->getSEIs();          // If suffix SEI, use already existing SEI structure
+      m_SEIs = m_pcPic->getSEIs();          // If suffix SEI and SEI already present, use already existing SEI structure
     }
     else
     {
@@ -644,7 +644,11 @@ Void TDecTop::xDecodeSEI( TComInputBitstream* bs )
   m_seiReader.parseSEImessage( bs, *m_SEIs, nalUnitType );
   if(nalUnitType == NAL_UNIT_SEI_SUFFIX)
   {
-    m_SEIs = NULL;  // The actual SEI structure is updated, this pointer is not required now.
+    if(!m_pcPic->getSEIs())
+    {
+      m_pcPic->setSEIs(m_SEIs); // Only suffix SEI present and new object created; update picture SEI variable
+    }
+    m_SEIs = NULL;  // SEI structure already updated using this pointer; not required now.
   }
 #else
   m_seiReader.parseSEImessage( bs, *m_SEIs );
