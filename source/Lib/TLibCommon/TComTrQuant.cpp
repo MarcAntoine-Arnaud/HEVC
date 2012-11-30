@@ -1103,7 +1103,7 @@ Void TComTrQuant::xQuant( TComDataCU* pcCU,
       deltaU[uiBlockPos] = (Int)((tmpLevel - (iLevel<<iQBits) )>> qBits8);
 #else
       iLevel = ((Int64)abs(iLevel) * piQuantCoeff[uiBlockPos] + iAdd ) >> iQBits;
-      deltaU[uiBlockPos] = (Int)( ((Int64)abs(iLevel) * piQuantCoeff[uiBlockPos] - (iLevel<<iQBits) )>> qBits8 );
+      deltaU[uiBlockPos] = (Int)( ((Int64)abs(piCoef[uiBlockPos]) * piQuantCoeff[uiBlockPos] - (iLevel<<iQBits) )>> qBits8 );
 #endif
       uiAcSum += iLevel;
       iLevel *= iSign;        
