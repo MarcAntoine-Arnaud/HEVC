@@ -1151,24 +1151,15 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
               // Byte alignment is necessary between tiles when tiles are independent.
               uiTotalCodedSize += pcSubstreamsOut[ui].getNumberOfWrittenBits();
 
+              Bool bNextSubstreamInNewTile = ((ui+1) < iNumSubstreams)&& ((ui+1)%uiNumSubstreamsPerTile == 0);
+              if (bNextSubstreamInNewTile)
               {
-                Bool bNextSubstreamInNewTile = ((ui+1) < iNumSubstreams)
-                  && ((ui+1)%uiNumSubstreamsPerTile == 0);
-                if (bNextSubstreamInNewTile)
-                {
-                  // byte align.
-                  while (uiTotalCodedSize&0x7)
-                  {
-                    pcSubstreamsOut[ui].write(0, 1);
-                    uiTotalCodedSize++;
-                  }
-                }
-                Bool bRecordOffsetNext = bNextSubstreamInNewTile;
-                if (bRecordOffsetNext)
-                  pcSlice->setTileLocation(ui/uiNumSubstreamsPerTile, pcSlice->getTileOffstForMultES()+(uiTotalCodedSize>>3));
+                pcSlice->setTileLocation(ui/uiNumSubstreamsPerTile, pcSlice->getTileOffstForMultES()+(uiTotalCodedSize>>3));
               }
               if (ui+1 < pcSlice->getPPS()->getNumSubstreams())
+              {
                 puiSubstreamSizes[ui] = pcSubstreamsOut[ui].getNumberOfWrittenBits();
+              }
             }
 
             // Complete the slice header info.
