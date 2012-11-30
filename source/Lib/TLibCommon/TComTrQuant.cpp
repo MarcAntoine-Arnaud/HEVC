@@ -1028,11 +1028,6 @@ Void TComTrQuant::xQuant( TComDataCU* pcCU,
     const UInt   log2BlockSize   = g_aucConvertToBit[ iWidth ] + 2;
 
     UInt scanIdx = pcCU->getCoefScanIdx(uiAbsPartIdx, iWidth, eTType==TEXT_LUMA, pcCU->isIntra(uiAbsPartIdx));
-    if (scanIdx == SCAN_ZIGZAG)
-    {
-      scanIdx = SCAN_DIAG;
-    }
-
     const UInt *scan = g_auiSigLastScan[ scanIdx ][ log2BlockSize - 1 ];
     
     Int deltaU[32*32] ;
@@ -1540,12 +1535,6 @@ Void TComTrQuant::xRateDistOptQuant                 ( TComDataCU*               
   Int iAddC =  1 << (iQBitsC-1);
 #endif
   UInt uiScanIdx = pcCU->getCoefScanIdx(uiAbsPartIdx, uiWidth, eTType==TEXT_LUMA, pcCU->isIntra(uiAbsPartIdx));
-  if (uiScanIdx == SCAN_ZIGZAG)
-  {
-    // Map value zigzag to diagonal scan
-    uiScanIdx = SCAN_DIAG;
-  }
-  Int blockType = uiLog2BlkSize;
   
 #if ADAPTIVE_QP_SELECTION
   memset(piArlDstCoeff, 0, sizeof(Int) *  uiMaxNumCoeff);
@@ -1658,7 +1647,7 @@ Void TComTrQuant::xRateDistOptQuant                 ( TComDataCU*               
         {
           UInt   uiPosY        = uiBlkPos >> uiLog2BlkSize;
           UInt   uiPosX        = uiBlkPos - ( uiPosY << uiLog2BlkSize );
-          UShort uiCtxSig      = getSigCtxInc( patternSigCtx, uiScanIdx, uiPosX, uiPosY, blockType, uiWidth, uiHeight, eTType );
+          UShort uiCtxSig      = getSigCtxInc( patternSigCtx, uiScanIdx, uiPosX, uiPosY, uiLog2BlkSize, uiWidth, uiHeight, eTType );
           uiLevel              = xGetCodedLevel( pdCostCoeff[ iScanPos ], pdCostCoeff0[ iScanPos ], pdCostSig[ iScanPos ],
                                                 lLevelDouble, uiMaxAbsLevel, uiCtxSig, uiOneCtx, uiAbsCtx, uiGoRiceParam, 
                                                 c1Idx, c2Idx, iQBits, dTemp, 0 );
@@ -2058,7 +2047,7 @@ Int  TComTrQuant::calcPatternSigCtx( const UInt* sigCoeffGroupFlag, UInt posXCG,
  * \param patternSigCtx pattern for current coefficient group
  * \param posX column of current scan position
  * \param posY row of current scan position
- * \param blockType log2 value of block size if square block, or 4 otherwise
+ * \param log2BlockSize log2 value of block size (square block)
  * \param width width of the block
  * \param height height of the block
  * \param textureType texture type (TEXT_LUMA...)
@@ -2069,7 +2058,7 @@ Int TComTrQuant::getSigCtxInc    (
                                    UInt                            scanIdx,
                                    Int                             posX,
                                    Int                             posY,
-                                   Int                             blockType,
+                                   Int                             log2BlockSize,
                                    Int                             width
                                   ,Int                             height
                                   ,TextType                        textureType
@@ -2088,12 +2077,12 @@ Int TComTrQuant::getSigCtxInc    (
     return 0;
   }
 
-  if ( blockType == 2 )
+  if ( log2BlockSize == 2 )
   {
     return ctxIndMap[ 4 * posY + posX ];
   }
 
-  Int offset = blockType == 3 ? (scanIdx==SCAN_DIAG ? 9 : 15) : (textureType == TEXT_LUMA ? 21 : 12);
+  Int offset = log2BlockSize == 3 ? (scanIdx==SCAN_DIAG ? 9 : 15) : (textureType == TEXT_LUMA ? 21 : 12);
 
   Int posXinSubset = posX-((posX>>2)<<2);
   Int posYinSubset = posY-((posY>>2)<<2);

@@ -68,8 +68,7 @@ Void initROM()
     g_auiSigLastScan[0][i] = new UInt[ c*c ];
     g_auiSigLastScan[1][i] = new UInt[ c*c ];
     g_auiSigLastScan[2][i] = new UInt[ c*c ];
-    g_auiSigLastScan[3][i] = new UInt[ c*c ];
-    initSigLastScan( g_auiSigLastScan[0][i], g_auiSigLastScan[1][i], g_auiSigLastScan[2][i], g_auiSigLastScan[3][i], c, c, i);
+    initSigLastScan( g_auiSigLastScan[0][i], g_auiSigLastScan[1][i], g_auiSigLastScan[2][i], c, c, i);
 
     c <<= 1;
   }  
@@ -84,7 +83,6 @@ Void destroyROM()
     delete[] g_auiSigLastScan[0][i];
     delete[] g_auiSigLastScan[1][i];
     delete[] g_auiSigLastScan[2][i];
-    delete[] g_auiSigLastScan[3][i];
   }
 }
 
@@ -386,13 +384,12 @@ UInt64 g_nSymbolCounter = 0;
 // ====================================================================================================================
 
 // scanning order table
-UInt* g_auiSigLastScan[4][ MAX_CU_DEPTH ];
+UInt* g_auiSigLastScan[ 3 ][ MAX_CU_DEPTH ];
 
-const UInt g_sigLastScan8x8[ 4 ][ 4 ] =
+const UInt g_sigLastScan8x8[ 3 ][ 4 ] =
 {
-  {0, 1, 2, 3},
-  {0, 1, 2, 3},
   {0, 2, 1, 3},
+  {0, 1, 2, 3},
   {0, 2, 1, 3}
 };
 UInt g_sigLastScanCG32x32[ 64 ];
@@ -411,7 +408,7 @@ const UInt g_auiGoRicePrefixLen[5] =
   8, 7, 6, 5, 4
 };
 
-Void initSigLastScan(UInt* pBuffZ, UInt* pBuffH, UInt* pBuffV, UInt* pBuffD, Int iWidth, Int iHeight, Int iDepth)
+Void initSigLastScan(UInt* pBuffD, UInt* pBuffH, UInt* pBuffV, Int iWidth, Int iHeight, Int iDepth)
 {
   const UInt  uiNumScanPos  = UInt( iWidth * iWidth );
   UInt        uiNextScanPos = 0;

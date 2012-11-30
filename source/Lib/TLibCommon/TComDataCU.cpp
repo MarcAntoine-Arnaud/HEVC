@@ -3745,7 +3745,7 @@ UInt TComDataCU::getCoefScanIdx(UInt uiAbsPartIdx, UInt uiWidth, Bool bIsLuma, B
 
   if ( !bIsIntra ) 
   {
-    uiScanIdx = SCAN_ZIGZAG;
+    uiScanIdx = SCAN_DIAG;
     return uiScanIdx;
   }
 
@@ -3763,10 +3763,10 @@ UInt TComDataCU::getCoefScanIdx(UInt uiAbsPartIdx, UInt uiWidth, Bool bIsLuma, B
   if ( bIsLuma )
   {
     uiDirMode = getLumaIntraDir(uiAbsPartIdx);
-    uiScanIdx = SCAN_ZIGZAG;
+    uiScanIdx = SCAN_DIAG;
     if (uiCTXIdx >3 && uiCTXIdx < 6) //if multiple scans supported for transform size
     {
-      uiScanIdx = abs((Int) uiDirMode - VER_IDX) < 5 ? 1 : (abs((Int)uiDirMode - HOR_IDX) < 5 ? 2 : 0);
+      uiScanIdx = abs((Int) uiDirMode - VER_IDX) < 5 ? SCAN_HOR : (abs((Int)uiDirMode - HOR_IDX) < 5 ? SCAN_VER : SCAN_DIAG);
     }
   }
   else
@@ -3781,10 +3781,10 @@ UInt TComDataCU::getCoefScanIdx(UInt uiAbsPartIdx, UInt uiWidth, Bool bIsLuma, B
       // get luma mode from upper-left corner of current CU
       uiDirMode = getLumaIntraDir((uiAbsPartIdx/numParts)*numParts);
     }
-    uiScanIdx = SCAN_ZIGZAG;
+    uiScanIdx = SCAN_DIAG;
     if (uiCTXIdx >4 && uiCTXIdx < 7) //if multiple scans supported for transform size
     {
-      uiScanIdx = abs((Int) uiDirMode - VER_IDX) < 5 ? 1 : (abs((Int)uiDirMode - HOR_IDX) < 5 ? 2 : 0);
+      uiScanIdx = abs((Int) uiDirMode - VER_IDX) < 5 ? SCAN_HOR : (abs((Int)uiDirMode - HOR_IDX) < 5 ? SCAN_VER : SCAN_DIAG);
     }
   }
 

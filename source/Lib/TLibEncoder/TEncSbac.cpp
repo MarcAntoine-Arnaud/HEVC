@@ -1131,20 +1131,8 @@ Void TEncSbac::codeCoeffNxN( TComDataCU* pcCU, TCoeff* pcCoef, UInt uiAbsPartIdx
   eTType = eTType == TEXT_LUMA ? TEXT_LUMA : ( eTType == TEXT_NONE ? TEXT_NONE : TEXT_CHROMA );
   
   //----- encode significance map -----
-  const UInt   uiLog2BlockSize   = g_aucConvertToBit[ uiWidth ] + 2;
+  const UInt   uiLog2BlockSize = g_aucConvertToBit[ uiWidth ] + 2;
   UInt uiScanIdx = pcCU->getCoefScanIdx(uiAbsPartIdx, uiWidth, eTType==TEXT_LUMA, pcCU->isIntra(uiAbsPartIdx));
-  if (uiScanIdx == SCAN_ZIGZAG)
-  {
-    // Map zigzag to diagonal scan
-    uiScanIdx = SCAN_DIAG;
-  }
-  Int blockType = uiLog2BlockSize;
-  if (uiWidth != uiHeight)
-  {
-    uiScanIdx = SCAN_DIAG;
-    blockType = 4;
-  }
-  
   const UInt *scan = g_auiSigLastScan[ uiScanIdx ][ uiLog2BlockSize - 1 ];
   
   Bool beValid;
@@ -1259,7 +1247,7 @@ Void TEncSbac::codeCoeffNxN( TComDataCU* pcCU, TCoeff* pcCoef, UInt uiAbsPartIdx
           uiSig     = (pcCoef[ uiBlkPos ] != 0);
           if( iScanPosSig > iSubPos || iSubSet == 0 || numNonZero )
           {
-            uiCtxSig  = TComTrQuant::getSigCtxInc( patternSigCtx, uiScanIdx, uiPosX, uiPosY, blockType, uiWidth, uiHeight, eTType );
+            uiCtxSig  = TComTrQuant::getSigCtxInc( patternSigCtx, uiScanIdx, uiPosX, uiPosY, uiLog2BlockSize, uiWidth, uiHeight, eTType );
             m_pcBinIf->encodeBin( uiSig, baseCtx[ uiCtxSig ] );
           }
           if( uiSig )

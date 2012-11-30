@@ -509,10 +509,9 @@ enum MVP_DIR
 /// coefficient scanning type used in ACS
 enum COEFF_SCAN_TYPE
 {
-  SCAN_ZIGZAG = 0,      ///< typical zigzag scan
-  SCAN_HOR,             ///< horizontal first scan
-  SCAN_VER,              ///< vertical first scan
-  SCAN_DIAG              ///< up-right diagonal scan
+  SCAN_DIAG = 0,         ///< up-right diagonal scan
+  SCAN_HOR,              ///< horizontal first scan
+  SCAN_VER               ///< vertical first scan
 };
 
 namespace Profile
