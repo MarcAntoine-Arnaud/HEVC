@@ -49,21 +49,50 @@ using namespace std;
 
 //! \ingroup TLibDecoder
 //! \{
+#if HM9_NALU_TYPES
+static void convertPayloadToRBSP(vector<uint8_t>& nalUnitBuf, TComInputBitstream *pcBitstream, Bool isVclNalUnit)
+#else
 static void convertPayloadToRBSP(vector<uint8_t>& nalUnitBuf, TComInputBitstream *pcBitstream)
+#endif
 {
   UInt zeroCount = 0;
   vector<uint8_t>::iterator it_read, it_write;
 
   for (it_read = it_write = nalUnitBuf.begin(); it_read != nalUnitBuf.end(); it_read++, it_write++)
   {
+    assert(zeroCount < 2 || *it_read >= 0x03);
     if (zeroCount == 2 && *it_read == 0x03)
     {
       it_read++;
       zeroCount = 0;
+      if (it_read == nalUnitBuf.end())
+      {
+        break;
+      }
     }
     zeroCount = (*it_read == 0x00) ? zeroCount+1 : 0;
     *it_write = *it_read;
   }
+  assert(zeroCount == 0);
+  
+#if HM9_NALU_TYPES
+  if (isVclNalUnit)
+  {
+    // Remove cabac_zero_word from payload if present
+    Int n = 0;
+    
+    while (it_write[-1] == 0x00)
+    {
+      it_write--;
+      n++;
+    }
+    
+    if (n > 0)
+    {
+      printf("\nDetected %d instances of cabac_zero_word", n/2);      
+    }
+  }
+#endif
 
   nalUnitBuf.resize(it_write - nalUnitBuf.begin());
 }
@@ -108,8 +137,12 @@ void read(InputNALUnit& nalu, vector<uint8_t>& nalUnitBuf)
 {
   /* perform anti-emulation prevention */
   TComInputBitstream *pcBitstream = new TComInputBitstream(NULL);
+#if HM9_NALU_TYPES
+  convertPayloadToRBSP(nalUnitBuf, pcBitstream, nalu.m_nalUnitType <= NAL_UNIT_RESERVED_31);
+#else
   convertPayloadToRBSP(nalUnitBuf, pcBitstream);
-
+#endif
+  
   nalu.m_Bitstream = new TComInputBitstream(&nalUnitBuf);
   delete pcBitstream;
   readNalUnitHeader(nalu);
