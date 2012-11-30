@@ -188,7 +188,7 @@ Void TDecTop::xGetNewPicBuffer ( TComSlice* pcSlice, TComPic*& rpcPic )
   rpcPic->getPicSym()->allocSaoParam(&m_cSAO);
 }
 
-Void TDecTop::executeDeblockAndAlf(Int& poc, TComList<TComPic*>*& rpcListPic, Int& iSkipFrame, Int& iPOCLastDisplay)
+Void TDecTop::executeLoopFilters(Int& poc, TComList<TComPic*>*& rpcListPic, Int& iSkipFrame, Int& iPOCLastDisplay)
 {
   if (!m_pcPic)
   {

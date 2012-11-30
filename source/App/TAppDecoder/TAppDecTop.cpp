@@ -168,7 +168,7 @@ Void TAppDecTop::decode()
     }
     if (bNewPicture || !bitstreamFile)
     {
-      m_cTDecTop.executeDeblockAndAlf(poc, pcListPic, m_iSkipFrame, m_iPOCLastDisplay);
+      m_cTDecTop.executeLoopFilters(poc, pcListPic, m_iSkipFrame, m_iPOCLastDisplay);
     }
 
     if( pcListPic )
