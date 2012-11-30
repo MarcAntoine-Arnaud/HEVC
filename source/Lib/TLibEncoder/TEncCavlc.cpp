@@ -731,7 +731,12 @@ Void TEncCavlc::codeSliceHeader         ( TComSlice* pcSlice )
       else
       {
         WRITE_FLAG( 1, "short_term_ref_pic_set_sps_flag");
-        WRITE_UVLC( pcSlice->getRPSidx(), "short_term_ref_pic_set_idx" );
+        Int numBits = 0;
+        while ((1 << numBits) < pcSlice->getSPS()->getRPSList()->getNumberOfReferencePictureSets())
+        {
+          numBits++;
+        }
+        WRITE_CODE( pcSlice->getRPSidx(), numBits, "short_term_ref_pic_set_idx" );
       }
       if(pcSlice->getSPS()->getLongTermRefsPresent())
       {
