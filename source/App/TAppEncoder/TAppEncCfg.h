@@ -269,7 +269,15 @@ protected:
   Void  xCheckParameter ();                                   ///< check validity of configuration values
   Void  xPrintParameter ();                                   ///< print configuration values
   Void  xPrintUsage     ();                                   ///< print usage
-  
+#if SIGNAL_BITRATE_PICRATE_IN_VPS
+  Int       m_bitRatePicRateMaxTLayers;                       ///< Indicates max. number of sub-layers for which bit rate is signalled.
+  Bool*     m_bitRateInfoPresentFlag;                         ///< Indicates whether bit rate information is signalled
+  Bool*     m_picRateInfoPresentFlag;                         ///< Indicates whether pic rate information is signalled
+  Int*      m_avgBitRate;                                     ///< Indicates avg. bit rate information for various sub-layers
+  Int*      m_maxBitRate;                                     ///< Indicates max. bit rate information for various sub-layers
+  Int*      m_avgPicRate;                                     ///< Indicates avg. picture rate information for various sub-layers
+  Int*      m_constantPicRateIdc;                                ///< Indicates constant picture rate idc for various sub-layers
+#endif
 public:
   TAppEncCfg();
   virtual ~TAppEncCfg();
