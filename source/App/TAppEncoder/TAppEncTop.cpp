@@ -305,7 +305,10 @@ Void TAppEncTop::xInitLibCfg()
 #if SIGNAL_BITRATE_PICRATE_IN_VPS
   TComBitRatePicRateInfo *bitRatePicRateInfo = m_cTEncTop.getVPS()->getBitratePicrateInfo();
   // The number of bit rate/pic rate have to equal to number of sub-layers.
-  assert(m_bitRatePicRateMaxTLayers == m_cTEncTop.getVPS()->getMaxTLayers());
+  if(m_bitRatePicRateMaxTLayers)
+  {
+    assert(m_bitRatePicRateMaxTLayers == m_cTEncTop.getVPS()->getMaxTLayers());
+  }
   for(Int i = 0; i < m_bitRatePicRateMaxTLayers; i++)
   {
     bitRatePicRateInfo->setBitRateInfoPresentFlag( i, m_bitRateInfoPresentFlag[i] );
