@@ -48,6 +48,7 @@
 #define HLS_EXTRA_SLICE_HEADER_BITS                 1  ///< K0210: signal num_extra_slice_header_bits in PPS
 #define HLS_MOVE_SPS_PICLIST_FLAGS                  1  ///< K0170: move restricted_ref_pic_lists_flag and lists_modification_present_flag
 #define HLS_ADD_VUI_PICSTRUCT_PRESENT_FLAG          1  ///< add pic_struct_present_flag to VUI
+#define HLS_DISPLAY_WINDOW_PLACEHOLDER              1  ///< K0382: add display window flag placeholder
 
 #define VARYING_DBL_PARAMS                          1  ///< K0289: Specifying varying deblocking parameters in GOP
 
