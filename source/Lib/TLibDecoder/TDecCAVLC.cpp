@@ -947,7 +947,15 @@ Void TDecCavlc::parseSliceHeader (TComSlice*& rpcSlice, ParameterSetManagerDecod
         {
           numBits++;
         }
-        READ_CODE( numBits, uiCode, "short_term_ref_pic_set_idx"); rpcSlice->setRPS(sps->getRPSList()->getReferencePictureSet(uiCode));
+        if (numBits > 0)
+        {
+          READ_CODE( numBits, uiCode, "short_term_ref_pic_set_idx");        }
+        else
+        {
+          uiCode = 0;
+        }
+        rpcSlice->setRPS(sps->getRPSList()->getReferencePictureSet(uiCode));
+
         rps = rpcSlice->getRPS();
       }
       if(sps->getLongTermRefsPresent())

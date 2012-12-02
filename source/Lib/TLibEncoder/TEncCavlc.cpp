@@ -739,7 +739,10 @@ Void TEncCavlc::codeSliceHeader         ( TComSlice* pcSlice )
         {
           numBits++;
         }
-        WRITE_CODE( pcSlice->getRPSidx(), numBits, "short_term_ref_pic_set_idx" );
+        if (numBits > 0)
+        {
+          WRITE_CODE( pcSlice->getRPSidx(), numBits, "short_term_ref_pic_set_idx" );          
+        }
       }
       if(pcSlice->getSPS()->getLongTermRefsPresent())
       {
