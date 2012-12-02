@@ -497,7 +497,7 @@ Bool TDecTop::xDecodeSlice(InputNALUnit &nalu, Int &iSkipFrame, Int iPOCLastDisp
         pcSlice->setRefPic(pcSlice->getRefPic(REF_PIC_LIST_0, iRefIdx), REF_PIC_LIST_1, iRefIdx);
       }
     }
-    if (pcSlice->isInterB())
+    if (!pcSlice->isIntra())
     {
       Bool bLowDelay = true;
       Int  iCurrPOC  = pcSlice->getPOC();
@@ -510,12 +510,15 @@ Bool TDecTop::xDecodeSlice(InputNALUnit &nalu, Int &iSkipFrame, Int iPOCLastDisp
           bLowDelay = false;
         }
       }
-      for (iRefIdx = 0; iRefIdx < pcSlice->getNumRefIdx(REF_PIC_LIST_1) && bLowDelay; iRefIdx++)
+      if (pcSlice->isInterB())
       {
-        if ( pcSlice->getRefPic(REF_PIC_LIST_1, iRefIdx)->getPOC() > iCurrPOC )
+        for (iRefIdx = 0; iRefIdx < pcSlice->getNumRefIdx(REF_PIC_LIST_1) && bLowDelay; iRefIdx++)
         {
-          bLowDelay = false;
-        }
+          if ( pcSlice->getRefPic(REF_PIC_LIST_1, iRefIdx)->getPOC() > iCurrPOC )
+          {
+            bLowDelay = false;
+          }
+        }        
       }
 
       pcSlice->setCheckLDC(bLowDelay);            
