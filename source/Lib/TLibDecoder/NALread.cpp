@@ -138,7 +138,7 @@ void read(InputNALUnit& nalu, vector<uint8_t>& nalUnitBuf)
   /* perform anti-emulation prevention */
   TComInputBitstream *pcBitstream = new TComInputBitstream(NULL);
 #if HM9_NALU_TYPES
-  convertPayloadToRBSP(nalUnitBuf, pcBitstream, nalu.m_nalUnitType <= NAL_UNIT_RESERVED_31);
+  convertPayloadToRBSP(nalUnitBuf, pcBitstream, (nalUnitBuf[0] & 64) == 0);
 #else
   convertPayloadToRBSP(nalUnitBuf, pcBitstream);
 #endif
