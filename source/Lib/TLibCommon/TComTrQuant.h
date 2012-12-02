@@ -169,7 +169,7 @@ public:
                                      UInt                            scanIdx,
                                      Int                             posX,
                                      Int                             posY,
-                                     Int                             blockType,
+                                     Int                             log2BlkSize,
                                      Int                             width
                                     ,Int                             height
                                     ,TextType                        textureType

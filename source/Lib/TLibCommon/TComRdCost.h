@@ -162,6 +162,10 @@ public:
   Void    setFrameLambda ( Double dLambda ) { m_dFrameLambda = dLambda; }
   
   Double  getSqrtLambda ()   { return m_sqrtLambda; }
+
+#if RATE_CONTROL_LAMBDA_DOMAIN
+  Double  getLambda() { return m_dLambda; }
+#endif
   
   // Distortion Functions
   Void    init();
@@ -256,7 +260,10 @@ public:
 #else
   UInt   getDistPart(Int bitDepth, Pel* piCur, Int iCurStride,  Pel* piOrg, Int iOrgStride, UInt uiBlkWidth, UInt uiBlkHeight, DFunc eDFunc = DF_SSE );
 #endif
-  
+
+#if RATE_CONTROL_LAMBDA_DOMAIN
+  UInt   getSADPart ( Int bitDepth, Pel* pelCur, Int curStride,  Pel* pelOrg, Int orgStride, UInt width, UInt height );
+#endif
 };// END CLASS DEFINITION TComRdCost
 
 //! \}

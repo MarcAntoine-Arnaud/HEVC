@@ -480,7 +480,23 @@ UInt TComRdCost::getDistPart(Int bitDepth, Pel* piCur, Int iCurStride,  Pel* piO
 #endif
 }
 
-
+#if RATE_CONTROL_LAMBDA_DOMAIN
+UInt TComRdCost::getSADPart ( Int bitDepth, Pel* pelCur, Int curStride,  Pel* pelOrg, Int orgStride, UInt width, UInt height )
+{
+  UInt SAD = 0;
+  Int shift = DISTORTION_PRECISION_ADJUSTMENT(bitDepth-8);
+  for ( Int i=0; i<height; i++ )
+  {
+    for( Int j=0; j<width; j++ )
+    {
+      SAD += abs((pelCur[j] - pelOrg[j])) >> shift;
+    }
+    pelCur = pelCur + curStride;
+    pelOrg = pelOrg + orgStride;
+  }
+  return SAD;
+}
+#endif
 
 // ====================================================================================================================
 // Distortion functions

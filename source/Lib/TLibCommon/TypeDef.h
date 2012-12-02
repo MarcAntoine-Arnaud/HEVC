@@ -40,7 +40,41 @@
 
 //! \ingroup TLibCommon
 //! \{
+#define SUFFIX_SEI_NUT_DECODED_HASH_SEI             1  ///< K0120: Use the suffix SEI NUT for the decoded hash SEI message
+#define HLS_SEI_GENERIC_EXTENSION                   1  ///< K0371: generic SEI payload extension mechanism
+#define HLS_REMOVE_ACTIVE_PARAM_SET_SEI_EXT_FLAG    1  ///< K0371: remove active_parameter_set_sei_extension_flag
+#define HLS_ADD_SUBLAYER_ORDERING_INFO_PRESENT_FLAG 1  ///< K0330: Use sub_layer_ordering_info_present_flag in VPS and SPS as a shortcut to signal only one set of values
+#define HLS_GROUP_SPS_PCM_FLAGS                     1  ///< K0217: Group together syntax elements for PCM in SPS
+#define HLS_EXTRA_SLICE_HEADER_BITS                 1  ///< K0210: signal num_extra_slice_header_bits in PPS
+#define HLS_MOVE_SPS_PICLIST_FLAGS                  1  ///< K0170: move restricted_ref_pic_lists_flag and lists_modification_present_flag
+#define HLS_ADD_VUI_PICSTRUCT_PRESENT_FLAG          1  ///< add pic_struct_present_flag to VUI
+#define HLS_DISPLAY_WINDOW_PLACEHOLDER              1  ///< K0382: add display window flag placeholder
+
+#define VARYING_DBL_PARAMS                          1  ///< K0289: Specifying varying deblocking parameters in GOP
+
+#define DISALLOW_LTRP_REPETITIONS                   1  ///< K0123: Disallow duplicate LTRP entries in RPS
+#define REMOVE_LTRP_LSB_RESTRICTIONS                1  ///< K0123: Remove restrictions that LTRP LSBs have to be increasing/decreasing
+#define POC_TEMPORAL_RELATIONSHIP                   1  ///< K0120: Add syntax in SPS/VUI to indicate POC temporal relationship
+#define SIGNAL_BITRATE_PICRATE_IN_VPS               1  ///< K0125: Signal bit_rate and pic_rate in VPS
+#define MOVE_SPS_TEMPORAL_ID_NESTING_FLAG           1  ///< K0120: Move sps_temporal_id_nesting_flag and replace sps_reserved_zero_bit
+#define CONDITION_SUBLAYERPROFILEPRESENTFLAG        1  ///< K0125: Condition signalling of sub_layer_profile_present_flag
+
+#define VPS_OPERATING_POINT                         1  ///< K0204 - Operation point added to VPS
+#if VPS_OPERATING_POINT
+  #define MAX_VPS_NUM_HRD_PARAMETERS                1
+  #define MAX_VPS_NUM_HRD_PARAMETERS_ALLOWED_PLUS1  1024
+  #define MAX_VPS_NUH_RESERVED_ZERO_LAYER_ID_PLUS1  1
+#endif
+#define SEI_DISPLAY_ORIENTATION                     1  ///< Display orientation SEI message
+#define SEI_TEMPORAL_LEVEL0_INDEX                   1  ///< K0205 - Temporal level zero index SEI message
+
+#define RATE_CONTROL_LAMBDA_DOMAIN                  1  ///< JCTVC-K0103, rate control by R-lambda model
+
+#define MIN_SPATIAL_SEGMENTATION                    1  ///< JCTVC-K0236
 #define SAVE_BITS_REFPICLIST_MOD_FLAG               1  ///< K0224 Proposal#1: Send ref_pic_list_modification_flag_lX only when NumPocTotalCurr is greater than 1.
+
+#define VPS_REARRANGE                               1  ///< JCTVC-K0254
+#define HRD_BUFFER                                  1  ///< JCTVC-K0221
 
 #define USE_PIC_CHROMA_QP_OFFSETS_IN_DEBLOCKING     1  ///< K0220: Use picture-based chroma QP offsets in deblocking filter.
 
@@ -476,10 +510,9 @@ enum MVP_DIR
 /// coefficient scanning type used in ACS
 enum COEFF_SCAN_TYPE
 {
-  SCAN_ZIGZAG = 0,      ///< typical zigzag scan
-  SCAN_HOR,             ///< horizontal first scan
-  SCAN_VER,              ///< vertical first scan
-  SCAN_DIAG              ///< up-right diagonal scan
+  SCAN_DIAG = 0,         ///< up-right diagonal scan
+  SCAN_HOR,              ///< horizontal first scan
+  SCAN_VER               ///< vertical first scan
 };
 
 namespace Profile

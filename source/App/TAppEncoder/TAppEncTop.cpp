@@ -85,11 +85,7 @@ Void TAppEncTop::xInitLibCfg()
   m_cTEncTop.setFrameSkip                    ( m_FrameSkip );
   m_cTEncTop.setSourceWidth                  ( m_iSourceWidth );
   m_cTEncTop.setSourceHeight                 ( m_iSourceHeight );
-  m_cTEncTop.setCroppingMode                 ( m_croppingMode );
-  m_cTEncTop.setCropLeft                     ( m_cropLeft );
-  m_cTEncTop.setCropRight                    ( m_cropRight );
-  m_cTEncTop.setCropTop                      ( m_cropTop );
-  m_cTEncTop.setCropBottom                   ( m_cropBottom );
+  m_cTEncTop.setPicCroppingWindow            ( m_cropLeft, m_cropRight, m_cropTop, m_cropBottom );
   m_cTEncTop.setFrameToBeEncoded             ( m_iFrameToBeEncoded );
   
   //====== Coding Structure ========
@@ -227,13 +223,24 @@ Void TAppEncTop::xInitLibCfg()
   m_cTEncTop.setRecoveryPointSEIEnabled( m_recoveryPointSEIEnabled );
   m_cTEncTop.setBufferingPeriodSEIEnabled( m_bufferingPeriodSEIEnabled );
   m_cTEncTop.setPictureTimingSEIEnabled( m_pictureTimingSEIEnabled );
+#if SEI_DISPLAY_ORIENTATION
+  m_cTEncTop.setDisplayOrientationSEIAngle( m_displayOrientationSEIAngle );
+#endif
+#if SEI_TEMPORAL_LEVEL0_INDEX
+  m_cTEncTop.setTemporalLevel0IndexSEIEnabled( m_temporalLevel0IndexSEIEnabled );
+#endif
   m_cTEncTop.setUniformSpacingIdr          ( m_iUniformSpacingIdr );
   m_cTEncTop.setNumColumnsMinus1           ( m_iNumColumnsMinus1 );
   m_cTEncTop.setNumRowsMinus1              ( m_iNumRowsMinus1 );
   if(m_iUniformSpacingIdr==0)
   {
+#if MIN_SPATIAL_SEGMENTATION
+    m_cTEncTop.setColumnWidth              ( m_pColumnWidth );
+    m_cTEncTop.setRowHeight                ( m_pRowHeight );
+#else
     m_cTEncTop.setColumnWidth              ( m_pchColumnWidth );
     m_cTEncTop.setRowHeight                ( m_pchRowHeight );
+#endif
   }
   m_cTEncTop.xCheckGSParameters();
   Int uiTilesCount          = (m_iNumRowsMinus1+1) * (m_iNumColumnsMinus1+1);
@@ -248,9 +255,19 @@ Void TAppEncTop::xInitLibCfg()
   m_cTEncTop.setUseScalingListId           ( m_useScalingListId  );
   m_cTEncTop.setScalingListFile            ( m_scalingListFile   );
   m_cTEncTop.setSignHideFlag(m_signHideFlag);
+#if RATE_CONTROL_LAMBDA_DOMAIN
+  m_cTEncTop.setUseRateCtrl         ( m_RCEnableRateControl );
+  m_cTEncTop.setTargetBitrate       ( m_RCTargetBitrate );
+  m_cTEncTop.setKeepHierBit         ( m_RCKeepHierarchicalBit );
+  m_cTEncTop.setLCULevelRC          ( m_RCLCULevelRC );
+  m_cTEncTop.setUseLCUSeparateModel ( m_RCUseLCUSeparateModel );
+  m_cTEncTop.setInitialQP           ( m_RCInitialQP );
+  m_cTEncTop.setForceIntraQP        ( m_RCForceIntraQP );
+#else
   m_cTEncTop.setUseRateCtrl     ( m_enableRateCtrl);
   m_cTEncTop.setTargetBitrate   ( m_targetBitrate);
   m_cTEncTop.setNumLCUInUnit    ( m_numLCUInUnit);
+#endif
   m_cTEncTop.setTransquantBypassEnableFlag(m_TransquantBypassEnableFlag);
   m_cTEncTop.setCUTransquantBypassFlagValue(m_CUTransquantBypassFlagValue);
   m_cTEncTop.setUseRecalculateQPAccordingToLambda( m_recalculateQPAccordingToLambda );
@@ -278,10 +295,39 @@ Void TAppEncTop::xInitLibCfg()
   m_cTEncTop.setBitstreamRestrictionFlag( m_bitstreamRestrictionFlag );
   m_cTEncTop.setTilesFixedStructureFlag( m_tilesFixedStructureFlag );
   m_cTEncTop.setMotionVectorsOverPicBoundariesFlag( m_motionVectorsOverPicBoundariesFlag );
+#if MIN_SPATIAL_SEGMENTATION
+  m_cTEncTop.setMinSpatialSegmentationIdc( m_minSpatialSegmentationIdc );
+#endif
   m_cTEncTop.setMaxBytesPerPicDenom( m_maxBytesPerPicDenom );
   m_cTEncTop.setMaxBitsPerMinCuDenom( m_maxBitsPerMinCuDenom );
   m_cTEncTop.setLog2MaxMvLengthHorizontal( m_log2MaxMvLengthHorizontal );
   m_cTEncTop.setLog2MaxMvLengthVertical( m_log2MaxMvLengthVertical );
+#if SIGNAL_BITRATE_PICRATE_IN_VPS
+  TComBitRatePicRateInfo *bitRatePicRateInfo = m_cTEncTop.getVPS()->getBitratePicrateInfo();
+  // The number of bit rate/pic rate have to equal to number of sub-layers.
+  if(m_bitRatePicRateMaxTLayers)
+  {
+    assert(m_bitRatePicRateMaxTLayers == m_cTEncTop.getVPS()->getMaxTLayers());
+  }
+  for(Int i = 0; i < m_bitRatePicRateMaxTLayers; i++)
+  {
+    bitRatePicRateInfo->setBitRateInfoPresentFlag( i, m_bitRateInfoPresentFlag[i] );
+    if( bitRatePicRateInfo->getBitRateInfoPresentFlag(i) )
+    {
+      bitRatePicRateInfo->setAvgBitRate(i, m_avgBitRate[i]);
+      bitRatePicRateInfo->setMaxBitRate(i, m_maxBitRate[i]);
+    }
+  }
+  for(Int i = 0; i < m_bitRatePicRateMaxTLayers; i++)
+  {
+    bitRatePicRateInfo->setPicRateInfoPresentFlag( i, m_picRateInfoPresentFlag[i] );
+    if( bitRatePicRateInfo->getPicRateInfoPresentFlag(i) )
+    {
+      bitRatePicRateInfo->setAvgPicRate     (i, m_avgPicRate[i]);
+      bitRatePicRateInfo->setConstantPicRateIdc(i, m_constantPicRateIdc[i]);
+    }
+  }
+#endif
 }
 
 Void TAppEncTop::xCreateLib()

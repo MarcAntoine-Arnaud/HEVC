@@ -175,13 +175,17 @@ protected:
   Bool      m_entropySliceEnabledFlag;
 #endif
 
-  Bool      m_bLFCrossSliceBoundaryFlag;  ///< 0: Cross-slice-boundary in-loop filtering 1: non-cross-slice-boundary in-loop filtering
-  Bool      m_bLFCrossTileBoundaryFlag;  //!< 1: Cross-tile-boundary in-loop filtering 0: non-cross-tile-boundary in-loop filtering
+  Bool      m_bLFCrossSliceBoundaryFlag;  ///< 1: filter across slice boundaries 0: do not filter across slice boundaries
+  Bool      m_bLFCrossTileBoundaryFlag;   ///< 1: filter across tile boundaries  0: do not filter across tile boundaries
   Int       m_iUniformSpacingIdr;
   Int       m_iNumColumnsMinus1;
   Char*     m_pchColumnWidth;
   Int       m_iNumRowsMinus1;
   Char*     m_pchRowHeight;
+#if MIN_SPATIAL_SEGMENTATION
+  UInt*     m_pColumnWidth;
+  UInt*     m_pRowHeight;
+#endif
   Int       m_iWaveFrontSynchro; //< 0: no WPP. >= 1: WPP is enabled, the "Top right" from which inheritance occurs is this LCU offset in the line above the current.
   Int       m_iWaveFrontSubstreams; //< If iWaveFrontSynchro, this is the number of substreams per frame (dependent tiles) or per tile (independent tiles).
 
@@ -191,6 +195,12 @@ protected:
   Int       m_recoveryPointSEIEnabled;
   Int       m_bufferingPeriodSEIEnabled;
   Int       m_pictureTimingSEIEnabled;
+#if SEI_DISPLAY_ORIENTATION
+  Int       m_displayOrientationSEIAngle;
+#endif
+#if SEI_TEMPORAL_LEVEL0_INDEX
+  Int       m_temporalLevel0IndexSEIEnabled;
+#endif
   // weighted prediction
   Bool      m_bUseWeightPred;                                 ///< Use of explicit Weighting Prediction for P_SLICE
   Bool      m_useWeightedBiPred;                                    ///< Use of Bi-Directional Weighting Prediction (B_SLICE)
@@ -200,9 +210,19 @@ protected:
 
   Int       m_TMVPModeId;
   Int       m_signHideFlag;
+#if RATE_CONTROL_LAMBDA_DOMAIN
+  Bool      m_RCEnableRateControl;                ///< enable rate control or not
+  Int       m_RCTargetBitrate;                    ///< target bitrate when rate control is enabled
+  Bool      m_RCKeepHierarchicalBit;              ///< whether keeping hierarchical bit allocation structure or not
+  Bool      m_RCLCULevelRC;                       ///< true: LCU level rate control; false: picture level rate control
+  Bool      m_RCUseLCUSeparateModel;              ///< use separate R-lambda model at LCU level
+  Int       m_RCInitialQP;                        ///< inital QP for rate control
+  Bool      m_RCForceIntraQP;                     ///< force all intra picture to use initial QP or not
+#else
   Bool      m_enableRateCtrl;                                   ///< Flag for using rate control algorithm
   Int       m_targetBitrate;                                 ///< target bitrate
   Int       m_numLCUInUnit;                                  ///< Total number of LCUs in a frame should be completely divided by the NumLCUInUnit
+#endif
   Int       m_useScalingListId;                               ///< using quantization matrix
   Char*     m_scalingListFile;                                ///< quantization matrix file name
 
@@ -236,6 +256,9 @@ protected:
   Bool      m_bitstreamRestrictionFlag;                       ///< Signals whether bitstream restriction parameters are present
   Bool      m_tilesFixedStructureFlag;                        ///< Indicates that each active picture parameter set has the same values of the syntax elements related to tiles
   Bool      m_motionVectorsOverPicBoundariesFlag;             ///< Indicates that no samples outside the picture boundaries are used for inter prediction
+#if MIN_SPATIAL_SEGMENTATION
+  Int       m_minSpatialSegmentationIdc;                      ///< Indicates the maximum size of the spatial segments in the pictures in the coded video sequence
+#endif
   Int       m_maxBytesPerPicDenom;                            ///< Indicates a number of bytes not exceeded by the sum of the sizes of the VCL NAL units associated with any coded picture
   Int       m_maxBitsPerMinCuDenom;                           ///< Indicates an upper bound for the number of bits of coding_unit() data
   Int       m_log2MaxMvLengthHorizontal;                      ///< Indicate the maximum absolute value of a decoded horizontal MV component in quarter-pel luma units
@@ -246,7 +269,15 @@ protected:
   Void  xCheckParameter ();                                   ///< check validity of configuration values
   Void  xPrintParameter ();                                   ///< print configuration values
   Void  xPrintUsage     ();                                   ///< print usage
-  
+#if SIGNAL_BITRATE_PICRATE_IN_VPS
+  Int       m_bitRatePicRateMaxTLayers;                       ///< Indicates max. number of sub-layers for which bit rate is signalled.
+  Bool*     m_bitRateInfoPresentFlag;                         ///< Indicates whether bit rate information is signalled
+  Bool*     m_picRateInfoPresentFlag;                         ///< Indicates whether pic rate information is signalled
+  Int*      m_avgBitRate;                                     ///< Indicates avg. bit rate information for various sub-layers
+  Int*      m_maxBitRate;                                     ///< Indicates max. bit rate information for various sub-layers
+  Int*      m_avgPicRate;                                     ///< Indicates avg. picture rate information for various sub-layers
+  Int*      m_constantPicRateIdc;                                ///< Indicates constant picture rate idc for various sub-layers
+#endif
 public:
   TAppEncCfg();
   virtual ~TAppEncCfg();

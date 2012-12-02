@@ -100,7 +100,7 @@ Void TEncTop::create ()
     m_cEncSAO.setSaoLcuBoundary(getSaoLcuBoundary());
     m_cEncSAO.setSaoLcuBasedOptimization(getSaoLcuBasedOptimization());
     m_cEncSAO.setMaxNumOffsetsPerPic(getMaxNumOffsetsPerPic());
-    m_cEncSAO.create( getSourceWidth(), getSourceHeight(), g_uiMaxCUWidth, g_uiMaxCUHeight, g_uiMaxCUDepth );
+    m_cEncSAO.create( getSourceWidth(), getSourceHeight(), g_uiMaxCUWidth, g_uiMaxCUHeight );
     m_cEncSAO.createEncBuffer();
   }
 #if ADAPTIVE_QP_SELECTION
@@ -111,7 +111,15 @@ Void TEncTop::create ()
 #endif
   m_cLoopFilter.        create( g_uiMaxCUDepth );
   
+#if RATE_CONTROL_LAMBDA_DOMAIN
+  if ( m_RCEnableRateControl )
+  {
+    m_cRateCtrl.init( m_iFrameToBeEncoded, m_RCTargetBitrate, m_iFrameRate, m_iGOPSize, m_iSourceWidth, m_iSourceHeight,
+                      g_uiMaxCUWidth, g_uiMaxCUHeight, m_RCKeepHierarchicalBit, m_RCUseLCUSeparateModel, m_GOPList );
+  }
+#else
   m_cRateCtrl.create(getIntraPeriod(), getGOPSize(), getFrameRate(), getTargetBitrate(), getQP(), getNumLCUInUnit(), getSourceWidth(), getSourceHeight(), g_uiMaxCUWidth, g_uiMaxCUHeight);
+#endif
   // if SBAC-based RD optimization is used
   if( m_bUseSBACRD )
   {
@@ -362,8 +370,22 @@ Void TEncTop::encode(Bool flush, TComPicYuv* pcPicYuvOrg, TComList<TComPicYuv*>&
     return;
   }
   
+#if RATE_CONTROL_LAMBDA_DOMAIN
+  if ( m_RCEnableRateControl )
+  {
+    m_cRateCtrl.initRCGOP( m_iNumPicRcvd );
+  }
+#endif
+
   // compress GOP
   m_cGOPEncoder.compressGOP(m_iPOCLast, m_iNumPicRcvd, m_cListPic, rcListPicYuvRecOut, accessUnitsOut);
+
+#if RATE_CONTROL_LAMBDA_DOMAIN
+  if ( m_RCEnableRateControl )
+  {
+    m_cRateCtrl.destroyRCGOP();
+  }
+#endif
   
   iNumEncoded         = m_iNumPicRcvd;
   m_iNumPicRcvd       = 0;
@@ -403,13 +425,16 @@ Void TEncTop::xGetNewPicBuffer ( TComPic*& rpcPic )
     if ( getUseAdaptiveQP() )
     {
       TEncPic* pcEPic = new TEncPic;
-      pcEPic->create( m_iSourceWidth, m_iSourceHeight, g_uiMaxCUWidth, g_uiMaxCUHeight, g_uiMaxCUDepth, m_cPPS.getMaxCuDQPDepth()+1 );
+      pcEPic->create( m_iSourceWidth, m_iSourceHeight, g_uiMaxCUWidth, g_uiMaxCUHeight, g_uiMaxCUDepth, m_cPPS.getMaxCuDQPDepth()+1 ,
+                      m_picCroppingWindow, m_numReorderPics);
       rpcPic = pcEPic;
     }
     else
     {
       rpcPic = new TComPic;
-      rpcPic->create( m_iSourceWidth, m_iSourceHeight, g_uiMaxCUWidth, g_uiMaxCUHeight, g_uiMaxCUDepth );
+
+      rpcPic->create( m_iSourceWidth, m_iSourceHeight, g_uiMaxCUWidth, g_uiMaxCUHeight, g_uiMaxCUDepth, 
+                      m_picCroppingWindow, m_numReorderPics);
     }
     if (getUseSAO())
     {
@@ -450,14 +475,7 @@ Void TEncTop::xInitSPS()
 
   m_cSPS.setPicWidthInLumaSamples         ( m_iSourceWidth      );
   m_cSPS.setPicHeightInLumaSamples        ( m_iSourceHeight     );
-  m_cSPS.setPicCroppingFlag( m_croppingMode!= 0 );
-  if (m_croppingMode != 0)
-  {
-    m_cSPS.setPicCropLeftOffset( m_cropLeft );
-    m_cSPS.setPicCropRightOffset( m_cropRight );
-    m_cSPS.setPicCropTopOffset( m_cropTop );
-    m_cSPS.setPicCropBottomOffset( m_cropBottom );
-  }
+  m_cSPS.setPicCroppingWindow             ( m_picCroppingWindow );
   m_cSPS.setMaxCUWidth    ( g_uiMaxCUWidth      );
   m_cSPS.setMaxCUHeight   ( g_uiMaxCUHeight     );
   m_cSPS.setMaxCUDepth    ( g_uiMaxCUDepth      );
@@ -545,6 +563,9 @@ Void TEncTop::xInitSPS()
       pcVUI->setBitstreamRestrictionFlag(getBitstreamRestrictionFlag());
       pcVUI->setTilesFixedStructureFlag(getTilesFixedStructureFlag());
       pcVUI->setMotionVectorsOverPicBoundariesFlag(getMotionVectorsOverPicBoundariesFlag());
+#if MIN_SPATIAL_SEGMENTATION
+      pcVUI->setMinSpatialSegmentationIdc(getMinSpatialSegmentationIdc());
+#endif
       pcVUI->setMaxBytesPerPicDenom(getMaxBytesPerPicDenom());
       pcVUI->setMaxBitsPerMinCuDenom(getMaxBitsPerMinCuDenom());
       pcVUI->setLog2MaxMvLengthHorizontal(getLog2MaxMvLengthHorizontal());
@@ -593,6 +614,15 @@ Void TEncTop::xInitPPS()
     m_cPPS.setMaxCuDQPDepth( 0 );
     m_cPPS.setMinCuDQPSize( m_cPPS.getSPS()->getMaxCUWidth() >> ( m_cPPS.getMaxCuDQPDepth()) );
   }
+
+#if RATE_CONTROL_LAMBDA_DOMAIN
+  if ( m_RCEnableRateControl )
+  {
+    m_cPPS.setUseDQP(true);
+    m_cPPS.setMaxCuDQPDepth( 0 );
+    m_cPPS.setMinCuDQPSize( m_cPPS.getSPS()->getMaxCUWidth() >> ( m_cPPS.getMaxCuDQPDepth()) );
+  } 
+#endif
 
   m_cPPS.setChromaCbQpOffset( m_chromaCbQpOffset );
   m_cPPS.setChromaCrQpOffset( m_chromaCrQpOffset );

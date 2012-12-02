@@ -99,6 +99,11 @@ private:
   TEncSbac*               m_pcRDGoOnSbacCoder;
   Bool                    m_bUseSBACRD;
   TEncRateCtrl*           m_pcRateCtrl;
+#if RATE_CONTROL_LAMBDA_DOMAIN
+  UInt                    m_LCUPredictionSAD;
+  Int                     m_addSADDepth;
+  Int                     m_temporalSAD;
+#endif
 public:
   /// copy parameters from encoder class
   Void  init                ( TEncTop* pcEncTop );
@@ -116,6 +121,9 @@ public:
   Void  encodeCU            ( TComDataCU*    pcCU, Bool bForceTerminate = false  );
   
   Void setBitCounter        ( TComBitCounter* pcBitCounter ) { m_pcBitCounter = pcBitCounter; }
+#if RATE_CONTROL_LAMBDA_DOMAIN
+  UInt getLCUPredictionSAD() { return m_LCUPredictionSAD; }
+#endif
 protected:
   Void  finishCU            ( TComDataCU*  pcCU, UInt uiAbsPartIdx,           UInt uiDepth        );
 #if AMP_ENC_SPEEDUP

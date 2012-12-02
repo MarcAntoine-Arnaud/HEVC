@@ -152,7 +152,7 @@ Int  TComSampleAdaptiveOffset::convertLevelRowCol2Idx(Int level, Int row, Int co
 /** create SampleAdaptiveOffset memory.
  * \param 
  */
-Void TComSampleAdaptiveOffset::create( UInt uiSourceWidth, UInt uiSourceHeight, UInt uiMaxCUWidth, UInt uiMaxCUHeight, UInt uiMaxCUDepth)
+Void TComSampleAdaptiveOffset::create( UInt uiSourceWidth, UInt uiSourceHeight, UInt uiMaxCUWidth, UInt uiMaxCUHeight )
 {
   m_iPicWidth  = uiSourceWidth;
   m_iPicHeight = uiSourceHeight;
@@ -573,7 +573,7 @@ Void TComSampleAdaptiveOffset::processSaoCu(Int iAddr, Int iSaoType, Int iYCbCr)
 
       posOffset = (yPos* stride) + xPos;
 
-      processSaoBlock(pPicDec+ posOffset, pPicRest+ posOffset, stride, iSaoType, xPos, yPos, width, height, pbBorderAvail, iYCbCr);
+      processSaoBlock(pPicDec+ posOffset, pPicRest+ posOffset, stride, iSaoType, width, height, pbBorderAvail, iYCbCr);
     }
   }
 }
@@ -589,7 +589,7 @@ Void TComSampleAdaptiveOffset::processSaoCu(Int iAddr, Int iSaoType, Int iYCbCr)
  * \param  height block height
  * \param  pbBorderAvail availabilities of block border pixels
  */
-Void TComSampleAdaptiveOffset::processSaoBlock(Pel* pDec, Pel* pRest, Int stride, Int saoType, UInt xPos, UInt yPos, UInt width, UInt height, Bool* pbBorderAvail, Int iYCbCr)
+Void TComSampleAdaptiveOffset::processSaoBlock(Pel* pDec, Pel* pRest, Int stride, Int saoType, UInt width, UInt height, Bool* pbBorderAvail, Int iYCbCr)
 {
   //variables
   Int startX, startY, endX, endY, x, y;
@@ -1040,7 +1040,7 @@ Void TComSampleAdaptiveOffset::processSaoCuOrg(Int iAddr, Int iSaoType, Int iYCb
 /** Sample adaptive offset process
  * \param pcPic, pcSaoParam  
  */
-Void TComSampleAdaptiveOffset::SAOProcess(TComPic* pcPic, SAOParam* pcSaoParam)
+Void TComSampleAdaptiveOffset::SAOProcess(SAOParam* pcSaoParam)
 {
   if (pcSaoParam->bSaoFlag[0] || pcSaoParam->bSaoFlag[1])
   {

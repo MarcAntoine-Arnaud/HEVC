@@ -41,6 +41,11 @@
 #include <string>
 #include "TLibCommon/TComRom.h"
 #include "TAppEncCfg.h"
+
+static istream& operator>>(istream &, Level::Name &);
+static istream& operator>>(istream &, Level::Tier &);
+static istream& operator>>(istream &, Profile::Name &);
+
 #include "TAppCommon/program_options_lite.h"
 #include "TLibEncoder/TEncRateCtrl.h"
 #ifdef WIN32
@@ -62,8 +67,13 @@ TAppEncCfg::TAppEncCfg()
 , m_pchBitstreamFile()
 , m_pchReconFile()
 , m_pchdQPFile()
+#if MIN_SPATIAL_SEGMENTATION
+, m_pColumnWidth()
+, m_pRowHeight()
+#else
 , m_pchColumnWidth()
 , m_pchRowHeight()
+#endif
 , m_scalingListFile()
 {
   m_aidQP = NULL;
@@ -79,8 +89,13 @@ TAppEncCfg::~TAppEncCfg()
   free(m_pchBitstreamFile);
   free(m_pchReconFile);
   free(m_pchdQPFile);
+#if MIN_SPATIAL_SEGMENTATION
+  free(m_pColumnWidth);
+  free(m_pRowHeight);
+#else
   free(m_pchColumnWidth);
   free(m_pchRowHeight);
+#endif
   free(m_scalingListFile);
 }
 
@@ -98,6 +113,10 @@ std::istringstream &operator>>(std::istringstream &in, GOPEntry &entry)     //in
   in>>entry.m_POC;
   in>>entry.m_QPOffset;
   in>>entry.m_QPFactor;
+#if VARYING_DBL_PARAMS
+  in>>entry.m_tcOffsetDiv2;
+  in>>entry.m_betaOffsetDiv2;
+#endif
   in>>entry.m_temporalId;
   in>>entry.m_numRefPicsActive;
   in>>entry.m_numRefPics;
@@ -173,7 +192,7 @@ static const struct MapStrToLevel {
 };
 
 template<typename T, typename P>
-istream& readStrToEnum(P map[], unsigned long mapLen, istream &in, T &val)
+static istream& readStrToEnum(P map[], unsigned long mapLen, istream &in, T &val)
 {
   string str;
   in >> str;
@@ -192,22 +211,25 @@ found:
   return in;
 }
 
-istream& operator>>(istream &in, Profile::Name &profile)
+static istream& operator>>(istream &in, Profile::Name &profile)
 {
   return readStrToEnum(strToProfile, sizeof(strToProfile)/sizeof(*strToProfile), in, profile);
 }
 
-istream& operator>>(istream &in, Level::Tier &tier)
+static istream& operator>>(istream &in, Level::Tier &tier)
 {
   return readStrToEnum(strToTier, sizeof(strToTier)/sizeof(*strToTier), in, tier);
 }
 
-istream& operator>>(istream &in, Level::Name &level)
+static istream& operator>>(istream &in, Level::Name &level)
 {
   return readStrToEnum(strToLevel, sizeof(strToLevel)/sizeof(*strToLevel), in, level);
 }
 
-
+#if SIGNAL_BITRATE_PICRATE_IN_VPS
+Void readBoolString(const string inpString, const Int numEntries, Bool* &memberArray, const char *elementName);
+Void readIntString(const string inpString, const Int numEntries, Int* &memberArray, const char *elementName);
+#endif
 // ====================================================================================================================
 // Public member functions
 // ====================================================================================================================
@@ -227,6 +249,14 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
   string cfg_ColumnWidth;
   string cfg_RowHeight;
   string cfg_ScalingListFile;
+#if SIGNAL_BITRATE_PICRATE_IN_VPS
+  string cfg_bitRateInfoPresentFlag;
+  string cfg_picRateInfoPresentFlag;
+  string cfg_avgBitRate;
+  string cfg_maxBitRate;
+  string cfg_avgPicRate;
+  string cfg_constantPicRateIdc;
+#endif
   po::Options opts;
   opts.addOptions()
   ("help", do_help, false, "this help text")
@@ -379,9 +409,19 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
   ("FDM", m_useFastDecisionForMerge, true, "Fast decision for Merge RD Cost") 
   ("CFM", m_bUseCbfFastMode, false, "Cbf fast mode setting")
   ("ESD", m_useEarlySkipDetection, false, "Early SKIP detection setting")
+#if RATE_CONTROL_LAMBDA_DOMAIN
+  ( "RateControl",         m_RCEnableRateControl,   false, "Rate control: enable rate control" )
+  ( "TargetBitrate",       m_RCTargetBitrate,           0, "Rate control: target bitrate" )
+  ( "KeepHierarchicalBit", m_RCKeepHierarchicalBit, false, "Rate control: keep hierarchical bit allocation in rate control algorithm" )
+  ( "LCULevelRateControl", m_RCLCULevelRC,           true, "Rate control: true: LCU level RC; false: picture level RC" )
+  ( "RCLCUSeparateModel",  m_RCUseLCUSeparateModel,  true, "Rate control: use LCU level separate R-lambda model" )
+  ( "InitialQP",           m_RCInitialQP,               0, "Rate control: initial QP" )
+  ( "RCForceIntraQP",      m_RCForceIntraQP,        false, "Rate control: force intra QP to be equal to initial QP" )
+#else
   ("RateCtrl,-rc", m_enableRateCtrl, false, "Rate control on/off")
   ("TargetBitrate,-tbr", m_targetBitrate, 0, "Input target bitrate")
   ("NumLCUInUnit,-nu", m_numLCUInUnit, 0, "Number of LCUs in an Unit")
+#endif
 
   ("TransquantBypassEnableFlag", m_TransquantBypassEnableFlag, false, "transquant_bypass_enable_flag indicator in PPS")
   ("CUTransquantBypassFlagValue", m_CUTransquantBypassFlagValue, false, "Fixed cu_transquant_bypass_flag value, when transquant_bypass_enable_flag is enabled")
@@ -421,6 +461,27 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
   ("SEIRecoveryPoint",               m_recoveryPointSEIEnabled,                0, "Control generation of recovery point SEI messages")
   ("SEIBufferingPeriod",             m_bufferingPeriodSEIEnabled,              0, "Control generation of buffering period SEI messages")
   ("SEIPictureTiming",               m_pictureTimingSEIEnabled,                0, "Control generation of picture timing SEI messages")
+#if SEI_DISPLAY_ORIENTATION
+  ("SEIDisplayOrientation",          m_displayOrientationSEIAngle,             0, "Control generation of display orientation SEI messages\n"
+                                                              "\tN: 0 < N < (2^16 - 1) enable display orientation SEI message with anticlockwise_rotation = N and display_orientation_repetition_period = 1\n"
+                                                              "\t0: disable")
+#endif
+#if SEI_TEMPORAL_LEVEL0_INDEX
+  ("SEITemporalLevel0Index",         m_temporalLevel0IndexSEIEnabled,          0, "Control generation of temporal level 0 index SEI messages")
+#endif
+#if SIGNAL_BITRATE_PICRATE_IN_VPS
+  ("BitRatePicRateMaxTLayers",   m_bitRatePicRateMaxTLayers,           0, "Maximum number of sub-layers signalled; can be inferred otherwise; here for easy parsing of config. file")
+  ("BitRateInfoPresent",         cfg_bitRateInfoPresentFlag,          string(""), "Control signalling of bit rate information of avg. bit rate and max. bit rate in VPS\n"
+                                                                          "\t0: Do not sent bit rate info\n"
+                                                                          "\tN (N > 0): Send bit rate info for N sub-layers. N should equal maxTempLayers.")                                                                     
+  ("PicRateInfoPresent",         cfg_picRateInfoPresentFlag,          string(""), "Control signalling of picture rate information of avg. bit rate and max. bit rate in VPS\n"
+                                                                          "\t0: Do not sent picture rate info\n"
+                                                                          "\tN (N > 0): Send picture rate info for N sub-layers. N should equal maxTempLayers.")                                                                     
+  ("AvgBitRate",                   cfg_avgBitRate,                    string(""), "List of avg. bit rates for the different sub-layers; include non-negative number even if corresponding flag is 0")
+  ("MaxBitRate",                   cfg_maxBitRate,                    string(""), "List of max. bit rates for the different sub-layers; include non-negative number even if corresponding flag is 0")
+  ("AvgPicRate",                   cfg_avgPicRate,                    string(""), "List of avg. picture rates for the different sub-layers; include non-negative number even if corresponding flag is 0")
+  ("ConstantPicRateIdc",           cfg_constantPicRateIdc,            string(""), "List of constant picture rate IDCs; include non-negative number even if corresponding flag is 0")
+#endif
   ;
   
   for(Int i=1; i<MAX_GOP+1; i++) {
@@ -452,8 +513,76 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
   m_pchReconFile = cfg_ReconFile.empty() ? NULL : strdup(cfg_ReconFile.c_str());
   m_pchdQPFile = cfg_dQPFile.empty() ? NULL : strdup(cfg_dQPFile.c_str());
   
+#if MIN_SPATIAL_SEGMENTATION
+  Char* pColumnWidth = cfg_ColumnWidth.empty() ? NULL: strdup(cfg_ColumnWidth.c_str());
+  Char* pRowHeight = cfg_RowHeight.empty() ? NULL : strdup(cfg_RowHeight.c_str());
+  if( m_iUniformSpacingIdr == 0 && m_iNumColumnsMinus1 > 0 )
+  {
+    char *columnWidth;
+    int  i=0;
+    m_pColumnWidth = new UInt[m_iNumColumnsMinus1];
+    columnWidth = strtok(pColumnWidth, " ,-");
+    while(columnWidth!=NULL)
+    {
+      if( i>=m_iNumColumnsMinus1 )
+      {
+        printf( "The number of columns whose width are defined is larger than the allowed number of columns.\n" );
+        exit( EXIT_FAILURE );
+      }
+      *( m_pColumnWidth + i ) = atoi( columnWidth );
+      columnWidth = strtok(NULL, " ,-");
+      i++;
+    }
+    if( i<m_iNumColumnsMinus1 )
+    {
+      printf( "The width of some columns is not defined.\n" );
+      exit( EXIT_FAILURE );
+    }
+  }
+  else
+  {
+    m_pColumnWidth = NULL;
+  }
+
+  if( m_iUniformSpacingIdr == 0 && m_iNumRowsMinus1 > 0 )
+  {
+    char *rowHeight;
+    int  i=0;
+    m_pRowHeight = new UInt[m_iNumRowsMinus1];
+    rowHeight = strtok(pRowHeight, " ,-");
+    while(rowHeight!=NULL)
+    {
+      if( i>=m_iNumRowsMinus1 )
+      {
+        printf( "The number of rows whose height are defined is larger than the allowed number of rows.\n" );
+        exit( EXIT_FAILURE );
+      }
+      *( m_pRowHeight + i ) = atoi( rowHeight );
+      rowHeight = strtok(NULL, " ,-");
+      i++;
+    }
+    if( i<m_iNumRowsMinus1 )
+    {
+      printf( "The height of some rows is not defined.\n" );
+      exit( EXIT_FAILURE );
+   }
+  }
+  else
+  {
+    m_pRowHeight = NULL;
+  }
+#else
   m_pchColumnWidth = cfg_ColumnWidth.empty() ? NULL: strdup(cfg_ColumnWidth.c_str());
   m_pchRowHeight = cfg_RowHeight.empty() ? NULL : strdup(cfg_RowHeight.c_str());
+#endif
+#if SIGNAL_BITRATE_PICRATE_IN_VPS
+  readBoolString(cfg_bitRateInfoPresentFlag, m_bitRatePicRateMaxTLayers, m_bitRateInfoPresentFlag, "bit rate info. present flag" );
+  readIntString (cfg_avgBitRate,             m_bitRatePicRateMaxTLayers, m_avgBitRate,             "avg. bit rate"               );
+  readIntString (cfg_maxBitRate,             m_bitRatePicRateMaxTLayers, m_maxBitRate,             "max. bit rate"               );
+  readBoolString(cfg_picRateInfoPresentFlag, m_bitRatePicRateMaxTLayers, m_picRateInfoPresentFlag, "bit rate info. present flag" );
+  readIntString (cfg_avgPicRate,             m_bitRatePicRateMaxTLayers, m_avgPicRate,             "avg. pic rate"               );
+  readIntString (cfg_constantPicRateIdc,     m_bitRatePicRateMaxTLayers, m_constantPicRateIdc,     "constant pic rate Idc"       );
+#endif
   m_scalingListFile = cfg_ScalingListFile.empty() ? NULL : strdup(cfg_ScalingListFile.c_str());
   
   /* rules for input, output and internal bitdepths as per help text */
@@ -560,6 +689,7 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
     }
   }
   m_iWaveFrontSubstreams = m_iWaveFrontSynchro ? (m_iSourceHeight + m_uiMaxCUHeight - 1) / m_uiMaxCUHeight : 1;
+
   // check validity of input parameters
   xCheckParameter();
   
@@ -571,7 +701,70 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
   
   return true;
 }
+#if SIGNAL_BITRATE_PICRATE_IN_VPS
+Void readBoolString(const string inpString, const Int numEntries, Bool* &memberArray, const char *elementName)
+{
+  Char* inpArray = inpString.empty() ? NULL : strdup(inpString.c_str());
+  Int i = 0;
+  if(numEntries)
+  {
+    Char* tempArray = strtok(inpArray, " ,-");
+    memberArray = new Bool[numEntries];
+    while( tempArray != NULL )
+    {
+      if( i >= numEntries )
+      {
+        printf( "The number of %s defined is larger than the allowed number\n", elementName );
+        exit( EXIT_FAILURE );
+      }
+      assert( (atoi(tempArray) == 0) || (atoi(tempArray) == 1) );
+      *( memberArray + i ) = atoi(tempArray);
+      tempArray = strtok(NULL, " ,-");
+      i++;
+    }
+    if( i < numEntries )
+    {
+      printf( "Some %s are not defined\n", elementName );
+      exit( EXIT_FAILURE );
+    }
+  }
+  else
+  {
+    memberArray = NULL;
+  }
+}
 
+Void readIntString(const string inpString, const Int numEntries, Int* &memberArray, const char *elementName)
+{
+  Char* inpArray = inpString.empty() ? NULL : strdup(inpString.c_str());
+  Int i = 0;
+  if(numEntries)
+  {
+    Char* tempArray = strtok(inpArray, " ,-");
+    memberArray = new Int[numEntries];
+    while( tempArray != NULL )
+    {
+      if( i >= numEntries )
+      {
+        printf( "The number of %s defined is larger than the allowed number\n", elementName );
+        exit( EXIT_FAILURE );
+      }
+      *( memberArray + i ) = atoi(tempArray);
+      tempArray = strtok(NULL, " ,-");
+      i++;
+    }
+    if( i < numEntries )
+    {
+      printf( "Some %s are not defined\n", elementName );
+      exit( EXIT_FAILURE );
+    }
+  }
+  else
+  {
+    memberArray = NULL;
+  }
+}
+#endif
 // ====================================================================================================================
 // Private member functions
 // ====================================================================================================================
@@ -709,6 +902,10 @@ Void TAppEncCfg::xCheckParameter()
   if (m_iIntraPeriod == 1 && m_GOPList[0].m_POC == -1) {
     m_GOPList[0] = GOPEntry();
     m_GOPList[0].m_QPFactor = 1;
+#if VARYING_DBL_PARAMS
+    m_GOPList[0].m_betaOffsetDiv2 = 0;
+    m_GOPList[0].m_tcOffsetDiv2 = 0;
+#endif
     m_GOPList[0].m_POC = 1;
     m_GOPList[0].m_numRefPicsActive = 4;
   }
@@ -735,6 +932,16 @@ Void TAppEncCfg::xCheckParameter()
     }
   }
   
+#if VARYING_DBL_PARAMS
+  if ( (m_iIntraPeriod != 1) && !m_loopFilterOffsetInPPS && m_DeblockingFilterControlPresent && (!m_bLoopFilterDisable) )
+  {
+    for(Int i=0; i<m_iGOPSize; i++)
+    {
+      xConfirmPara( (m_GOPList[i].m_betaOffsetDiv2 + m_loopFilterBetaOffsetDiv2) < -6 || (m_GOPList[i].m_betaOffsetDiv2 + m_loopFilterBetaOffsetDiv2) > 6, "Loop Filter Beta Offset div. 2 for one of the GOP entries exceeds supported range (-6 to 6)" );
+      xConfirmPara( (m_GOPList[i].m_tcOffsetDiv2 + m_loopFilterTcOffsetDiv2) < -6 || (m_GOPList[i].m_tcOffsetDiv2 + m_loopFilterTcOffsetDiv2) > 6, "Loop Filter Tc Offset div. 2 for one of the GOP entries exceeds supported range (-6 to 6)" );
+    }
+  }
+#endif
   m_extraRPSs=0;
   //start looping through frames in coding order until we can verify that the GOP structure is correct.
   while(!verifiedGOP&&!errorGOP) 
@@ -996,6 +1203,81 @@ Void TAppEncCfg::xCheckParameter()
     m_maxDecPicBuffering[MAX_TLAYER-1] = m_numReorderPics[MAX_TLAYER-1];
   }
 
+#if MIN_SPATIAL_SEGMENTATION
+  if(m_vuiParametersPresentFlag && m_bitstreamRestrictionFlag)
+  { 
+    Int PicSizeInSamplesY =  m_iSourceWidth * m_iSourceHeight;
+    if(tileFlag)
+    {
+      Int maxTileWidth = 0;
+      Int maxTileHeight = 0;
+      Int widthInCU = (m_iSourceWidth % m_uiMaxCUWidth) ? m_iSourceWidth/m_uiMaxCUWidth + 1: m_iSourceWidth/m_uiMaxCUWidth;
+      Int heightInCU = (m_iSourceHeight % m_uiMaxCUHeight) ? m_iSourceHeight/m_uiMaxCUHeight + 1: m_iSourceHeight/m_uiMaxCUHeight;
+      if(m_iUniformSpacingIdr)
+      {
+        maxTileWidth = m_uiMaxCUWidth*((widthInCU+m_iNumColumnsMinus1)/(m_iNumColumnsMinus1+1));
+        maxTileHeight = m_uiMaxCUHeight*((heightInCU+m_iNumRowsMinus1)/(m_iNumRowsMinus1+1));
+        // if only the last tile-row is one treeblock higher than the others 
+        // the maxTileHeight becomes smaller if the last row of treeblocks has lower height than the others
+        if(!((heightInCU-1)%(m_iNumRowsMinus1+1)))
+        {
+          maxTileHeight = maxTileHeight - m_uiMaxCUHeight + (m_iSourceHeight % m_uiMaxCUHeight);
+        }     
+        // if only the last tile-column is one treeblock wider than the others 
+        // the maxTileWidth becomes smaller if the last column of treeblocks has lower width than the others   
+        if(!((widthInCU-1)%(m_iNumColumnsMinus1+1)))
+        {
+          maxTileWidth = maxTileWidth - m_uiMaxCUWidth + (m_iSourceWidth % m_uiMaxCUWidth);
+        }
+      }
+      else // not uniform spacing
+      {
+        if(m_iNumColumnsMinus1<1)
+        {
+          maxTileWidth = m_iSourceWidth;
+        }
+        else
+        {
+          Int accColumnWidth = 0;
+          for(Int col=0; col<(m_iNumColumnsMinus1); col++)
+          {
+            maxTileWidth = m_pColumnWidth[col]>maxTileWidth ? m_pColumnWidth[col]:maxTileWidth;
+            accColumnWidth += m_pColumnWidth[col];
+          }
+          maxTileWidth = (widthInCU-accColumnWidth)>maxTileWidth ? m_uiMaxCUWidth*(widthInCU-accColumnWidth):m_uiMaxCUWidth*maxTileWidth;
+        }
+        if(m_iNumRowsMinus1<1)
+        {
+          maxTileHeight = m_iSourceHeight;
+        }
+        else
+        {
+          Int accRowHeight = 0;
+          for(Int row=0; row<(m_iNumRowsMinus1); row++)
+          {
+            maxTileHeight = m_pRowHeight[row]>maxTileHeight ? m_pRowHeight[row]:maxTileHeight;
+            accRowHeight += m_pRowHeight[row];
+          }
+          maxTileHeight = (heightInCU-accRowHeight)>maxTileHeight ? m_uiMaxCUHeight*(heightInCU-accRowHeight):m_uiMaxCUHeight*maxTileHeight;
+        }
+      }
+      Int maxSizeInSamplesY = maxTileWidth*maxTileHeight;
+      m_minSpatialSegmentationIdc = 4*PicSizeInSamplesY/maxSizeInSamplesY-4;
+    }
+    else if(m_iWaveFrontSynchro)
+    {
+      m_minSpatialSegmentationIdc = 4*PicSizeInSamplesY/((2*m_iSourceHeight+m_iSourceWidth)*m_uiMaxCUHeight)-4;
+    }
+    else if(m_iSliceMode == 1)
+    {
+      m_minSpatialSegmentationIdc = 4*PicSizeInSamplesY/(m_iSliceArgument*m_uiMaxCUWidth*m_uiMaxCUHeight)-4;
+    }
+    else
+    {
+      m_minSpatialSegmentationIdc = 0;
+    }
+  }
+#endif
   xConfirmPara( m_bUseLComb==false && m_numReorderPics[MAX_TLAYER-1]!=0, "ListCombination can only be 0 in low delay coding (more precisely when L0 and L1 are identical)" );  // Note however this is not the full necessary condition as ref_pic_list_combination_flag can only be 0 if L0 == L1.
   xConfirmPara( m_iWaveFrontSynchro < 0, "WaveFrontSynchro cannot be negative" );
   xConfirmPara( m_iWaveFrontSubstreams <= 0, "WaveFrontSubstreams must be positive" );
@@ -1003,6 +1285,20 @@ Void TAppEncCfg::xCheckParameter()
 
   xConfirmPara( m_decodePictureHashSEIEnabled<0 || m_decodePictureHashSEIEnabled>3, "this hash type is not correct!\n");
 
+#if RATE_CONTROL_LAMBDA_DOMAIN
+  if ( m_RCEnableRateControl )
+  {
+    if ( m_RCForceIntraQP )
+    {
+      if ( m_RCInitialQP == 0 )
+      {
+        printf( "\nInitial QP for rate control is not specified. Reset not to use force intra QP!" );
+        m_RCForceIntraQP = false;
+      }
+    }
+    xConfirmPara( m_uiDeltaQpRD > 0, "Rate control cannot be used together with slice level multiple-QP optimization!\n" );
+  }
+#else
   if(m_enableRateCtrl)
   {
     Int numLCUInWidth  = (m_iSourceWidth  / m_uiMaxCUWidth) + (( m_iSourceWidth  %  m_uiMaxCUWidth ) ? 1 : 0);
@@ -1014,6 +1310,7 @@ Void TAppEncCfg::xCheckParameter()
     m_iMaxDeltaQP       = MAX_DELTA_QP;
     m_iMaxCuDQPDepth    = MAX_CUDQP_DEPTH;
   }
+#endif
 
   xConfirmPara(!m_TransquantBypassEnableFlag && m_CUTransquantBypassFlagValue, "CUTransquantBypassFlagValue cannot be 1 when TransquantBypassEnableFlag is 0");
 
@@ -1079,12 +1376,25 @@ Void TAppEncCfg::xPrintParameter()
   printf("GOP size                     : %d\n", m_iGOPSize );
   printf("Internal bit depth           : (Y:%d, C:%d)\n", m_internalBitDepthY, m_internalBitDepthC );
   printf("PCM sample bit depth         : (Y:%d, C:%d)\n", g_uiPCMBitDepthLuma, g_uiPCMBitDepthChroma );
+#if RATE_CONTROL_LAMBDA_DOMAIN
+  printf("RateControl                  : %d\n", m_RCEnableRateControl );
+  if(m_RCEnableRateControl)
+  {
+    printf("TargetBitrate                : %d\n", m_RCTargetBitrate );
+    printf("KeepHierarchicalBit          : %d\n", m_RCKeepHierarchicalBit );
+    printf("LCULevelRC                   : %d\n", m_RCLCULevelRC );
+    printf("UseLCUSeparateModel          : %d\n", m_RCUseLCUSeparateModel );
+    printf("InitialQP                    : %d\n", m_RCInitialQP );
+    printf("ForceIntraQP                 : %d\n", m_RCForceIntraQP );
+  }
+#else
   printf("RateControl                  : %d\n", m_enableRateCtrl);
   if(m_enableRateCtrl)
   {
     printf("TargetBitrate                : %d\n", m_targetBitrate);
     printf("NumLCUInUnit                 : %d\n", m_numLCUInUnit);
   }
+#endif
   printf("Max Num Merge Candidates     : %d\n", m_maxNumMergeCand);
   printf("\n");
   

@@ -804,6 +804,7 @@ Void TComSlice::copySliceInfo(TComSlice *pSrc)
   m_bLMvdL1Zero = pSrc->m_bLMvdL1Zero;
   m_LFCrossSliceBoundaryFlag = pSrc->m_LFCrossSliceBoundaryFlag;
   m_enableTMVPFlag                = pSrc->m_enableTMVPFlag;
+  m_maxNumMergeCand               = pSrc->m_maxNumMergeCand;
 }
 
 Int TComSlice::m_prevPOC = 0;
@@ -1254,6 +1255,10 @@ TComVPS::TComVPS()
 , m_uiMaxTLayers              (  1)
 , m_uiMaxLayers               (  1)
 , m_bTemporalIdNestingFlag    (false)
+#if VPS_OPERATING_POINT
+, m_numHrdParameters          (  0)
+, m_maxNuhReservedZeroLayerId (  0)
+#endif
 {
 
   for( Int i = 0; i < MAX_TLAYER; i++)
@@ -1282,11 +1287,6 @@ TComSPS::TComSPS()
 // Structure
 , m_picWidthInLumaSamples     (352)
 , m_picHeightInLumaSamples    (288)
-, m_picCroppingFlag           (false)
-, m_picCropLeftOffset         (  0)
-, m_picCropRightOffset        (  0)
-, m_picCropTopOffset          (  0)
-, m_picCropBottomOffset       (  0) 
 , m_uiMaxCUWidth              ( 32)
 , m_uiMaxCUHeight             ( 32)
 , m_uiMaxCUDepth              (  3)
@@ -1302,8 +1302,10 @@ TComSPS::TComSPS()
 , m_pcmLog2MaxSize            (  5)
 , m_uiPCMLog2MinSize          (  7)
 , m_bUseLComb                 (false)
+#if !HLS_MOVE_SPS_PICLIST_FLAGS
 , m_restrictedRefPicListsFlag   (  1)
 , m_listsModificationPresentFlag(  0)
+#endif /* !HLS_MOVE_SPS_PICLIST_FLAGS */
 , m_bitDepthY                 (  8)
 , m_bitDepthC                 (  8)
 , m_qpBDOffsetY               (  0)
@@ -1392,7 +1394,10 @@ Void TComSPS::setHrdParameters( UInt frameRate, UInt numDU, UInt bitRate, Bool r
 
   vui->setBitRateScale( 4 );                                       // in units of 2~( 6 + 4 ) = 1,024 bps
   vui->setCpbSizeScale( 6 );                                       // in units of 2~( 4 + 4 ) = 1,024 bit
-
+#if HRD_BUFFER
+  vui->setDuCpbSizeScale( 6 );                                       // in units of 2~( 4 + 4 ) = 1,024 bit
+#endif
+    
   vui->setInitialCpbRemovalDelayLengthMinus1(15);                  // assuming 0.5 sec, log2( 90,000 * 0.5 ) = 16-bit
   if( randomAccess )
   {
@@ -1410,6 +1415,9 @@ Void TComSPS::setHrdParameters( UInt frameRate, UInt numDU, UInt bitRate, Bool r
 */
   Int i, j;
   UInt birateValue, cpbSizeValue;
+#if HRD_BUFFER
+  UInt ducpbSizeValue;
+#endif
 
   for( i = 0; i < MAX_TLAYER; i ++ )
   {
@@ -1420,14 +1428,23 @@ Void TComSPS::setHrdParameters( UInt frameRate, UInt numDU, UInt bitRate, Bool r
 
     birateValue  = bitRate;
     cpbSizeValue = bitRate;                                     // 1 second
+#if HRD_BUFFER
+    ducpbSizeValue = bitRate/numDU;
+#endif
     for( j = 0; j < ( vui->getCpbCntMinus1( i ) + 1 ); j ++ )
     {
       vui->setBitRateValueMinus1( i, j, 0, ( birateValue  - 1 ) );
       vui->setCpbSizeValueMinus1( i, j, 0, ( cpbSizeValue - 1 ) );
+#if HRD_BUFFER
+      vui->setDuCpbSizeValueMinus1( i, j, 0, ( ducpbSizeValue - 1 ) );
+#endif
       vui->setCbrFlag( i, j, 0, ( j == 0 ) );
 
       vui->setBitRateValueMinus1( i, j, 1, ( birateValue  - 1) );
       vui->setCpbSizeValueMinus1( i, j, 1, ( cpbSizeValue - 1 ) );
+#if HRD_BUFFER
+        vui->setDuCpbSizeValueMinus1( i, j, 1, ( ducpbSizeValue - 1 ) );
+#endif
       vui->setCbrFlag( i, j, 1, ( j == 0 ) );
     }
   }
@@ -1469,6 +1486,12 @@ TComPPS::TComPPS()
 , m_encCABACTableIdx            (I_SLICE)
 , m_sliceHeaderExtensionPresentFlag    (false)
 , m_loopFilterAcrossSlicesEnabledFlag (false)
+#if HLS_MOVE_SPS_PICLIST_FLAGS
+, m_listsModificationPresentFlag(  0)
+#endif /* HLS_MOVE_SPS_PICLIST_FLAGS */
+#if HLS_EXTRA_SLICE_HEADER_BITS
+, m_numExtraSliceHeaderBits(0)
+#endif /* HLS_EXTRA_SLICE_HEADER_BITS */
 {
   m_scalingList = new TComScalingList;
 }
@@ -1933,4 +1956,15 @@ TComPTL::TComPTL()
   ::memset(m_subLayerProfilePresentFlag, 0, sizeof(m_subLayerProfilePresentFlag));
   ::memset(m_subLayerLevelPresentFlag,   0, sizeof(m_subLayerLevelPresentFlag  ));
 }
+#if SIGNAL_BITRATE_PICRATE_IN_VPS
+TComBitRatePicRateInfo::TComBitRatePicRateInfo()
+{
+  ::memset(m_bitRateInfoPresentFlag, 0, sizeof(m_bitRateInfoPresentFlag));
+  ::memset(m_picRateInfoPresentFlag, 0, sizeof(m_picRateInfoPresentFlag));
+  ::memset(m_avgBitRate,             0, sizeof(m_avgBitRate));
+  ::memset(m_maxBitRate,             0, sizeof(m_maxBitRate));
+  ::memset(m_constantPicRateIdc,     0, sizeof(m_constantPicRateIdc));
+  ::memset(m_avgPicRate,             0, sizeof(m_avgPicRate));
+}
+#endif
 //! \}

@@ -73,7 +73,9 @@ TComPic::~TComPic()
 {
 }
 
-Void TComPic::create( Int iWidth, Int iHeight, UInt uiMaxWidth, UInt uiMaxHeight, UInt uiMaxDepth, Bool bIsVirtual )
+Void TComPic::create( Int iWidth, Int iHeight, UInt uiMaxWidth, UInt uiMaxHeight, UInt uiMaxDepth, CroppingWindow &croppingWindow,
+                      Int *numReorderPics, Bool bIsVirtual)
+
 {
   m_apcPicSym     = new TComPicSym;  m_apcPicSym   ->create( iWidth, iHeight, uiMaxWidth, uiMaxHeight, uiMaxDepth );
   if (!bIsVirtual)
@@ -85,6 +87,13 @@ Void TComPic::create( Int iWidth, Int iHeight, UInt uiMaxWidth, UInt uiMaxHeight
   /* there are no SEI messages associated with this picture initially */
   m_SEIs = NULL;
   m_bUsedByCurr = false;
+
+  /* store cropping parameters with picture */
+  m_croppingWindow = croppingWindow;
+
+  /* store number of reorder pics with picture */
+  memcpy(m_numReorderPics, numReorderPics, MAX_TLAYER*sizeof(Int));
+
   return;
 }
 
