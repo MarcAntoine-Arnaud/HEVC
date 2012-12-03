@@ -1804,8 +1804,7 @@ Void TDecCavlc::xParsePredWeightTable( TComSlice* pcSlice )
 
               Int iDeltaChroma;
               READ_SVLC( iDeltaChroma, "delta_chroma_offset_lX" );  // se(v): delta_chroma_offset_l0[i][j]
-              Int shift = 1<<(g_bitDepthC-1);
-              Int pred = ( shift - ( ( shift*wp[j].iWeight)>>(wp[j].uiLog2WeightDenom) ) );
+              Int pred = ( 128 - ( ( 128*wp[j].iWeight)>>(wp[j].uiLog2WeightDenom) ) );
               wp[j].iOffset = Clip3(-128, 127, (iDeltaChroma + pred) );
             }
           }
