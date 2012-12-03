@@ -1220,7 +1220,11 @@ Void TEncGOP::compressGOP( Int iPOCLast, Int iNumPicRcvd, TComList<TComPic*>& rc
             for (AccessUnit::const_iterator it = accessUnit.begin(); it != accessUnit.end(); it++)
             {
               UInt numRBSPBytes_nal = UInt((*it)->m_nalUnitData.str().size());
+#if HM9_NALU_TYPES
+              if ((*it)->m_nalUnitType != NAL_UNIT_SEI && (*it)->m_nalUnitType != NAL_UNIT_SEI_SUFFIX)
+#else
               if ((*it)->m_nalUnitType != NAL_UNIT_SEI)
+#endif
               {
                 numRBSPBytes += numRBSPBytes_nal;
               }
@@ -1777,8 +1781,14 @@ Void TEncGOP::xCalculateAddPSNR( TComPic* pcPic, TComPicYuv* pcPicD, const Acces
 #if VERBOSE_RATE
     printf("*** %6s numBytesInNALunit: %u\n", nalUnitTypeToString((*it)->m_nalUnitType), numRBSPBytes_nal);
 #endif
+#if HM9_NALU_TYPES
+    if ((*it)->m_nalUnitType != NAL_UNIT_SEI && (*it)->m_nalUnitType != NAL_UNIT_SEI_SUFFIX)
+#else
     if ((*it)->m_nalUnitType != NAL_UNIT_SEI)
+#endif
+    {
       numRBSPBytes += numRBSPBytes_nal;
+    }
   }
 
   UInt uibits = numRBSPBytes * 8;
